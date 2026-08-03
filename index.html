@@ -1714,56 +1714,56 @@ function HomeScreen({
     title: 'Celestia',
     category: 'Location-Based Immersive Experience',
     year: 2025,
-    thumbImage: window.__asset('assets/projects/celestia/cathedral-nave.jpg')
+    thumbImage: window.__asset('projects/celestia/cathedral-nave.jpg')
   }, {
     id: 'hurtubise',
     title: 'Hurtubise : Saisir le Chaos',
     category: 'Immersive Film · Fulldome',
     year: 2025,
-    thumbImage: window.__asset('assets/projects/hurtubise/dome-neon-blue-1.jpg')
+    thumbImage: window.__asset('projects/hurtubise/dome-neon-blue-1.jpg')
   }, {
     id: 'volcano',
     title: 'Into the Volcano',
     category: 'Immersive Installation',
     year: 2025,
-    thumbImage: window.__asset('assets/projects/volcano/iceland-cliffs.jpg')
+    thumbImage: window.__asset('projects/volcano/iceland-cliffs.jpg')
   }, {
     id: 'traveler',
     title: "Traveler's Introspection",
     category: 'Immersive Film',
     year: 2025,
-    thumbImage: window.__asset('assets/projects/traveler/planet-strands.png')
+    thumbImage: window.__asset('projects/traveler/planet-strands.png')
   }];
   const MORE_PROJECTS = [{
     id: 'melanie',
     title: 'Melanie Martinez',
     category: 'Tour Visuals',
     year: 2024,
-    thumbImage: window.__asset('assets/projects/melanie-martinez/k12-seesaw.jpg')
+    thumbImage: window.__asset('projects/melanie-martinez/k12-seesaw.jpg')
   }, {
     id: 'paralleles',
     title: 'PARALLÈLES',
     category: 'Interactive Installation · Real-Time',
     year: 2023,
-    thumbImage: window.__asset('assets/projects/paralleles/installation-neon-x.jpg')
+    thumbImage: window.__asset('projects/paralleles/installation-neon-x.jpg')
   }, {
     id: 'batiscan',
     title: 'Lac Batiscan',
     category: 'Interactive Scale Model',
     year: 2024,
-    thumbImage: window.__asset('assets/projects/batiscan/model-top-labels.avif')
+    thumbImage: window.__asset('projects/batiscan/model-top-labels.avif')
   }, {
     id: 'epernay',
     title: '1858 – Habits de Lumière',
     category: 'Projection Mapping · Architectural',
     year: 2022,
-    thumbImage: window.__asset('assets/projects/1858-epernay/mapping-green-facade.jpg')
+    thumbImage: window.__asset('projects/1858-epernay/mapping-green-facade.jpg')
   }, {
     id: 'colosseum',
     title: 'Sangue e Arena',
     category: 'Projection Mapping · Architectural',
     year: 2018,
-    thumbImage: window.__asset('assets/projects/colosseum/naumachia-night-wide.jpg')
+    thumbImage: window.__asset('projects/colosseum/naumachia-night-wide.jpg')
   }];
   const ALL_PROJECTS = [...PROJECTS, ...MORE_PROJECTS];
   const YEARS_SINCE_2018 = Math.floor((Date.now() - new Date('2018-10-01').getTime()) / (365.25 * 24 * 3600 * 1000));
@@ -1957,7 +1957,7 @@ const PROJECT_DATA = {
     rnd: ['A parallel R&D track: prototyping a PC/VR preview application for artists, production and the client (Paquin et associés) to review the show before physical installation, instead of relying on rendered exports and on-site fixes.', 'Research centered on Unreal Media Player and Bink Video for encoding and in-headset playback performance, testing resolutions and immersive-preview approaches to find a combination that played back smoothly in VR without re-authoring content for a lower-fidelity preview path.', 'The goal was practical: cut iteration time and unnecessary exports for artists, and give the client a way to sign off on staging and scale before install day — which also turned into a small human-machine-interface exercise in its own right, thinking through how someone navigates and evaluates a spatial, immersive show from inside a headset rather than on a monitor.'],
     pipeline: ['Unreal Engine 5', 'Niagara', 'Notch', 'Unreal Media Player', 'Bink Video'],
     trailerUrl: 'https://www.instagram.com/reel/DZdTE_xAg4z/',
-    galleryImages: [window.__asset('assets/projects/celestia/cathedral-nave.jpg'), window.__asset('assets/projects/celestia/cathedral-arches.jpg')],
+    galleryImages: [window.__asset('projects/celestia/cathedral-nave.jpg'), window.__asset('projects/celestia/cathedral-arches.jpg')],
     prev: 'PARALLÈLES',
     next: "Traveler's Introspection"
   },
@@ -1975,10 +1975,10 @@ const PROJECT_DATA = {
     technicalChallenges: ['Designing reusable animation rigs for hundreds of animated light bulbs while preserving the visual rhythm of Jacques Hurtubise’s work.', 'Managing multiple animation layers inside a fulldome workflow and synchronizing visual timing across the dome.'],
     rnd: ['Camera and motion-rhythm research: extensive back-and-forth with composer Tommy Caron to find a rhythmic “recipe” for this specific movement — pacing the light and paint animation against the music while leaving room for creative variation over time.'],
     pipeline: ['Unreal Engine 5', 'Photoshop', 'After Effects'],
-    heroImage: window.__asset('assets/projects/hurtubise/dome-neon-blue-1.jpg'),
+    heroImage: window.__asset('projects/hurtubise/dome-neon-blue-1.jpg'),
     trailerUrl: 'https://www.youtube.com/watch?v=V8K4WwrpNwI',
     trailerEmbedDisabled: true,
-    galleryImages: [window.__asset('assets/projects/hurtubise/dome-neon-blue-1.jpg'), window.__asset('assets/projects/hurtubise/dome-neon-blue-2.png'), window.__asset('assets/projects/hurtubise/dome-neon-amber.jpg'), window.__asset('assets/projects/hurtubise/dome-paint-animation.jpg')],
+    galleryImages: [window.__asset('projects/hurtubise/dome-neon-blue-1.jpg'), window.__asset('projects/hurtubise/dome-neon-blue-2.png'), window.__asset('projects/hurtubise/dome-neon-amber.jpg'), window.__asset('projects/hurtubise/dome-paint-animation.jpg')],
     prev: "Traveler's Introspection",
     next: 'Into the Volcano'
   },
@@ -1995,7 +1995,7 @@ const PROJECT_DATA = {
     contribution: ['Unreal Engine Environment Artist', 'Look Development', 'High-resolution asset integration', 'Optimization', 'Pipeline development'],
     technicalChallenges: ['The project required handling extremely high-resolution geological assets.', 'Developed a workflow using Cinema 4D BodyPaint and Adobe Photoshop to clean, repair and prepare 16K textures while preserving maximum visual fidelity for Unreal Engine.'],
     pipeline: ['Unreal Engine 5', 'Cinema 4D BodyPaint', 'Substance 3D', 'Photoshop'],
-    galleryImages: [window.__asset('assets/projects/volcano/iceland-cliffs.jpg'), window.__asset('assets/projects/volcano/installation-view.png')],
+    galleryImages: [window.__asset('projects/volcano/iceland-cliffs.jpg'), window.__asset('projects/volcano/installation-view.png')],
     placeholderTiles: 2,
     externalUrl: 'https://normal.studio/en/projects/into-the-volcano/',
     prev: 'Hurtubise : Saisir le Chaos',
@@ -2013,7 +2013,7 @@ const PROJECT_DATA = {
     tools: ['Unreal Engine 5', 'Cinema 4D', 'Substance Designer', 'After Effects'],
     contribution: ['Modeling of the wooden box set piece', 'Modeling, sculpting and Substance Designer material work for the carousel horses', 'Asset editing for the seesaw piece', 'Environment creation and assembly in Unreal Engine', 'Real-time content production for touring LED/projection systems', 'Scene-to-scene visual continuity across the show’s storybook worlds', 'Real-time playback preparation and optimization for nightly live performance'],
     technicalChallenges: ['Live touring content has to hold up across venues and hardware configurations with no room for a dropped frame mid-show — every scene was built and optimized for consistent real-time playback rather than a one-off render.', 'Matching a distinct hand-crafted, storybook art direction (pastel playgrounds, ornate carousels, marionette theatre) while keeping assets light enough for real-time performance.', 'Built a Blueprint actor with dynamic throw logic in Unreal so objects could be thrown and land convincingly in-engine, removing the repeated back-and-forth of re-simulating that motion in Cinema 4D and re-importing.'],
-    galleryImages: [window.__asset('assets/projects/melanie-martinez/k12-seesaw.jpg'), window.__asset('assets/projects/melanie-martinez/carousel-bunny.avif'), window.__asset('assets/projects/melanie-martinez/carousel-arch.avif'), window.__asset('assets/projects/melanie-martinez/mansion-arch.avif'), window.__asset('assets/projects/melanie-martinez/red-room-dancers.avif'), window.__asset('assets/projects/melanie-martinez/puppet-theater.avif')],
+    galleryImages: [window.__asset('projects/melanie-martinez/k12-seesaw.jpg'), window.__asset('projects/melanie-martinez/carousel-bunny.avif'), window.__asset('projects/melanie-martinez/carousel-arch.avif'), window.__asset('projects/melanie-martinez/mansion-arch.avif'), window.__asset('projects/melanie-martinez/red-room-dancers.avif'), window.__asset('projects/melanie-martinez/puppet-theater.avif')],
     pipeline: ['Unreal Engine 5', 'After Effects'],
     prev: 'Into the Volcano',
     next: '1858 – Habits de Lumière'
@@ -2033,7 +2033,7 @@ const PROJECT_DATA = {
     recognition: ['SAT Fest 2026 — Public Award', 'SAT Fest 2026 — Official Selection', 'FDUK 2026 — Official Selection', 'Dome Under Film Festival 2026 — Official Selection', 'Macon Film Festival 2026 — Official Selection', 'Portland Festival of Cinema, Animation & Technology 2026 — Nominee'],
     pipeline: ['Unreal Engine 5', 'VR Previsualization', 'After Effects'],
     privateVideoUrl: null,
-    galleryImages: [window.__asset('assets/projects/traveler/planet-strands.png'), window.__asset('assets/projects/traveler/asteroid-field.png'), window.__asset('assets/projects/traveler/cave-crystals.png'), window.__asset('assets/projects/traveler/tunnel-vortex.png'), window.__asset('assets/projects/traveler/golden-strands-2.png')],
+    galleryImages: [window.__asset('projects/traveler/planet-strands.png'), window.__asset('projects/traveler/asteroid-field.png'), window.__asset('projects/traveler/cave-crystals.webp'), window.__asset('projects/traveler/tunnel-vortex.webp'), window.__asset('projects/traveler/golden-strands-2.webp')],
     prev: 'Celestia',
     next: 'Hurtubise : Saisir le Chaos'
   },
@@ -2049,7 +2049,7 @@ const PROJECT_DATA = {
     contribution: ['Unreal Engine Artist', 'Camera design and cinematic animation', 'Sequencer implementation', 'OSC workflow integration', 'Real-time synchronization', 'Technical integration', 'Visual storytelling'],
     technicalChallenges: ["One of the main technical challenges was building a reliable workflow between Unreal Engine and TouchDesigner.", "Unreal Engine's Sequencer acted as the master timeline, sending OSC commands to TouchDesigner to trigger synchronized visual events. The resulting TouchDesigner output was then captured and composited back into Unreal in real time.", "My role consisted of designing the camera language, creating cinematic animations, integrating the synchronized visual content, and producing presentation-ready sequences used during the project's validation phase."],
     pipeline: ['Unreal Engine', 'Sequencer', 'OSC', 'TouchDesigner', 'Real-time rendering', 'Camera animation'],
-    galleryImages: [window.__asset('assets/projects/paralleles/installation-neon-x.jpg'), window.__asset('assets/projects/paralleles/installation-day.webp'), window.__asset('assets/projects/paralleles/unreal-viewport.png')],
+    galleryImages: [window.__asset('projects/paralleles/installation-neon-x.jpg'), window.__asset('projects/paralleles/installation-day.webp'), window.__asset('projects/paralleles/unreal-viewport.png')],
     prev: 'Lac Batiscan',
     next: 'Celestia'
   },
@@ -2075,7 +2075,7 @@ const PROJECT_DATA = {
     externalUrl: 'https://www.xyztechnologies.com/en/realisations/interactive-model-at-batiscan-river-park/',
     externalLabel: 'See more on XYZ Technologies',
     trailerUrl: 'https://drive.google.com/file/d/1uixdKNK3wAQAihA3xj8i-67IQN4xWFAj/preview',
-    galleryImages: [window.__asset('assets/projects/batiscan/reception-projection.avif'), window.__asset('assets/projects/batiscan/aerial-lake-winter.avif'), window.__asset('assets/projects/batiscan/model-top-labels.avif'), window.__asset('assets/projects/batiscan/model-angle-labels.avif'), window.__asset('assets/projects/batiscan/model-tablet-poi.avif')],
+    galleryImages: [window.__asset('projects/batiscan/reception-projection.avif'), window.__asset('projects/batiscan/aerial-lake-winter.avif'), window.__asset('projects/batiscan/model-top-labels.avif'), window.__asset('projects/batiscan/model-angle-labels.avif'), window.__asset('projects/batiscan/model-tablet-poi.avif')],
     placeholderTiles: 0,
     relatedProjects: ['1858 – Habits de Lumière', 'Sangue e Arena'],
     prev: 'Sangue e Arena',
@@ -2099,7 +2099,7 @@ const PROJECT_DATA = {
     impact: 'The final production became one of the key visual experiences of Habits de Lumière 2022, combining historical storytelling with large-scale projection mapping and immersive visual effects.',
     pipeline: ['Cinema 4D', 'After Effects', 'Photoshop'],
     trailerUrl: 'https://drive.google.com/file/d/1wrjlpzt2n4l3SEmFaD_lSg4Nd9VQQDzV/preview',
-    galleryImages: [window.__asset('assets/projects/1858-epernay/mapping-green-facade.jpg'), window.__asset('assets/projects/1858-epernay/lighting-intro.png'), window.__asset('assets/projects/1858-epernay/vfx-green-growth.png'), window.__asset('assets/projects/1858-epernay/vfx-briques-1.png'), window.__asset('assets/projects/1858-epernay/vfx-briques-2.png')],
+    galleryImages: [window.__asset('projects/1858-epernay/mapping-green-facade.jpg'), window.__asset('projects/1858-epernay/lighting-intro.png'), window.__asset('projects/1858-epernay/vfx-green-growth.png'), window.__asset('projects/1858-epernay/vfx-briques-1.png'), window.__asset('projects/1858-epernay/vfx-briques-2.png')],
     creditsNote: 'Employer: Graphics eMotion — Event: Habits de Lumière 2022 — Location: Épernay, France',
     relatedProjects: ['Sangue e Arena', 'Lac Batiscan'],
     prev: 'Melanie Martinez',
@@ -2123,7 +2123,7 @@ const PROJECT_DATA = {
     pipeline: ['Cinema 4D', '3ds Max', 'After Effects', 'CrazyTalk', 'Photoshop', 'MakeHuman'],
     creditsNote: 'Employer: Graphics eMotion — Location: Colosseum of Rome',
     relatedProjects: ['1858 – Habits de Lumière', 'Lac Batiscan'],
-    galleryImages: [window.__asset('assets/projects/colosseum/naumachia-night-wide.jpg'), window.__asset('assets/projects/colosseum/naumachia-ships-blue.jpg'), window.__asset('assets/projects/colosseum/naumachia-ships-fire.jpg'), window.__asset('assets/projects/colosseum/gladiators-wide.jpg'), window.__asset('assets/projects/colosseum/gladiator-duel.jpg'), window.__asset('assets/projects/colosseum/gladiators-lineup.jpg'), window.__asset('assets/projects/colosseum/priscus-verus-banner.jpg'), window.__asset('assets/projects/colosseum/emperor-bust-projection.jpg'), window.__asset('assets/projects/colosseum/wireframe-architecture.jpg')],
+    galleryImages: [window.__asset('projects/colosseum/naumachia-night-wide.jpg'), window.__asset('projects/colosseum/naumachia-ships-blue.jpg'), window.__asset('projects/colosseum/naumachia-ships-fire.jpg'), window.__asset('projects/colosseum/gladiators-wide.jpg'), window.__asset('projects/colosseum/gladiator-duel.jpg'), window.__asset('projects/colosseum/gladiators-lineup.jpg'), window.__asset('projects/colosseum/priscus-verus-banner.jpg'), window.__asset('projects/colosseum/emperor-bust-projection.jpg'), window.__asset('projects/colosseum/wireframe-architecture.jpg')],
     placeholderTiles: 0,
     prev: '1858 – Habits de Lumière',
     next: 'Lac Batiscan'
