@@ -34,3 +34,12 @@ Avant de considérer une modification terminée :
 - Mettre à jour `README.md` ou la documentation pertinente si une modification change l'installation, la structure, les commandes, le contenu éditorial durable ou le déploiement.
 - Utiliser un message de commit clair et ciblé. Avant le commit, relire le diff et ne mettre en scène que les fichiers appartenant à la tâche.
 - Signaler explicitement toute vérification non réalisable et la raison, plutôt que de la présenter comme réussie.
+
+## Direction éditoriale
+
+- Ne jamais présenter un logiciel, un moteur ou une technique comme l'accomplissement. Les outils servent uniquement à situer le contexte de production.
+- Construire chaque récit autour du problème à résoudre, des décisions prises, des compromis rencontrés et de leur impact sur la production.
+- Expliquer pourquoi le travail comptait, pas seulement ce qui a été fabriqué.
+- Décrire uniquement les responsabilités réellement exercées. Ne jamais inventer de détail de production, de métrique, de résultat ou de niveau de responsabilité.
+- Structurer les projets autour d'une introduction concise, du contexte, de la contribution réelle, du défi, de la réponse de production et du résultat factuel.
+- Employer une voix active, précise, humble et naturelle. Éviter le langage marketing, les superlatifs, les buzzwords et les formulations génériques associées aux textes générés.

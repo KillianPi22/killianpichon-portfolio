@@ -32,3 +32,12 @@
 - Mettre à jour `README.md` ou la documentation appropriée dès qu'une modification affecte l'installation, la structure, les commandes, le contenu durable ou le déploiement.
 - Relire le diff, mettre en scène uniquement les fichiers de la tâche et utiliser un message de commit clair et ciblé.
 - Indiquer honnêtement toute vérification non effectuée, avec sa raison.
+
+## Direction éditoriale
+
+- Ne jamais présenter un logiciel, un moteur ou une technique comme l'accomplissement. Les outils servent uniquement à situer le contexte de production.
+- Construire chaque récit autour du problème à résoudre, des décisions prises, des compromis rencontrés et de leur impact sur la production.
+- Expliquer pourquoi le travail comptait, pas seulement ce qui a été fabriqué.
+- Décrire uniquement les responsabilités réellement exercées. Ne jamais inventer de détail de production, de métrique, de résultat ou de niveau de responsabilité.
+- Structurer les projets autour d'une introduction concise, du contexte, de la contribution réelle, du défi, de la réponse de production et du résultat factuel.
+- Employer une voix active, précise, humble et naturelle. Éviter le langage marketing, les superlatifs, les buzzwords et les formulations génériques associées aux textes générés.

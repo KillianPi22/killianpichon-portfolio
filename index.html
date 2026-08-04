@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="./">
   <meta name="theme-color" content="#0a0a0b">
-  <meta name="description" content="Portfolio of Killian Pichon, a Montreal-based Realtime 3D Generalist working across Unreal Engine, VFX, motion design and immersive experiences.">
+  <meta name="description" content="Portfolio of Killian Pichon, creating immersive experiences through real-time graphics, technical art and visual storytelling.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://killianpi22.github.io/killianpichon-portfolio/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Killian Pichon">
-  <meta property="og:title" content="Killian Pichon — Realtime 3D Generalist">
-  <meta property="og:description" content="Portfolio of Killian Pichon, a Montreal-based Realtime 3D Generalist working across Unreal Engine, VFX, motion design and immersive experiences.">
+  <meta property="og:title" content="Killian Pichon — Immersive Experiences & Technical Art">
+  <meta property="og:description" content="Immersive experiences shaped through real-time graphics, technical art, visual storytelling and production thinking.">
   <meta property="og:url" content="https://killianpi22.github.io/killianpichon-portfolio/">
   <meta name="twitter:card" content="summary">
-  <title>Killian Pichon — Realtime 3D Generalist</title>
+  <title>Killian Pichon — Immersive Experiences & Technical Art</title>
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{--font-display:'Archivo',system-ui,sans-serif;--font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',monospace}
@@ -133,7 +133,7 @@ button{color:inherit}
 <body>
   <div id="offline-fallback">
     <main style="min-height:100vh;padding:clamp(32px,7vw,96px);background:#0a0a0b;color:#f3f1ed;font-family:Arial,sans-serif">
-      <p style="margin:0 0 24px;color:#ff8259;letter-spacing:.24em;font-size:12px">REALTIME 3D GENERALIST</p>
+      <p style="margin:0 0 24px;color:#ff8259;letter-spacing:.24em;font-size:12px">IMMERSIVE EXPERIENCES · TECHNICAL ART</p>
       <h1 style="margin:0;font-size:clamp(64px,12vw,168px);line-height:.86;letter-spacing:-.06em">KILLIAN<br>PICHON</h1>
       <p style="max-width:480px;margin:40px 0 0;font-size:18px;line-height:1.6;color:#c8c5c0">Real-time, VFX, motion design and immersive experiences.</p>
     </main>
@@ -668,11 +668,11 @@ function ProjectCard({
 }
 function Hero({
   name = 'Killian Pichon',
-  role = '3D Generalist',
-  tagline = 'Real-Time Artist',
-  tools = 'Real-time · VFX · Motion Design · Immersive Experiences',
-  eyebrow = 'Realtime 3D Generalist',
-  description = 'I design cinematic worlds where real-time rendering, visual storytelling and interactive technologies converge.',
+  role = 'Immersive Artist',
+  tagline = 'Technical Art & Visual Storytelling',
+  tools = 'Realtime Graphics · Technical Art · Immersive Production',
+  eyebrow = 'Immersive Experience Artist',
+  description = 'I create immersive experiences by connecting visual storytelling with the production workflows needed to build, review and deliver them.',
   stats = [{
     value: '6',
     suffix: '+',
@@ -1580,7 +1580,7 @@ function Clients({
 }
 function Footer({
   mark = 'KP',
-  role = '3D Generalist / Real-Time Artist'
+  role = 'Immersive Artist / Technical Art'
 }) {
   return React.createElement("footer", {
     style: {
@@ -1948,14 +1948,15 @@ const PROJECT_DATA = {
     studio: 'Normal Studio',
     venue: 'Denver & Chicago',
     client: 'Paquin et associés',
-    desc: 'A traveling, large-scale location-based immersive experience — procedural animation, stylized look development and a real-time compositing pipeline built to hold up across two installations.',
-    overview: "Celestia is a location-based immersive show produced at Normal Studio for client Paquin et associés, first installed in Denver and later re-mounted for a second edition in Chicago. The brief called for large flocks of animated creatures moving believably across a monumental projection surface, a stylized magical look distinct from a literal render, and a production pipeline light enough to iterate on across two very different venues and timelines.",
-    role: 'Realtime 3D Generalist — Animation, Look Development & Compositing',
+    desc: 'A traveling immersive production shaped around a practical question: how could a monumental show remain art-directable across two venues without rebuilding its workflow?',
+    overview: "Produced at Normal Studio for Paquin et associés, Celestia opened in Denver and was later remounted in Chicago. The production needed large flocks to move clearly across a monumental projection surface, a magical visual language that would read at scale, and a workflow flexible enough to support late creative decisions across both installations.",
+    role: 'Realtime 3D Generalist — Procedural Animation, Look Development & Compositing',
     tools: ['Unreal Engine 5', 'Niagara', 'Notch', 'Unreal Media Player', 'Bink Video'],
-    contribution: ['Animation — procedural bird flock systems driving hundreds of agents, animation blending between locomotion states, dedicated hero-bird animation blending for close-up beats, spline-driven flight behaviours, and Niagara integration to bridge simulation and rendered motion.', 'Look Development — a stylized, Fresnel-based shading approach built to read as "magical" rather than physically literal, developed through iterative visual passes with the art direction team.', 'Compositing Pipeline — light-pass breakdown, mask generation and render preparation feeding a Notch-based compositing workflow for final delivery.'],
-    technicalChallenges: ['Problem: monumental projection surfaces punish literal, physically-based rendering — detail disappears at scale and render times balloon, while the show still needed to look convincing at a distance and remain editable late in production.', 'Approach: rather than push more raw fidelity, the look was rebuilt around simplified Fresnel-based shading and clean separated passes (light, mask, base) so the compositing stage — not the render — carried the final polish, keeping iteration fast for the art directors.', 'Solution: procedural flock systems (spline-driven behaviours + animation blending, with hero birds animated and blended separately for hand-crafted close-ups) replaced hand-keyed crowds, and the whole look/animation pipeline was validated against Notch compositing early so surprises didn\u2019t surface only at final assembly.', 'Impact: rendering time dropped meaningfully without giving up artistic control, and the same pipeline carried over from the Denver edition into the Chicago remount with only content changes, not a rebuild.', 'Lessons learned: designing for compositing from the start — rather than treating it as a finishing step — is what made the stylized look both fast to render and easy to art-direct late; it\u2019s a workflow worth carrying into future large-format shows.'],
-    rnd: ['A parallel R&D track: prototyping a PC/VR preview application for artists, production and the client (Paquin et associés) to review the show before physical installation, instead of relying on rendered exports and on-site fixes.', 'Research centered on Unreal Media Player and Bink Video for encoding and in-headset playback performance, testing resolutions and immersive-preview approaches to find a combination that played back smoothly in VR without re-authoring content for a lower-fidelity preview path.', 'The goal was practical: cut iteration time and unnecessary exports for artists, and give the client a way to sign off on staging and scale before install day — which also turned into a small human-machine-interface exercise in its own right, thinking through how someone navigates and evaluates a spatial, immersive show from inside a headset rather than on a monitor.'],
-    pipeline: ['Unreal Engine 5', 'Niagara', 'Notch', 'Unreal Media Player', 'Bink Video'],
+    contribution: ['Designed procedural flock behaviours and animation blending for background groups, while keeping hero birds separate for close-up moments that required directed performance.', 'Developed a simplified, Fresnel-led visual treatment with the art direction team so silhouettes and motion remained legible on the projection surface.', 'Prepared separated light, mask and base passes so final adjustments could happen in compositing without reopening every rendered element.'],
+    technicalChallenges: ['Challenge — large projection surfaces can erase fine detail, while a literal rendering approach would make late visual changes slower and harder to control.', 'Production response — the look was organized around readable forms, separated passes and early compositing tests; procedural flocks handled scale while hero animation preserved authored moments.', 'Production impact — the team could refine timing and finish later in the process, and the same production logic carried from the Denver installation into the Chicago remount.'],
+    rnd: ['A parallel research track explored a PC/VR preview workflow so artists, production and the client could review spatial content before physical installation.', 'Playback tests compared encoding, resolution and in-headset performance to find a review path that did not require a separate low-fidelity version of the show.', 'The research focused on an operational need rather than a standalone deliverable: earlier review of staging, scale and pacing, with less dependence on rendered exports or installation-day feedback.'],
+    pipeline: ['Procedural flock blocking and hero animation', 'Projection-scale look development', 'Separated render-pass preparation', 'Real-time compositing review', 'PC/VR pre-installation research'],
+    impact: 'The resulting workflow kept visual decisions editable through compositing and remained adaptable when the production moved from Denver to Chicago.',
     trailerUrl: 'https://www.instagram.com/reel/DZdTE_xAg4z/',
     galleryImages: [window.__asset('projects/celestia/cathedral-nave.jpg'), window.__asset('projects/celestia/cathedral-arches.jpg')],
     prev: 'PARALLÈLES',
@@ -1967,14 +1968,15 @@ const PROJECT_DATA = {
     year: 2025,
     studio: 'Normal Studio',
     venue: 'Montréal Planetarium',
-    desc: "An immersive fulldome experience bringing Jacques Hurtubise's paintings to life through animation, light and immersive storytelling.",
-    overview: "An immersive film projected at the Montréal Planetarium, transforming Jacques Hurtubise's paintings into animated visual environments synchronized with the music of Hippie Hourrah.",
-    role: 'Unreal Engine Artist',
+    desc: "A fulldome production translating Jacques Hurtubise's paintings into synchronized light, movement and spatial composition.",
+    overview: "Presented at the Montréal Planetarium, the film placed Jacques Hurtubise's work inside a dome-scale audiovisual experience set to music by Hippie Hourrah. The production challenge was to animate the paintings without losing their graphic rhythm, then coordinate multiple visual layers across a continuous immersive surface.",
+    role: 'Realtime 3D Artist — Animation Systems, Synchronization & Fulldome Compositing',
     tools: ['Unreal Engine 5', 'Photoshop', 'After Effects'],
-    contribution: ['Unreal Engine Artist', 'Animation rig development for the neon light installation', 'Animation of Photoshop-mapped window sequences', "Digital animation of Jacques Hurtubise's artworks", 'Fulldome compositing', 'Visual delay compositing and synchronization for dome projection', 'Technical integration'],
-    technicalChallenges: ['Designing reusable animation rigs for hundreds of animated light bulbs while preserving the visual rhythm of Jacques Hurtubise’s work.', 'Managing multiple animation layers inside a fulldome workflow and synchronizing visual timing across the dome.'],
-    rnd: ['Camera and motion-rhythm research: extensive back-and-forth with composer Tommy Caron to find a rhythmic “recipe” for this specific movement — pacing the light and paint animation against the music while leaving room for creative variation over time.'],
-    pipeline: ['Unreal Engine 5', 'Photoshop', 'After Effects'],
+    contribution: ['Developed reusable animation rigs for the neon-light sequences so large groups of bulbs could be directed without losing the irregular energy of the source artwork.', 'Prepared and animated mapped window sequences and digital interpretations of Hurtubise paintings.', 'Composited the fulldome material, including visual-delay treatments and timing adjustments required for synchronization across the dome.', 'Worked through motion and pacing decisions with composer Tommy Caron so the animation supported the music without becoming mechanically repetitive.'],
+    technicalChallenges: ['Challenge — hundreds of animated lights and layered artworks had to feel coordinated across the dome while preserving the tension and spontaneity of Hurtubise’s visual language.', 'Production response — reusable rigs organized the light animation, while mapped sequences and delay-based compositing were timed as connected layers rather than isolated shots.', 'Production impact — the system supported iteration on rhythm and synchronization without rebuilding each element individually.'],
+    rnd: ['Camera and motion-rhythm studies were developed through repeated exchanges with composer Tommy Caron, searching for timing rules that could support the score while leaving room for variation.'],
+    pipeline: ['Artwork preparation and mapped animation', 'Reusable neon-light rigging', 'Music-led timing studies', 'Fulldome compositing', 'Dome synchronization and technical integration'],
+    impact: 'The production connected painting, light and music through a shared timing structure designed for the spatial demands of fulldome projection.',
     heroImage: window.__asset('projects/hurtubise/dome-neon-blue-1.jpg'),
     trailerUrl: 'https://www.youtube.com/watch?v=V8K4WwrpNwI',
     trailerEmbedDisabled: true,
@@ -1984,17 +1986,18 @@ const PROJECT_DATA = {
   },
   volcano: {
     title: 'Into the Volcano',
-    category: 'Immersive Installation · Unreal Engine',
+    category: 'Immersive Installation · 270°',
     year: 2025,
     studio: 'Normal Studio',
     venue: 'Perlan Museum, Reykjavík',
-    desc: 'A 270° immersive installation combining real volcanic footage with real-time Unreal Engine environments.',
-    overview: 'A large-scale immersive museum experience blending documentary footage of volcanic eruptions with digital environments rendered in Unreal Engine.',
-    role: 'Unreal Engine Environment Artist',
+    desc: 'A 270° museum experience combining volcanic footage with digital landscapes prepared for close, large-format viewing.',
+    overview: 'Created for the Perlan Museum in Reykjavík, the installation moves between documentary footage of eruptions and reconstructed volcanic environments. My contribution centered on making ultra-high-resolution geological assets usable in production while preserving the surface detail needed for an immersive screen.',
+    role: 'Environment Artist — Look Development & High-Resolution Asset Integration',
     tools: ['Unreal Engine 5', 'Cinema 4D', 'Substance 3D', 'Photoshop'],
-    contribution: ['Unreal Engine Environment Artist', 'Look Development', 'High-resolution asset integration', 'Optimization', 'Pipeline development'],
-    technicalChallenges: ['The project required handling extremely high-resolution geological assets.', 'Developed a workflow using Cinema 4D BodyPaint and Adobe Photoshop to clean, repair and prepare 16K textures while preserving maximum visual fidelity for Unreal Engine.'],
-    pipeline: ['Unreal Engine 5', 'Cinema 4D BodyPaint', 'Substance 3D', 'Photoshop'],
+    contribution: ['Assessed and prepared geological assets carrying 16K texture sources.', 'Cleaned and repaired texture areas that would become visible at installation scale.', 'Integrated the assets into the real-time environment and balanced fidelity against production performance.', 'Documented a repeatable handoff between texture repair, look development and final scene integration.'],
+    technicalChallenges: ['Challenge — the 16K textures carried the geological detail required by the experience, but their size made inspection, repair and iteration difficult.', 'Production response — the textures were divided into deliberate repair and validation stages so only the areas that affected the final view received intensive work.', 'Production impact — high-resolution assets could move through look development and integration without treating every source file as an equally expensive operation.'],
+    pipeline: ['16K source-texture assessment', 'Targeted cleaning and repair', 'High-resolution asset integration', 'Look-development review', 'Performance-aware scene preparation'],
+    impact: 'The workflow preserved the geological detail needed for the 270° presentation while making the assets practical to review and integrate during production.',
     galleryImages: [window.__asset('projects/volcano/iceland-cliffs.jpg'), window.__asset('projects/volcano/installation-view.png')],
     placeholderTiles: 2,
     externalUrl: 'https://normal.studio/en/projects/into-the-volcano/',
@@ -2007,14 +2010,15 @@ const PROJECT_DATA = {
     year: 2024,
     studio: 'Normal Studio',
     venue: 'The Trilogy Tour — K-12 / Portals worlds',
-    desc: 'Real-time tour visuals produced with Normal Studio for the Trilogy Tour, translating Melanie Martinez’s pastel-nightmare storybook world into large-scale live playback.',
-    overview: 'Real-time visual content produced for Melanie Martinez’s Trilogy Tour, built for stable real-time playback across large-venue live event systems night after night. The show moves through a sequence of storybook sets — a candy-colored playground, an oversized carousel, a haunted dollhouse, a marionette theatre — each requiring content built to survive the pacing and technical constraints of a live touring rig rather than a single fixed cinema screen.',
+    desc: 'Touring visuals translating Melanie Martinez’s storybook worlds into scenes designed for repeatable large-venue playback.',
+    overview: 'Produced with Normal Studio for the Trilogy Tour, the work moved through playground, carousel, dollhouse and marionette-theatre environments. Each scene had to preserve the hand-crafted art direction while remaining dependable within the pacing and technical constraints of a touring show.',
     role: 'Realtime 3D Generalist',
     tools: ['Unreal Engine 5', 'Cinema 4D', 'Substance Designer', 'After Effects'],
-    contribution: ['Modeling of the wooden box set piece', 'Modeling, sculpting and Substance Designer material work for the carousel horses', 'Asset editing for the seesaw piece', 'Environment creation and assembly in Unreal Engine', 'Real-time content production for touring LED/projection systems', 'Scene-to-scene visual continuity across the show’s storybook worlds', 'Real-time playback preparation and optimization for nightly live performance'],
-    technicalChallenges: ['Live touring content has to hold up across venues and hardware configurations with no room for a dropped frame mid-show — every scene was built and optimized for consistent real-time playback rather than a one-off render.', 'Matching a distinct hand-crafted, storybook art direction (pastel playgrounds, ornate carousels, marionette theatre) while keeping assets light enough for real-time performance.', 'Built a Blueprint actor with dynamic throw logic in Unreal so objects could be thrown and land convincingly in-engine, removing the repeated back-and-forth of re-simulating that motion in Cinema 4D and re-importing.'],
+    contribution: ['Modeled the wooden-box set piece and developed the carousel horses through modeling, sculpting and material work.', 'Adapted the seesaw asset and assembled the environments for live playback.', 'Maintained visual continuity as the show moved between distinct storybook settings.', 'Prepared and optimized scenes for the repeatability expected of a touring production.'],
+    technicalChallenges: ['Challenge — the scenes had to preserve a detailed, hand-made visual identity while playing consistently across a live touring system.', 'Production response — assets were evaluated in the context of each scene, and repeated object-throw simulations were replaced with reusable in-scene logic that could be adjusted without another external simulation pass.', 'Production impact — motion and staging changes could be reviewed inside the live scene, reducing back-and-forth during iteration.'],
     galleryImages: [window.__asset('projects/melanie-martinez/k12-seesaw.jpg'), window.__asset('projects/melanie-martinez/carousel-bunny.avif'), window.__asset('projects/melanie-martinez/carousel-arch.avif'), window.__asset('projects/melanie-martinez/mansion-arch.avif'), window.__asset('projects/melanie-martinez/red-room-dancers.avif'), window.__asset('projects/melanie-martinez/puppet-theater.avif')],
-    pipeline: ['Unreal Engine 5', 'After Effects'],
+    pipeline: ['Asset modeling and adaptation', 'Material and environment development', 'Scene assembly and continuity review', 'Reusable motion logic', 'Touring-playback preparation'],
+    impact: 'The scenes were prepared as dependable parts of a larger touring sequence, with visual decisions made in relation to live pacing rather than a single rendered shot.',
     prev: 'Into the Volcano',
     next: '1858 – Habits de Lumière'
   },
@@ -2024,14 +2028,16 @@ const PROJECT_DATA = {
     year: 2025,
     studio: 'Fantastik Obsolete',
     roleTitle: 'Co-Founder',
-    desc: 'An award-winning immersive film exploring cinematic movement, rhythm and perception inside a fulldome environment. Produced in 2025, released in 2026.',
-    overview: 'Traveler’s Introspection is an original immersive film created by Fantastik Obsolete. The project explores how camera language, pacing and visual effects influence perception inside a 360° cinematic experience.',
-    role: 'Unreal Engine / Technical Direction · Co-Founder, Fantastik Obsolete',
+    desc: 'An original fulldome film studying how camera movement, rhythm and scale shape perception inside a 360° image.',
+    overview: 'Created by Fantastik Obsolete, Traveler’s Introspection treats the dome as an active cinematic space rather than a wide conventional screen. The production focused on how acceleration, transitions, visual density and camera direction affect comfort and attention from the audience’s point of view.',
+    role: 'Co-Founder — Camera, Visual Effects, Compositing & Technical Direction',
     tools: ['Unreal Engine 5', 'After Effects', 'VR Previsualization'],
-    contribution: ['Unreal Engine', 'Camera choreography', 'Motion pacing', 'Visual effects R&D', 'Cinematic timing', 'Compositing', 'Technical direction'],
-    rnd: ['Every sequence was iteratively tested in VR to evaluate camera comfort, perceived speed, acceleration and deceleration, transitions, audience immersion and natural spatial perception.', 'VR became an essential production tool, allowing every scene to be validated from the audience’s point of view before final dome rendering.'],
+    contribution: ['Designed camera choreography and motion pacing for sequences intended to surround the viewer.', 'Developed visual-effects studies and transitions in relation to perceived speed and spatial orientation.', 'Led compositing and technical direction from scene development through final dome delivery.', 'Reviewed sequences from the audience’s point of view before committing to final output.'],
+    technicalChallenges: ['Challenge — camera choices that feel controlled on a monitor can become disorienting or visually weak when they occupy the full dome.', 'Production response — each sequence was reviewed iteratively in VR to evaluate comfort, acceleration, deceleration, transitions and the natural reading of spatial movement.', 'Production impact — camera and timing decisions were validated before final dome rendering, keeping revision focused on audience perception rather than technical guesswork.'],
+    rnd: ['VR review was used as a production study throughout the film, allowing movement and scale to be judged from inside the experience rather than from a flat preview.', 'The process established a shared basis for discussing comfort, pacing and immersion before final dome output.'],
     recognition: ['SAT Fest 2026 — Public Award', 'SAT Fest 2026 — Official Selection', 'FDUK 2026 — Official Selection', 'Dome Under Film Festival 2026 — Official Selection', 'Macon Film Festival 2026 — Official Selection', 'Portland Festival of Cinema, Animation & Technology 2026 — Nominee'],
-    pipeline: ['Unreal Engine 5', 'VR Previsualization', 'After Effects'],
+    pipeline: ['Camera blocking and choreography', 'VR audience-perspective review', 'Motion and transition refinement', 'Visual-effects development', 'Fulldome compositing and delivery'],
+    impact: 'The review process kept creative decisions tied to how the film would be perceived in the dome, while the completed work went on to receive festival selections and recognition.',
     privateVideoUrl: null,
     galleryImages: [window.__asset('projects/traveler/planet-strands.png'), window.__asset('projects/traveler/asteroid-field.png'), window.__asset('projects/traveler/cave-crystals.webp'), window.__asset('projects/traveler/tunnel-vortex.webp'), window.__asset('projects/traveler/golden-strands-2.webp')],
     prev: 'Celestia',
@@ -2042,34 +2048,35 @@ const PROJECT_DATA = {
     category: 'Interactive Installation · Real-Time',
     year: 2023,
     studio: 'Transversal',
-    desc: 'A real-time interactive installation combining Unreal Engine, TouchDesigner and OSC communication to create synchronized visual experiences. Completed in 28 hours.',
-    overview: "PARALLÈLES is an interactive installation developed with Transversal. The project focused on synchronizing procedural visuals created in TouchDesigner with cinematic sequences produced in Unreal Engine. Unreal acted as the master sequencer, sending OSC commands to TouchDesigner while simultaneously rendering camera animations inside a unified real-time experience.",
-    role: 'Unreal Engine Artist',
+    desc: 'An interactive installation built around a synchronized camera and presentation pipeline linking cinematic sequences with procedural visuals. Completed in 28 hours.',
+    overview: "Developed with Transversal, PARALLÈLES required two visual systems to behave as one production timeline. Cinematic camera sequences drove the presentation, OSC cues triggered procedural events in TouchDesigner, and the resulting imagery returned to the real-time scene for capture and review.",
+    role: 'Realtime Artist — Camera, Sequencing & Technical Integration',
     tools: ['Unreal Engine', 'Sequencer', 'OSC', 'TouchDesigner'],
-    contribution: ['Unreal Engine Artist', 'Camera design and cinematic animation', 'Sequencer implementation', 'OSC workflow integration', 'Real-time synchronization', 'Technical integration', 'Visual storytelling'],
-    technicalChallenges: ["One of the main technical challenges was building a reliable workflow between Unreal Engine and TouchDesigner.", "Unreal Engine's Sequencer acted as the master timeline, sending OSC commands to TouchDesigner to trigger synchronized visual events. The resulting TouchDesigner output was then captured and composited back into Unreal in real time.", "My role consisted of designing the camera language, creating cinematic animations, integrating the synchronized visual content, and producing presentation-ready sequences used during the project's validation phase."],
-    pipeline: ['Unreal Engine', 'Sequencer', 'OSC', 'TouchDesigner', 'Real-time rendering', 'Camera animation'],
+    contribution: ['Designed the camera language and animated the cinematic sequences used to present the installation.', 'Structured the master timeline and connected its cues to procedural visual events through OSC.', 'Integrated the returned visual output into the scene for synchronized capture and compositing.', 'Prepared presentation-ready sequences used during project validation.'],
+    technicalChallenges: ['Challenge — camera motion, procedural imagery and presentation timing lived in separate systems but had to remain synchronized during review.', 'Production response — the cinematic timeline acted as the master clock, sending OSC cues outward and receiving the generated imagery back into the presentation scene.', 'Production impact — the team could review camera work and procedural visuals as one coherent sequence instead of validating each system separately.'],
+    pipeline: ['Camera design and cinematic animation', 'Master timeline sequencing', 'OSC cue exchange', 'Procedural visual generation', 'Return capture and real-time compositing', 'Presentation validation'],
+    impact: 'The connected workflow turned separate visual processes into a reviewable presentation sequence within the project’s 28-hour production window.',
     galleryImages: [window.__asset('projects/paralleles/installation-neon-x.jpg'), window.__asset('projects/paralleles/installation-day.webp'), window.__asset('projects/paralleles/unreal-viewport.png')],
     prev: 'Lac Batiscan',
     next: 'Celestia'
   },
   batiscan: {
     title: 'Lac Batiscan',
-    category: 'Interactive Scale Model · Projection Mapping',
+    category: 'Interactive Scale Model · Projection Mapping Design',
     year: 2024,
     studio: 'XYZ Technologies',
     roleTitle: 'Freelance',
     venue: 'Parc de la Rivière Batiscan',
-    desc: 'A projection-mapped interactive scale model created for Parc de la Rivière Batiscan, giving visitors a seasonal, at-a-glance introduction to the site before they explore it. Completed in 72 hours.',
-    overview: 'Created for Parc de la Rivière Batiscan in collaboration with XYZ Technologies, this project enriches the visitor experience through an interactive scale model installed at the park reception. The content presents the park in both summer and winter, giving visitors an engaging visual introduction before they head out onto the site. I was responsible for the complete visual content before the interactive layer was integrated into the installation.',
-    designIntent: 'The goal was not only to reproduce the park faithfully, but to create a clear and engaging visual language that would help visitors intuitively understand the site’s geography and seasonal transformations. Every lighting, shading and compositing decision was made to support readability while preserving the atmosphere of the environment.',
-    role: 'Freelance — Visual Content & Pixel Mapping',
+    desc: 'Projection mapping design for an interactive scale model helping visitors read the park’s geography and seasonal character before entering the site. Completed in 72 hours.',
+    overview: 'Created for Parc de la Rivière Batiscan with XYZ Technologies, the installation introduces the site through an interactive model at reception. I produced the complete visual content for the physical model before the interactive layer was integrated by the wider team.',
+    designIntent: 'The objective was to make the park understandable at a glance rather than reproduce every detail literally. Lighting, shading, water and seasonal transitions were judged by how clearly visitors could read the terrain from different positions around the model.',
+    role: 'Freelance — Visual Content & Projection Mapping Design',
     tools: ['Cinema 4D', 'Unreal Engine', 'Fluid Flux', 'After Effects', 'Photoshop', 'Illustrator'],
-    contribution: ['Creation of the complete pixel map for the physical model', 'Development of all visual content projected onto the scale model', 'Terrain look development', 'Water simulation using Fluid Flux', 'Shading and lighting', 'Visual effects', 'Final compositing'],
+    contribution: ['Created the complete projection mapping design for the physical model.', 'Developed the summer and winter visual content projected onto the terrain.', 'Handled terrain look development, water behaviour, shading, lighting and visual effects.', 'Prepared the final compositing delivered before integration of the interactive layer.'],
     contributionNote: 'The interactive features were developed afterwards, by others, and were outside my responsibilities.',
-    technicalChallenges: ['One of the main challenges was designing visuals that accurately matched the physical geometry of the model while remaining readable from multiple viewing angles.', 'Special attention went into projection accuracy, terrain readability, seasonal transitions, realistic water behaviour and lighting consistency — the goal was visuals that felt natural while staying clear for public presentation.'],
+    technicalChallenges: ['Challenge — projected content had to align with the model’s physical geometry and remain legible from several visitor viewpoints.', 'Production response — projection accuracy, terrain contrast, seasonal transitions, water behaviour and lighting were evaluated together against public readability.', 'Production impact — the visual system gave visitors a clear seasonal overview of the landscape before they began exploring the park.'],
     impact: 'The final content became the visual foundation of the interactive installation, helping visitors better understand the landscapes and seasonal transformations of Parc de la Rivière Batiscan before beginning their visit. The full visual production was completed in 72 hours.',
-    pipeline: ['Cinema 4D', 'Unreal Engine', 'Fluid Flux', 'After Effects', 'Photoshop', 'Illustrator'],
+    pipeline: ['Physical-model projection planning', 'Terrain and seasonal look development', 'Water and environmental motion', 'Multi-angle readability review', 'Final compositing', 'Handoff for interactive integration'],
     placeholderTiles: 4,
     creditsNote: 'Courtesy and photography: XYZ Technologies',
     externalUrl: 'https://www.xyztechnologies.com/en/realisations/interactive-model-at-batiscan-river-park/',
@@ -2088,16 +2095,16 @@ const PROJECT_DATA = {
     studio: 'Graphics eMotion',
     venue: 'Épernay, France',
     client: "Ville d'Épernay",
-    desc: 'A monumental projection mapping show for Habits de Lumière 2022, projected onto the Hôtel de Ville of Épernay and retracing the building’s history through the voice of its architect.',
-    overview: '"1858" was the monumental projection mapping show created for the 2022 edition of Habits de Lumière in Épernay, France. Projected onto the Hôtel de Ville, the 15-minute experience retraced the history of the building through the narration of its architect, Victor Lenoir. The show blended architectural storytelling, poetic sequences and large-scale visual effects to illustrate major historical moments, including the First World War and the city’s reconstruction.',
-    designIntent: 'The goal was not simply to project animations onto a building, but to transform the architecture into a storytelling medium. Every sequence was designed to reinforce the narrative while respecting the structure and rhythm of the monument, allowing the façade itself to become part of the visual experience.',
+    desc: 'An architectural projection mapping production using the Hôtel de Ville itself to carry the story of its history and reconstruction.',
+    overview: 'Created by Graphics eMotion for Habits de Lumière 2022 in Épernay, the 15-minute show followed the building’s history through the voice of architect Victor Lenoir. My contribution covered several sequences combining lighting, particles, compositing and motion design within the studio’s larger production.',
+    designIntent: 'The façade was treated as part of the narration rather than a neutral screen. Composition and movement followed the building’s structure so historical and poetic moments remained readable from the public viewing distance.',
     role: 'Projection Mapping Artist',
     tools: ['Cinema 4D', 'After Effects', 'Photoshop'],
-    contribution: ['Pixel mapping preparation', 'Scene development', 'Lighting', 'Particle systems', 'Shading', 'Compositing', 'Motion design for large-scale architectural projection'],
+    contribution: ['Prepared projection mapping layouts for the façade geometry.', 'Developed assigned scenes through lighting, shading, particles and compositing.', 'Designed motion at a scale and rhythm appropriate for architectural viewing.', 'Integrated the sequences within the studio’s broader narrative and technical framework.'],
     contributionNote: 'I contributed multiple projection mapping sequences to the show as part of the Graphics eMotion team; the overall show — direction, narration, staging and other sequences — was a full studio production, not a solo work.',
-    technicalChallenges: ['Projection mapping at an architectural scale requires every visual element to precisely match the geometry of the façade.', 'The production required balancing architectural readability, large-scale composition, visual rhythm, lighting consistency, particle integration and projection accuracy — the challenge was sequences that stayed readable from long viewing distances while enhancing the building’s architectural features.'],
-    impact: 'The final production became one of the key visual experiences of Habits de Lumière 2022, combining historical storytelling with large-scale projection mapping and immersive visual effects.',
-    pipeline: ['Cinema 4D', 'After Effects', 'Photoshop'],
+    technicalChallenges: ['Challenge — every visual event had to align with the façade while remaining clear at long viewing distances.', 'Production response — architectural lines guided composition, lighting and particle movement, with projection accuracy reviewed alongside narrative rhythm.', 'Production impact — the assigned sequences supported the historical story without separating the imagery from the building that carried it.'],
+    impact: 'The finished show used large-scale projection to connect the Hôtel de Ville’s architecture with the history being narrated across its façade.',
+    pipeline: ['Façade mapping preparation', 'Narrative scene development', 'Lighting and particle integration', 'Distance-readability review', 'Compositing and show integration'],
     trailerUrl: 'https://drive.google.com/file/d/1wrjlpzt2n4l3SEmFaD_lSg4Nd9VQQDzV/preview',
     galleryImages: [window.__asset('projects/1858-epernay/mapping-green-facade.jpg'), window.__asset('projects/1858-epernay/lighting-intro.png'), window.__asset('projects/1858-epernay/vfx-green-growth.png'), window.__asset('projects/1858-epernay/vfx-briques-1.png'), window.__asset('projects/1858-epernay/vfx-briques-2.png')],
     creditsNote: 'Employer: Graphics eMotion — Event: Habits de Lumière 2022 — Location: Épernay, France',
@@ -2111,16 +2118,16 @@ const PROJECT_DATA = {
     year: 2018,
     studio: 'Graphics eMotion',
     venue: 'Colosseum of Rome',
-    desc: 'A monumental projection mapping show for the Colosseum of Rome, blending live-action footage, CGI and architectural projection to recreate gladiatorial combat, myth and naval battle.',
-    overview: '"Sangue e Arena" was a monumental projection mapping show created for the Colosseum of Rome. The production transformed the monument into a large-scale historical spectacle inspired by Ancient Rome, combining live-action footage, CGI and projection mapping to recreate gladiatorial combats, mythological scenes and naval battles. The project involved multiple artists working together to produce content for one of the world’s most iconic monuments.',
-    designIntent: 'The objective was to support the historical narrative by blending realistic compositing, stylized animation and large-scale visual effects into a coherent architectural projection. Each contribution had to integrate seamlessly into a much larger collaborative production while respecting the monument’s unique architectural constraints.',
+    desc: 'One of my first large-scale international productions, combining filmed performance, animation and architectural projection at the Colosseum of Rome.',
+    overview: 'Sangue e Arena brought gladiatorial combat, mythological scenes and a naval battle to the Colosseum through a studio-wide combination of live action and CGI. As an early-career artist on a major international production, I contributed defined sequences while learning how specialized work is coordinated inside a much larger visual system.',
+    designIntent: 'Each contribution had to support the historical narrative and remain consistent with material produced by other departments. The work was shaped as part of a shared architectural projection, not as a collection of isolated effects.',
     role: 'Projection Mapping Artist',
     tools: ['Cinema 4D', '3ds Max', 'After Effects', 'CrazyTalk', 'Photoshop', 'MakeHuman'],
-    contribution: ['Rotoscoping and compositing of the live-action gladiators', 'Animation of stone statues using 3ds Max and CrazyTalk', 'Creation of the complete 3D Naumachia (naval battle) scene', 'Development of particle simulations inside Cinema 4D', 'Creation and rigging of 3D characters in MakeHuman, with hand-animated walk cycles', 'Wireframe-shader architectural construction sequences', 'Scene integration within the overall projection mapping workflow'],
+    contribution: ['Rotoscoped and composited filmed gladiators for their integration into the projected scenes.', 'Animated stone statues and developed wireframe construction sequences for the architecture.', 'Created the complete 3D Naumachia scene, including characters, hand-animated walk cycles and particle work.', 'Integrated assigned scenes within the wider projection mapping workflow and shared art direction.'],
     contributionNote: 'This was my first large-scale international projection mapping production. I was responsible for the full 3D production of the Naumachia sequence, while compositing for that sequence was handled separately by others on the team.',
-    technicalChallenges: ['The project combined live-action footage, CGI and architectural projection mapping into a single visual experience.', 'Major challenges included convincing compositing of filmed actors, believable stone statue animation, large-scale particle systems, staging an entire naval battle sequence in 3D, and maintaining visual consistency across multiple production techniques.', 'The production required close collaboration between departments while respecting the artistic direction of the overall show.'],
-    impact: 'This project marked my first experience on a major international projection mapping production. It allowed me to develop practical experience in compositing, large-scale animation workflows and collaborative VFX production while contributing to one of the most ambitious projects of my early career.',
-    pipeline: ['Cinema 4D', '3ds Max', 'After Effects', 'CrazyTalk', 'Photoshop', 'MakeHuman'],
+    technicalChallenges: ['Challenge — filmed performers, character animation, particles and architectural imagery had to read as parts of one production despite coming from different disciplines.', 'Production response — responsibilities were divided across the team, with each sequence reviewed against the shared visual direction and the geometry of the monument.', 'Production impact — the process established practical experience in handoffs, compositing and large-scale animation within an international collaborative production.'],
+    impact: 'The project became a formative lesson in how individual craft, clear boundaries of responsibility and close collaboration support a production larger than any single sequence.',
+    pipeline: ['Live-action preparation and compositing', 'Character and statue animation', 'Naumachia scene production', 'Particle and architectural effects', 'Cross-department review', 'Projection integration'],
     creditsNote: 'Employer: Graphics eMotion — Location: Colosseum of Rome',
     relatedProjects: ['1858 – Habits de Lumière', 'Lac Batiscan'],
     galleryImages: [window.__asset('projects/colosseum/naumachia-night-wide.jpg'), window.__asset('projects/colosseum/naumachia-ships-blue.jpg'), window.__asset('projects/colosseum/naumachia-ships-fire.jpg'), window.__asset('projects/colosseum/gladiators-wide.jpg'), window.__asset('projects/colosseum/gladiator-duel.jpg'), window.__asset('projects/colosseum/gladiators-lineup.jpg'), window.__asset('projects/colosseum/priscus-verus-banner.jpg'), window.__asset('projects/colosseum/emperor-bust-projection.jpg'), window.__asset('projects/colosseum/wireframe-architecture.jpg')],
@@ -2922,8 +2929,8 @@ function ProjectScreen({
 }
 window.ProjectScreen = ProjectScreen;
 const CV_PDF = 'https://drive.google.com/file/d/1PTHsGhPivU5w3pQKRpSCrGZCv-uND0l5/view?usp=sharing';
-const CORE_EXPERTISE = ['Realtime 3D Production', 'Creative Problem Solving', 'Technical Art', 'Custom Pipeline Optimization', 'Immersive Storytelling', 'Cross-disciplinary Collaboration', 'Continuous Learning', 'AI-assisted Workflow Integration', 'Innovation with Traditional Methods', 'Procedural Workflows'];
-const SPECIALIZATIONS = ['Fulldome Cinema', 'Location-Based Immersive Experiences', 'Projection Mapping', 'Virtual Production', 'Immersive Storytelling', 'AI-assisted Workflows', 'Electronic Music & AV Performance'];
+const CORE_EXPERTISE = ['Immersive Experience Production', 'Technical Art', 'Realtime Rendering', 'Production Workflow Design', 'Camera & Motion', 'Fulldome Compositing', 'Projection Mapping Design', 'Cross-disciplinary Collaboration', 'R&D & Previsualization', 'Visual Storytelling'];
+const SPECIALIZATIONS = ['Fulldome Cinema', 'Location-Based Immersive Experiences', 'Projection Mapping', 'Virtual Production', 'Realtime Visual Systems', 'Immersive Storytelling', 'Electronic Music & AV Performance'];
 const LANGUAGES = ['French (native)', 'English (professional)', 'German (elementary)'];
 const TOOLKIT = {
   'Realtime & Game Engines': ['Unreal Engine 5', 'Unity (basic)', 'TouchDesigner', 'Notch'],
@@ -2935,25 +2942,25 @@ const EXPERIENCE = [{
   period: '2024 — Present',
   role: 'Co-founder / Realtime Artist',
   org: 'Fantastik Obsolete — Montréal, QC',
-  desc: "Co-founded an independent collective dedicated to immersive cinema and real-time storytelling. Lead Unreal Engine production, look development, VFX integration and technical direction for award-winning fulldome films, from concept development through international festival delivery.",
+  desc: "Co-founded an independent collective dedicated to immersive cinema and real-time storytelling. I guide camera, look development, visual effects and technical decisions from early studies through fulldome delivery, keeping creative choices connected to how an audience experiences the work inside the dome.",
   productions: ["Traveler's Introspection — Public Award, SATFest 2026. Official Selection: Dome Under Film Festival, PFCAT, Macon Film Festival, FDUK."]
 }, {
   period: '2023 — Present',
   role: 'Realtime 3D Generalist / Motion Designer',
   org: 'Freelance — Montréal, QC',
-  desc: 'Produced real-time visual content, cinematic environments and interactive experiences for clients in entertainment, immersive media and live events. Delivered production-ready assets, optimized workflows and collaborated across multidisciplinary teams from concept to final delivery.',
+  desc: 'Develop immersive visuals, cinematic environments and interactive content for entertainment, cultural and live-event productions. The work combines image-making with practical production decisions: clarifying handoffs, protecting iteration time and adapting content to the display system where it will be experienced.',
   productions: ['Clients & Projects: Melanie Martinez Tour (Normal Studio), XYZ Technologies, Lumin-Art, Transversal.']
 }, {
   period: '2025 — 2026',
   role: 'Realtime 3D Generalist / Motion Designer',
   org: 'Normal Studio — Montréal, QC',
-  desc: 'Contributed to the design and production of immersive installations, location-based immersive shows and full-dome productions using Unreal Engine. Work spanned procedural animation systems, look development, real-time compositing pipelines and R&D on preview/visualization tooling, alongside cinematic sequences, materials and Niagara effects — collaborating closely with artists, designers and developers.',
-  productions: ['Celestia — Traveling location-based immersive show for client Paquin et associés, launched in Denver with a second edition in Chicago. Built procedural bird-flock animation and hero-bird blending, a stylized Fresnel-based look, and a Notch-driven compositing pipeline; separately prototyped a PC/VR preview application (Unreal Media Player, Bink Video) so artists, production and the client could review the show before install.', 'Hurtubise — Fulldome biographical experience for the SAT. Created animated neon sequences in Unreal Engine to enhance the film’s visual storytelling.', 'Volcano — Scientific visualization of volcanic landscapes. Designed an efficient workflow for editing and integrating 16K textures on high-resolution assets.']
+  desc: 'Contributed to immersive installations, traveling shows and fulldome productions alongside artists, designers and developers. My work focused on animation systems, projection-scale look development, compositing handoffs and preview studies that helped teams review spatial content earlier in production.',
+  productions: ['Celestia — Developed scalable flock animation, a projection-readable visual treatment and separated compositing passes; also explored a PC/VR review workflow for artists, production and the client before installation.', 'Hurtubise — Built reusable neon-animation systems and synchronized layered artwork with music for a fulldome presentation.', 'Volcano — Structured the cleaning, repair and integration of 16K geological textures for a large-format immersive environment.']
 }, {
   period: '2018 — 2022',
   role: '3D Generalist / Motion Designer',
   org: 'Graphics eMotion — Montréal, QC',
-  desc: 'Designed and produced large-scale projection mapping experiences, museum installations and live event visuals for international clients. Created environments, animation, compositing and VFX while adapting content to complex architectural surfaces and immersive display systems.',
+  desc: 'Contributed to projection mapping, museum installations and live-event productions for international clients. The work required adapting animation, compositing and visual effects to architectural surfaces, public viewing distances and the shared delivery needs of multidisciplinary teams.',
   productions: ['Sangue e Arena — Permanent projection mapping experience, Colosseum, Rome.', 'IHF World Handball Championship Opening Ceremony — Large-scale live event visuals, Cairo.', 'Le Banquet — Immersive multi-sensory projection mapping experience, Cité des Sciences, Paris.', 'Habits de Lumière – 1858 — Architectural projection mapping, Épernay.']
 }];
 const EDUCATION = [{
@@ -3028,14 +3035,14 @@ function AboutScreen({
       marginTop: '12px',
       textTransform: 'uppercase'
     }
-  }, "Realtime Experiences"), React.createElement("p", {
+  }, "Immersive Experiences"), React.createElement("p", {
     style: {
       fontSize: 'var(--color-text-body-lg)',
       color: 'var(--color-text-body)',
       marginTop: '20px',
       lineHeight: 'var(--leading-relaxed)'
     }
-  }, "Bridging cinematic storytelling, interactive technologies and immersive visual experiences. Montreal-based Realtime 3D Generalist working across Unreal Engine, motion design, VFX and fulldome cinema."))), React.createElement("section", {
+  }, "I create immersive experiences through real-time graphics, technical art and visual storytelling. Based in Montréal, I work between image-making and production thinking, shaping visuals while helping teams iterate, review and deliver complex spatial work."))), React.createElement("section", {
     style: {
       padding: '0 var(--container-pad) 96px'
     }
@@ -3250,7 +3257,7 @@ function TechnicalScreen({
       textTransform: 'uppercase',
       marginTop: '12px'
     }
-  }, "Real-Time Pipeline"), React.createElement("p", {
+  }, "Production Thinking"), React.createElement("p", {
     style: {
       fontSize: 'var(--color-text-body-lg)',
       color: 'var(--color-text-body)',
@@ -3258,9 +3265,9 @@ function TechnicalScreen({
       lineHeight: 'var(--leading-relaxed)',
       maxWidth: '720px'
     }
-  }, "An overview of the tools and disciplines behind the productions in this portfolio \u2014 Unreal Engine environment and animation work, look development, VFX, and real-time compositing pipelines built for large-scale immersive and projection-mapped experiences."), React.createElement(TechSection, {
-    eyebrow: "01 \u2014 Engine",
-    title: "Unreal Engine"
+  }, "I enjoy understanding how productions are built as much as creating the visuals themselves. My technical work focuses on reducing iteration time, improving creative handoffs and helping teams review immersive experiences earlier during production."), React.createElement(TechSection, {
+    eyebrow: "01 \u2014 Areas of Interest",
+    title: "Immersive Production Systems"
   }, React.createElement("p", {
     style: {
       fontSize: 'var(--font-size-body)',
@@ -3269,15 +3276,15 @@ function TechnicalScreen({
       maxWidth: '720px',
       marginBottom: 'var(--space-5)'
     }
-  }, "Unreal Engine 5 is the core tool across most projects in this portfolio \u2014 environment art, look development, Niagara VFX, animation systems and real-time compositing for large-format projection and immersive installations. See individual project pages for the specific techniques used on each production."), React.createElement("div", {
+  }, "My areas of interest sit where visual decisions meet production constraints: pipeline development, real-time rendering, production optimization, immersive projection, virtual production and R&D. Unreal Engine, Niagara and compositing tools are useful when they shorten feedback loops, clarify spatial decisions or make a workflow more dependable \u2014 never as outcomes by themselves."), React.createElement("div", {
     style: {
       display: 'flex',
       gap: '8px',
       flexWrap: 'wrap'
     }
-  }, React.createElement(Tag, null, "Unreal Engine 5"), React.createElement(Tag, null, "Niagara VFX"), React.createElement(Tag, null, "Environment Art"), React.createElement(Tag, null, "Look Development"))), React.createElement(TechSection, {
-    eyebrow: "02 \u2014 Pipeline",
-    title: "Projection Mapping & Compositing"
+  }, React.createElement(Tag, null, "Pipeline Development"), React.createElement(Tag, null, "Realtime Rendering"), React.createElement(Tag, null, "Production Optimization"), React.createElement(Tag, null, "Immersive Projection"), React.createElement(Tag, null, "Virtual Production"), React.createElement(Tag, null, "R&D"))), React.createElement(TechSection, {
+    eyebrow: "02 \u2014 Production Studies",
+    title: "Working Philosophy"
   }, React.createElement("p", {
     style: {
       fontSize: 'var(--font-size-body)',
@@ -3285,14 +3292,14 @@ function TechnicalScreen({
       lineHeight: 'var(--leading-relaxed)',
       maxWidth: '720px'
     }
-  }, "Architectural and scale-model projection mapping work \u2014 pixel mapping preparation, scene development and compositing for surfaces ranging from monumental fa\xE7ades to physical scale models. Cinema 4D, After Effects and Photoshop round out the toolset for this side of the practice."), React.createElement("div", {
+  }, "Technical studies begin with a production question: how can a client review scale before installation, how can a team revise timing without rebuilding a scene, or how can ultra-high-resolution assets remain practical to handle? I test workflows against those questions, document what changes the process and keep the solution proportional to the production."), React.createElement("div", {
     style: {
       display: 'flex',
       gap: '8px',
       flexWrap: 'wrap',
       marginTop: 'var(--space-4)'
     }
-  }, React.createElement(Tag, null, "Projection Mapping"), React.createElement(Tag, null, "Cinema 4D"), React.createElement(Tag, null, "After Effects"), React.createElement(Tag, null, "Compositing")))), React.createElement(Footer, null));
+  }, React.createElement(Tag, null, "Iteration Time"), React.createElement(Tag, null, "Previsualization"), React.createElement(Tag, null, "Camera & Timing"), React.createElement(Tag, null, "Cross-System Synchronization"), React.createElement(Tag, null, "Compositing Strategy")))), React.createElement(Footer, null));
 }
 window.TechnicalScreen = TechnicalScreen;
 const SUBJECTS = ['General Inquiry', 'Hiring Opportunity', 'Studio Collaboration Proposal'];
@@ -3599,16 +3606,16 @@ function ContactScreen({
 window.ContactScreen = ContactScreen;
 const SCREEN_META = {
   home: {
-    title: 'Killian Pichon — Realtime 3D Generalist',
-    description: 'Portfolio of Killian Pichon, a Montreal-based Realtime 3D Generalist working across Unreal Engine, VFX, motion design and immersive experiences.'
+    title: 'Killian Pichon — Immersive Experiences & Technical Art',
+    description: 'Portfolio of Killian Pichon, creating immersive experiences through real-time graphics, technical art and visual storytelling.'
   },
   about: {
     title: 'About — Killian Pichon',
-    description: 'Experience, specializations and technical toolkit of Killian Pichon, Realtime 3D Generalist in Montreal.'
+    description: 'Production experience, specializations and working approach of Montréal-based immersive artist Killian Pichon.'
   },
   technical: {
-    title: 'Technical Pipeline — Killian Pichon',
-    description: 'Real-time production, Unreal Engine, projection mapping and compositing workflows used across Killian Pichon’s portfolio.'
+    title: 'Production Thinking — Killian Pichon',
+    description: 'Production studies, workflow decisions and technical-art interests behind Killian Pichon’s immersive work.'
   },
   contact: {
     title: 'Contact — Killian Pichon',
