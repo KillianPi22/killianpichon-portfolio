@@ -71,6 +71,7 @@ button{color:inherit}
 ::selection{background:var(--accent);color:var(--void-950)}
 
 .site-nav{position:relative;z-index:30}
+.hero{min-height:calc(100vh + 2px);min-height:calc(100dvh + 2px)}
 .site-mark{display:inline-flex;align-items:center;min-height:32px}
 .view-all-button,.project-back,.related-project-button{appearance:none;background:none;border:0;padding:0}
 .view-all-button{font-size:var(--text-small);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--tracking-wide);cursor:pointer}
@@ -95,8 +96,6 @@ button{color:inherit}
   .hero-title-wrap h1{font-size:clamp(3rem,16vw,4.6rem)!important}
   .hero-art{display:none!important}
   .hero-scroll-indicator{display:none!important}
-  .hero-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;margin-top:var(--space-7)}
-  .hero-stat{padding:var(--space-5) var(--space-3)!important}
   .hero-reel{width:min(280px,100%)!important}
 
   .featured-projects{padding:72px var(--container-pad)!important}
@@ -681,21 +680,6 @@ function Hero({
   tools = 'Realtime Graphics · Technical Art · Immersive Production',
   eyebrow = 'Immersive Experience Artist',
   description = 'I create immersive experiences by connecting visual storytelling with the production workflows needed to build, review and deliver them.',
-  stats = [{
-    value: '6',
-    suffix: '+',
-    label: 'Years Experience'
-  }, {
-    value: '25',
-    suffix: '+',
-    label: 'Projects Completed'
-  }, {
-    value: '4',
-    label: 'Awards Received'
-  }, {
-    value: '3',
-    label: 'Studios Collaborated'
-  }],
   onWatchReel,
   glowPattern = true,
   reelUrl = 'https://vimeo.com/1201960449',
@@ -705,7 +689,6 @@ function Hero({
   const artRef = React.useRef(null);
   const canvasRef = React.useRef(null);
   const leftColRef = React.useRef(null);
-  const statsRef = React.useRef(null);
   const scrollIndRef = React.useRef(null);
   const pointerRef = React.useRef({
     x: -9999,
@@ -852,15 +835,6 @@ function Hero({
           y1: r.bottom - sectionRect.top + 16
         });
       }
-      if (statsRef.current) {
-        const r = statsRef.current.getBoundingClientRect();
-        excludeRects.push({
-          x0: r.left - sectionRect.left,
-          y0: r.top - sectionRect.top - 8,
-          x1: r.right - sectionRect.left,
-          y1: r.bottom - sectionRect.top
-        });
-      }
       if (scrollIndRef.current) {
         const r = scrollIndRef.current.getBoundingClientRect();
         excludeRects.push({
@@ -962,7 +936,6 @@ function Hero({
       position: 'relative',
       overflow: 'hidden',
       padding: '140px var(--container-pad) 0',
-      minHeight: '760px',
       display: 'flex',
       flexDirection: 'column'
     }
@@ -1157,7 +1130,7 @@ function Hero({
       alignItems: 'center',
       gap: '10px',
       fontFamily: 'var(--font-mono)',
-      fontSize: 'var(--text-micro)',
+      fontSize: 'var(--text-small)',
       letterSpacing: 'var(--tracking-widest)',
       textTransform: 'uppercase',
       color: 'var(--text-faint)'
@@ -1166,44 +1139,7 @@ function Hero({
     style: {
       color: 'var(--accent)'
     }
-  }, "\u2193"))), React.createElement("div", {
-    className: "hero-stats",
-    ref: statsRef,
-    style: {
-      position: 'relative',
-      borderTop: '1px solid var(--line-subtle)',
-      display: 'grid',
-      gridTemplateColumns: `repeat(${stats.length}, 1fr)`
-    }
-  }, stats.map(s => React.createElement("div", {
-    className: "hero-stat",
-    key: s.label,
-    style: {
-      padding: 'var(--space-6) var(--space-5)',
-      textAlign: 'center',
-      borderLeft: '1px solid var(--line-subtle)'
-    }
-  }, React.createElement("div", {
-    style: {
-      fontFamily: 'var(--font-display)',
-      fontWeight: 700,
-      fontSize: 'var(--text-display-md)',
-      color: 'var(--text-heading)'
-    }
-  }, s.value, React.createElement("span", {
-    style: {
-      color: 'var(--accent)'
-    }
-  }, s.suffix || '')), React.createElement("div", {
-    style: {
-      fontFamily: 'var(--font-mono)',
-      fontSize: 'var(--text-micro)',
-      letterSpacing: 'var(--tracking-wide)',
-      textTransform: 'uppercase',
-      color: 'var(--text-muted)',
-      marginTop: '6px'
-    }
-  }, s.label)))), reelOpen && React.createElement("div", {
+  }, "\u2193"))), reelOpen && React.createElement("div", {
     className: "modal-backdrop",
     role: "dialog",
     "aria-modal": "true",
@@ -1773,8 +1709,6 @@ function HomeScreen({
     year: 2018,
     thumbImage: window.__asset('projects/colosseum/naumachia-night-wide.jpg')
   }];
-  const ALL_PROJECTS = [...PROJECTS, ...MORE_PROJECTS];
-  const YEARS_SINCE_2018 = Math.floor((Date.now() - new Date('2018-10-01').getTime()) / (365.25 * 24 * 3600 * 1000));
   const AWARDS = [{
     image: window.__asset('assets/awards/public-award-sat-fest.png'),
     type: 'Public Award',
@@ -1826,23 +1760,7 @@ function HomeScreen({
       position: 'relative',
       zIndex: 2
     }
-  }, React.createElement(Hero, {
-    stats: [{
-      value: String(YEARS_SINCE_2018),
-      suffix: '+',
-      label: 'Years Experience'
-    }, {
-      value: String(ALL_PROJECTS.length),
-      suffix: '+',
-      label: 'Projects Completed'
-    }, {
-      value: String(AWARDS.length),
-      label: 'Awards & Selections'
-    }, {
-      value: String((window.KillianPichonDesignSystem_16387b.DEFAULT_LOGOS || []).filter(l => l.studio).length || 5),
-      label: 'Studios Collaborated'
-    }]
-  })), React.createElement("section", {
+  }, React.createElement(Hero, null)), React.createElement("section", {
     className: "featured-projects",
     id: "featured-projects",
     style: {
