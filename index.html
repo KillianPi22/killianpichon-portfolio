@@ -115,12 +115,20 @@ button{color:inherit}
   .project-media-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:140px!important;min-height:0!important}
   .project-media-tile{grid-row:auto!important;min-height:140px}
   .project-details-grid{grid-template-columns:1fr!important;gap:var(--space-5)!important;margin-top:var(--space-7)!important}
-  .project-nav-edge{top:auto!important;bottom:20px!important;transform:none!important}
+  .project-nav-edge{top:50%!important;top:50dvh!important;bottom:auto!important;transform:translateY(-50%)!important}
   .project-nav-edge-prev{left:12px!important}
   .project-nav-edge-next{right:12px!important}
   .project-nav-edge .pn-label{display:none!important}
   .project-nav-button{width:44px!important;height:44px!important}
   .modal-backdrop{padding:20px!important}
+}
+
+@media (hover: none){
+  .project-nav-edge{top:50%!important;top:50dvh!important;bottom:auto!important;transform:translateY(-50%)!important}
+  .project-nav-edge-prev{left:12px!important}
+  .project-nav-edge-next{right:12px!important}
+  .project-nav-edge .pn-label{display:none!important}
+  .project-nav-button{width:44px!important;height:44px!important}
 }
 
 @media (prefers-reduced-motion: reduce){
