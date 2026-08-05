@@ -328,19 +328,59 @@ function Get-LanIp {
 }
 
 $lanIp = Get-LanIp
-$listener = New-Object System.Net.HttpListener
-$lanMode = $false
 
-# Ecoute sur toutes les interfaces si Windows l'autorise (necessaire pour l'iPhone),
-# sinon repli silencieux sur localhost.
-try {
-  $listener.Prefixes.Add("http://+:$Port/")
-  $listener.Start()
-  $lanMode = $true
-} catch {
-  $listener = New-Object System.Net.HttpListener
-  $listener.Prefixes.Add("http://localhost:$Port/")
-  $listener.Start()
+# Renvoie un listener demarre, ou $null. Ferme systematiquement l'objet en cas
+# d'echec : un listener abandonne garde sa reservation et fait echouer l'essai
+# suivant avec un message trompeur.
+function Start-Listener([string]$prefix) {
+  $l = New-Object System.Net.HttpListener
+  try {
+    $l.Prefixes.Add($prefix)
+    $l.Start()
+    return $l
+  } catch {
+    try { $l.Close() } catch {}
+    return $null
+  }
+}
+
+# Ecoute sur toutes les interfaces si Windows l'autorise (necessaire pour
+# l'iPhone), sinon repli sur localhost.
+$lanMode = $true
+$listener = Start-Listener "http://+:$Port/"
+if (-not $listener) {
+  $lanMode = $false
+  $listener = Start-Listener "http://localhost:$Port/"
+}
+
+if (-not $listener) {
+  Write-Host ""
+  Write-Host "  Impossible d'ecouter sur le port $Port."
+  Write-Host ""
+
+  $who = $null
+  try {
+    $conn = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction Stop | Select-Object -First 1
+    if ($conn) {
+      $proc = Get-Process -Id $conn.OwningProcess -ErrorAction SilentlyContinue
+      # HTTP.sys fait apparaitre les listeners sous le processus System (PID 4)
+      if ($proc -and $proc.Id -ne 4) { $who = "$($proc.ProcessName) (PID $($proc.Id))" }
+      else { $who = "un autre serveur local" }
+    }
+  } catch {}
+
+  if ($who) { Write-Host "  Le port est deja utilise par $who." }
+  else { Write-Host "  Le port est deja utilise, ou reserve par Windows." }
+
+  Write-Host ""
+  Write-Host "  Le plus souvent : une fenetre de l'editeur est deja ouverte."
+  Write-Host "  Ferme-la, puis relance edit-site.cmd."
+  Write-Host ""
+  Write-Host "  Sinon, utilise un autre port :"
+  Write-Host "      edit-site.cmd -Port 8001"
+  Write-Host ""
+  Read-Host "  Appuie sur Entree pour fermer" | Out-Null
+  return
 }
 
 $editorUrl = "http://localhost:$Port/__editor"
