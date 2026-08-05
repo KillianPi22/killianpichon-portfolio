@@ -26,9 +26,27 @@ versionnee.
 
 1. Double-cliquer sur `tools/edit-site.cmd`. L'editeur s'ouvre sur
    `http://localhost:8000/__editor` et demande le mot de passe.
-2. Rechercher un texte, le corriger, cliquer sur **Enregistrer**.
-   L'ecriture se fait directement dans `index.html`, ligne par ligne.
-3. Verifier le rendu dans l'apercu, puis **commiter manuellement**.
+2. Onglet **Textes** : rechercher un texte, le corriger, cliquer sur
+   **Enregistrer**. L'ecriture se fait directement dans `index.html`.
+3. Verifier le rendu dans l'apercu de droite.
+4. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
+   le message propose, puis **Commiter**.
+5. Pousser depuis GitHub Desktop quand le resultat convient. C'est ce push,
+   et lui seul, qui met a jour killianpichon.art.
+
+### Commit depuis l'editeur
+
+L'onglet **Modifications** compare le fichier de travail au dernier commit et
+affiche chaque texte modifie, avec sa section et sa ligne.
+
+- Le commit ne porte que sur `index.html`. Les autres fichiers modifies ne sont
+  jamais embarques, quel que soit l'etat de l'index git.
+- Le commit se fait sur la **branche courante**, affichee a cote du bouton.
+  Elle apparait en orange si ce n'est pas `main`.
+- Rien n'est pousse : le site ne bouge qu'au `git push`.
+- Si la structure du fichier a change en dehors de l'editeur (nombre de textes
+  different), la comparaison est refusee et renvoie vers GitHub Desktop plutot
+  que de deviner.
 
 Le serveur s'arrete automatiquement une vingtaine de secondes apres la fermeture
 de l'onglet de l'editeur, ou immediatement via le bouton **Quitter**.

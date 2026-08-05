@@ -173,8 +173,7 @@ function Get-Branch {
   return "(hors git)"
 }
 
-function Get-Strings {
-  $lines = [System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false))
+function Get-StringsFromLines([string[]]$lines) {
   $items = @()
   $section = "Global"
   for ($i = 0; $i -lt $lines.Length; $i++) {
@@ -196,6 +195,72 @@ function Get-Strings {
     }
   }
   return $items
+}
+
+function Get-Strings {
+  return Get-StringsFromLines ([System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false)))
+}
+
+# ------------------------------------------------------------------ git local
+# Toutes les commandes git passent par un tableau d'arguments : rien n'est
+# interpole dans une ligne de commande, donc rien n'est injectable.
+function Invoke-Git([string[]]$gitArgs) {
+  $out = [System.IO.Path]::GetTempFileName()
+  $err = [System.IO.Path]::GetTempFileName()
+  try {
+    $p = Start-Process -FilePath "git" -ArgumentList (@("-C", $Root) + $gitArgs) `
+           -RedirectStandardOutput $out -RedirectStandardError $err `
+           -NoNewWindow -Wait -PassThru
+    $enc = [System.Text.UTF8Encoding]::new($false)
+    return @{
+      code   = $p.ExitCode
+      stdout = [System.IO.File]::ReadAllText($out, $enc)
+      stderr = [System.IO.File]::ReadAllText($err, $enc)
+    }
+  } finally {
+    Remove-Item $out, $err -Force -ErrorAction SilentlyContinue
+  }
+}
+
+# Version de index.html telle qu'elle est dans le dernier commit.
+# Passe par un fichier pour recuperer les octets bruts : une capture texte
+# de la sortie de git abimerait les accents.
+function Get-HeadStrings {
+  $tmp = [System.IO.Path]::GetTempFileName()
+  try {
+    $p = Start-Process -FilePath "git" -ArgumentList @("-C", $Root, "show", "HEAD:index.html") `
+           -RedirectStandardOutput $tmp -NoNewWindow -Wait -PassThru
+    if ($p.ExitCode -ne 0) { return $null }
+    return Get-StringsFromLines ([System.IO.File]::ReadAllLines($tmp, [System.Text.UTF8Encoding]::new($false)))
+  } catch { return $null }
+  finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+}
+
+# Compare le fichier de travail au dernier commit, texte par texte.
+# L'editeur ne remplace que le contenu des chaines : la structure est
+# preservee, donc les deux listes s'alignent. Si ce n'est pas le cas, le
+# fichier a ete modifie autrement et on le dit au lieu de deviner.
+function Get-Changes {
+  $head = Get-HeadStrings
+  if ($null -eq $head) { return @{ ok = $false; reason = "impossible de lire la version commitee" } }
+  $now = @(Get-Strings)
+  $head = @($head)
+
+  if ($head.Count -ne $now.Count) {
+    return @{ ok = $false; structural = $true
+              reason = "La structure du fichier a change ($($head.Count) textes commites contre $($now.Count) actuellement). Passe par GitHub Desktop pour ce commit." }
+  }
+
+  $changes = @()
+  for ($i = 0; $i -lt $now.Count; $i++) {
+    if ($head[$i].raw -ne $now[$i].raw) {
+      $changes += [pscustomobject]@{
+        line = $now[$i].line; section = $now[$i].section
+        before = $head[$i].text; after = $now[$i].text
+      }
+    }
+  }
+  return @{ ok = $true; changes = $changes; count = $changes.Count }
 }
 
 function Save-Strings($edits) {
@@ -412,6 +477,52 @@ try {
         $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
         $body = $reader.ReadToEnd(); $reader.Close()
         Send-Json $res (Save-Strings (($body | ConvertFrom-Json).edits))
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__changes") {
+        $lastPing = Get-Date; $everPinged = $true
+        $c = Get-Changes
+        $c["branch"] = (Get-Branch)
+        Send-Json $res $c
+        $res.Close(); continue
+      }
+
+      # Commit limite a index.html : la pathspec finale garantit qu'aucun
+      # autre fichier modifie ne sera embarque, quel que soit l'index git.
+      if ($rel -eq "/__commit" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        $msg = ($body | ConvertFrom-Json).message
+
+        if ([string]::IsNullOrWhiteSpace($msg)) {
+          Send-Json $res @{ ok = $false; reason = "Message de commit vide." }
+          $res.Close(); continue
+        }
+
+        $st = Invoke-Git @("status", "--porcelain", "--", "index.html")
+        if ([string]::IsNullOrWhiteSpace($st.stdout)) {
+          Send-Json $res @{ ok = $false; reason = "Aucune modification a commiter dans index.html." }
+          $res.Close(); continue
+        }
+
+        # message passe par un fichier : aucun probleme de guillemets ou d'accents
+        $msgFile = [System.IO.Path]::GetTempFileName()
+        try {
+          [System.IO.File]::WriteAllText($msgFile, $msg, [System.Text.UTF8Encoding]::new($false))
+          $r = Invoke-Git @("commit", "-F", $msgFile, "--", "index.html")
+          if ($r.code -eq 0) {
+            $h = (Invoke-Git @("rev-parse", "--short", "HEAD")).stdout.Trim()
+            Write-Host "  Commit $h sur $(Get-Branch)"
+            Send-Json $res @{ ok = $true; hash = $h; branch = (Get-Branch) }
+          } else {
+            $why = if ([string]::IsNullOrWhiteSpace($r.stderr)) { $r.stdout } else { $r.stderr }
+            Send-Json $res @{ ok = $false; reason = $why.Trim() }
+          }
+        } finally {
+          Remove-Item $msgFile -Force -ErrorAction SilentlyContinue
+        }
         $res.Close(); continue
       }
 
