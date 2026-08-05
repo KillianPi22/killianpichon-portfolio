@@ -1,0 +1,466 @@
+<#
+  Editeur de contenu local + serveur de previsualisation.
+  Lance-le en double-cliquant sur tools\edit-site.cmd
+
+  - Sert le site statique sur http://localhost:8000/
+  - Sert l'editeur sur http://localhost:8000/__editor
+  - Ecrit les corrections de texte directement dans index.html
+  - S'arrete tout seul quand l'editeur est ferme (battement de coeur)
+
+  Ne fait partie d'aucun deploiement : GitHub Pages sert des fichiers
+  statiques et n'execute jamais ce script.
+#>
+
+param(
+  [int]$Port = 8000,
+  [switch]$NoBrowser,
+  [int]$IdleTimeoutSeconds = 25
+)
+
+$ErrorActionPreference = "Stop"
+
+$ScriptDir  = Split-Path -Parent $MyInvocation.MyCommand.Path
+$Root       = Split-Path -Parent $ScriptDir
+$TargetFile = Join-Path $Root "index.html"
+$BackupDir  = Join-Path $ScriptDir ".backups"
+$AppCodeStartLine = 443   # tout ce qui precede est le bundle React vendorise
+
+if (-not (Test-Path $TargetFile)) { throw "index.html introuvable dans $Root" }
+if (-not (Test-Path $BackupDir))  { New-Item -ItemType Directory -Path $BackupDir | Out-Null }
+
+# --------------------------------------------------------------- mot de passe
+# auth.json contient un sel aleatoire et une empreinte PBKDF2 du mot de passe :
+# le mot de passe lui-meme n'y figure pas et ne peut pas en etre deduit.
+# Le fichier est ignore par Git (depot public) et ne quitte donc jamais la machine.
+# Cree-le avec tools\set-password.cmd
+$AuthFile = Join-Path $ScriptDir "auth.json"
+
+function Get-Pbkdf2([string]$password, [byte[]]$salt, [int]$iter) {
+  $d = New-Object System.Security.Cryptography.Rfc2898DeriveBytes(
+        $password, $salt, $iter, [System.Security.Cryptography.HashAlgorithmName]::SHA256)
+  try { return $d.GetBytes(32) } finally { $d.Dispose() }
+}
+
+# comparaison a duree constante : ne revele pas ou la difference se situe
+function Test-BytesEqual([byte[]]$a, [byte[]]$b) {
+  if ($a.Length -ne $b.Length) { return $false }
+  $diff = 0
+  for ($i = 0; $i -lt $a.Length; $i++) { $diff = $diff -bor ($a[$i] -bxor $b[$i]) }
+  return ($diff -eq 0)
+}
+
+if (-not (Test-Path $AuthFile)) {
+  Write-Host ""
+  Write-Host "  Aucun mot de passe defini."
+  Write-Host "  Lance d'abord tools\set-password.cmd, puis relance edit-site.cmd."
+  Write-Host ""
+  Read-Host "  Appuie sur Entree pour fermer"
+  return
+}
+
+$auth = Get-Content $AuthFile -Raw | ConvertFrom-Json
+$AuthSalt = [Convert]::FromBase64String($auth.salt)
+$AuthHash = [Convert]::FromBase64String($auth.hash)
+$AuthIter = [int]$auth.iter
+
+function Test-Password([string]$candidate) {
+  if ([string]::IsNullOrEmpty($candidate)) { return $false }
+  return Test-BytesEqual (Get-Pbkdf2 $candidate $AuthSalt $AuthIter) $AuthHash
+}
+
+# jetons de session en memoire : rien n'est ecrit sur le disque
+$sessions = @{}
+$failCount = 0
+$lockUntil = [datetime]::MinValue
+
+function New-SessionToken {
+  $b = New-Object byte[] 32
+  [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b)
+  $t = [Convert]::ToBase64String($b)
+  $sessions[$t] = (Get-Date).AddHours(12)
+  return $t
+}
+
+function Test-SessionToken([string]$t) {
+  if ([string]::IsNullOrEmpty($t)) { return $false }
+  if (-not $sessions.ContainsKey($t)) { return $false }
+  if ((Get-Date) -gt $sessions[$t]) { $sessions.Remove($t); return $false }
+  return $true
+}
+
+# ---------------------------------------------------------------- mime types
+$mime = @{
+  ".html"="text/html; charset=utf-8"; ".htm"="text/html; charset=utf-8"
+  ".css"="text/css; charset=utf-8"; ".js"="application/javascript; charset=utf-8"
+  ".json"="application/json; charset=utf-8"; ".xml"="application/xml; charset=utf-8"
+  ".txt"="text/plain; charset=utf-8"; ".svg"="image/svg+xml"
+  ".png"="image/png"; ".jpg"="image/jpeg"; ".jpeg"="image/jpeg"; ".gif"="image/gif"
+  ".webp"="image/webp"; ".avif"="image/avif"; ".ico"="image/x-icon"
+  ".mp4"="video/mp4"; ".webm"="video/webm"
+  ".woff"="font/woff"; ".woff2"="font/woff2"; ".ttf"="font/ttf"; ".otf"="font/otf"
+}
+
+# ------------------------------------------------------------ scan des textes
+$pattern = @'
+(?<q>['"])(?<val>(?:\\.|(?!\k<q>).)*)\k<q>
+'@
+$rx = [regex]::new($pattern.Trim())
+
+function Test-Editorial([string]$v) {
+  if ($v.Length -lt 4) { return $false }
+  if ($v -notmatch '\s') { return $false }
+  if ($v -match 'var\(--|[0-9]+px|[0-9]+%|rgba?\(|#[0-9a-fA-F]{3,6}\b|cubic-bezier|linear-gradient|repeating-|translate|scale\(|blur\(|/\*|http[s]?://') { return $false }
+  if ($v -match '^\s*[0-9]+\s*/\s*[0-9]+\s*$') { return $false }
+  if ($v -match '^[\s0-9.,/*+\-]+$') { return $false }
+  if ($v -match '^[Mm][\s0-9.,\-]') { return $false }
+  if ($v -match '^[A-Za-z]?[\s0-9.,\-]+[A-Za-z]?[\s0-9.,\-]*$') { return $false }
+  if ($v -match '^(flex|grid|none|block|absolute|relative|sticky|center|space-between|inline-flex|column|row|hidden|auto|pointer|not-allowed|uppercase|transparent|repeat\(|x mandatory|y mandatory)') { return $false }
+  if ($v -match '^[a-z-]+ (var|[0-9])') { return $false }
+  if ($v -match '^[\s\\]*(\\x[0-9A-Fa-f]{2}|\\u[0-9A-Fa-f]{4})[\s\\]*$') { return $false }
+  if ($v -notmatch '[A-Za-z]{2}') { return $false }
+  return $true
+}
+
+# Litteral source -> texte lisible.
+# if/elseif volontaire : `continue` dans un switch PowerShell sort du switch,
+# pas de la boucle, ce qui dupliquait silencieusement un caractere.
+function ConvertFrom-SourceLiteral([string]$s) {
+  $sb = New-Object System.Text.StringBuilder
+  $i = 0
+  while ($i -lt $s.Length) {
+    $c = $s[$i]
+    if ($c -ne '\' -or $i + 1 -ge $s.Length) { [void]$sb.Append($c); $i++; continue }
+    $n = $s[$i+1]
+    if     ($n -eq 'n')  { [void]$sb.Append("`n"); $i += 2 }
+    elseif ($n -eq 't')  { [void]$sb.Append("`t"); $i += 2 }
+    elseif ($n -eq 'r')  { $i += 2 }
+    elseif ($n -eq '\')  { [void]$sb.Append('\');  $i += 2 }
+    elseif ($n -eq "'")  { [void]$sb.Append("'");  $i += 2 }
+    elseif ($n -eq '"')  { [void]$sb.Append('"');  $i += 2 }
+    elseif ($n -eq 'x' -and $i + 3 -lt $s.Length) {
+      [void]$sb.Append([char][Convert]::ToInt32($s.Substring($i+2, 2), 16)); $i += 4
+    }
+    elseif ($n -eq 'u' -and $i + 5 -lt $s.Length) {
+      [void]$sb.Append([char][Convert]::ToInt32($s.Substring($i+2, 4), 16)); $i += 6
+    }
+    else { [void]$sb.Append($c); $i++ }
+  }
+  return $sb.ToString()
+}
+
+# Texte lisible -> litteral source (UTF-8 brut conserve : le fichier en contient deja)
+function ConvertTo-SourceLiteral([string]$s, [char]$quote) {
+  $s = $s -replace '\\', '\\'
+  $s = $s.Replace("`r", '')
+  $s = $s.Replace("`n", '\n')
+  $s = $s.Replace("`t", '\t')
+  if ($quote -eq "'") { $s = $s.Replace("'", "\'") } else { $s = $s.Replace('"', '\"') }
+  return $s
+}
+
+function Get-FileStamp {
+  $fi = New-Object System.IO.FileInfo $TargetFile
+  return "$($fi.LastWriteTimeUtc.Ticks)-$($fi.Length)"
+}
+
+function Get-Branch {
+  $head = Join-Path $Root ".git\HEAD"
+  if (Test-Path $head) {
+    $c = (Get-Content $head -Raw).Trim()
+    if ($c -match 'ref:\s*refs/heads/(.+)$') { return $Matches[1] }
+    return $c.Substring(0, [Math]::Min(8, $c.Length))
+  }
+  return "(hors git)"
+}
+
+function Get-Strings {
+  $lines = [System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false))
+  $items = @()
+  $section = "Global"
+  for ($i = 0; $i -lt $lines.Length; $i++) {
+    $line = $lines[$i]
+    if ($line -match '^function\s+([A-Za-z0-9_]+)\s*\(') { $section = $Matches[1] }
+    if (($i + 1) -lt $AppCodeStartLine) { continue }
+    foreach ($m in $rx.Matches($line)) {
+      $v = $m.Groups['val'].Value
+      if (-not (Test-Editorial $v)) { continue }
+      $items += [pscustomobject]@{
+        line    = $i + 1
+        start   = $m.Groups['val'].Index
+        len     = $v.Length
+        quote   = [string]$m.Groups['q'].Value
+        section = $section
+        raw     = $v
+        text    = (ConvertFrom-SourceLiteral $v)
+      }
+    }
+  }
+  return $items
+}
+
+function Save-Strings($edits) {
+  $enc = [System.Text.UTF8Encoding]::new($false)
+  $content = [System.IO.File]::ReadAllText($TargetFile, $enc)
+  $nl = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" }
+  $lines = [System.Collections.Generic.List[string]]::new()
+  foreach ($l in ($content -split "`r`n|`n")) { $lines.Add($l) }
+
+  $applied = 0; $rejected = @()
+
+  $byLine = $edits | Group-Object -Property { $_.line }
+  foreach ($g in $byLine) {
+    $idx = [int]$g.Name - 1
+    if ($idx -lt 0 -or $idx -ge $lines.Count) {
+      foreach ($e in $g.Group) { $rejected += "ligne $($e.line) hors limites" }
+      continue
+    }
+    $line = $lines[$idx]
+    # droite vers gauche : les decalages restent valides
+    foreach ($e in ($g.Group | Sort-Object -Property { [int]$_.start } -Descending)) {
+      $start = [int]$e.start; $len = [int]$e.len
+      if ($start + $len -gt $line.Length) { $rejected += "ligne $($e.line) : decalage"; continue }
+      if ($line.Substring($start, $len) -ne $e.raw) {
+        $rejected += "ligne $($e.line) : la source a change depuis le chargement"; continue
+      }
+      $new = ConvertTo-SourceLiteral $e.text ([char]$e.quote)
+      $line = $line.Substring(0, $start) + $new + $line.Substring($start + $len)
+      $applied++
+    }
+    $lines[$idx] = $line
+  }
+
+  if ($applied -gt 0) {
+    $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    [System.IO.File]::Copy($TargetFile, (Join-Path $BackupDir "index.$stamp.html"), $true)
+    [System.IO.File]::WriteAllText($TargetFile, ($lines -join $nl), $enc)
+    # ne garder que les 20 sauvegardes les plus recentes
+    Get-ChildItem $BackupDir -Filter "index.*.html" |
+      Sort-Object LastWriteTime -Descending | Select-Object -Skip 20 |
+      Remove-Item -Force -ErrorAction SilentlyContinue
+  }
+  return @{ ok = ($applied -gt 0); applied = $applied; rejected = $rejected; stamp = (Get-FileStamp) }
+}
+
+function Send-Json($res, $obj) {
+  $json = $obj | ConvertTo-Json -Depth 6 -Compress
+  $b = [System.Text.Encoding]::UTF8.GetBytes($json)
+  $res.ContentType = "application/json; charset=utf-8"
+  $res.Headers.Add("Cache-Control", "no-store")
+  $res.ContentLength64 = $b.Length
+  $res.OutputStream.Write($b, 0, $b.Length)
+  $res.StatusCode = 200
+}
+
+# ------------------------------------------------------------------ adresses
+function Get-LanIp {
+  try {
+    $ip = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop |
+      Where-Object { $_.IPAddress -notmatch '^(127\.|169\.254\.)' -and $_.InterfaceAlias -notmatch 'Loopback|vEthernet|WSL' } |
+      Sort-Object -Property InterfaceMetric | Select-Object -First 1
+    if ($ip) { return $ip.IPAddress }
+  } catch {}
+  return $null
+}
+
+$lanIp = Get-LanIp
+$listener = New-Object System.Net.HttpListener
+$lanMode = $false
+
+# Ecoute sur toutes les interfaces si Windows l'autorise (necessaire pour l'iPhone),
+# sinon repli silencieux sur localhost.
+try {
+  $listener.Prefixes.Add("http://+:$Port/")
+  $listener.Start()
+  $lanMode = $true
+} catch {
+  $listener = New-Object System.Net.HttpListener
+  $listener.Prefixes.Add("http://localhost:$Port/")
+  $listener.Start()
+}
+
+$editorUrl = "http://localhost:$Port/__editor"
+$lanUrl = if ($lanMode -and $lanIp) { "http://${lanIp}:$Port/" } else { $null }
+
+Write-Host ""
+Write-Host "  Editeur : $editorUrl"
+Write-Host "  Site    : http://localhost:$Port/"
+if ($lanUrl) {
+  Write-Host "  iPhone  : $lanUrl  (meme reseau Wi-Fi - lecture seule)"
+  Write-Host "            L'editeur reste reserve a cet ordinateur."
+} else {
+  Write-Host "  iPhone  : indisponible - lance tools\setup-wifi.cmd une fois pour l'activer"
+}
+Write-Host "  Branche : $(Get-Branch)"
+Write-Host ""
+Write-Host "  Ferme l'onglet de l'editeur pour arreter le serveur."
+Write-Host ""
+
+if (-not $NoBrowser) { Start-Process $editorUrl | Out-Null }
+
+# --------------------------------------------------------------- boucle HTTP
+$lastPing = Get-Date
+$everPinged = $false
+
+try {
+  while ($listener.IsListening) {
+
+    # attente non bloquante : permet l'arret automatique sur inactivite
+    $task = $listener.GetContextAsync()
+    while (-not $task.AsyncWaitHandle.WaitOne(1000)) {
+      $idle = ((Get-Date) - $lastPing).TotalSeconds
+      $limit = if ($everPinged) { $IdleTimeoutSeconds } else { 120 }
+      if ($idle -gt $limit) {
+        if ($everPinged) { Write-Host "  Editeur ferme - arret du serveur." }
+        else { Write-Host "  Aucun editeur connecte - arret du serveur." }
+        $listener.Stop(); return
+      }
+    }
+    $ctx = $task.GetAwaiter().GetResult()
+    $req = $ctx.Request
+    $res = $ctx.Response
+
+    try {
+      $rel = [System.Uri]::UnescapeDataString($req.Url.AbsolutePath)
+
+      # ------------------------------------------------------------ securite
+      # Les routes de l'editeur (/__*) sont reservees a CET ordinateur.
+      # En mode Wi-Fi le serveur ecoute sur tout le reseau local pour que
+      # l'iPhone puisse AFFICHER le site : sans ce garde-fou, n'importe qui
+      # sur le meme reseau pourrait ecrire dans index.html.
+      # Le telephone lit le site ; lui seul edite.
+      if ($rel.StartsWith("/__") -and -not $req.IsLocal) {
+        $res.StatusCode = 403
+        $deny = [System.Text.Encoding]::UTF8.GetBytes(
+          "403 - L'editeur de contenu n'est accessible que depuis l'ordinateur qui l'execute.")
+        $res.ContentType = "text/plain; charset=utf-8"
+        $res.ContentLength64 = $deny.Length
+        $res.OutputStream.Write($deny, 0, $deny.Length)
+        Write-Host "  Acces editeur refuse depuis $($req.RemoteEndPoint.Address)"
+        $res.Close(); continue
+      }
+
+      # Ouverture de session. Ralentissement progressif apres des echecs
+      # repetes, pour qu'un essai automatise ne serve a rien.
+      if ($rel -eq "/__auth" -and $req.HttpMethod -eq "POST") {
+        if ((Get-Date) -lt $lockUntil) {
+          $wait = [int]($lockUntil - (Get-Date)).TotalSeconds
+          Send-Json $res @{ ok = $false; locked = $true; wait = $wait }
+          $res.Close(); continue
+        }
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        $pw = ($body | ConvertFrom-Json).password
+        if (Test-Password $pw) {
+          $failCount = 0
+          Send-Json $res @{ ok = $true; token = (New-SessionToken) }
+          Write-Host "  Session ouverte."
+        } else {
+          $failCount++
+          if ($failCount -ge 5) {
+            $lockUntil = (Get-Date).AddSeconds([Math]::Min(300, 15 * ($failCount - 4)))
+            Write-Host "  $failCount echecs - blocage temporaire."
+          }
+          Start-Sleep -Milliseconds 400
+          Send-Json $res @{ ok = $false }
+        }
+        $res.Close(); continue
+      }
+
+      # /__editor sert la page (qui affiche l'ecran de deverrouillage) et
+      # /__ping reste libre : il ne renvoie rien d'autre que "le serveur est
+      # vivant", et sans lui le serveur s'arreterait pendant qu'on saisit le
+      # mot de passe. Toute autre route exige une session valide.
+      if ($rel.StartsWith("/__") -and $rel -ne "/__editor" -and $rel -ne "/__ping") {
+        $token = $req.Headers["X-Auth-Token"]
+        if (-not (Test-SessionToken $token)) {
+          $res.StatusCode = 401
+          $m = [System.Text.Encoding]::UTF8.GetBytes("401 - session requise")
+          $res.ContentType = "text/plain; charset=utf-8"
+          $res.ContentLength64 = $m.Length
+          $res.OutputStream.Write($m, 0, $m.Length)
+          $res.Close(); continue
+        }
+      }
+
+      if ($rel -eq "/__ping") {
+        $lastPing = Get-Date; $everPinged = $true
+        Send-Json $res @{ ok = $true }
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__meta") {
+        $lastPing = Get-Date; $everPinged = $true
+        Send-Json $res @{ stamp = (Get-FileStamp); branch = (Get-Branch); lanUrl = $lanUrl }
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__quit") {
+        Send-Json $res @{ ok = $true }
+        $res.Close()
+        Write-Host "  Arret demande par l'editeur."
+        $listener.Stop(); return
+      }
+
+      if ($rel -eq "/__strings") {
+        $lastPing = Get-Date; $everPinged = $true
+        Send-Json $res @{ items = @(Get-Strings); stamp = (Get-FileStamp); branch = (Get-Branch); lanUrl = $lanUrl }
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__save" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        Send-Json $res (Save-Strings (($body | ConvertFrom-Json).edits))
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__editor") {
+        $b = [System.IO.File]::ReadAllBytes((Join-Path $ScriptDir "editor.html"))
+        $res.ContentType = "text/html; charset=utf-8"
+        $res.Headers.Add("Cache-Control", "no-store")
+        $res.ContentLength64 = $b.Length
+        $res.OutputStream.Write($b, 0, $b.Length)
+        $res.StatusCode = 200
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/" -or $rel -eq "") { $rel = "/index.html" }
+      $candidate = Join-Path $Root ($rel.TrimStart("/") -replace "/", "\")
+      $full = [System.IO.Path]::GetFullPath($candidate)
+      $rootFull = [System.IO.Path]::GetFullPath($Root)
+      if (-not $full.StartsWith($rootFull, [StringComparison]::OrdinalIgnoreCase)) {
+        $res.StatusCode = 403; $res.Close(); continue
+      }
+      if (Test-Path -LiteralPath $full -PathType Container) { $full = Join-Path $full "index.html" }
+
+      if (Test-Path -LiteralPath $full -PathType Leaf) {
+        $bytes = [System.IO.File]::ReadAllBytes($full)
+        $ext = [System.IO.Path]::GetExtension($full).ToLowerInvariant()
+        $type = $mime[$ext]; if (-not $type) { $type = "application/octet-stream" }
+        $res.ContentType = $type
+        $res.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate")
+        $res.ContentLength64 = $bytes.Length
+        $res.OutputStream.Write($bytes, 0, $bytes.Length)
+        $res.StatusCode = 200
+      } else {
+        $res.StatusCode = 404
+        $msg = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found: $rel")
+        $res.ContentType = "text/plain; charset=utf-8"
+        $res.ContentLength64 = $msg.Length
+        $res.OutputStream.Write($msg, 0, $msg.Length)
+      }
+    } catch {
+      try {
+        $res.StatusCode = 500
+        $m = [System.Text.Encoding]::UTF8.GetBytes("500: $($_.Exception.Message)")
+        $res.ContentLength64 = $m.Length
+        $res.OutputStream.Write($m, 0, $m.Length)
+      } catch {}
+    } finally {
+      try { $res.Close() } catch {}
+    }
+  }
+} finally {
+  try { $listener.Stop(); $listener.Close() } catch {}
+}

@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Éditeur de contenu — Portfolio</title>
+<style>
+:root{
+  --void-950:#0a0a0b;--void-900:#0e0e10;--void-850:#131316;
+  --line:rgba(255,255,255,.13);--line-subtle:rgba(255,255,255,.07);
+  --white:#f5f4f0;--white-80:#c9c8c4;--grey:#9a999f;
+  --ember:#ff5a2a;--ember-400:#ff8259;--ok:#3ddc84;
+  --sidebar:440px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--void-950);color:var(--white-80);
+  font:15px/1.55 'Inter',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;
+  display:flex;overflow:hidden}
+
+/* ---------------------------------------------------------------- sidebar */
+#side{width:var(--sidebar);flex:0 0 auto;display:flex;flex-direction:column;
+  border-right:1px solid var(--line-subtle);min-width:320px;max-width:70vw}
+#side header{padding:14px 16px 12px;border-bottom:1px solid var(--line-subtle);flex:0 0 auto}
+.titlerow{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+h1{font-size:14px;font-weight:700;color:var(--white);margin:0;letter-spacing:-.02em;
+  text-transform:uppercase;flex:1}
+#branch{font:11px 'JetBrains Mono',ui-monospace,monospace;color:var(--grey);
+  border:1px solid var(--line-subtle);padding:3px 8px;border-radius:999px;white-space:nowrap}
+#search{width:100%;background:var(--void-850);border:1px solid var(--line);
+  color:var(--white);padding:9px 14px;border-radius:999px;font:inherit;font-size:13px}
+#search:focus{outline:2px solid var(--ember);outline-offset:2px}
+.actions{display:flex;align-items:center;gap:8px;margin-top:10px}
+#count{font-size:11px;color:var(--grey);letter-spacing:.1em;text-transform:uppercase;flex:1}
+button{font:inherit;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:999px;cursor:pointer;border:1px solid var(--line);
+  background:none;color:var(--white);transition:.18s;white-space:nowrap}
+button:hover:not(:disabled){border-color:var(--ember);color:var(--ember-400)}
+#save{background:var(--white);color:var(--void-950);border-color:var(--white)}
+#save:disabled{opacity:.3;cursor:not-allowed}
+#save:hover:not(:disabled){background:var(--ember);border-color:var(--ember);color:var(--void-950)}
+
+#list{flex:1;overflow-y:auto;padding:12px 16px 60px}
+.section{margin-bottom:22px}
+.section h2{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ember);margin:0 0 8px;padding-bottom:5px;
+  border-bottom:1px solid var(--line-subtle);position:sticky;top:-12px;
+  background:var(--void-950);padding-top:6px}
+.row{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--line-subtle)}
+.row.dirty{background:rgba(255,90,42,.07)}
+.ln{flex:0 0 42px;font:11px 'JetBrains Mono',ui-monospace,monospace;color:var(--grey);
+  padding-top:9px;text-align:right;user-select:none}
+textarea{flex:1;min-width:0;background:var(--void-850);border:1px solid var(--line-subtle);
+  color:var(--white);font:inherit;font-size:13px;padding:8px 10px;border-radius:6px;
+  resize:none;overflow:hidden;line-height:1.5}
+textarea:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:transparent}
+.row.dirty textarea{border-color:var(--ember)}
+.empty{color:var(--grey);padding:36px 0;text-align:center;font-size:13px}
+
+/* ------------------------------------------------------------ verrouillage */
+#lock{position:fixed;inset:0;z-index:100;background:var(--void-950);
+  display:flex;align-items:center;justify-content:center;padding:24px}
+#lock form{width:100%;max-width:340px;text-align:center}
+#lock h2{font-size:14px;font-weight:700;color:var(--white);margin:0 0 6px;
+  letter-spacing:-.02em;text-transform:uppercase}
+#lock p{font-size:13px;color:var(--grey);margin:0 0 22px;line-height:1.6}
+#pw{width:100%;background:var(--void-850);border:1px solid var(--line);color:var(--white);
+  padding:11px 16px;border-radius:999px;font:inherit;font-size:14px;text-align:center;
+  letter-spacing:.08em}
+#pw:focus{outline:2px solid var(--ember);outline-offset:2px}
+#lock button{width:100%;margin-top:12px;background:var(--white);color:var(--void-950);
+  border-color:var(--white);padding:11px}
+#lock button:hover:not(:disabled){background:var(--ember);border-color:var(--ember);
+  color:var(--void-950)}
+#lockmsg{margin-top:14px;font-size:12px;color:var(--ember-400);min-height:16px}
+
+#status{flex:0 0 auto;padding:9px 16px;font-size:12px;
+  border-top:1px solid var(--line-subtle);display:none;line-height:1.45}
+#status.show{display:block}
+#status.ok{color:var(--ok)} #status.err{color:var(--ember-400)} #status.warn{color:var(--ember-400)}
+
+/* --------------------------------------------------------------- splitter */
+#grip{flex:0 0 5px;cursor:col-resize;background:transparent}
+#grip:hover,#grip.active{background:var(--ember)}
+
+/* ---------------------------------------------------------------- preview */
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#bar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:10px 14px;
+  border-bottom:1px solid var(--line-subtle)}
+#bar .sp{flex:1}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;border-radius:0;padding:7px 13px;font-size:11px}
+.seg button.on{background:var(--white);color:var(--void-950)}
+.seg button.on:hover{background:var(--white);color:var(--void-950)}
+#lan{font:11px 'JetBrains Mono',ui-monospace,monospace;color:var(--grey);
+  border:1px solid var(--line-subtle);padding:5px 10px;border-radius:999px}
+#lan b{color:var(--ember-400);font-weight:500}
+#stage{flex:1;overflow:auto;background:#000;display:flex;justify-content:center}
+iframe{border:0;background:var(--void-950);width:100%;height:100%;display:block}
+iframe.framed{box-shadow:0 0 0 1px var(--line)}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <form id="lockform" autocomplete="off">
+    <h2>Éditeur de contenu</h2>
+    <p>Outil local. Saisis le mot de passe pour déverrouiller l'édition.</p>
+    <input id="pw" type="password" placeholder="Mot de passe" autocomplete="current-password" required>
+    <button type="submit">Déverrouiller</button>
+    <div id="lockmsg"></div>
+  </form>
+</div>
+
+<aside id="side">
+  <header>
+    <div class="titlerow">
+      <h1>Contenu</h1>
+      <span id="branch">…</span>
+    </div>
+    <input id="search" type="search" placeholder="Rechercher un texte, une section…" autocomplete="off">
+    <div class="actions">
+      <span id="count">chargement…</span>
+      <button id="reload" type="button">Recharger</button>
+      <button id="save" type="button" disabled>Enregistrer</button>
+    </div>
+  </header>
+  <div id="list"><p class="empty">Chargement…</p></div>
+  <div id="status"></div>
+</aside>
+
+<div id="grip"></div>
+
+<main id="main">
+  <div id="bar">
+    <div class="seg" id="widths">
+      <button data-w="0"   class="on">Plein</button>
+      <button data-w="1280">Bureau</button>
+      <button data-w="768">Tablette</button>
+      <button data-w="390">iPhone</button>
+    </div>
+    <button id="refresh" type="button">Rafraîchir</button>
+    <span class="sp"></span>
+    <span id="lan"></span>
+    <button id="quit" type="button">Quitter</button>
+  </div>
+  <div id="stage"><iframe id="site" src="/" title="Aperçu du site"></iframe></div>
+</main>
+
+<script>
+/* Cet outil n'a de sens que servi par tools/serve.ps1 en local.
+   Ce fichier est versionne, donc publie par GitHub Pages : on refuse
+   explicitement de s'executer ailleurs, pour ne pas laisser croire
+   qu'un visiteur pourrait editer le site. Il ne le pourrait pas de
+   toute facon - GitHub Pages est statique et n'a aucune route d'ecriture. */
+(() => {
+  const h = location.hostname;
+  const local = h === 'localhost' || h === '127.0.0.1' || h === '[::1]' || h === '';
+  if (local) return;
+  document.body.innerHTML =
+    '<div style="margin:auto;max-width:520px;padding:48px 24px;text-align:center">' +
+    '<h1 style="font-size:15px;letter-spacing:-.02em">Outil local</h1>' +
+    '<p style="color:#9a999f;font-size:14px;line-height:1.7">' +
+    "L'éditeur de contenu du portfolio ne fonctionne que sur l'ordinateur qui " +
+    "l'exécute, lancé via <code>tools/edit-site.cmd</code>.<br><br>" +
+    "Il modifie des fichiers locaux uniquement. Le site publié n'est pas " +
+    "modifiable depuis cette page." +
+    '</p></div>';
+  throw new Error('editeur local uniquement');
+})();
+
+const $ = s => document.querySelector(s);
+let items = [], stamp = null;
+const edits = new Map();
+const key = it => it.line + ':' + it.start;
+
+/* ------------------------------------------------------------- session */
+/* Le jeton vit en sessionStorage : il disparait a la fermeture de l'onglet
+   et n'est jamais ecrit sur le disque. Le serveur l'invalide au bout de 12 h. */
+let token = sessionStorage.getItem('editorToken') || null;
+
+async function authFetch(url, opts){
+  const o = Object.assign({}, opts);
+  o.headers = Object.assign({}, o.headers, { 'X-Auth-Token': token || '' });
+  const r = await fetch(url, o);
+  if (r.status === 401){ lock('Session expirée. Saisis à nouveau le mot de passe.'); throw new Error('401'); }
+  return r;
+}
+
+function lock(msg){
+  token = null;
+  sessionStorage.removeItem('editorToken');
+  $('#lock').style.display = 'flex';
+  $('#lockmsg').textContent = msg || '';
+  $('#pw').value = '';
+  $('#pw').focus();
+}
+
+function unlock(){
+  $('#lock').style.display = 'none';
+  $('#lockmsg').textContent = '';
+}
+
+$('#lockform').addEventListener('submit', async e => {
+  e.preventDefault();
+  const pw = $('#pw').value;
+  const btn = $('#lockform button');
+  btn.disabled = true;
+  $('#lockmsg').textContent = 'Vérification…';
+  try{
+    const r = await fetch('/__auth', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ password: pw })
+    });
+    const d = await r.json();
+    if (d.ok){
+      token = d.token;
+      sessionStorage.setItem('editorToken', token);
+      unlock();
+      await boot();
+    } else if (d.locked){
+      $('#lockmsg').textContent = `Trop de tentatives. Réessaie dans ${d.wait} s.`;
+    } else {
+      $('#lockmsg').textContent = 'Mot de passe incorrect.';
+      $('#pw').value = ''; $('#pw').focus();
+    }
+  } catch(err){
+    $('#lockmsg').textContent = 'Serveur injoignable.';
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+/* ------------------------------------------------------------- rendu liste */
+function autosize(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+
+function updateCount(){
+  const n = edits.size;
+  $('#count').textContent = n ? `${n} modif${n>1?'s':''} en attente` : `${items.length} textes`;
+  $('#save').disabled = n === 0;
+}
+
+function render(filter){
+  const host = $('#list');
+  const f = (filter||'').trim().toLowerCase();
+  const shown = f ? items.filter(it =>
+      it.text.toLowerCase().includes(f) || it.section.toLowerCase().includes(f)) : items;
+
+  if (!shown.length){ host.innerHTML = '<p class="empty">Aucun résultat.</p>'; return; }
+
+  const groups = new Map();
+  for (const it of shown){
+    if (!groups.has(it.section)) groups.set(it.section, []);
+    groups.get(it.section).push(it);
+  }
+
+  host.innerHTML = '';
+  for (const [section, list] of groups){
+    const sec = document.createElement('section');
+    sec.className = 'section';
+    const h = document.createElement('h2');
+    h.textContent = section + ' · ' + list.length;
+    sec.appendChild(h);
+    for (const it of list){
+      const k = key(it);
+      const row = document.createElement('div');
+      row.className = 'row' + (edits.has(k) ? ' dirty' : '');
+      const ln = document.createElement('div');
+      ln.className = 'ln'; ln.textContent = it.line;
+      const ta = document.createElement('textarea');
+      ta.value = edits.has(k) ? edits.get(k) : it.text;
+      ta.rows = 1;
+      ta.addEventListener('input', () => {
+        autosize(ta);
+        if (ta.value === it.text){ edits.delete(k); row.classList.remove('dirty'); }
+        else { edits.set(k, ta.value); row.classList.add('dirty'); }
+        updateCount();
+      });
+      row.append(ln, ta);
+      sec.appendChild(row);
+      requestAnimationFrame(() => autosize(ta));
+    }
+    host.appendChild(sec);
+  }
+}
+
+function status(msg, kind){
+  const s = $('#status');
+  if (!msg){ s.className = ''; s.textContent=''; return; }
+  s.textContent = msg;
+  s.className = 'show ' + (kind || '');
+}
+
+/* ------------------------------------------------------------------ donnees */
+async function load(){
+  const r = await authFetch('/__strings');
+  const d = await r.json();
+  items = d.items || [];
+  stamp = d.stamp;
+  $('#branch').textContent = d.branch || '';
+  setLan(d.lanUrl);
+  edits.clear();
+  render($('#search').value);
+  updateCount();
+}
+
+function setLan(url){
+  $('#lan').innerHTML = url
+    ? 'iPhone · <b>' + url + '</b>'
+    : 'iPhone · lancer en admin';
+}
+
+function reloadPreview(){
+  const f = $('#site');
+  f.src = '/?t=' + Date.now();
+}
+
+/* --------------------------------------------- battement de coeur + veille */
+/* Battement de coeur des le chargement, meme verrouille : sans lui le serveur
+   s'arreterait pendant la saisie du mot de passe. /__ping ne renvoie rien. */
+setInterval(() => { fetch('/__ping').catch(()=>{}); }, 5000);
+
+setInterval(async () => {
+  if (!token) return;
+  try{
+    const r = await authFetch('/__meta');
+    const d = await r.json();
+    if (d.stamp && stamp && d.stamp !== stamp){
+      if (edits.size){
+        status(`index.html a été modifié en dehors de l'éditeur. Tes ${edits.size} modif(s) en attente risquent d'être refusées. Enregistre ou recharge.`, 'warn');
+      } else {
+        await load();
+        reloadPreview();
+        status('Rechargé — index.html a changé sur le disque.', 'ok');
+      }
+    }
+    $('#branch').textContent = d.branch || '';
+  } catch(e){
+    status('Serveur arrêté. Relance tools\\edit-site.cmd.', 'err');
+  }
+}, 5000);
+
+/* ---------------------------------------------------------------- controles */
+$('#search').addEventListener('input', e => render(e.target.value));
+
+$('#reload').addEventListener('click', async () => {
+  if (edits.size && !confirm(`${edits.size} modification(s) non enregistrée(s). Recharger et les perdre ?`)) return;
+  await load(); reloadPreview(); status('');
+});
+
+$('#save').addEventListener('click', async () => {
+  const payload = [];
+  for (const it of items){
+    const k = key(it);
+    if (edits.has(k)) payload.push({
+      line: it.line, start: it.start, len: it.len,
+      quote: it.quote, raw: it.raw, text: edits.get(k)
+    });
+  }
+  $('#save').disabled = true;
+  status('Enregistrement…');
+  try{
+    const r = await authFetch('/__save', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ edits: payload })
+    });
+    const res = await r.json();
+    if (res.applied > 0){
+      let msg = `${res.applied} texte(s) enregistré(s) dans index.html.`;
+      if (res.rejected && res.rejected.length) msg += ' Refusés : ' + res.rejected.join(' ; ');
+      msg += ' Pense à commiter quand le résultat te convient.';
+      status(msg, res.rejected && res.rejected.length ? 'warn' : 'ok');
+      await load();
+      reloadPreview();
+    } else {
+      status('Rien enregistré. ' + ((res.rejected||[]).join(' ; ') || ''), 'err');
+      $('#save').disabled = false;
+    }
+  } catch(e){
+    status('Erreur : ' + e.message, 'err');
+    $('#save').disabled = false;
+  }
+});
+
+$('#refresh').addEventListener('click', reloadPreview);
+
+$('#quit').addEventListener('click', async () => {
+  if (edits.size && !confirm(`${edits.size} modification(s) non enregistrée(s). Quitter quand même ?`)) return;
+  try { await authFetch('/__quit'); } catch(e){}
+  status('Serveur arrêté. Tu peux fermer cet onglet.', 'ok');
+});
+
+$('#widths').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  [...$('#widths').children].forEach(x => x.classList.toggle('on', x === b));
+  const w = +b.dataset.w;
+  const f = $('#site');
+  if (w === 0){ f.style.width='100%'; f.style.height='100%'; f.classList.remove('framed'); }
+  else { f.style.width = w+'px'; f.style.height='100%'; f.classList.add('framed'); }
+});
+
+/* ------------------------------------------------------------- redimension */
+(() => {
+  const grip = $('#grip'); let dragging = false;
+  grip.addEventListener('mousedown', e => {
+    dragging = true; grip.classList.add('active');
+    document.body.style.userSelect='none'; e.preventDefault();
+  });
+  addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const w = Math.min(Math.max(e.clientX, 320), innerWidth*0.7);
+    document.documentElement.style.setProperty('--sidebar', w+'px');
+  });
+  addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false; grip.classList.remove('active'); document.body.style.userSelect='';
+  });
+})();
+
+addEventListener('beforeunload', e => {
+  if (edits.size){ e.preventDefault(); e.returnValue = ''; }
+});
+
+async function boot(){
+  await load();
+  reloadPreview();
+}
+
+/* Un jeton deja present (rechargement de page) est reutilise s'il est
+   toujours valide ; sinon authFetch renvoie sur l'ecran de deverrouillage. */
+(async () => {
+  if (token){
+    try { await boot(); unlock(); return; } catch(e){}
+  }
+  lock('');
+})();
+</script>
+</body>
+</html>

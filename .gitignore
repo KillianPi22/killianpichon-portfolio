@@ -1,3 +1,13 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Sauvegardes automatiques de l'editeur de contenu local
+tools/.backups/
+
+# Empreinte du mot de passe de l'editeur : propre a chaque machine,
+# ne doit jamais etre publiee (depot public). Recree-la avec set-password.cmd
+tools/auth.json
+
+# Copies de travail creees par Claude Code
+.claude/worktrees/
