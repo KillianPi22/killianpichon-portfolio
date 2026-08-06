@@ -1360,11 +1360,28 @@ const DEFAULT_LOGOS = [{
   src: window.__asset(LOGO_BASE + 'graphics-emotion.png'),
   studio: true
 }];
+const CLIENTS_PHONE_QUERY = '(max-width: 767px)';
+function useClientsPhoneLayout() {
+  const [isPhone, setIsPhone] = React.useState(() => window.matchMedia(CLIENTS_PHONE_QUERY).matches);
+  React.useEffect(() => {
+    const mq = window.matchMedia(CLIENTS_PHONE_QUERY);
+    const sync = () => setIsPhone(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    window.addEventListener('resize', sync);
+    return () => {
+      mq.removeEventListener('change', sync);
+      window.removeEventListener('resize', sync);
+    };
+  }, []);
+  return isPhone;
+}
 function Clients({
   logos = DEFAULT_LOGOS
 }) {
   const trackRef = React.useRef(null);
   const scoped = React.useRef('clients-' + Math.random().toString(36).slice(2));
+  const isPhone = useClientsPhoneLayout();
   const loopLogos = [...logos, ...logos, ...logos];
   React.useEffect(() => {
     const track = trackRef.current;
@@ -1379,7 +1396,7 @@ function Clients({
       passive: true
     });
     return () => track.removeEventListener('scroll', onScroll);
-  }, [logos]);
+  }, [logos, isPhone]);
   function scroll(dir) {
     const track = trackRef.current;
     if (!track) return;
@@ -1405,6 +1422,75 @@ function Clients({
     flexShrink: 0,
     transition: 'border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out)'
   };
+  const tileRestShadow = 'inset 0 1px 0 rgba(255,255,255,.07), inset 0 -1px 0 rgba(0,0,0,.5), 0 10px 24px rgba(0,0,0,.35)';
+  const tileHoverShadow = 'inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5), 0 0 20px var(--accent-glow)';
+  function logoTile(l, i, extraStyle) {
+    return React.createElement("div", {
+      key: l.name + i,
+      title: l.name,
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--line-subtle)',
+        background: 'linear-gradient(155deg, var(--void-700) 0%, var(--void-800) 45%, var(--void-900) 100%)',
+        boxShadow: tileRestShadow,
+        transition: 'box-shadow var(--duration-base) var(--ease-out)',
+        ...extraStyle
+      },
+      onMouseEnter: e => {
+        e.currentTarget.style.boxShadow = tileHoverShadow;
+      },
+      onMouseLeave: e => {
+        e.currentTarget.style.boxShadow = tileRestShadow;
+      }
+    }, l.src ? React.createElement("img", {
+      src: l.src,
+      alt: l.name,
+      style: {
+        maxWidth: '100%',
+        maxHeight: '100%',
+        objectFit: 'contain',
+        filter: l.name === 'SAT' || l.name === 'Cité Sciences et Industrie' || l.name === 'Graphics eMotion' || l.name === 'Lumin-Art Productions' ? 'none' : 'grayscale(1) invert(1)',
+        mixBlendMode: 'screen',
+        opacity: 0.9,
+        transition: 'opacity var(--duration-base) var(--ease-out)'
+      }
+    }) : React.createElement("span", {
+      style: {
+        fontFamily: 'var(--font-display)',
+        fontWeight: 700,
+        fontSize: 'var(--text-h3)',
+        color: 'var(--text-muted)',
+        textAlign: 'center',
+        letterSpacing: 'var(--tracking-tight)'
+      }
+    }, l.name));
+  }
+  if (isPhone) {
+    return React.createElement("ul", {
+      className: "clients-grid",
+      style: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+        gap: '12px',
+        width: '100%',
+        margin: 0,
+        padding: 0,
+        listStyle: 'none'
+      }
+    }, logos.map((l, i) => React.createElement("li", {
+      key: l.name + i,
+      style: {
+        minWidth: 0
+      }
+    }, logoTile(l, i, {
+      width: '100%',
+      height: '76px',
+      padding: '14px 16px'
+    }))));
+  }
   return React.createElement("div", {
     className: "clients-carousel",
     style: {
@@ -1452,52 +1538,13 @@ function Clients({
       flex: 1,
       minWidth: 0
     }
-  }, loopLogos.map((l, i) => React.createElement("div", {
-    key: l.name + i,
-    title: l.name,
-    style: {
-      flex: '0 0 auto',
-      width: '168px',
-      height: '96px',
-      scrollSnapAlign: 'start',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-      borderRadius: 'var(--radius-lg)',
-      border: '1px solid var(--line-subtle)',
-      background: 'linear-gradient(155deg, var(--void-700) 0%, var(--void-800) 45%, var(--void-900) 100%)',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,.07), inset 0 -1px 0 rgba(0,0,0,.5), 0 10px 24px rgba(0,0,0,.35)',
-      transition: 'box-shadow var(--duration-base) var(--ease-out)'
-    },
-    onMouseEnter: e => {
-      e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,.1), inset 0 -1px 0 rgba(0,0,0,.5), 0 0 20px var(--accent-glow)';
-    },
-    onMouseLeave: e => {
-      e.currentTarget.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,.07), inset 0 -1px 0 rgba(0,0,0,.5), 0 10px 24px rgba(0,0,0,.35)';
-    }
-  }, l.src ? React.createElement("img", {
-    src: l.src,
-    alt: l.name,
-    style: {
-      maxWidth: '100%',
-      maxHeight: '100%',
-      objectFit: 'contain',
-      filter: l.name === 'SAT' || l.name === 'Cité Sciences et Industrie' || l.name === 'Graphics eMotion' || l.name === 'Lumin-Art Productions' ? 'none' : 'grayscale(1) invert(1)',
-      mixBlendMode: 'screen',
-      opacity: 0.9,
-      transition: 'opacity var(--duration-base) var(--ease-out)'
-    }
-  }) : React.createElement("span", {
-    style: {
-      fontFamily: 'var(--font-display)',
-      fontWeight: 700,
-      fontSize: 'var(--text-h3)',
-      color: 'var(--text-muted)',
-      textAlign: 'center',
-      letterSpacing: 'var(--tracking-tight)'
-    }
-  }, l.name)))), React.createElement("button", {
+  }, loopLogos.map((l, i) => logoTile(l, i, {
+    flex: '0 0 auto',
+    width: '168px',
+    height: '96px',
+    scrollSnapAlign: 'start',
+    padding: '20px'
+  }))), React.createElement("button", {
     "aria-label": "Next clients",
     onClick: () => scroll(1),
     style: arrowStyle,
