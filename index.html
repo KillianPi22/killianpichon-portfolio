@@ -1601,11 +1601,13 @@ function ScrollBulb() {
       width: '2400px',
       height: '780px',
       transform: 'translate(-50%, 70px)',
-      background: 'radial-gradient(ellipse 42% 100% at 50% 0%, rgba(255,238,215,.95) 0%, rgba(255,220,180,.6) 12%, rgba(255,195,145,.32) 26%, rgba(255,165,110,.16) 42%, rgba(255,140,90,.07) 60%, transparent 80%)',
+      background: 'radial-gradient(ellipse 42% 100% at 50% 0%, rgba(255,206,166,.95) 0%, rgba(255,166,116,.6) 12%, rgba(255,133,80,.32) 26%, rgba(255,106,52,.16) 42%, rgba(255,90,42,.07) 60%, transparent 80%)',
       mixBlendMode: 'screen',
       filter: 'blur(18px)',
       opacity: lit ? 1 : 0,
-      transition: t
+      transition: t,
+      willChange: 'opacity',
+      backfaceVisibility: 'hidden'
     }
   }), React.createElement("div", {
     style: {
@@ -1615,11 +1617,13 @@ function ScrollBulb() {
       width: '150px',
       height: '36px',
       transform: 'translate(-50%, 76px)',
-      background: 'radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255,245,225,.7) 0%, rgba(255,210,160,.25) 60%, transparent 100%)',
+      background: 'radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255,224,196,.7) 0%, rgba(255,160,105,.25) 60%, transparent 100%)',
       mixBlendMode: 'screen',
       filter: 'blur(4px)',
       opacity: lit ? 1 : 0,
-      transition: t
+      transition: t,
+      willChange: 'opacity',
+      backfaceVisibility: 'hidden'
     }
   }), React.createElement("img", {
     src: "assets/illustrations/lightbulb.png",
@@ -1635,7 +1639,9 @@ function ScrollBulb() {
       opacity: lit ? 1 : 0,
       transition: t,
       mixBlendMode: 'screen',
-      filter: lit ? 'drop-shadow(0 0 12px rgba(255,210,150,.7)) blur(0.4px)' : 'blur(0.4px)'
+      filter: lit ? 'drop-shadow(0 0 12px rgba(255,150,90,.7)) blur(0.4px)' : 'blur(0.4px)',
+      willChange: 'opacity',
+      backfaceVisibility: 'hidden'
     }
   }));
 }
@@ -1787,7 +1793,7 @@ function HomeScreen({
     type: "button",
     "aria-expanded": showAll,
     onClick: () => setShowAll(v => !v)
-  }, showAll ? 'Hide Projects' : 'View All Projects')), React.createElement("div", {
+  }, showAll ? 'Hide Projects' : 'CLICK HERE FOR MORE PROJECTS')), React.createElement("div", {
     className: "project-grid",
     style: {
       display: 'grid',
