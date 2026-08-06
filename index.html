@@ -2146,6 +2146,9 @@ function ProjectScreen({
   const modalCloseRef = React.useRef(null);
   const headingRef = React.useRef(null);
   const collageImages = p.galleryImages || [null, null, null, null];
+  const galleryImages = collageImages.filter(Boolean);
+  const galleryCount = galleryImages.length;
+  const lightboxOpen = lightbox !== null;
   const tiles = [...(p.trailerUrl && !p.trailerEmbedDisabled ? [{
     video: true
   }] : []), ...collageImages.map(src => ({
@@ -2162,27 +2165,35 @@ function ProjectScreen({
     window.scrollTo(0, 0);
   }, [id]);
   React.useEffect(() => {
-    if (!trailerOpen && !lightbox) return;
+    if (!trailerOpen && !lightboxOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     modalCloseRef.current?.focus();
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [trailerOpen, lightbox]);
+  }, [trailerOpen, lightboxOpen]);
   React.useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') {
-        if (trailerOpen) setTrailerOpen(false);else if (lightbox) setLightbox(null);else onBack();
+        if (trailerOpen) setTrailerOpen(false);else if (lightbox !== null) setLightbox(null);else onBack();
         return;
       }
-      if (trailerOpen || lightbox) return;
+      if (lightbox !== null) {
+        if (galleryCount > 1 && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+          e.preventDefault();
+          const step = e.key === 'ArrowLeft' ? -1 : 1;
+          setLightbox(i => (i + step + galleryCount) % galleryCount);
+        }
+        return;
+      }
+      if (trailerOpen) return;
       if (e.key === 'ArrowLeft' && prevId) onOpenProject(prevId);
       if (e.key === 'ArrowRight' && nextId) onOpenProject(nextId);
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [prevId, nextId, onOpenProject, onBack, trailerOpen, lightbox]);
+  }, [prevId, nextId, onOpenProject, onBack, trailerOpen, lightbox, galleryCount]);
   return React.createElement("div", null, React.createElement(Navbar, {
     activeLink: "Work",
     onLinkClick: onNav
@@ -2472,7 +2483,7 @@ function ProjectScreen({
     "aria-label": t.video ? `Play ${p.title} video` : t.src ? `Open ${p.title} image ${i + 1}` : undefined,
     key: i,
     onClick: () => {
-      if (t.video) setTrailerOpen(true);else if (t.src) setLightbox(t.src);
+      if (t.video) setTrailerOpen(true);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
     },
     style: {
       gridRow: i === 0 && tiles.length > 1 ? 'span 2' : 'span 1',
@@ -2863,7 +2874,7 @@ function ProjectScreen({
     allow: "autoplay; fullscreen; picture-in-picture",
     allowFullScreen: true,
     title: "Trailer"
-  }))), lightbox && React.createElement("div", {
+  }))), lightbox !== null && React.createElement("div", {
     className: "modal-backdrop",
     role: "dialog",
     "aria-modal": "true",
@@ -2895,16 +2906,76 @@ function ProjectScreen({
       lineHeight: 1,
       cursor: 'pointer'
     }
-  }, "\xD7"), React.createElement("img", {
-    src: lightbox,
-    alt: `${p.title} project image`,
+  }, "\xD7"), galleryCount > 1 && [-1, 1].map(dir => React.createElement("button", {
+    key: dir,
+    type: "button",
+    "aria-label": dir < 0 ? 'Previous image' : 'Next image',
+    onClick: e => {
+      e.stopPropagation();
+      setLightbox(i => (i + dir + galleryCount) % galleryCount);
+    },
+    style: {
+      position: 'absolute',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      [dir < 0 ? 'left' : 'right']: '20px',
+      width: '44px',
+      height: '44px',
+      borderRadius: '50%',
+      border: '1px solid var(--line-default)',
+      background: 'rgba(19,19,22,.7)',
+      backdropFilter: 'blur(8px)',
+      color: 'var(--text-heading)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      cursor: 'pointer',
+      zIndex: 1,
+      transition: 'border-color var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out)'
+    },
+    onMouseEnter: e => {
+      e.currentTarget.style.borderColor = 'var(--accent)';
+      e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+    },
+    onMouseLeave: e => {
+      e.currentTarget.style.borderColor = 'var(--line-default)';
+      e.currentTarget.style.boxShadow = 'none';
+    }
+  }, React.createElement("svg", {
+    width: "16",
+    height: "16",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "2.5",
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    style: dir < 0 ? {
+      transform: 'rotate(180deg)'
+    } : undefined
+  }, React.createElement("path", {
+    d: "M8 4l8 8-8 8"
+  })))), React.createElement("img", {
+    src: galleryImages[lightbox],
+    alt: `${p.title} project image ${lightbox + 1} of ${galleryCount}`,
     style: {
       maxWidth: '90vw',
       maxHeight: '90vh',
       borderRadius: 'var(--radius-md)',
       objectFit: 'contain'
     }
-  })), React.createElement(Footer, null));
+  }), galleryCount > 1 && React.createElement("div", {
+    "aria-hidden": "true",
+    style: {
+      position: 'absolute',
+      bottom: '24px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      fontSize: 'var(--text-micro)',
+      color: 'var(--text-faint)',
+      letterSpacing: 'var(--tracking-wide)'
+    }
+  }, `${lightbox + 1} / ${galleryCount}`)), React.createElement(Footer, null));
 }
 window.ProjectScreen = ProjectScreen;
 const CV_PDF = 'https://drive.google.com/file/d/1PTHsGhPivU5w3pQKRpSCrGZCv-uND0l5/view?usp=sharing';
