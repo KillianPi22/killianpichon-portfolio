@@ -2061,6 +2061,7 @@ const PROJECT_DATA = {
     externalUrl: 'https://www.xyztechnologies.com/en/realisations/interactive-model-at-batiscan-river-park/',
     externalLabel: 'See more on XYZ Technologies',
     trailerUrl: 'https://drive.google.com/file/d/1uixdKNK3wAQAihA3xj8i-67IQN4xWFAj/preview',
+    videoPoster: window.__asset('projects/batiscan/video-poster.jpg'),
     galleryImages: [window.__asset('projects/batiscan/reception-projection.avif'), window.__asset('projects/batiscan/aerial-lake-winter.avif'), window.__asset('projects/batiscan/model-top-labels.avif'), window.__asset('projects/batiscan/model-angle-labels.avif'), window.__asset('projects/batiscan/model-tablet-poi.avif')],
     placeholderTiles: 0,
     relatedProjects: ['1858 – Habits de Lumière', 'Sangue e Arena'],
@@ -2085,6 +2086,7 @@ const PROJECT_DATA = {
     impact: 'The finished show used large-scale projection to connect the Hôtel de Ville’s architecture with the history being narrated across its façade.',
     pipeline: ['Façade mapping preparation', 'Narrative scene development', 'Lighting and particle integration', 'Distance-readability review', 'Compositing and show integration'],
     trailerUrl: 'https://drive.google.com/file/d/1wrjlpzt2n4l3SEmFaD_lSg4Nd9VQQDzV/preview',
+    videoPoster: window.__asset('projects/1858-epernay/video-poster.jpg'),
     galleryImages: [window.__asset('projects/1858-epernay/mapping-green-facade.jpg'), window.__asset('projects/1858-epernay/lighting-intro.png'), window.__asset('projects/1858-epernay/vfx-green-growth.png'), window.__asset('projects/1858-epernay/vfx-briques-1.png'), window.__asset('projects/1858-epernay/vfx-briques-2.png')],
     creditsNote: 'Employer: Graphics eMotion — Event: Habits de Lumière 2022 — Location: Épernay, France',
     relatedProjects: ['Sangue e Arena', 'Lac Batiscan'],
@@ -2150,7 +2152,8 @@ function ProjectScreen({
   const galleryCount = galleryImages.length;
   const lightboxOpen = lightbox !== null;
   const tiles = [...(p.trailerUrl && !p.trailerEmbedDisabled ? [{
-    video: true
+    video: true,
+    poster: p.videoPoster || null
   }] : []), ...collageImages.map(src => ({
     src
   })), ...Array.from({
@@ -2492,7 +2495,7 @@ function ProjectScreen({
       overflow: 'hidden',
       position: 'relative',
       cursor: t.video || t.src ? 'pointer' : 'default',
-      background: t.src ? `url(${t.src}) center/cover` : t.video ? 'linear-gradient(150deg,#2a2723,#151417 40%,#3a1c10)' : 'linear-gradient(150deg,rgba(28,29,34,.55),rgba(17,17,20,.4) 55%,rgba(36,22,16,.35))',
+      background: t.src ? `url(${t.src}) center/cover` : t.video ? t.poster ? `linear-gradient(rgba(10,10,11,.28),rgba(10,10,11,.5)), url(${t.poster}) center/cover` : 'linear-gradient(150deg,#2a2723,#151417 40%,#3a1c10)' : 'linear-gradient(150deg,rgba(28,29,34,.55),rgba(17,17,20,.4) 55%,rgba(36,22,16,.35))',
       transition: 'box-shadow var(--duration-base) var(--ease-out)'
     },
     onMouseEnter: e => {
