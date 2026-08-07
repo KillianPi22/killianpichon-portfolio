@@ -78,6 +78,11 @@ button{color:inherit}
 .view-all-button:hover{color:var(--text-heading)}
 .project-media-tile{appearance:none;width:100%;padding:0;text-align:inherit}
 .modal-backdrop{overscroll-behavior:contain}
+@media (min-width: 768px){
+  html.kp-snap .hero{min-height:100vh;min-height:100dvh}
+}
+.kp-scroll-arrow{display:inline-block;line-height:1;animation:kp-scroll-bob 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes kp-scroll-bob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(10px);opacity:1}}
 
 @media (max-width: 1024px){
   .project-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
@@ -95,7 +100,9 @@ button{color:inherit}
   .hero-left{width:100%!important}
   .hero-title-wrap h1{font-size:clamp(3rem,16vw,4.6rem)!important}
   .hero-art{display:none!important}
-  .hero-scroll-indicator{display:none!important}
+  .hero-scroll-indicator{gap:0!important}
+  .hero-scroll-indicator .kp-scroll-label{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;white-space:nowrap;clip-path:inset(50%)}
+  .hero-scroll-indicator .kp-scroll-arrow{font-size:calc(var(--text-small) * 2.6)!important}
   .hero-reel{width:min(280px,100%)!important}
 
   .featured-projects{padding:72px var(--container-pad)!important}
@@ -120,6 +127,12 @@ button{color:inherit}
   .project-nav-edge .pn-label{display:none!important}
   .project-nav-button{width:44px!important;height:44px!important}
   .modal-backdrop{padding:20px!important}
+
+  .exp-rail{left:11px!important}
+  .exp-row{grid-template-columns:24px 1fr!important;column-gap:4px}
+  .exp-row .exp-dot-cell{grid-column:1;grid-row:1/span 2}
+  .exp-row .exp-year{grid-column:2;grid-row:1;transform:none!important;margin-bottom:6px}
+  .exp-row .exp-body{grid-column:2;grid-row:2}
 }
 
 @media (hover: none){
@@ -132,6 +145,7 @@ button{color:inherit}
 
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
+  html.kp-snap{scroll-snap-type:none}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
@@ -1130,14 +1144,19 @@ function Hero({
       alignItems: 'center',
       gap: '10px',
       fontFamily: 'var(--font-mono)',
-      fontSize: 'var(--text-small)',
+      fontSize: 'calc(var(--text-small) * 1.15)',
       letterSpacing: 'var(--tracking-widest)',
       textTransform: 'uppercase',
       color: 'var(--text-faint)'
     }
-  }, "Scroll to Explore", React.createElement("span", {
+  }, React.createElement("span", {
+    className: "kp-scroll-label"
+  }, "Scroll to Explore"), React.createElement("span", {
+    className: "kp-scroll-arrow",
+    "aria-hidden": "true",
     style: {
-      color: 'var(--accent)'
+      color: 'var(--accent)',
+      fontSize: 'calc(var(--text-small) * 3)'
     }
   }, "\u2193"))), reelOpen && React.createElement("div", {
     className: "modal-backdrop",
@@ -1706,6 +1725,69 @@ function HomeScreen({
     Footer
   } = window.KillianPichonDesignSystem_16387b;
   const [showAll, setShowAll] = React.useState(false);
+  React.useEffect(() => {
+    const root = document.documentElement;
+    root.classList.add('kp-snap');
+    return () => root.classList.remove('kp-snap');
+  }, []);
+  React.useEffect(() => {
+    if (!window.matchMedia('(min-width: 768px)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let settling = false;
+    let lastJump = 0;
+    let timer = 0;
+    function stops() {
+      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const tops = ['.hero', '.featured-projects', '.clients-section', '.awards-section'].map(sel => {
+        const el = document.querySelector(sel);
+        if (!el) return null;
+        return Math.min(max, Math.max(0, Math.round(el.getBoundingClientRect().top + window.scrollY)));
+      }).filter(v => v !== null).sort((a, b) => a - b);
+      return tops.filter((v, i) => i === 0 || v - tops[i - 1] > 8);
+    }
+    function onWheel(e) {
+      if (e.ctrlKey) return;
+      if (document.body.style.overflow === 'hidden') return;
+      if (Math.abs(e.deltaY) < 4) return;
+      const now = Date.now();
+      if (settling || now - lastJump < 620) {
+        e.preventDefault();
+        return;
+      }
+      const list = stops();
+      if (list.length < 2) return;
+      const y = window.scrollY;
+      let current = 0;
+      let best = Infinity;
+      list.forEach((t, i) => {
+        const d = Math.abs(t - y);
+        if (d < best) {
+          best = d;
+          current = i;
+        }
+      });
+      const target = current + (e.deltaY > 0 ? 1 : -1);
+      if (target < 0 || target >= list.length) return;
+      e.preventDefault();
+      settling = true;
+      lastJump = now;
+      window.scrollTo({
+        top: list[target],
+        behavior: 'smooth'
+      });
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        settling = false;
+      }, 620);
+    }
+    window.addEventListener('wheel', onWheel, {
+      passive: false
+    });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('wheel', onWheel);
+    };
+  }, []);
   const PROJECTS = [{
     id: 'celestia',
     title: 'Celestia',
@@ -3053,6 +3135,200 @@ function AboutSection({
     }
   }, title), children);
 }
+function ExperienceTimeline({
+  items
+}) {
+  const wrapRef = React.useRef(null);
+  const fillRef = React.useRef(null);
+  const rowRefs = React.useRef([]);
+  const dotRefs = React.useRef([]);
+  const yearRefs = React.useRef([]);
+  const [revealed, setRevealed] = React.useState(() => items.map(() => false));
+  const [armed, setArmed] = React.useState(false);
+  const staticRef = React.useRef(false);
+  React.useEffect(() => {
+    staticRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (staticRef.current) {
+      if (fillRef.current) fillRef.current.style.height = '100%';
+      setRevealed(items.map(() => true));
+      return;
+    }
+    let raf = 0;
+    function update() {
+      raf = 0;
+      const wrap = wrapRef.current;
+      if (!wrap) return;
+      const rect = wrap.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const head = vh * 0.55;
+      const progress = Math.max(0, Math.min(1, (head - rect.top) / Math.max(1, rect.height)));
+      if (fillRef.current) fillRef.current.style.height = (progress * 100).toFixed(2) + '%';
+      const headAbsolute = rect.top + progress * rect.height;
+      for (let i = 0; i < rowRefs.current.length; i++) {
+        const row = rowRefs.current[i];
+        if (!row) continue;
+        const rowRect = row.getBoundingClientRect();
+        const dot = dotRefs.current[i];
+        if (dot) {
+          const reached = rowRect.top + 14 <= headAbsolute;
+          dot.style.background = reached ? 'var(--accent)' : 'var(--void-900)';
+          dot.style.borderColor = reached ? 'var(--accent)' : 'var(--line-strong)';
+          dot.style.boxShadow = reached ? '0 0 12px var(--accent-glow)' : 'none';
+        }
+        const year = yearRefs.current[i];
+        if (year) {
+          const offset = (rowRect.top + rowRect.height / 2 - vh / 2) / vh;
+          year.style.transform = 'translateY(' + Math.max(-1, Math.min(1, offset)) * 20 + 'px)';
+        }
+      }
+    }
+    function onScroll() {
+      if (!raf) raf = requestAnimationFrame(update);
+    }
+    update();
+    window.addEventListener('scroll', onScroll, {
+      passive: true
+    });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [items]);
+  React.useEffect(() => {
+    if (staticRef.current) return;
+    if (typeof IntersectionObserver !== 'function') return;
+    setArmed(true);
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const index = Number(entry.target.dataset.index);
+        setRevealed(prev => {
+          if (prev[index]) return prev;
+          const next = prev.slice();
+          next[index] = true;
+          return next;
+        });
+        io.unobserve(entry.target);
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -10% 0px'
+    });
+    rowRefs.current.forEach(el => el && io.observe(el));
+    return () => io.disconnect();
+  }, [items]);
+  const railFade = 'linear-gradient(180deg, transparent 0, #000 72px, #000 calc(100% - 72px), transparent 100%)';
+  return React.createElement("div", {
+    className: "exp-timeline",
+    ref: wrapRef,
+    style: {
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'var(--space-7)'
+    }
+  }, React.createElement("div", {
+    className: "exp-rail",
+    "aria-hidden": "true",
+    style: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: '134px',
+      width: '1px',
+      background: 'var(--line-subtle)',
+      WebkitMaskImage: railFade,
+      maskImage: railFade
+    }
+  }, React.createElement("div", {
+    ref: fillRef,
+    style: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '0%',
+      background: 'linear-gradient(180deg, var(--accent-dim) 0%, var(--accent) 100%)',
+      boxShadow: '0 0 10px var(--accent-glow)'
+    }
+  })), items.map((e, i) => React.createElement("div", {
+    key: e.role + e.period,
+    className: "exp-row",
+    ref: el => rowRefs.current[i] = el,
+    "data-index": i,
+    style: {
+      position: 'relative',
+      display: 'grid',
+      gridTemplateColumns: '120px 28px 1fr',
+      alignItems: 'start',
+      opacity: !armed || revealed[i] ? 1 : 0,
+      transform: !armed || revealed[i] ? 'none' : 'translateY(24px)',
+      transition: 'opacity 700ms var(--ease-out), transform 700ms var(--ease-out)',
+      transitionDelay: revealed[i] ? i % 2 === 0 ? '0ms' : '60ms' : '0ms'
+    }
+  }, React.createElement("div", {
+    className: "exp-year",
+    ref: el => yearRefs.current[i] = el,
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'var(--text-small)',
+      color: 'var(--text-faint)',
+      willChange: 'transform'
+    }
+  }, e.period), React.createElement("div", {
+    className: "exp-dot-cell",
+    "aria-hidden": "true",
+    style: {
+      display: 'flex',
+      justifyContent: 'center',
+      paddingTop: '9px'
+    }
+  }, React.createElement("div", {
+    ref: el => dotRefs.current[i] = el,
+    style: {
+      width: '9px',
+      height: '9px',
+      borderRadius: '50%',
+      border: '1px solid var(--line-strong)',
+      background: 'var(--void-900)',
+      transition: 'background 300ms var(--ease-out), border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out)'
+    }
+  })), React.createElement("div", {
+    className: "exp-body"
+  }, React.createElement("div", {
+    style: {
+      fontFamily: 'var(--font-display)',
+      fontWeight: 700,
+      fontSize: 'var(--text-h3)',
+      color: 'var(--text-heading)'
+    }
+  }, e.role), React.createElement("div", {
+    style: {
+      fontSize: 'var(--text-small)',
+      color: 'var(--text-muted)',
+      marginTop: '2px'
+    }
+  }, e.org), React.createElement("p", {
+    style: {
+      fontSize: 'var(--text-small)',
+      color: 'var(--color-text-body)',
+      marginTop: '10px',
+      lineHeight: 'var(--leading-relaxed)'
+    }
+  }, e.desc), e.productions.length > 0 && React.createElement("ul", {
+    style: {
+      margin: '10px 0 0',
+      paddingLeft: '18px',
+      fontSize: 'var(--text-small)',
+      color: 'var(--text-muted)',
+      lineHeight: 'var(--leading-relaxed)'
+    }
+  }, e.productions.map(p => React.createElement("li", {
+    key: p
+  }, p)))))));
+}
 function AboutScreen({
   onNav
 }) {
@@ -3122,56 +3398,9 @@ function AboutScreen({
     tone: "accent"
   }, t)))), React.createElement(AboutSection, {
     title: "Work Experience"
-  }, React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 'var(--space-6)'
-    }
-  }, EXPERIENCE.map(e => React.createElement("div", {
-    key: e.role + e.period,
-    style: {
-      display: 'grid',
-      gridTemplateColumns: '160px 1fr',
-      gap: 'var(--space-5)'
-    }
-  }, React.createElement("div", {
-    style: {
-      fontFamily: 'var(--font-mono)',
-      fontSize: 'var(--text-small)',
-      color: 'var(--text-faint)'
-    }
-  }, e.period), React.createElement("div", null, React.createElement("div", {
-    style: {
-      fontFamily: 'var(--font-display)',
-      fontWeight: 700,
-      fontSize: 'var(--text-h3)',
-      color: 'var(--text-heading)'
-    }
-  }, e.role), React.createElement("div", {
-    style: {
-      fontSize: 'var(--text-small)',
-      color: 'var(--text-muted)',
-      marginTop: '2px'
-    }
-  }, e.org), React.createElement("p", {
-    style: {
-      fontSize: 'var(--text-small)',
-      color: 'var(--color-text-body)',
-      marginTop: '10px',
-      lineHeight: 'var(--leading-relaxed)'
-    }
-  }, e.desc), e.productions.length > 0 && React.createElement("ul", {
-    style: {
-      margin: '10px 0 0',
-      paddingLeft: '18px',
-      fontSize: 'var(--text-small)',
-      color: 'var(--text-muted)',
-      lineHeight: 'var(--leading-relaxed)'
-    }
-  }, e.productions.map(p => React.createElement("li", {
-    key: p
-  }, p)))))))), React.createElement(AboutSection, {
+  }, React.createElement(ExperienceTimeline, {
+    items: EXPERIENCE
+  })), React.createElement(AboutSection, {
     title: "Education"
   }, React.createElement("div", {
     style: {
