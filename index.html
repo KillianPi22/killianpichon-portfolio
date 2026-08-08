@@ -1720,13 +1720,40 @@ function HomeScreen({
     let lastJump = 0;
     let timer = 0;
     function stops() {
-      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      const tops = ['.hero', '.featured-projects', '.clients-section', '.awards-section'].map(sel => {
+      const vh = window.innerHeight;
+      const max = Math.max(0, document.documentElement.scrollHeight - vh);
+      const list = [];
+      ['.hero', '.featured-projects', '.clients-section', '.awards-section'].forEach(sel => {
         const el = document.querySelector(sel);
-        if (!el) return null;
-        return Math.min(max, Math.max(0, Math.round(el.getBoundingClientRect().top + window.scrollY)));
-      }).filter(v => v !== null).sort((a, b) => a - b);
-      return tops.filter((v, i) => i === 0 || v - tops[i - 1] > 8);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const top = Math.round(rect.top + window.scrollY);
+        const bottom = top + Math.round(rect.height);
+        list.push(top);
+        // Une section plus haute que l'ecran recoit des arrets intermediaires,
+        // sinon son milieu serait enjambe d'un seul cran de molette. Le dernier
+        // est cale sur la fin de la section pour ne rien couper.
+        for (let y = top + vh; y < bottom - 8; y += vh) {
+          list.push(Math.min(y, bottom - vh));
+        }
+      });
+      const clamped = list.map(v => Math.min(max, Math.max(0, v))).sort((a, b) => a - b);
+      const merged = [];
+      clamped.forEach((v, i) => {
+        if (merged.length === 0) {
+          merged.push(v);
+          return;
+        }
+        const last = merged[merged.length - 1];
+        if (v - last <= 8) return;
+        // Un arret trop proche du precedent produit un a-coup. On ne l'ecarte
+        // que si le suivant reste atteignable en un ecran, sans quoi on
+        // recreerait un saut par-dessus du contenu.
+        const next = clamped[i + 1];
+        if (v - last < vh * 0.3 && next !== undefined && next - last <= vh) return;
+        merged.push(v);
+      });
+      return merged;
     }
     function onWheel(e) {
       if (e.ctrlKey) return;
