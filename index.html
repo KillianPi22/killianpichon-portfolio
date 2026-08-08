@@ -5,16 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="./">
   <meta name="theme-color" content="#0a0a0b">
-  <meta name="description" content="Portfolio of Killian Pichon, creating immersive experiences through real-time graphics, technical art and visual storytelling.">
+  <meta name="description" content="Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://killianpichon.art/">
+  <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="assets/icons/favicon-64.png" sizes="64x64" type="image/png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" sizes="180x180">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Killian Pichon">
-  <meta property="og:title" content="Killian Pichon — Immersive Experiences & Technical Art">
-  <meta property="og:description" content="Immersive experiences shaped through real-time graphics, technical art, visual storytelling and production thinking.">
+  <meta property="og:locale" content="en_CA">
+  <meta property="og:title" content="Killian Pichon - 3D Artist Generalist / Real-Time">
+  <meta property="og:description" content="Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.">
   <meta property="og:url" content="https://killianpichon.art/">
-  <meta name="twitter:card" content="summary">
-  <title>Killian Pichon — Immersive Experiences & Technical Art</title>
+  <meta property="og:image" content="https://killianpichon.art/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Killian Pichon — 3D artist generalist, real-time graphics, technical art, immersive.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Killian Pichon - 3D Artist Generalist / Real-Time">
+  <meta name="twitter:description" content="Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling.">
+  <meta name="twitter:image" content="https://killianpichon.art/assets/og-image.jpg">
+  <title>Killian Pichon - 3D Artist Generalist / Real-Time</title>
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{--font-display:'Archivo',system-ui,sans-serif;--font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',monospace}
@@ -693,7 +704,6 @@ function Hero({
   tagline = 'Technical Art & Visual Storytelling',
   tools = 'Realtime Graphics · Technical Art · Immersive',
   eyebrow = '3D Artist Generalist / Real-Time',
-  description = 'I create immersive experiences by connecting visual storytelling with the production workflows needed to build, review and deliver them.',
   onWatchReel,
   glowPattern = true,
   reelUrl = 'https://vimeo.com/1201960449',
@@ -1050,16 +1060,7 @@ function Hero({
       color: 'var(--text-muted)',
       marginTop: 'var(--space-4)'
     }
-  }, tools), React.createElement("p", {
-    style: {
-      fontFamily: 'var(--font-body)',
-      fontSize: 'var(--font-size-body)',
-      lineHeight: 'var(--leading-relaxed)',
-      color: 'var(--color-text-body)',
-      maxWidth: '360px',
-      marginTop: 'var(--space-5)'
-    }
-  }, description), React.createElement("button", {
+  }, tools), React.createElement("button", {
     className: "hero-reel",
     type: "button",
     "aria-label": "Open showreel",
@@ -1588,35 +1589,17 @@ function Clients({
     d: "M8 4l8 8-8 8"
   }))));
 }
-function Footer({
-  mark = 'KP',
-  role = 'Immersive Artist / Technical Art'
-}) {
+function Footer() {
   return React.createElement("footer", {
     style: {
       borderTop: '1px solid var(--line-subtle)',
       padding: 'var(--space-7) var(--container-pad)',
       display: 'flex',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-end',
       flexWrap: 'wrap',
       gap: 'var(--space-5)'
     }
-  }, React.createElement("div", null, React.createElement("div", {
-    style: {
-      fontFamily: 'var(--font-display)',
-      fontWeight: 800,
-      fontSize: 'var(--text-h3)',
-      color: 'var(--text-heading)'
-    }
-  }, mark), React.createElement("div", {
-    style: {
-      fontSize: 'var(--text-micro)',
-      color: 'var(--text-muted)',
-      textTransform: 'uppercase',
-      letterSpacing: 'var(--tracking-wide)',
-      marginTop: '4px'
-    }
-  }, role)), React.createElement("div", {
+  }, React.createElement("div", {
     style: {
       fontSize: 'var(--text-micro)',
       color: 'var(--text-faint)'
@@ -3888,8 +3871,8 @@ function ContactScreen({
 window.ContactScreen = ContactScreen;
 const SCREEN_META = {
   home: {
-    title: 'Killian Pichon — Immersive Experiences & Technical Art',
-    description: 'Portfolio of Killian Pichon, creating immersive experiences through real-time graphics, technical art and visual storytelling.'
+    title: 'Killian Pichon - 3D Artist Generalist / Real-Time',
+    description: 'Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.'
   },
   about: {
     title: 'About — Killian Pichon',
@@ -3949,6 +3932,10 @@ function App() {
     const ogDescription = document.querySelector('meta[property="og:description"]');
     if (ogTitle) ogTitle.setAttribute('content', meta.title);
     if (ogDescription) ogDescription.setAttribute('content', meta.description);
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (twitterTitle) twitterTitle.setAttribute('content', meta.title);
+    if (twitterDescription) twitterDescription.setAttribute('content', meta.description);
   }, [route.screen, route.projectId]);
   React.useEffect(() => {
     const fallback = document.getElementById('offline-fallback');
