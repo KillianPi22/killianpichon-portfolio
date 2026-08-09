@@ -92,6 +92,21 @@ button{color:inherit}
 @media (min-width: 768px){
   html.kp-snap .hero{min-height:100vh;min-height:100dvh}
 }
+.awards-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.awards-cell{border-left:1px solid var(--line-subtle);min-width:0}
+.awards-cell:nth-child(6n+1){border-left:none}
+@media (max-width: 1023px){
+  .awards-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .awards-cell:nth-child(n){border-left:1px solid var(--line-subtle);border-top:none}
+  .awards-cell:nth-child(3n+1){border-left:none}
+  .awards-cell:nth-child(n+4){border-top:1px solid var(--line-subtle)}
+}
+@media (max-width: 640px){
+  .awards-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .awards-cell:nth-child(n){border-left:1px solid var(--line-subtle);border-top:none}
+  .awards-cell:nth-child(2n+1){border-left:none}
+  .awards-cell:nth-child(n+3){border-top:1px solid var(--line-subtle)}
+}
 .kp-scroll-arrow{display:inline-block;line-height:1;animation:kp-scroll-bob 1.6s cubic-bezier(.45,0,.55,1) infinite}
 @keyframes kp-scroll-bob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(10px);opacity:1}}
 
@@ -1279,18 +1294,17 @@ function Awards({
   awards = []
 }) {
   return React.createElement("div", {
+    className: "awards-row",
     style: {
-      display: 'flex',
       borderTop: '1px solid var(--line-subtle)',
       borderBottom: '1px solid var(--line-subtle)'
     }
   }, awards.map((a, i) => React.createElement("div", {
     key: i,
+    className: "awards-cell",
     style: {
-      flex: 1,
       padding: 'var(--space-5) var(--space-4)',
       textAlign: 'center',
-      borderLeft: i === 0 ? 'none' : '1px solid var(--line-subtle)',
       transition: 'transform var(--duration-base) var(--ease-out)'
     },
     onMouseEnter: e => {
