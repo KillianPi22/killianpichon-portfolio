@@ -28,13 +28,30 @@ versionnee.
    `http://localhost:8000/__editor` et demande le mot de passe.
 2. Onglet **Textes** : rechercher un texte, le corriger, cliquer sur
    **Enregistrer**. L'ecriture se fait directement dans `index.html`.
-3. Onglet **Reglages** : titre d'onglet, description, favicon, image de
+3. Onglet **Medias** : remplacer un chemin d'image, avec vignette et
+   autocompletion sur les fichiers presents dans `assets/` et `projects/`.
+4. Onglet **Reglages** : titre d'onglet, description, favicon, image de
    partage, langue, titres des pages secondaires.
-4. Verifier le rendu dans l'apercu de droite.
-5. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
+5. Verifier le rendu dans l'apercu de droite.
+6. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
    le message propose, puis **Commiter**.
-6. Pousser depuis GitHub Desktop quand le resultat convient. C'est ce push,
+7. Pousser depuis GitHub Desktop quand le resultat convient. C'est ce push,
    et lui seul, qui met a jour killianpichon.art.
+
+### Medias
+
+Tous les chemins d'images passent par `window.__asset('...')`. L'onglet
+**Medias** les liste avec une vignette, groupes par bloc de code, et propose
+en autocompletion les fichiers reellement presents dans `assets/` et
+`projects/`.
+
+Un chemin qui ne correspond a aucun fichier est signale sous le champ. La
+verification interroge le serveur local, donc elle reflete ce que le site
+servira vraiment.
+
+L'onglet ne remplace pas un fichier : il change la reference. Pour ajouter une
+image, la deposer dans `assets/` ou `projects/`, puis la selectionner ici.
+Penser a l'optimiser avant (voir la section Medias de `AGENTS.md`).
 
 ### Reglages du site
 

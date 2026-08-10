@@ -136,6 +136,31 @@ textarea:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:tr
 #setsave:disabled{opacity:.3;cursor:not-allowed}
 #setsave:hover:not(:disabled){background:var(--ember);border-color:var(--ember);color:var(--void-950)}
 
+/* ------------------------------------------------------------------ medias */
+#media{flex:1;overflow-y:auto;padding:12px 16px 60px;display:none}
+#media.on{display:block}
+.med{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-subtle)}
+.med.dirty{background:rgba(255,90,42,.07)}
+.medthumb{width:66px;height:50px;flex:0 0 66px;border:1px solid var(--line-subtle);
+  border-radius:6px;background:var(--void-800) center/cover no-repeat;
+  display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--grey);
+  text-align:center;overflow:hidden}
+.medbody{flex:1;min-width:0}
+.med input{width:100%;background:var(--void-850);border:1px solid var(--line-subtle);
+  color:var(--white);font:12px 'JetBrains Mono',ui-monospace,monospace;
+  padding:7px 9px;border-radius:6px}
+.med input:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:transparent}
+.med.dirty input{border-color:var(--ember)}
+.medmeta{font:10px 'JetBrains Mono',ui-monospace,monospace;color:var(--grey);
+  letter-spacing:.08em;text-transform:uppercase;margin-top:5px}
+.medmeta.missing{color:var(--ember-400)}
+#medbox{border-top:1px solid var(--line-subtle);padding:12px 16px;flex:0 0 auto;display:none}
+#medbox.on{display:flex;align-items:center;gap:10px}
+#medcount{flex:1;font-size:11px;color:var(--grey);letter-spacing:.1em;text-transform:uppercase}
+#medsave{background:var(--white);color:var(--void-950);border-color:var(--white)}
+#medsave:disabled{opacity:.3;cursor:not-allowed}
+#medsave:hover:not(:disabled){background:var(--ember);border-color:var(--ember);color:var(--void-950)}
+
 #status{flex:0 0 auto;padding:9px 16px;font-size:12px;
   border-top:1px solid var(--line-subtle);display:none;line-height:1.45}
 #status.show{display:block}
@@ -188,14 +213,23 @@ iframe.framed{box-shadow:0 0 0 1px var(--line)}
     </div>
     <div class="tabs">
       <button id="tabTexts" class="on" type="button">Textes</button>
+      <button id="tabMedia" type="button">Médias</button>
       <button id="tabSettings" type="button">Réglages</button>
-      <button id="tabChanges" type="button">Modifications</button>
+      <button id="tabChanges" type="button">Modifs</button>
     </div>
   </header>
 
   <div id="list"><p class="empty">Chargement…</p></div>
+  <div id="media"></div>
   <div id="settings"></div>
   <div id="changes"></div>
+
+  <datalist id="medialib"></datalist>
+
+  <div id="medbox">
+    <span id="medcount"></span>
+    <button id="medsave" type="button" disabled>Enregistrer</button>
+  </div>
 
   <div id="setbox">
     <span id="setcount"></span>
@@ -450,6 +484,9 @@ $('#save').addEventListener('click', async () => {
       body: JSON.stringify({ edits: payload })
     });
     const res = await r.json();
+    // adopter l'empreinte tout de suite : sinon le surveillant de fichier
+    // signale notre propre ecriture comme un changement exterieur
+    if (res.stamp) stamp = res.stamp;
     if (res.applied > 0){
       let msg = `${res.applied} texte(s) enregistré(s) dans index.html.`;
       if (res.rejected && res.rejected.length) msg += ' Refusés : ' + res.rejected.join(' ; ');
@@ -573,6 +610,144 @@ async function loadChanges(){
     renderChanges(await r.json());
   } catch(e){}
 }
+
+/* ------------------------------------------------------------------ medias */
+let media = [];
+const medEdits = new Map();
+const medKey = it => it.line + ':' + it.start;
+
+function isVideo(p){ return /\.(mp4|webm)$/i.test(p || ''); }
+
+function updateMedCount(){
+  const n = medEdits.size;
+  $('#medcount').textContent = n ? `${n} chemin${n>1?'s':''} modifié${n>1?'s':''}` : `${media.length} médias`;
+  $('#medsave').disabled = n === 0;
+}
+
+function paintThumb(thumb, path){
+  if (!path){ thumb.style.backgroundImage = ''; thumb.textContent = 'vide'; return; }
+  if (isVideo(path)){ thumb.style.backgroundImage = ''; thumb.textContent = 'vidéo'; return; }
+  thumb.textContent = '';
+  thumb.style.backgroundImage = `url("/${path}")`;
+}
+
+function renderMedia(){
+  const host = $('#media');
+  host.innerHTML = '';
+  if (!media.length){
+    host.innerHTML = '<p class="empty">Aucun média référencé.</p>';
+    updateMedCount(); return;
+  }
+
+  const groups = new Map();
+  for (const it of media){
+    if (!groups.has(it.section)) groups.set(it.section, []);
+    groups.get(it.section).push(it);
+  }
+
+  for (const [section, list] of groups){
+    const sec = document.createElement('section');
+    sec.className = 'section';
+    const h = document.createElement('h2');
+    h.textContent = section + ' · ' + list.length;
+    sec.appendChild(h);
+
+    for (const it of list){
+      const k = medKey(it);
+      const row = document.createElement('div');
+      row.className = 'med' + (medEdits.has(k) ? ' dirty' : '');
+
+      const thumb = document.createElement('div');
+      thumb.className = 'medthumb';
+
+      const body = document.createElement('div');
+      body.className = 'medbody';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.setAttribute('list', 'medialib');
+      input.value = medEdits.has(k) ? medEdits.get(k) : it.text;
+
+      const meta = document.createElement('div');
+      meta.className = 'medmeta';
+
+      const refreshMeta = (val, known) => {
+        const missing = known === false;
+        meta.classList.toggle('missing', missing);
+        meta.textContent = `ligne ${it.line}` + (missing ? ' · fichier introuvable' : '');
+      };
+      refreshMeta(it.text, it.exists);
+      paintThumb(thumb, input.value);
+
+      input.addEventListener('input', () => {
+        if (input.value === it.text){ medEdits.delete(k); row.classList.remove('dirty'); }
+        else { medEdits.set(k, input.value); row.classList.add('dirty'); }
+        paintThumb(thumb, input.value);
+        // le fichier existe-t-il ? on demande au serveur qui sert le site
+        fetch('/' + input.value, { method: 'HEAD' })
+          .then(r => refreshMeta(input.value, r.ok))
+          .catch(() => refreshMeta(input.value, false));
+        updateMedCount();
+      });
+
+      body.append(input, meta);
+      row.append(thumb, body);
+      sec.appendChild(row);
+    }
+    host.appendChild(sec);
+  }
+  updateMedCount();
+}
+
+async function loadMedia(){
+  try{
+    const r = await authFetch('/__media');
+    const d = await r.json();
+    media = d.items || [];
+    $('#medialib').innerHTML = '';
+    for (const p of (d.library || [])){
+      const o = document.createElement('option');
+      o.value = p;
+      $('#medialib').appendChild(o);
+    }
+    medEdits.clear();
+    renderMedia();
+  } catch(e){}
+}
+
+$('#medsave').addEventListener('click', async () => {
+  const payload = [];
+  for (const it of media){
+    const k = medKey(it);
+    if (medEdits.has(k)) payload.push({
+      line: it.line, start: it.start, len: it.len,
+      quote: it.quote, raw: it.raw, text: medEdits.get(k)
+    });
+  }
+  $('#medsave').disabled = true;
+  status('Enregistrement des médias…');
+  try{
+    const r = await authFetch('/__media', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ edits: payload })
+    });
+    const res = await r.json();
+    if (res.stamp) stamp = res.stamp;
+    if (res.applied > 0){
+      let m = `${res.applied} chemin(s) enregistré(s) dans index.html.`;
+      if (res.rejected && res.rejected.length) m += ' Refusés : ' + res.rejected.join(' ; ');
+      status(m, res.rejected && res.rejected.length ? 'warn' : 'ok');
+      await loadMedia();
+      reloadPreview();
+      await loadChanges();
+    } else {
+      status('Rien enregistré. ' + ((res.rejected||[]).join(' ; ') || ''), 'err');
+      $('#medsave').disabled = false;
+    }
+  } catch(e){
+    status('Erreur : ' + e.message, 'err');
+    $('#medsave').disabled = false;
+  }
+});
 
 /* ---------------------------------------------------------------- reglages */
 let settings = [];
@@ -712,6 +887,7 @@ $('#setsave').addEventListener('click', async () => {
       body: JSON.stringify({ values })
     });
     const d = await r.json();
+    if (d.stamp) stamp = d.stamp;
     if (d.applied > 0){
       let m = `${d.applied} emplacement(s) mis à jour dans index.html.`;
       if (d.rejected && d.rejected.length) m += ' Refusés : ' + d.rejected.join(' ; ');
@@ -731,23 +907,27 @@ $('#setsave').addEventListener('click', async () => {
 });
 
 function showTab(which){
-  const map = { texts:'#tabTexts', settings:'#tabSettings', changes:'#tabChanges' };
+  const map = { texts:'#tabTexts', media:'#tabMedia', settings:'#tabSettings', changes:'#tabChanges' };
   for (const [k, sel] of Object.entries(map)) $(sel).classList.toggle('on', k === which);
   $('#list').classList.toggle('off', which !== 'texts');
+  $('#media').classList.toggle('on', which === 'media');
   $('#settings').classList.toggle('on', which === 'settings');
   $('#changes').classList.toggle('on', which === 'changes');
+  $('#medbox').classList.toggle('on', which === 'media');
   $('#setbox').classList.toggle('on', which === 'settings');
   $('#commitbox').classList.toggle('on', which === 'changes');
-  if (which === 'changes') loadChanges();
+  if (which === 'media') loadMedia();
   if (which === 'settings') loadSettings();
+  if (which === 'changes') loadChanges();
 }
 
 $('#tabTexts').addEventListener('click', () => showTab('texts'));
+$('#tabMedia').addEventListener('click', () => showTab('media'));
 $('#tabSettings').addEventListener('click', () => showTab('settings'));
 $('#tabChanges').addEventListener('click', () => showTab('changes'));
 
 $('#commit').addEventListener('click', async () => {
-  if (edits.size || setEdits.size){
+  if (edits.size || setEdits.size || medEdits.size){
     status('Enregistre d\'abord tes modifications en attente.', 'warn');
     return;
   }
@@ -777,7 +957,7 @@ $('#commit').addEventListener('click', async () => {
 });
 
 addEventListener('beforeunload', e => {
-  if (edits.size || setEdits.size){ e.preventDefault(); e.returnValue = ''; }
+  if (edits.size || setEdits.size || medEdits.size){ e.preventDefault(); e.returnValue = ''; }
 });
 
 async function boot(){

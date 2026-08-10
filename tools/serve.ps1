@@ -219,6 +219,64 @@ function Get-Strings {
   return Get-StringsFromLines ([System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false)))
 }
 
+# ================================================================= MEDIAS ====
+# Les chemins d'images passent tous par window.__asset('...'). Le scanner de
+# textes les ignore (il exige une espace, absente d'un chemin), donc les deux
+# inventaires ne se recouvrent pas.
+$rxAsset = [regex]::new("__asset\(\s*(?<q>['""])(?<v>[^'""]*)\k<q>\s*\)")
+
+function Get-MediaFromLines([string[]]$lines) {
+  $start = Get-AppCodeStart $lines
+  if ($start -lt 0) { return @() }
+
+  $items = @()
+  $section = "Global"
+  for ($i = 0; $i -lt $lines.Length; $i++) {
+    $line = $lines[$i]
+    if ($line -match '^function\s+([A-Za-z0-9_]+)\s*\(') { $section = $Matches[1] }
+    elseif ($line -match '^(?:const|let|var)\s+([A-Za-z0-9_]+)\s*=') { $section = $Matches[1] }
+    if (($i + 1) -lt $start) { continue }
+
+    foreach ($m in $rxAsset.Matches($line)) {
+      $path = $m.Groups['v'].Value
+      $disk = Join-Path $Root ($path -replace '/', '\')
+      $items += [pscustomobject]@{
+        line    = $i + 1
+        start   = $m.Groups['v'].Index
+        len     = $path.Length
+        quote   = [string]$m.Groups['q'].Value
+        section = $section
+        raw     = $path
+        text    = $path
+        exists  = (Test-Path -LiteralPath $disk -PathType Leaf)
+      }
+    }
+  }
+  return $items
+}
+
+function Get-Media {
+  return Get-MediaFromLines ([System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false)))
+}
+
+# Inventaire des fichiers disponibles, pour proposer un choix plutot que de
+# laisser saisir un chemin a l'aveugle.
+function Get-MediaLibrary {
+  $exts = @('.avif','.webp','.jpg','.jpeg','.png','.gif','.svg','.mp4','.webm')
+  $out = @()
+  foreach ($dir in @('assets','projects')) {
+    $full = Join-Path $Root $dir
+    if (-not (Test-Path $full)) { continue }
+    Get-ChildItem $full -Recurse -File -ErrorAction SilentlyContinue | ForEach-Object {
+      if ($exts -contains $_.Extension.ToLowerInvariant()) {
+        $rel = $_.FullName.Substring($Root.Length).TrimStart('\') -replace '\\', '/'
+        $out += $rel
+      }
+    }
+  }
+  return ($out | Sort-Object)
+}
+
 # ------------------------------------------------------------------ git local
 # Toutes les commandes git passent par un tableau d'arguments : rien n'est
 # interpole dans une ligne de commande, donc rien n'est injectable.
@@ -284,7 +342,22 @@ function Get-Changes {
     }
   }
 
-  # 2. Les textes du code applicatif.
+  # 2. Les chemins d'images.
+  $nowMedia  = @(Get-Media)
+  $headMedia = @(Get-MediaFromLines $headContent.lines)
+  if ($headMedia.Count -eq $nowMedia.Count) {
+    for ($i = 0; $i -lt $nowMedia.Count; $i++) {
+      if ($headMedia[$i].raw -ne $nowMedia[$i].raw) {
+        $changes += [pscustomobject]@{
+          line = $nowMedia[$i].line; section = "Medias - $($nowMedia[$i].section)"
+          label = $null
+          before = $headMedia[$i].raw; after = $nowMedia[$i].raw
+        }
+      }
+    }
+  }
+
+  # 3. Les textes du code applicatif.
   $now  = @(Get-StringsFromLines ([System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false))))
   $head = @(Get-StringsFromLines $headContent.lines)
 
@@ -735,6 +808,22 @@ try {
         $res.Close(); continue
       }
 
+      if ($rel -eq "/__media" -and $req.HttpMethod -eq "GET") {
+        $lastPing = Get-Date; $everPinged = $true
+        Send-Json $res @{ items = @(Get-Media); library = @(Get-MediaLibrary) }
+        $res.Close(); continue
+      }
+
+      # meme mecanique d'ecriture que les textes : ancrage ligne + decalage,
+      # verification de la source avant remplacement
+      if ($rel -eq "/__media" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        Send-Json $res (Save-Strings (($body | ConvertFrom-Json).edits))
+        $res.Close(); continue
+      }
+
       if ($rel -eq "/__settings" -and $req.HttpMethod -eq "GET") {
         $lastPing = Get-Date; $everPinged = $true
         Send-Json $res @{ items = @(Get-Settings) }
@@ -821,14 +910,17 @@ try {
         $res.ContentType = $type
         $res.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate")
         $res.ContentLength64 = $bytes.Length
-        $res.OutputStream.Write($bytes, 0, $bytes.Length)
+        # Une reponse a HEAD ne porte pas de corps : ecrire quand meme leve une
+        # exception et renvoie 500. L'editeur s'en sert pour verifier qu'un
+        # chemin d'image existe.
+        if ($req.HttpMethod -ne "HEAD") { $res.OutputStream.Write($bytes, 0, $bytes.Length) }
         $res.StatusCode = 200
       } else {
         $res.StatusCode = 404
         $msg = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found: $rel")
         $res.ContentType = "text/plain; charset=utf-8"
         $res.ContentLength64 = $msg.Length
-        $res.OutputStream.Write($msg, 0, $msg.Length)
+        if ($req.HttpMethod -ne "HEAD") { $res.OutputStream.Write($msg, 0, $msg.Length) }
       }
     } catch {
       try {
