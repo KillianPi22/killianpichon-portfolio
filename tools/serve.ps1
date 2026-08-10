@@ -220,14 +220,27 @@ function Get-Strings {
 }
 
 # ================================================================= MEDIAS ====
-# Les chemins d'images passent tous par window.__asset('...'). Le scanner de
-# textes les ignore (il exige une espace, absente d'un chemin), donc les deux
-# inventaires ne se recouvrent pas.
-$rxAsset = [regex]::new("__asset\(\s*(?<q>['""])(?<v>[^'""]*)\k<q>\s*\)")
+# On s'ancre sur l'extension du fichier, pas sur window.__asset(...). Ancre sur
+# l'appel, le scan ratait deux formes bien reelles : les logos, ecrits
+# __asset(LOGO_BASE + 'sat.png'), et une image posee en src: "..." sans
+# __asset du tout. Le scanner de textes ignore ces chaines, faute d'espace :
+# les deux inventaires ne se recouvrent pas.
+$rxImage = [regex]::new("(?<q>['""])(?<v>[^'""]*\.(?:avif|webp|jpe?g|png|gif|svg|mp4|webm))\k<q>",
+                        [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+$rxBaseDecl = [regex]::new("^(?:const|let|var)\s+(?<n>[A-Za-z_][A-Za-z0-9_]*)\s*=\s*['""](?<p>[^'""]*/)['""]")
+$rxConcat = [regex]::new("(?<n>[A-Za-z_][A-Za-z0-9_]*)\s*\+\s*$")
 
 function Get-MediaFromLines([string[]]$lines) {
   $start = Get-AppCodeStart $lines
   if ($start -lt 0) { return @() }
+
+  # Les prefixes de chemin declares en constante, pour resoudre les
+  # concatenations et pouvoir afficher une vignette.
+  $bases = @{}
+  foreach ($l in $lines) {
+    $b = $rxBaseDecl.Match($l)
+    if ($b.Success) { $bases[$b.Groups['n'].Value] = $b.Groups['p'].Value }
+  }
 
   $items = @()
   $section = "Global"
@@ -237,18 +250,27 @@ function Get-MediaFromLines([string[]]$lines) {
     elseif ($line -match '^(?:const|let|var)\s+([A-Za-z0-9_]+)\s*=') { $section = $Matches[1] }
     if (($i + 1) -lt $start) { continue }
 
-    foreach ($m in $rxAsset.Matches($line)) {
-      $path = $m.Groups['v'].Value
-      $disk = Join-Path $Root ($path -replace '/', '\')
+    foreach ($m in $rxImage.Matches($line)) {
+      $literal = $m.Groups['v'].Value
+      $base = ''
+      $before = $line.Substring(0, $m.Index)
+      $c = $rxConcat.Match($before)
+      if ($c.Success -and $bases.ContainsKey($c.Groups['n'].Value)) {
+        $base = $bases[$c.Groups['n'].Value]
+      }
+      $resolved = $base + $literal
+      $disk = Join-Path $Root ($resolved -replace '/', '\')
       $items += [pscustomobject]@{
-        line    = $i + 1
-        start   = $m.Groups['v'].Index
-        len     = $path.Length
-        quote   = [string]$m.Groups['q'].Value
-        section = $section
-        raw     = $path
-        text    = $path
-        exists  = (Test-Path -LiteralPath $disk -PathType Leaf)
+        line     = $i + 1
+        start    = $m.Groups['v'].Index
+        len      = $literal.Length
+        quote    = [string]$m.Groups['q'].Value
+        section  = $section
+        raw      = $literal
+        text     = $literal
+        base     = $base
+        resolved = $resolved
+        exists   = (Test-Path -LiteralPath $disk -PathType Leaf)
       }
     }
   }

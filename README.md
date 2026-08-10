@@ -32,7 +32,9 @@ versionnee.
    autocompletion sur les fichiers presents dans `assets/` et `projects/`.
 4. Onglet **Reglages** : titre d'onglet, description, favicon, image de
    partage, langue, titres des pages secondaires.
-5. Verifier le rendu dans l'apercu de droite.
+5. Verifier le rendu dans l'apercu de droite. Le bouton **Pointer** de la barre
+   d'apercu permet de cliquer un texte ou une image sur la page pour l'ouvrir
+   directement dans le panneau de gauche.
 6. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
    le message propose, puis **Commiter**.
 7. Pousser depuis GitHub Desktop quand le resultat convient. C'est ce push,
@@ -40,10 +42,14 @@ versionnee.
 
 ### Medias
 
-Tous les chemins d'images passent par `window.__asset('...')`. L'onglet
-**Medias** les liste avec une vignette, groupes par bloc de code, et propose
-en autocompletion les fichiers reellement presents dans `assets/` et
-`projects/`.
+L'onglet **Medias** liste tous les chemins d'images du site avec une vignette,
+groupes par bloc de code. Le bouton **Parcourir** ouvre une planche-contact des
+fichiers presents dans `assets/` et `projects/`, avec filtre par nom.
+
+Le scan s'ancre sur l'extension du fichier, pas sur `window.__asset(...)` :
+certaines images s'ecrivent `__asset(LOGO_BASE + 'sat.png')` et une autre est
+posee en `src: "..."` sans `__asset`. Quand un prefixe est concatene, le champ
+ne montre que la partie editable et le prefixe est rappele a cote.
 
 Un chemin qui ne correspond a aucun fichier est signale sous le champ. La
 verification interroge le serveur local, donc elle reflete ce que le site
