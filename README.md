@@ -28,11 +28,33 @@ versionnee.
    `http://localhost:8000/__editor` et demande le mot de passe.
 2. Onglet **Textes** : rechercher un texte, le corriger, cliquer sur
    **Enregistrer**. L'ecriture se fait directement dans `index.html`.
-3. Verifier le rendu dans l'apercu de droite.
-4. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
+3. Onglet **Reglages** : titre d'onglet, description, favicon, image de
+   partage, langue, titres des pages secondaires.
+4. Verifier le rendu dans l'apercu de droite.
+5. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
    le message propose, puis **Commiter**.
-5. Pousser depuis GitHub Desktop quand le resultat convient. C'est ce push,
+6. Pousser depuis GitHub Desktop quand le resultat convient. C'est ce push,
    et lui seul, qui met a jour killianpichon.art.
+
+### Reglages du site
+
+Les metadonnees vivent a **deux endroits** qui doivent rester d'accord :
+
+- les balises statiques de l'en-tete de `index.html` ;
+- la table `SCREEN_META`, que le routeur applique a l'execution.
+
+Les robots de Facebook, LinkedIn et Twitter n'executent pas JavaScript : ce
+sont les **balises statiques** qui decident de l'apparence des partages, pas
+`SCREEN_META`. Un reglage ecrit donc dans toutes ses cibles a la fois — le
+titre d'onglet en touche quatre. L'interface indique ce nombre sous chaque
+champ.
+
+Si les copies d'un meme reglage ne concordent pas dans le fichier, le champ
+le signale et l'enregistrement les realigne. Si une cible est introuvable ou
+ambigue, le reglage est marque non modifiable plutot que d'ecrire au hasard.
+
+`twitter:description` est volontairement traitee a part : c'est une version
+courte, distincte de la description generale.
 
 ### Commit depuis l'editeur
 

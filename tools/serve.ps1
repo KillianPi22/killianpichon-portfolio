@@ -192,7 +192,11 @@ function Get-StringsFromLines([string[]]$lines) {
   $section = "Global"
   for ($i = 0; $i -lt $lines.Length; $i++) {
     $line = $lines[$i]
+    # Le nom de section vient de la fonction englobante. Sans le second cas, le
+    # code de premier niveau qui suit les fonctions (SCREEN_META, PROJECT_DATA)
+    # heritait du nom de la derniere fonction rencontree, ce qui etait faux.
     if ($line -match '^function\s+([A-Za-z0-9_]+)\s*\(') { $section = $Matches[1] }
+    elseif ($line -match '^(?:const|let|var)\s+([A-Za-z0-9_]+)\s*=') { $section = $Matches[1] }
     if (($i + 1) -lt $AppCodeStartLine) { continue }
     foreach ($m in $rx.Matches($line)) {
       $v = $m.Groups['val'].Value
@@ -239,13 +243,17 @@ function Invoke-Git([string[]]$gitArgs) {
 # Version de index.html telle qu'elle est dans le dernier commit.
 # Passe par un fichier pour recuperer les octets bruts : une capture texte
 # de la sortie de git abimerait les accents.
-function Get-HeadStrings {
+function Get-HeadContent {
   $tmp = [System.IO.Path]::GetTempFileName()
   try {
     $p = Start-Process -FilePath "git" -ArgumentList @("-C", $Root, "show", "HEAD:index.html") `
            -RedirectStandardOutput $tmp -NoNewWindow -Wait -PassThru
     if ($p.ExitCode -ne 0) { return $null }
-    return Get-StringsFromLines ([System.IO.File]::ReadAllLines($tmp, [System.Text.UTF8Encoding]::new($false)))
+    $enc = [System.Text.UTF8Encoding]::new($false)
+    return @{
+      lines = [System.IO.File]::ReadAllLines($tmp, $enc)
+      text  = [System.IO.File]::ReadAllText($tmp, $enc)
+    }
   } catch { return $null }
   finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
 }
@@ -255,21 +263,41 @@ function Get-HeadStrings {
 # preservee, donc les deux listes s'alignent. Si ce n'est pas le cas, le
 # fichier a ete modifie autrement et on le dit au lieu de deviner.
 function Get-Changes {
-  $head = Get-HeadStrings
-  if ($null -eq $head) { return @{ ok = $false; reason = "impossible de lire la version commitee" } }
-  $now = @(Get-Strings)
-  $head = @($head)
+  $headContent = Get-HeadContent
+  if ($null -eq $headContent) { return @{ ok = $false; reason = "impossible de lire la version commitee" } }
+
+  $changes = @()
+
+  # 1. Les reglages. Ils vivent en partie dans l'en-tete HTML, hors du domaine
+  #    du comparateur de textes : sans ce bloc, une modification de titre ou de
+  #    favicon serait commitee sans jamais avoir ete relue.
+  $headSet = @(Get-SettingsFromText $headContent.text)
+  $nowSet  = @(Get-Settings)
+  for ($i = 0; $i -lt $nowSet.Count; $i++) {
+    if ($nowSet[$i].problem -or $headSet[$i].problem) { continue }
+    if ($headSet[$i].value -ne $nowSet[$i].value) {
+      $changes += [pscustomobject]@{
+        line = 0; section = "Reglages - $($nowSet[$i].group)"
+        label = $nowSet[$i].label
+        before = $headSet[$i].value; after = $nowSet[$i].value
+      }
+    }
+  }
+
+  # 2. Les textes du code applicatif.
+  $now  = @(Get-StringsFromLines ([System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false))))
+  $head = @(Get-StringsFromLines $headContent.lines)
 
   if ($head.Count -ne $now.Count) {
     return @{ ok = $false; structural = $true
               reason = "La structure du fichier a change ($($head.Count) textes commites contre $($now.Count) actuellement). Passe par GitHub Desktop pour ce commit." }
   }
 
-  $changes = @()
   for ($i = 0; $i -lt $now.Count; $i++) {
     if ($head[$i].raw -ne $now[$i].raw) {
       $changes += [pscustomobject]@{
         line = $now[$i].line; section = $now[$i].section
+        label = $null
         before = $head[$i].text; after = $now[$i].text
       }
     }
@@ -316,6 +344,170 @@ function Save-Strings($edits) {
     Get-ChildItem $BackupDir -Filter "index.*.html" |
       Sort-Object LastWriteTime -Descending | Select-Object -Skip 20 |
       Remove-Item -Force -ErrorAction SilentlyContinue
+  }
+  return @{ ok = ($applied -gt 0); applied = $applied; rejected = $rejected; stamp = (Get-FileStamp) }
+}
+
+# =============================================================== REGLAGES ====
+# Les metadonnees vivent a deux endroits qui doivent rester d'accord :
+#   1. les balises statiques de l'en-tete
+#   2. la table SCREEN_META, que le routeur applique a l'execution
+# Les robots des reseaux sociaux n'executent pas JavaScript : ce sont les
+# balises statiques qui decident de l'apparence des partages. Un reglage
+# ecrit donc dans TOUTES ses cibles a la fois, sinon l'onglet et la carte de
+# partage divergent.
+
+function New-MetaPattern([string]$attr, [string]$name) {
+  return "(?<pre><meta $attr=""$([regex]::Escape($name))"" content="")(?<v>[^""]*)(?<post>"")"
+}
+function New-ScreenMetaPattern([string]$screen, [string]$field) {
+  if ($field -eq 'title') {
+    return "(?<pre>$screen`:\s*\{\s*title:\s*')(?<v>(?:\\.|[^'])*)(?<post>')"
+  }
+  return "(?<pre>$screen`:\s*\{\s*title:\s*'(?:\\.|[^'])*',\s*description:\s*')(?<v>(?:\\.|[^'])*)(?<post>')"
+}
+
+$SettingsDef = @(
+  @{ key='title'; group='Identite'; label="Titre d'onglet"; kind='text'
+     help="Ecrit aussi dans og:title, twitter:title et SCREEN_META.home."
+     targets=@( '(?<pre><title>)(?<v>[^<]*)(?<post></title>)',
+                (New-MetaPattern 'property' 'og:title'),
+                (New-MetaPattern 'name' 'twitter:title'),
+                (New-ScreenMetaPattern 'home' 'title') ) }
+
+  @{ key='description'; group='Identite'; label='Description'; kind='textarea'
+     help="Ecrit aussi dans og:description et SCREEN_META.home."
+     targets=@( (New-MetaPattern 'name' 'description'),
+                (New-MetaPattern 'property' 'og:description'),
+                (New-ScreenMetaPattern 'home' 'description') ) }
+
+  @{ key='twitterDescription'; group='Identite'; label='Description Twitter'; kind='textarea'
+     help="Version courte, distincte de la description generale. Vue par le robot Twitter ; remplacee ensuite a l'execution."
+     targets=@( (New-MetaPattern 'name' 'twitter:description') ) }
+
+  @{ key='siteName'; group='Identite'; label='Nom du site'; kind='text'
+     targets=@( (New-MetaPattern 'property' 'og:site_name') ) }
+
+  @{ key='lang'; group='Identite'; label='Langue'; kind='text'
+     help="Code de la balise html, par exemple en ou fr."
+     targets=@( '(?<pre><html lang=")(?<v>[^"]*)(?<post>")' ) }
+
+  @{ key='locale'; group='Identite'; label='Locale sociale'; kind='text'
+     help='Format en_CA, fr_CA.'
+     targets=@( (New-MetaPattern 'property' 'og:locale') ) }
+
+  @{ key='themeColor'; group='Identite'; label='Couleur de theme'; kind='color'
+     targets=@( (New-MetaPattern 'name' 'theme-color') ) }
+
+  @{ key='canonical'; group='Identite'; label='Adresse canonique'; kind='text'
+     targets=@( '(?<pre><link rel="canonical" href=")(?<v>[^"]*)(?<post>")',
+                (New-MetaPattern 'property' 'og:url') ) }
+
+  @{ key='favicon32'; group='Images'; label='Favicon 32x32'; kind='image'
+     targets=@( '(?<pre><link rel="icon" href=")(?<v>[^"]*)(?<post>" sizes="32x32")' ) }
+
+  @{ key='favicon64'; group='Images'; label='Favicon 64x64'; kind='image'
+     targets=@( '(?<pre><link rel="icon" href=")(?<v>[^"]*)(?<post>" sizes="64x64")' ) }
+
+  @{ key='appleTouch'; group='Images'; label='Apple touch icon 180x180'; kind='image'
+     targets=@( '(?<pre><link rel="apple-touch-icon" href=")(?<v>[^"]*)(?<post>")' ) }
+
+  @{ key='shareImage'; group='Images'; label='Image de partage 1200x630'; kind='image'
+     help='Adresse absolue. Ecrit dans og:image et twitter:image.'
+     targets=@( (New-MetaPattern 'property' 'og:image'),
+                (New-MetaPattern 'name' 'twitter:image') ) }
+
+  @{ key='shareImageAlt'; group='Images'; label="Texte alternatif de l'image de partage"; kind='textarea'
+     targets=@( (New-MetaPattern 'property' 'og:image:alt') ) }
+)
+
+foreach ($screen in @('about','technical','contact')) {
+  $nice = @{ about='A propos'; technical='Technique'; contact='Contact' }[$screen]
+  $SettingsDef += @{ key="${screen}Title"; group='Pages'; label="$nice - titre"; kind='text'
+                     targets=@( (New-ScreenMetaPattern $screen 'title') ) }
+  $SettingsDef += @{ key="${screen}Desc"; group='Pages'; label="$nice - description"; kind='textarea'
+                     targets=@( (New-ScreenMetaPattern $screen 'description') ) }
+}
+
+# Une cible SCREEN_META vit entre apostrophes dans du JavaScript ; une cible
+# d'en-tete vit dans du HTML. Les deux ne s'echappent pas de la meme facon.
+function Test-JsTarget([string]$p) { return $p -match "\(\?<post>'\)" }
+
+function ConvertFrom-HtmlText([string]$s) {
+  # &amp; en dernier, sinon "&amp;lt;" se decoderait en "<"
+  return ($s -replace '&quot;','"' -replace '&#39;',"'" -replace '&lt;','<' -replace '&gt;','>' -replace '&amp;','&')
+}
+function ConvertTo-HtmlText([string]$s) {
+  # &amp; en premier, pour ne pas re-echapper les entites qu'on vient d'ecrire
+  return ($s -replace '&','&amp;' -replace '<','&lt;' -replace '>','&gt;' -replace '"','&quot;')
+}
+
+function Read-Target([string]$text, [string]$p) {
+  $ms = [regex]::Matches($text, $p)
+  # une cible ambigue est refusee : mieux vaut ne rien proposer que de
+  # reecrire la mauvaise occurrence
+  if ($ms.Count -ne 1) { return @{ ok = $false; count = $ms.Count } }
+  $raw = $ms[0].Groups['v'].Value
+  return @{
+    ok = $true; raw = $raw; index = $ms[0].Groups['v'].Index
+    text = $(if (Test-JsTarget $p) { ConvertFrom-SourceLiteral $raw } else { ConvertFrom-HtmlText $raw })
+  }
+}
+
+function Get-SettingsFromText([string]$text) {
+  $out = @()
+  foreach ($s in $SettingsDef) {
+    $value = $null; $problem = $null; $divergent = $false
+    foreach ($p in $s.targets) {
+      $r = Read-Target $text $p
+      if (-not $r.ok) { $problem = "$($r.count) correspondance(s) pour cette cible"; break }
+      if ($null -eq $value) { $value = $r.text }
+      elseif ($value -ne $r.text) { $divergent = $true }
+    }
+    $out += [pscustomobject]@{
+      key = $s.key; group = $s.group; label = $s.label; kind = $s.kind
+      help = $(if ($s.ContainsKey('help')) { $s.help } else { $null })
+      value = $(if ($problem) { '' } else { $value })
+      targets = $s.targets.Count
+      problem = $problem
+      # les cibles d'un meme reglage ne disent pas la meme chose :
+      # enregistrer les realignera toutes sur la valeur affichee
+      divergent = $divergent
+    }
+  }
+  return $out
+}
+
+function Get-Settings {
+  return Get-SettingsFromText ([System.IO.File]::ReadAllText($TargetFile, [System.Text.UTF8Encoding]::new($false)))
+}
+
+function Save-Settings($values) {
+  $enc = [System.Text.UTF8Encoding]::new($false)
+  $text = [System.IO.File]::ReadAllText($TargetFile, $enc)
+  $applied = 0; $rejected = @()
+
+  foreach ($s in $SettingsDef) {
+    $incoming = $values.PSObject.Properties[$s.key]
+    if (-not $incoming) { continue }
+    $new = [string]$incoming.Value
+
+    foreach ($p in $s.targets) {
+      # rematche a chaque cible : le texte a pu bouger a l'iteration precedente
+      $r = Read-Target $text $p
+      if (-not $r.ok) { $rejected += "$($s.label) : $($r.count) correspondance(s)"; continue }
+      $encoded = $(if (Test-JsTarget $p) { ConvertTo-SourceLiteral $new ([char]"'") }
+                   else { ConvertTo-HtmlText $new })
+      if ($r.raw -eq $encoded) { continue }
+      $text = $text.Remove($r.index, $r.raw.Length).Insert($r.index, $encoded)
+      $applied++
+    }
+  }
+
+  if ($applied -gt 0) {
+    $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    [System.IO.File]::Copy($TargetFile, (Join-Path $BackupDir "index.$stamp.html"), $true)
+    [System.IO.File]::WriteAllText($TargetFile, $text, $enc)
   }
   return @{ ok = ($applied -gt 0); applied = $applied; rejected = $rejected; stamp = (Get-FileStamp) }
 }
@@ -540,6 +732,20 @@ try {
         $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
         $body = $reader.ReadToEnd(); $reader.Close()
         Send-Json $res (Save-Strings (($body | ConvertFrom-Json).edits))
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__settings" -and $req.HttpMethod -eq "GET") {
+        $lastPing = Get-Date; $everPinged = $true
+        Send-Json $res @{ items = @(Get-Settings) }
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__settings" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        Send-Json $res (Save-Settings (($body | ConvertFrom-Json).values))
         $res.Close(); continue
       }
 

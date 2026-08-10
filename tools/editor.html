@@ -105,6 +105,37 @@ textarea:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:tr
 #commit:disabled{opacity:.3;cursor:not-allowed}
 #commit:hover:not(:disabled){background:var(--ember);border-color:var(--ember);color:var(--void-950)}
 
+/* ---------------------------------------------------------------- reglages */
+#settings{flex:1;overflow-y:auto;padding:12px 16px 60px;display:none}
+#settings.on{display:block}
+.set{margin-bottom:14px}
+.set label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--grey);margin-bottom:5px}
+.set input[type=text],.set textarea{width:100%;background:var(--void-850);
+  border:1px solid var(--line-subtle);color:var(--white);font:inherit;font-size:13px;
+  padding:8px 10px;border-radius:6px}
+.set textarea{resize:vertical;min-height:58px;line-height:1.5}
+.set input:focus,.set textarea:focus{outline:2px solid var(--ember);outline-offset:1px;
+  border-color:transparent}
+.set.dirty input,.set.dirty textarea{border-color:var(--ember)}
+.set .hint{font-size:11px;color:var(--text-faint,#57565c);margin-top:4px;line-height:1.45}
+.set .warn{font-size:11px;color:var(--ember-400);margin-top:4px}
+.set .withimg{display:flex;gap:10px;align-items:flex-start}
+.set .withimg input{flex:1}
+.imgprev{width:60px;height:60px;flex:0 0 60px;border:1px solid var(--line-subtle);
+  border-radius:6px;background:var(--void-800) center/contain no-repeat;
+  display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--grey);
+  text-align:center;overflow:hidden}
+.setcolor{display:flex;gap:8px;align-items:center}
+.setcolor input[type=color]{width:38px;height:34px;padding:2px;background:var(--void-850);
+  border:1px solid var(--line-subtle);border-radius:6px;cursor:pointer}
+#setbox{border-top:1px solid var(--line-subtle);padding:12px 16px;flex:0 0 auto;display:none}
+#setbox.on{display:flex;align-items:center;gap:10px}
+#setcount{flex:1;font-size:11px;color:var(--grey);letter-spacing:.1em;text-transform:uppercase}
+#setsave{background:var(--white);color:var(--void-950);border-color:var(--white)}
+#setsave:disabled{opacity:.3;cursor:not-allowed}
+#setsave:hover:not(:disabled){background:var(--ember);border-color:var(--ember);color:var(--void-950)}
+
 #status{flex:0 0 auto;padding:9px 16px;font-size:12px;
   border-top:1px solid var(--line-subtle);display:none;line-height:1.45}
 #status.show{display:block}
@@ -157,12 +188,19 @@ iframe.framed{box-shadow:0 0 0 1px var(--line)}
     </div>
     <div class="tabs">
       <button id="tabTexts" class="on" type="button">Textes</button>
+      <button id="tabSettings" type="button">Réglages</button>
       <button id="tabChanges" type="button">Modifications</button>
     </div>
   </header>
 
   <div id="list"><p class="empty">Chargement…</p></div>
+  <div id="settings"></div>
   <div id="changes"></div>
+
+  <div id="setbox">
+    <span id="setcount"></span>
+    <button id="setsave" type="button" disabled>Enregistrer</button>
+  </div>
 
   <div id="commitbox">
     <textarea id="cmsg" placeholder="Message de commit"></textarea>
@@ -503,7 +541,10 @@ function renderChanges(d){
       box.className = 'chg';
       const meta = document.createElement('div');
       meta.className = 'meta';
-      meta.textContent = `${c.section} · ligne ${c.line}`;
+      // les reglages n'ont pas de ligne unique : ils s'ecrivent a plusieurs endroits
+      meta.textContent = c.line
+        ? `${c.section} · ligne ${c.line}`
+        : `${c.section} · ${c.label}`;
       const b = document.createElement('div');
       b.className = 'before'; b.textContent = c.before;
       const a = document.createElement('div');
@@ -533,21 +574,180 @@ async function loadChanges(){
   } catch(e){}
 }
 
+/* ---------------------------------------------------------------- reglages */
+let settings = [];
+const setEdits = new Map();
+
+/* Une image de partage est referencee en adresse absolue vers le site en
+   ligne. Pour l'apercu on retombe sur le fichier local : pas de requete
+   sortante, et on voit ce qu'on est en train de modifier. */
+function previewSrc(v){
+  if (!v) return '';
+  const m = v.match(/^https?:\/\/killianpichon\.art\/(.*)$/i);
+  return m ? '/' + m[1] : v;
+}
+
+function updateSetCount(){
+  const n = setEdits.size;
+  $('#setcount').textContent = n ? `${n} réglage${n>1?'s':''} modifié${n>1?'s':''}` : `${settings.length} réglages`;
+  $('#setsave').disabled = n === 0;
+}
+
+function renderSettings(){
+  const host = $('#settings');
+  host.innerHTML = '';
+  const groups = new Map();
+  for (const s of settings){
+    if (!groups.has(s.group)) groups.set(s.group, []);
+    groups.get(s.group).push(s);
+  }
+
+  for (const [group, list] of groups){
+    const sec = document.createElement('section');
+    sec.className = 'section';
+    const h = document.createElement('h2');
+    h.textContent = group;
+    sec.appendChild(h);
+
+    for (const s of list){
+      const box = document.createElement('div');
+      box.className = 'set';
+      const lab = document.createElement('label');
+      lab.textContent = s.label;
+      box.appendChild(lab);
+
+      if (s.problem){
+        const w = document.createElement('div');
+        w.className = 'warn';
+        w.textContent = `Introuvable dans index.html (${s.problem}). Ce réglage n'est pas modifiable ici.`;
+        box.appendChild(w);
+        sec.appendChild(box);
+        continue;
+      }
+
+      let input;
+      if (s.kind === 'textarea'){
+        input = document.createElement('textarea');
+      } else {
+        input = document.createElement('input');
+        input.type = 'text';
+      }
+      input.value = setEdits.has(s.key) ? setEdits.get(s.key) : s.value;
+
+      const onInput = () => {
+        if (input.value === s.value){ setEdits.delete(s.key); box.classList.remove('dirty'); }
+        else { setEdits.set(s.key, input.value); box.classList.add('dirty'); }
+        if (s.kind === 'image') prev.style.backgroundImage = `url("${previewSrc(input.value)}")`;
+        if (s.kind === 'color') swatch.value = /^#[0-9a-f]{6}$/i.test(input.value) ? input.value : '#000000';
+        updateSetCount();
+      };
+      input.addEventListener('input', onInput);
+
+      let prev, swatch;
+      if (s.kind === 'image'){
+        const row = document.createElement('div');
+        row.className = 'withimg';
+        prev = document.createElement('div');
+        prev.className = 'imgprev';
+        prev.textContent = 'aperçu';
+        prev.style.backgroundImage = `url("${previewSrc(input.value)}")`;
+        row.append(input, prev);
+        box.appendChild(row);
+      } else if (s.kind === 'color'){
+        const row = document.createElement('div');
+        row.className = 'setcolor';
+        swatch = document.createElement('input');
+        swatch.type = 'color';
+        swatch.value = /^#[0-9a-f]{6}$/i.test(input.value) ? input.value : '#000000';
+        swatch.addEventListener('input', () => { input.value = swatch.value; onInput(); });
+        row.append(swatch, input);
+        box.appendChild(row);
+      } else {
+        box.appendChild(input);
+      }
+
+      if (s.targets > 1){
+        const hint = document.createElement('div');
+        hint.className = 'hint';
+        hint.textContent = (s.help || '') + ` Écrit dans ${s.targets} endroits du fichier.`;
+        box.appendChild(hint);
+      } else if (s.help){
+        const hint = document.createElement('div');
+        hint.className = 'hint';
+        hint.textContent = s.help;
+        box.appendChild(hint);
+      }
+
+      if (s.divergent){
+        const w = document.createElement('div');
+        w.className = 'warn';
+        w.textContent = "Les copies de ce réglage ne concordent pas dans le fichier. Enregistrer les réalignera toutes sur la valeur ci-dessus.";
+        box.appendChild(w);
+      }
+
+      sec.appendChild(box);
+    }
+    host.appendChild(sec);
+  }
+  updateSetCount();
+}
+
+async function loadSettings(){
+  try{
+    const r = await authFetch('/__settings');
+    settings = (await r.json()).items || [];
+    setEdits.clear();
+    renderSettings();
+  } catch(e){}
+}
+
+$('#setsave').addEventListener('click', async () => {
+  const values = {};
+  for (const [k, v] of setEdits) values[k] = v;
+  $('#setsave').disabled = true;
+  status('Enregistrement des réglages…');
+  try{
+    const r = await authFetch('/__settings', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ values })
+    });
+    const d = await r.json();
+    if (d.applied > 0){
+      let m = `${d.applied} emplacement(s) mis à jour dans index.html.`;
+      if (d.rejected && d.rejected.length) m += ' Refusés : ' + d.rejected.join(' ; ');
+      status(m, d.rejected && d.rejected.length ? 'warn' : 'ok');
+      await loadSettings();
+      await load();
+      reloadPreview();
+      await loadChanges();
+    } else {
+      status('Rien à enregistrer. ' + ((d.rejected||[]).join(' ; ') || ''), 'err');
+      $('#setsave').disabled = false;
+    }
+  } catch(e){
+    status('Erreur : ' + e.message, 'err');
+    $('#setsave').disabled = false;
+  }
+});
+
 function showTab(which){
-  const texts = which === 'texts';
-  $('#tabTexts').classList.toggle('on', texts);
-  $('#tabChanges').classList.toggle('on', !texts);
-  $('#list').classList.toggle('off', !texts);
-  $('#changes').classList.toggle('on', !texts);
-  $('#commitbox').classList.toggle('on', !texts);
-  if (!texts) loadChanges();
+  const map = { texts:'#tabTexts', settings:'#tabSettings', changes:'#tabChanges' };
+  for (const [k, sel] of Object.entries(map)) $(sel).classList.toggle('on', k === which);
+  $('#list').classList.toggle('off', which !== 'texts');
+  $('#settings').classList.toggle('on', which === 'settings');
+  $('#changes').classList.toggle('on', which === 'changes');
+  $('#setbox').classList.toggle('on', which === 'settings');
+  $('#commitbox').classList.toggle('on', which === 'changes');
+  if (which === 'changes') loadChanges();
+  if (which === 'settings') loadSettings();
 }
 
 $('#tabTexts').addEventListener('click', () => showTab('texts'));
+$('#tabSettings').addEventListener('click', () => showTab('settings'));
 $('#tabChanges').addEventListener('click', () => showTab('changes'));
 
 $('#commit').addEventListener('click', async () => {
-  if (edits.size){
+  if (edits.size || setEdits.size){
     status('Enregistre d\'abord tes modifications en attente.', 'warn');
     return;
   }
@@ -577,7 +777,7 @@ $('#commit').addEventListener('click', async () => {
 });
 
 addEventListener('beforeunload', e => {
-  if (edits.size){ e.preventDefault(); e.returnValue = ''; }
+  if (edits.size || setEdits.size){ e.preventDefault(); e.returnValue = ''; }
 });
 
 async function boot(){
