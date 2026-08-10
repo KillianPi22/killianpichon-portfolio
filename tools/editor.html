@@ -345,6 +345,7 @@ async function load(){
   stamp = d.stamp;
   $('#branch').textContent = d.branch || '';
   setLan(d.lanUrl);
+  if (d.warning) status(d.warning, 'err');
   edits.clear();
   render($('#search').value);
   updateCount();

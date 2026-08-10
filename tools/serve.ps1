@@ -23,7 +23,6 @@ $ScriptDir  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Root       = Split-Path -Parent $ScriptDir
 $TargetFile = Join-Path $Root "index.html"
 $BackupDir  = Join-Path $ScriptDir ".backups"
-$AppCodeStartLine = 443   # tout ce qui precede est le bundle React vendorise
 
 if (-not (Test-Path $TargetFile)) { throw "index.html introuvable dans $Root" }
 if (-not (Test-Path $BackupDir))  { New-Item -ItemType Directory -Path $BackupDir | Out-Null }
@@ -173,7 +172,22 @@ function Get-Branch {
   return "(hors git)"
 }
 
+# Frontiere entre le bundle React vendorise et le code applicatif.
+# Elle etait codee en dur : le fichier grandissant, le scan a fini par mordre
+# sur React minifie et exposer ses tables d'evenements a l'edition. On la
+# retrouve donc sur un marqueur du code, et on refuse de scanner s'il manque
+# plutot que de deviner.
+function Get-AppCodeStart([string[]]$lines) {
+  for ($i = 0; $i -lt $lines.Length; $i++) {
+    if ($lines[$i] -match 'window\.__asset\s*=\s*function') { return $i + 1 }
+  }
+  return -1
+}
+
 function Get-StringsFromLines([string[]]$lines) {
+  $AppCodeStartLine = Get-AppCodeStart $lines
+  if ($AppCodeStartLine -lt 0) { return @() }
+
   $items = @()
   $section = "Global"
   for ($i = 0; $i -lt $lines.Length; $i++) {
@@ -508,7 +522,16 @@ try {
 
       if ($rel -eq "/__strings") {
         $lastPing = Get-Date; $everPinged = $true
-        Send-Json $res @{ items = @(Get-Strings); stamp = (Get-FileStamp); branch = (Get-Branch); lanUrl = $lanUrl }
+        $srcLines = [System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false))
+        $boundary = Get-AppCodeStart $srcLines
+        $warn = $null
+        if ($boundary -lt 0) {
+          $warn = "Le debut du code applicatif est introuvable dans index.html (marqueur window.__asset absent). Aucun texte n'est expose, pour ne pas risquer de modifier le moteur React."
+        }
+        Send-Json $res @{
+          items = @(Get-StringsFromLines $srcLines); stamp = (Get-FileStamp)
+          branch = (Get-Branch); lanUrl = $lanUrl; boundary = $boundary; warning = $warn
+        }
         $res.Close(); continue
       }
 
