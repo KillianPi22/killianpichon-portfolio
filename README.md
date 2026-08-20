@@ -102,6 +102,29 @@ La valeur `lastmod` du sitemap doit etre mise a jour uniquement lors d'un
 changement significatif du contenu, des liens ou des donnees structurees de la
 page principale.
 
+### Mesure d'audience et consentement
+
+Google Analytics 4 utilise l'identifiant `G-P0LGWRTE4C`. Son integration est
+geree par `assets/analytics-consent.js` et `assets/analytics-consent.css`.
+
+Le site applique le mode de consentement **basique** : la balise Google n'est
+pas telechargee et aucune donnee Analytics n'est envoyee avant un accord
+explicite. Le choix est memorise localement sous
+`kp_analytics_consent_v1`. Les visiteurs peuvent le modifier depuis le pied de
+page ou `privacy.html`; un refus apres activation recharge la page afin de
+retirer completement la balise.
+
+Dans GA4, la conservation des donnees d'evenement et des donnees utilisateur
+est fixee a deux mois. Le suivi automatique des changements d'historique est
+desactive dans le flux Web, car le site envoie lui-meme les vues des routes a
+fragment.
+
+Les vues des routes avec fragment (`#/about`, `#/project/...`) sont envoyees
+manuellement avec leur URL complete. La vue automatique initiale est desactivee
+dans le code pour eviter les doublons. Si l'identifiant de mesure change, mettre
+a jour uniquement la constante `MEASUREMENT_ID` dans
+`assets/analytics-consent.js`.
+
 ### Commit depuis l'editeur
 
 L'onglet **Modifications** compare le fichier de travail au dernier commit et
