@@ -79,6 +79,11 @@ ambigue, le reglage est marque non modifiable plutot que d'ecrire au hasard.
 `twitter:description` est volontairement traitee a part : c'est une version
 courte, distincte de la description generale.
 
+Le favicon 96x96 reprend le logo des onglets dans un format adapte aux
+resultats de recherche Google. Apres une publication, Google doit revisiter la
+page avant de pouvoir l'afficher ; le changement peut donc prendre plusieurs
+jours ou quelques semaines.
+
 ### Commit depuis l'editeur
 
 L'onglet **Modifications** compare le fichier de travail au dernier commit et

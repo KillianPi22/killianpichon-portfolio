@@ -504,6 +504,10 @@ $SettingsDef = @(
   @{ key='favicon64'; group='Images'; label='Favicon 64x64'; kind='image'
      targets=@( '(?<pre><link rel="icon" href=")(?<v>[^"]*)(?<post>" sizes="64x64")' ) }
 
+  @{ key='favicon96'; group='Images'; label='Favicon 96x96 (Google)'; kind='image'
+     help='Version recommandee pour les resultats de recherche Google.'
+     targets=@( '(?<pre><link rel="icon" href=")(?<v>[^"]*)(?<post>" sizes="96x96")' ) }
+
   @{ key='appleTouch'; group='Images'; label='Apple touch icon 180x180'; kind='image'
      targets=@( '(?<pre><link rel="apple-touch-icon" href=")(?<v>[^"]*)(?<post>")' ) }
 
