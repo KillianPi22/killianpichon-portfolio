@@ -61,16 +61,17 @@ Penser a l'optimiser avant (voir la section Medias de `AGENTS.md`).
 
 ### Reglages du site
 
-Les metadonnees vivent a **deux endroits** qui doivent rester d'accord :
+Les metadonnees vivent a **trois endroits** qui doivent rester d'accord :
 
 - les balises statiques de l'en-tete de `index.html` ;
-- la table `SCREEN_META`, que le routeur applique a l'execution.
+- la table `SCREEN_META`, que le routeur applique a l'execution ;
+- les donnees structurees JSON-LD lues par les moteurs de recherche.
 
 Les robots de Facebook, LinkedIn et Twitter n'executent pas JavaScript : ce
 sont les **balises statiques** qui decident de l'apparence des partages, pas
 `SCREEN_META`. Un reglage ecrit donc dans toutes ses cibles a la fois — le
-titre d'onglet en touche quatre. L'interface indique ce nombre sous chaque
-champ.
+titre d'onglet en touche maintenant cinq. L'interface indique ce nombre sous
+chaque champ.
 
 Si les copies d'un meme reglage ne concordent pas dans le fichier, le champ
 le signale et l'enregistrement les realigne. Si une cible est introuvable ou
@@ -83,6 +84,23 @@ Le favicon 96x96 reprend le logo des onglets dans un format adapte aux
 resultats de recherche Google. Apres une publication, Google doit revisiter la
 page avant de pouvoir l'afficher ; le changement peut donc prendre plusieurs
 jours ou quelques semaines.
+
+### Referencement naturel
+
+La page principale contient des donnees structurees `WebSite`, `WebPage` et
+`Person` qui decrivent le site et son auteur a partir des informations visibles
+dans le portfolio. Le fichier `sitemap.xml` reference l'URL canonique ainsi que
+les images representatives des projets, qui sont autrement chargees par
+JavaScript.
+
+Le site utilise actuellement des routes avec fragment (`#/about`,
+`#/project/celestia`, etc.). Ces vues ne sont pas des URLs indexables distinctes
+et ne doivent donc pas etre ajoutees au sitemap. Pour indexer chaque projet
+separement, il faudra d'abord leur donner de vraies pages et des URLs sans `#`.
+
+La valeur `lastmod` du sitemap doit etre mise a jour uniquement lors d'un
+changement significatif du contenu, des liens ou des donnees structurees de la
+page principale.
 
 ### Commit depuis l'editeur
 

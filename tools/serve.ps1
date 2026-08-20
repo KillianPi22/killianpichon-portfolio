@@ -444,9 +444,10 @@ function Save-Strings($edits) {
 }
 
 # =============================================================== REGLAGES ====
-# Les metadonnees vivent a deux endroits qui doivent rester d'accord :
+# Les metadonnees vivent a trois endroits qui doivent rester d'accord :
 #   1. les balises statiques de l'en-tete
 #   2. la table SCREEN_META, que le routeur applique a l'execution
+#   3. les donnees structurees JSON-LD lues par les moteurs de recherche
 # Les robots des reseaux sociaux n'executent pas JavaScript : ce sont les
 # balises statiques qui decident de l'apparence des partages. Un reglage
 # ecrit donc dans TOUTES ses cibles a la fois, sinon l'onglet et la carte de
@@ -461,27 +462,37 @@ function New-ScreenMetaPattern([string]$screen, [string]$field) {
   }
   return "(?<pre>$screen`:\s*\{\s*title:\s*'(?:\\.|[^'])*',\s*description:\s*')(?<v>(?:\\.|[^'])*)(?<post>')"
 }
+function New-JsonLdPattern([string]$type, [string]$field) {
+  $escapedType = [regex]::Escape($type)
+  $escapedField = [regex]::Escape($field)
+  # Le commentaire regex (?#json) permet d'appliquer l'echappement JSON.
+  return "(?s)(?#json)(?<pre>""@type""\s*:\s*""$escapedType""(?:(?!\r?\n\s*\}).)*?""$escapedField""\s*:\s*"")(?<v>(?:\\.|[^""])*)((?<post>""))"
+}
 
 $SettingsDef = @(
   @{ key='title'; group='Identite'; label="Titre d'onglet"; kind='text'
-     help="Ecrit aussi dans og:title, twitter:title et SCREEN_META.home."
+     help="Ecrit aussi dans og:title, twitter:title, SCREEN_META.home et les donnees structurees."
      targets=@( '(?<pre><title>)(?<v>[^<]*)(?<post></title>)',
                 (New-MetaPattern 'property' 'og:title'),
                 (New-MetaPattern 'name' 'twitter:title'),
-                (New-ScreenMetaPattern 'home' 'title') ) }
+                (New-ScreenMetaPattern 'home' 'title'),
+                (New-JsonLdPattern 'WebPage' 'name') ) }
 
   @{ key='description'; group='Identite'; label='Description'; kind='textarea'
-     help="Ecrit aussi dans og:description et SCREEN_META.home."
+     help="Ecrit aussi dans og:description, SCREEN_META.home et les donnees structurees."
      targets=@( (New-MetaPattern 'name' 'description'),
                 (New-MetaPattern 'property' 'og:description'),
-                (New-ScreenMetaPattern 'home' 'description') ) }
+                (New-ScreenMetaPattern 'home' 'description'),
+                (New-JsonLdPattern 'WebSite' 'description'),
+                (New-JsonLdPattern 'WebPage' 'description') ) }
 
   @{ key='twitterDescription'; group='Identite'; label='Description Twitter'; kind='textarea'
      help="Version courte, distincte de la description generale. Vue par le robot Twitter ; remplacee ensuite a l'execution."
      targets=@( (New-MetaPattern 'name' 'twitter:description') ) }
 
   @{ key='siteName'; group='Identite'; label='Nom du site'; kind='text'
-     targets=@( (New-MetaPattern 'property' 'og:site_name') ) }
+     targets=@( (New-MetaPattern 'property' 'og:site_name'),
+                (New-JsonLdPattern 'WebSite' 'name') ) }
 
   @{ key='lang'; group='Identite'; label='Langue'; kind='text'
      help="Code de la balise html, par exemple en ou fr."
@@ -514,10 +525,12 @@ $SettingsDef = @(
   @{ key='shareImage'; group='Images'; label='Image de partage 1200x630'; kind='image'
      help='Adresse absolue. Ecrit dans og:image et twitter:image.'
      targets=@( (New-MetaPattern 'property' 'og:image'),
-                (New-MetaPattern 'name' 'twitter:image') ) }
+                (New-MetaPattern 'name' 'twitter:image'),
+                (New-JsonLdPattern 'ImageObject' 'url') ) }
 
   @{ key='shareImageAlt'; group='Images'; label="Texte alternatif de l'image de partage"; kind='textarea'
-     targets=@( (New-MetaPattern 'property' 'og:image:alt') ) }
+     targets=@( (New-MetaPattern 'property' 'og:image:alt'),
+                (New-MetaPattern 'name' 'twitter:image:alt') ) }
 )
 
 foreach ($screen in @('about','technical','contact')) {
@@ -531,6 +544,7 @@ foreach ($screen in @('about','technical','contact')) {
 # Une cible SCREEN_META vit entre apostrophes dans du JavaScript ; une cible
 # d'en-tete vit dans du HTML. Les deux ne s'echappent pas de la meme facon.
 function Test-JsTarget([string]$p) { return $p -match "\(\?<post>'\)" }
+function Test-JsonTarget([string]$p) { return $p -match '\(\?#json\)' }
 
 function ConvertFrom-HtmlText([string]$s) {
   # &amp; en dernier, sinon "&amp;lt;" se decoderait en "<"
@@ -549,7 +563,7 @@ function Read-Target([string]$text, [string]$p) {
   $raw = $ms[0].Groups['v'].Value
   return @{
     ok = $true; raw = $raw; index = $ms[0].Groups['v'].Index
-    text = $(if (Test-JsTarget $p) { ConvertFrom-SourceLiteral $raw } else { ConvertFrom-HtmlText $raw })
+    text = $(if ((Test-JsTarget $p) -or (Test-JsonTarget $p)) { ConvertFrom-SourceLiteral $raw } else { ConvertFrom-HtmlText $raw })
   }
 }
 
@@ -596,6 +610,7 @@ function Save-Settings($values) {
       $r = Read-Target $text $p
       if (-not $r.ok) { $rejected += "$($s.label) : $($r.count) correspondance(s)"; continue }
       $encoded = $(if (Test-JsTarget $p) { ConvertTo-SourceLiteral $new ([char]"'") }
+                   elseif (Test-JsonTarget $p) { ConvertTo-SourceLiteral $new ([char]'"') }
                    else { ConvertTo-HtmlText $new })
       if ($r.raw -eq $encoded) { continue }
       $text = $text.Remove($r.index, $r.raw.Length).Insert($r.index, $encoded)
