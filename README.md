@@ -171,6 +171,33 @@ Trois protections encadrent l'outil local :
 - **Ralentissement des essais.** Apres cinq echecs, les tentatives sont bloquees
   temporairement, avec un delai croissant.
 
+### Contenus a acces restreint
+
+Le portfolio peut reveler un lien externe apres saisie d'un code d'acces. Le
+code et l'URL ne sont pas publies en clair : `assets/protected-content.js`
+derive une cle avec PBKDF2-HMAC-SHA256 (600 000 iterations), puis dechiffre une
+charge AES-256-GCM. Les essais consecutifs sont ralentis dans l'onglet courant.
+
+Pour preparer une nouvelle ressource, lancer depuis PowerShell 7 :
+
+```powershell
+./tools/protect-content.ps1 -ResourceId nom-stable -Target 'https://example.com/contenu'
+```
+
+Le script demande le code sans l'afficher et imprime une configuration a copier
+dans la donnee de projet ou de section. Chaque ressource recoit un sel et un
+nonce aleatoires ; le meme code peut donc etre reutilise sans produire la meme
+charge chiffree. Pour des audiences ou des accords differents, preferer un code
+distinct par ressource : la fuite d'un code reutilise compromettrait toutes les
+ressources qui l'emploient. Ne jamais versionner le code ou l'URL en clair.
+
+Cette protection reste entierement executee dans le navigateur et ne remplace
+pas une authentification serveur. Un visiteur peut automatiser des essais hors
+de l'interface, et un lien YouTube non repertorie peut etre repartage par toute
+personne qui l'a obtenu. Ne pas placer de document NDA dans le depot GitHub
+Pages : pour un contenu reellement sensible, utiliser un hebergement prive avec
+controle d'identite cote serveur, ou le partage prive de la plateforme video.
+
 ### Acces iPhone (Wi-Fi)
 
 Windows n'autorise pas l'ecoute reseau sans privileges. Lancer **une seule fois**
