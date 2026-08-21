@@ -180,7 +180,7 @@ button{color:inherit}
   .hero{padding:108px var(--container-pad) 0!important;min-height:0!important}
   .hero-main{display:block!important}
   .hero-left{width:100%!important}
-  .hero-title-wrap h1{font-size:clamp(3rem,16vw,4.6rem)!important}
+  .hero-title-wrap h1,.hero-title-wire{font-size:clamp(3rem,16vw,4.6rem)!important}
   .hero-art{display:none!important}
   .hero-scroll-indicator{gap:0!important}
   .hero-scroll-indicator .kp-scroll-label{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;white-space:nowrap;clip-path:inset(50%)}
@@ -1099,6 +1099,7 @@ function Hero({
       margin: 0
     }
   }, name), React.createElement("div", {
+    className: "hero-title-wire",
     ref: wireRef,
     "aria-hidden": "true",
     style: {
@@ -1110,6 +1111,7 @@ function Hero({
       fontWeight: 800,
       fontSize: 'var(--text-display-xl)',
       lineHeight: 'var(--leading-tight)',
+      letterSpacing: 'var(--tracking-tight)',
       textTransform: 'uppercase',
       color: 'transparent',
       WebkitTextStrokeWidth: '1px',
