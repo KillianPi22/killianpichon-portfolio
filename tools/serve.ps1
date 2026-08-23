@@ -24,14 +24,43 @@ $Root       = Split-Path -Parent $ScriptDir
 $TargetFile = Join-Path $Root "index.html"
 $BackupDir  = Join-Path $ScriptDir ".backups"
 
+$DiagLog    = Join-Path $ScriptDir ".diagnostic-ping.log"
+
 # Chemins que le serveur de fichiers ne divulgue jamais, resolus une fois pour
 # toutes. Ils vivent dans le dossier du site mais n'en font pas partie.
 $ForbiddenPaths = @(
   (Join-Path $ScriptDir "auth.json"),
   $BackupDir,
+  $DiagLog,
   (Join-Path $Root ".git"),
   (Join-Path $Root ".claude")
 ) | ForEach-Object { [System.IO.Path]::GetFullPath($_) }
+
+# ------------------------------------------------------------- diagnostic
+# Mesure temporaire, destinee a comprendre pourquoi le serveur s'arrete en
+# pleine session de travail. Elle ne change rien au comportement : elle note
+# seulement l'ecart entre deux battements de l'editeur quand il depasse le
+# seuil, et la raison de l'arret. L'hypothese a verifier est que Chrome
+# ralentit le minuteur de l'editeur quand son onglet passe en arriere-plan,
+# jusqu'a franchir la tolerance du serveur. L'editeur envoie donc l'etat de
+# visibilite de son onglet avec chaque battement.
+# A retirer une fois la cause etablie.
+#
+# Le journal doit rester lisible sans jamais devenir ambigu : une ligne de
+# synthese par minute prouve que l'editeur bat toujours, une ligne dediee
+# marque chaque battement en retard, et chaque facon de s'arreter laisse sa
+# trace. L'absence de ligne ne doit jamais pouvoir signifier deux choses.
+$DiagGapThreshold = 8
+$DiagSummaryEvery = 60
+
+function Write-Diag([string]$line) {
+  try {
+    $stamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+    Add-Content -Path $DiagLog -Value "$stamp  $line" -Encoding utf8
+  } catch {
+    # Le diagnostic ne doit jamais interrompre le serveur.
+  }
+}
 
 if (-not (Test-Path $TargetFile)) { throw "index.html introuvable dans $Root" }
 if (-not (Test-Path $BackupDir))  { New-Item -ItemType Directory -Path $BackupDir | Out-Null }
@@ -734,6 +763,13 @@ if (-not $NoBrowser) { Start-Process $editorUrl | Out-Null }
 # --------------------------------------------------------------- boucle HTTP
 $lastPing = Get-Date
 $everPinged = $false
+$lastVisibility = "?"
+$diagWindowStart = Get-Date
+$diagBeats = 0
+$diagMaxGap = 0
+$diagHiddenBeats = 0
+$diagStopLogged = $false
+Write-Diag "--- demarrage  port=$Port  tolerance=${IdleTimeoutSeconds}s  avant-premier-ping=120s"
 
 try {
   while ($listener.IsListening) {
@@ -746,6 +782,8 @@ try {
       if ($idle -gt $limit) {
         if ($everPinged) { Write-Host "  Editeur ferme - arret du serveur." }
         else { Write-Host "  Aucun editeur connecte - arret du serveur." }
+        Write-Diag ("ARRET par inactivite  silence={0:N1}s  tolerance={1}s  dernier-onglet={2}  premier-ping-recu={3}" -f $idle, $limit, $lastVisibility, $everPinged)
+        $diagStopLogged = $true
         $listener.Stop(); return
       }
     }
@@ -817,6 +855,33 @@ try {
       }
 
       if ($rel -eq "/__ping") {
+        # Diagnostic : les battements en retard sont notes un par un, les
+        # autres seulement comptes puis resumes chaque minute. Sans ce resume,
+        # un journal muet ne dirait pas si l'editeur bat ou s'il est absent.
+        $gap = ((Get-Date) - $lastPing).TotalSeconds
+        $visibility = $req.QueryString["v"]
+        if (-not $visibility) { $visibility = "?" }
+
+        if (-not $everPinged) {
+          Write-Diag "premier battement recu  onglet=$visibility"
+          $diagWindowStart = Get-Date
+        } else {
+          $diagBeats++
+          if ($gap -gt $diagMaxGap) { $diagMaxGap = $gap }
+          if ($visibility -eq "hidden") { $diagHiddenBeats++ }
+          if ($gap -ge $DiagGapThreshold) {
+            Write-Diag ("battement en retard  ecart={0:N1}s  tolerance={1}s  onglet={2}" -f $gap, $IdleTimeoutSeconds, $visibility)
+          }
+          $windowAge = ((Get-Date) - $diagWindowStart).TotalSeconds
+          if ($windowAge -ge $DiagSummaryEvery) {
+            Write-Diag ("synthese  {0} battements en {1:N0}s  ecart-max={2:N1}s  onglet-cache={3}/{0}" -f $diagBeats, $windowAge, $diagMaxGap, $diagHiddenBeats)
+            $diagWindowStart = Get-Date; $diagBeats = 0; $diagMaxGap = 0; $diagHiddenBeats = 0
+          }
+        }
+        # Un battement sans etat connu ne doit pas effacer le dernier etat reel :
+        # la ligne d'arret perdrait justement l'information qu'on cherche.
+        if ($visibility -ne "?") { $lastVisibility = $visibility }
+
         $lastPing = Get-Date; $everPinged = $true
         Send-Json $res @{ ok = $true }
         $res.Close(); continue
@@ -832,6 +897,8 @@ try {
         Send-Json $res @{ ok = $true }
         $res.Close()
         Write-Host "  Arret demande par l'editeur."
+        Write-Diag ("ARRET propre demande par l'editeur  dernier-onglet={0}" -f $lastVisibility)
+        $diagStopLogged = $true
         $listener.Stop(); return
       }
 
@@ -1006,5 +1073,12 @@ try {
     }
   }
 } finally {
+  # Diagnostic : filet pour les sorties qui n'ont pas journalise leur raison
+  # (Ctrl+C, exception). Une fenetre de console fermee brutalement tue le
+  # processus sans passer ici : ce cas restera muet, et c'est justement ce
+  # qu'une derniere ligne de synthese permet de distinguer.
+  if (-not $diagStopLogged) {
+    Write-Diag ("ARRET sans raison journalisee  dernier-onglet={0}  premier-ping-recu={1}" -f $lastVisibility, $everPinged)
+  }
   try { $listener.Stop(); $listener.Close() } catch {}
 }

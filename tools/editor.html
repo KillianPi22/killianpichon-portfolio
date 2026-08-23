@@ -478,7 +478,11 @@ function reloadPreview(){
 /* --------------------------------------------- battement de coeur + veille */
 /* Battement de coeur des le chargement, meme verrouille : sans lui le serveur
    s'arreterait pendant la saisie du mot de passe. /__ping ne renvoie rien. */
-setInterval(() => { fetch('/__ping').catch(()=>{}); }, 5000);
+/* L'etat de visibilite accompagne le battement : c'est la mesure qui doit dire
+   si les coupures viennent du bridage des minuteurs en arriere-plan. Rien
+   d'autre ne change, surtout pas la cadence, sinon on masquerait le phenomene.
+   Diagnostic temporaire, a retirer avec celui de serve.ps1. */
+setInterval(() => { fetch('/__ping?v=' + document.visibilityState).catch(()=>{}); }, 5000);
 
 setInterval(async () => {
   if (!token) return;
