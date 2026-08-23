@@ -764,6 +764,13 @@ if (-not $NoBrowser) { Start-Process $editorUrl | Out-Null }
 $lastPing = Get-Date
 $everPinged = $false
 $lastVisibility = "?"
+# Le diagnostic tient son propre horodatage. $lastPing est rafraichi par les
+# DIX routes de l'editeur, pas seulement par /__ping : mesurer l'ecart entre
+# battements a partir de lui reviendrait a effacer un battement en retard des
+# que tu enregistres un texte ou charges une image, c'est-a-dire exactement
+# quand il faut le voir.
+$lastBeat = Get-Date
+$diagFirstBeatLogged = $false
 $diagWindowStart = Get-Date
 $diagBeats = 0
 $diagMaxGap = 0
@@ -782,7 +789,11 @@ try {
       if ($idle -gt $limit) {
         if ($everPinged) { Write-Host "  Editeur ferme - arret du serveur." }
         else { Write-Host "  Aucun editeur connecte - arret du serveur." }
-        Write-Diag ("ARRET par inactivite  silence={0:N1}s  tolerance={1}s  dernier-onglet={2}  premier-ping-recu={3}" -f $idle, $limit, $lastVisibility, $everPinged)
+        # Deux silences distincts : celui que le serveur surveille (toute route
+        # de l'editeur) et celui des seuls battements. Un ecart entre les deux
+        # signe une activite qui masquait un coeur deja arrete.
+        $beatSilence = ((Get-Date) - $lastBeat).TotalSeconds
+        Write-Diag ("ARRET par inactivite  silence={0:N1}s  silence-battement={1:N1}s  tolerance={2}s  dernier-onglet={3}  premier-ping-recu={4}" -f $idle, $beatSilence, $limit, $lastVisibility, $everPinged)
         $diagStopLogged = $true
         $listener.Stop(); return
       }
@@ -858,12 +869,13 @@ try {
         # Diagnostic : les battements en retard sont notes un par un, les
         # autres seulement comptes puis resumes chaque minute. Sans ce resume,
         # un journal muet ne dirait pas si l'editeur bat ou s'il est absent.
-        $gap = ((Get-Date) - $lastPing).TotalSeconds
+        $gap = ((Get-Date) - $lastBeat).TotalSeconds
         $visibility = $req.QueryString["v"]
         if (-not $visibility) { $visibility = "?" }
 
-        if (-not $everPinged) {
+        if (-not $diagFirstBeatLogged) {
           Write-Diag "premier battement recu  onglet=$visibility"
+          $diagFirstBeatLogged = $true
           $diagWindowStart = Get-Date
         } else {
           $diagBeats++
@@ -881,6 +893,7 @@ try {
         # Un battement sans etat connu ne doit pas effacer le dernier etat reel :
         # la ligne d'arret perdrait justement l'information qu'on cherche.
         if ($visibility -ne "?") { $lastVisibility = $visibility }
+        $lastBeat = Get-Date
 
         $lastPing = Get-Date; $everPinged = $true
         Send-Json $res @{ ok = $true }
