@@ -153,6 +153,7 @@ button{color:inherit}
 .awards-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
 .awards-cell{border-left:1px solid var(--line-subtle);min-width:0}
 .awards-cell:nth-child(6n+1){border-left:none}
+.awards-cell:nth-child(n+7){border-top:1px solid var(--line-subtle)}
 @media (max-width: 1023px){
   .awards-row{grid-template-columns:repeat(3,minmax(0,1fr))}
   .awards-cell:nth-child(n){border-left:1px solid var(--line-subtle);border-top:none}
@@ -1971,6 +1972,10 @@ function HomeScreen({
     type: 'Official Nominee',
     festival: 'Innovation Animation — PFCAT 2026',
     project: "Traveler's Introspection"
+  }, {
+    type: 'Winner',
+    festival: 'Prix NUMIX 2026 — International Exhibition',
+    project: 'Into the Volcano'
   }];
   return React.createElement("div", {
     style: {
@@ -2149,16 +2154,19 @@ const PROJECT_DATA = {
     studio: 'Normal Studio',
     venue: 'Perlan Museum, Reykjavík',
     desc: 'A 270° museum experience combining volcanic footage with digital landscapes prepared for close, large-format viewing.',
-    overview: 'Created for the Perlan Museum in Reykjavík, the installation moves between documentary footage of eruptions and reconstructed volcanic environments. My contribution centered on making ultra-high-resolution geological assets usable in production while preserving the surface detail needed for an immersive screen.',
+    overview: 'Created for the custom-built planetarium at Perlan in Reykjavík, the installation is a permanent, daily-screened descent beneath the Snæfellsnes Peninsula, moving from documentary footage of eruptions into reconstructed volcanic environments. The image runs on a continuous LED surface wrapping the audience 270° vertically and 360° horizontally, extended by a glass floor underfoot, so rock is read from close range rather than at a framed distance. Those environments were rebuilt in part from photogrammetry of Icelandic rock and cliff faces. My contribution centered on making the resulting ultra-high-resolution geological assets usable in production while preserving the surface detail that viewing distance exposes.',
     role: 'Environment Artist — Look Development & High-Resolution Asset Integration',
     tools: ['Unreal Engine 5', 'Cinema 4D', 'Substance 3D', 'Photoshop'],
     contribution: ['Assessed and prepared geological assets carrying 16K texture sources.', 'Cleaned and repaired texture areas that would become visible at installation scale.', 'Integrated the assets into the real-time environment and balanced fidelity against production performance.', 'Documented a repeatable handoff between texture repair, look development and final scene integration.'],
     technicalChallenges: ['Challenge — the 16K textures carried the geological detail required by the experience, but their size made inspection, repair and iteration difficult.', 'Production response — the textures were divided into deliberate repair and validation stages so only the areas that affected the final view received intensive work.', 'Production impact — high-resolution assets could move through look development and integration without treating every source file as an equally expensive operation.'],
+    recognition: ['Prix NUMIX 2026 — Winner, International · Exhibition'],
     pipeline: ['16K source-texture assessment', 'Targeted cleaning and repair', 'High-resolution asset integration', 'Look-development review', 'Performance-aware scene preparation'],
     impact: 'The workflow preserved the geological detail needed for the 270° presentation while making the assets practical to review and integrate during production.',
     galleryImages: [window.__asset('projects/volcano/iceland-cliffs.jpg'), window.__asset('projects/volcano/installation-view.png')],
     placeholderTiles: 2,
+    creditsNote: 'Directed by Tommy Caron — Normal Studio',
     externalUrl: 'https://normal.studio/en/projects/into-the-volcano/',
+    externalLabel: 'See more on Normal Studio',
     prev: 'Hurtubise : Saisir le Chaos',
     next: 'Melanie Martinez'
   },
@@ -3452,7 +3460,7 @@ const EXPERIENCE = [{
   role: 'Realtime 3D Generalist / Motion Designer',
   org: 'Normal Studio — Montréal, QC',
   desc: 'Contributed to immersive installations, traveling shows and fulldome productions alongside artists, designers and developers. My work focused on animation systems, projection-scale look development, compositing handoffs and preview studies that helped teams review spatial content earlier in production.',
-  productions: ['Celestia — Developed scalable flock animation, a projection-readable visual treatment and separated compositing passes; also explored a PC/VR review workflow for artists, production and the client before installation.', 'Hurtubise — Built reusable neon-animation systems and synchronized layered artwork with music for a fulldome presentation.', 'Volcano — Structured the cleaning, repair and integration of 16K geological textures for a large-format immersive environment.']
+  productions: ['Celestia — Developed scalable flock animation, a projection-readable visual treatment and separated compositing passes; also explored a PC/VR review workflow for artists, production and the client before installation.', 'Hurtubise — Built reusable neon-animation systems and synchronized layered artwork with music for a fulldome presentation.', 'Volcano — Winner, Prix NUMIX 2026 (International · Exhibition). Structured the cleaning, repair and integration of 16K geological textures for a large-format immersive environment.']
 }, {
   period: '2018 — 2022',
   role: '3D Generalist / Motion Designer',
