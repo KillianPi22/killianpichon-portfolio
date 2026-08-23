@@ -3,9 +3,11 @@
 
   const MEASUREMENT_ID = 'G-P0LGWRTE4C';
   const STORAGE_KEY = 'kp_analytics_consent_v1';
+  const DISMISS_KEY = 'kp_analytics_banner_dismissed_v1';
   const GRANTED = 'granted';
   const DENIED = 'denied';
   let memoryConsent = null;
+  let memoryDismissed = false;
   let tagLoaded = false;
   let lastPageLocation = '';
   let pageViewTimer = 0;
@@ -48,6 +50,27 @@
       window.localStorage.setItem(STORAGE_KEY, value);
     } catch (error) {
       // The in-memory choice still applies for this page view.
+    }
+  }
+
+  // Closing the banner is not a choice: nothing is recorded and analytics stays
+  // unloaded. The banner only steps aside for the current browsing session, so
+  // the question comes back on the next visit instead of being lost.
+  function readDismissed() {
+    try {
+      if (window.sessionStorage.getItem(DISMISS_KEY) === '1') return true;
+    } catch (error) {
+      // Private browsing or a locked-down browser can disable sessionStorage.
+    }
+    return memoryDismissed;
+  }
+
+  function storeDismissed() {
+    memoryDismissed = true;
+    try {
+      window.sessionStorage.setItem(DISMISS_KEY, '1');
+    } catch (error) {
+      // The in-memory dismissal still applies for this page view.
     }
   }
 
@@ -94,7 +117,12 @@
 
   function setBannerVisibility(forceOpen) {
     if (!banner) return;
-    banner.hidden = !forceOpen && readConsent() !== null;
+    banner.hidden = !forceOpen && (readConsent() !== null || readDismissed());
+  }
+
+  function dismissBanner() {
+    storeDismissed();
+    setBannerVisibility(false);
   }
 
   function chooseConsent(value) {
@@ -143,7 +171,7 @@
     banner.addEventListener('click', function (event) {
       const choice = event.target.closest('[data-consent]');
       if (choice) chooseConsent(choice.getAttribute('data-consent'));
-      if (event.target.closest('.kp-analytics-consent__close')) setBannerVisibility(false);
+      if (event.target.closest('.kp-analytics-consent__close')) dismissBanner();
     });
     document.body.appendChild(banner);
   }

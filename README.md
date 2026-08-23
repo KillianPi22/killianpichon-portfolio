@@ -159,7 +159,7 @@ des fichiers statiques et n'execute jamais `serve.ps1`. Les corrections
 n'affectent que les fichiers locaux, jusqu'au `git push` qui, lui, met a jour
 killianpichon.art.
 
-Trois protections encadrent l'outil local :
+Quatre protections encadrent l'outil local :
 
 - **Routes reservees a la machine hote.** Les routes `/__*` (lecture et ecriture
   des textes) sont refusees a toute requete non locale. En Wi-Fi, un telephone
@@ -170,6 +170,12 @@ Trois protections encadrent l'outil local :
   La session expire au bout de 12 h ou a la fermeture de l'onglet.
 - **Ralentissement des essais.** Apres cinq echecs, les tentatives sont bloquees
   temporairement, avec un delai croissant.
+- **Fichiers jamais servis.** `tools/auth.json`, `tools/.backups/`, `.git/` et
+  `.claude/` vivent dans le dossier du site mais n'en font pas partie : le
+  serveur repond 404, meme a une requete locale. Le filtre porte sur le chemin
+  resolu et non sur l'URL, donc aucune variante d'encodage ne le contourne.
+  Sans lui, un telephone connecte en Wi-Fi pourrait lire l'empreinte du mot de
+  passe et l'attaquer hors ligne.
 
 ### Contenus a acces restreint
 
@@ -197,6 +203,15 @@ de l'interface, et un lien YouTube non repertorie peut etre repartage par toute
 personne qui l'a obtenu. Ne pas placer de document NDA dans le depot GitHub
 Pages : pour un contenu reellement sensible, utiliser un hebergement prive avec
 controle d'identite cote serveur, ou le partage prive de la plateforme video.
+
+Toute la solidite du dispositif tient donc a l'entropie du code. La charge
+chiffree etant publique, un attaquant ne passe pas par le formulaire : il la
+copie et l'attaque hors ligne, sans subir le ralentissement. Mesure faite sur le
+site : 91 ms par essai dans le navigateur, mais de l'ordre de 10 000 essais par
+seconde sur une carte graphique dediee. Un mot du dictionnaire, un titre de film
+ou une date tombe en quelques secondes. Choisir une phrase de cinq mots
+aleatoires, ou seize caracteres aleatoires, et ne jamais deriver le code du nom
+du projet, du client ou du festival.
 
 ### Acces iPhone (Wi-Fi)
 

@@ -24,6 +24,15 @@ $Root       = Split-Path -Parent $ScriptDir
 $TargetFile = Join-Path $Root "index.html"
 $BackupDir  = Join-Path $ScriptDir ".backups"
 
+# Chemins que le serveur de fichiers ne divulgue jamais, resolus une fois pour
+# toutes. Ils vivent dans le dossier du site mais n'en font pas partie.
+$ForbiddenPaths = @(
+  (Join-Path $ScriptDir "auth.json"),
+  $BackupDir,
+  (Join-Path $Root ".git"),
+  (Join-Path $Root ".claude")
+) | ForEach-Object { [System.IO.Path]::GetFullPath($_) }
+
 if (-not (Test-Path $TargetFile)) { throw "index.html introuvable dans $Root" }
 if (-not (Test-Path $BackupDir))  { New-Item -ItemType Directory -Path $BackupDir | Out-Null }
 
@@ -942,6 +951,28 @@ try {
       if (-not $full.StartsWith($rootFull, [StringComparison]::OrdinalIgnoreCase)) {
         $res.StatusCode = 403; $res.Close(); continue
       }
+
+      # Fichiers presents dans le dossier mais jamais servis : empreinte du mot
+      # de passe, historique Git, sauvegardes de l'editeur, copies de travail.
+      # En Wi-Fi, sans ce filtre, tout appareil du reseau local pourrait les
+      # lire. Le test porte sur le chemin resolu, pas sur l'URL : aucune
+      # variante d'encodage ne le contourne.
+      $isForbidden = $false
+      foreach ($guarded in $ForbiddenPaths) {
+        if ($full.Equals($guarded, [StringComparison]::OrdinalIgnoreCase) -or
+            $full.StartsWith($guarded + [System.IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
+          $isForbidden = $true; break
+        }
+      }
+      if ($isForbidden) {
+        $res.StatusCode = 404
+        $m = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found: $rel")
+        $res.ContentType = "text/plain; charset=utf-8"
+        $res.ContentLength64 = $m.Length
+        if ($req.HttpMethod -ne "HEAD") { $res.OutputStream.Write($m, 0, $m.Length) }
+        $res.Close(); continue
+      }
+
       if (Test-Path -LiteralPath $full -PathType Container) { $full = Join-Path $full "index.html" }
 
       if (Test-Path -LiteralPath $full -PathType Leaf) {
