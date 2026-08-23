@@ -213,8 +213,9 @@ button{color:inherit}
   .project-nav-button{width:44px!important;height:44px!important}
   .modal-backdrop{padding:20px!important}
 
+  .exp-timeline{--exp-lane-0:11px!important;--exp-lane-gap:10px!important}
   .exp-rail{left:11px!important}
-  .exp-row{grid-template-columns:24px 1fr!important;column-gap:4px}
+  .exp-row{grid-template-columns:38px 1fr!important;column-gap:4px}
   .exp-row .exp-dot-cell{grid-column:1;grid-row:1/span 2}
   .exp-row .exp-year{grid-column:2;grid-row:1;transform:none!important;margin-bottom:6px}
   .exp-row .exp-body{grid-column:2;grid-row:2}
@@ -3445,24 +3446,32 @@ const TOOLKIT = {
 };
 const EXPERIENCE = [{
   period: '2024 — Present',
+  start: 2024,
+  end: null,
   role: 'Co-founder / Realtime Artist',
   org: 'Fantastik Obsolete — Montréal, QC',
   desc: "Co-founded an independent collective dedicated to immersive cinema and real-time storytelling. I guide camera, look development, visual effects and technical decisions from early studies through fulldome delivery, keeping creative choices connected to how an audience experiences the work inside the dome.",
   productions: ["Traveler's Introspection — Public Award, SATFest 2026. Official Selection: Dome Under Film Festival, PFCAT, Macon Film Festival, FDUK."]
 }, {
   period: '2023 — Present',
+  start: 2023,
+  end: null,
   role: 'Realtime 3D Generalist / Motion Designer',
   org: 'Freelance — Montréal, QC',
   desc: 'Develop immersive visuals, cinematic environments and interactive content for entertainment, cultural and live-event productions. The work combines image-making with practical production decisions: clarifying handoffs, protecting iteration time and adapting content to the display system where it will be experienced.',
   productions: ['Clients & Projects: Melanie Martinez Tour (Normal Studio), XYZ Technologies, Lumin-Art, Transversal.']
 }, {
   period: '2025 — 2026',
+  start: 2025,
+  end: 2026,
   role: 'Realtime 3D Generalist / Motion Designer',
   org: 'Normal Studio — Montréal, QC',
   desc: 'Contributed to immersive installations, traveling shows and fulldome productions alongside artists, designers and developers. My work focused on animation systems, projection-scale look development, compositing handoffs and preview studies that helped teams review spatial content earlier in production.',
   productions: ['Celestia — Developed scalable flock animation, a projection-readable visual treatment and separated compositing passes; also explored a PC/VR review workflow for artists, production and the client before installation.', 'Hurtubise — Built reusable neon-animation systems and synchronized layered artwork with music for a fulldome presentation.', 'Volcano — Winner, Prix NUMIX 2026 (International · Exhibition). Structured the cleaning, repair and integration of 16K geological textures for a large-format immersive environment.']
 }, {
   period: '2018 — 2022',
+  start: 2018,
+  end: 2022,
   role: '3D Generalist / Motion Designer',
   org: 'Graphics eMotion — Montréal, QC',
   desc: 'Contributed to projection mapping, museum installations and live-event productions for international clients. The work required adapting animation, compositing and visual effects to architectural surfaces, public viewing distances and the shared delivery needs of multidisciplinary teams.',
@@ -3505,6 +3514,52 @@ function AboutSection({
     }
   }, title), children);
 }
+function computeExperienceLanes(items) {
+  // Sans bornes explicites, on retombe sur le rail unique d'origine.
+  if (items.some(it => typeof it.start !== 'number')) {
+    return {
+      laneOf: items.map(() => 0),
+      tracks: []
+    };
+  }
+  const endOf = it => it.end == null ? Infinity : it.end;
+  const overlap = (a, b) => a.start <= endOf(b) && b.start <= endOf(a);
+  // Placement glouton : chaque poste prend la voie libre la plus a gauche.
+  const laneOf = [];
+  items.forEach((it, i) => {
+    let lane = 0;
+    while (laneOf.some((l, j) => l === lane && overlap(items[j], it))) lane++;
+    laneOf[i] = lane;
+  });
+  const laneCount = laneOf.reduce((m, l) => Math.max(m, l + 1), 1);
+  // Etendue verticale de chaque branche. La voie 0 est le rail principal,
+  // deja rendu au niveau du conteneur.
+  const tracks = [];
+  for (let lane = 1; lane < laneCount; lane++) {
+    const owner = laneOf.indexOf(lane);
+    if (owner < 0) continue;
+    const it = items[owner];
+    let to = owner;
+    items.forEach((other, j) => {
+      if (j > to && overlap(other, it)) to = j;
+    });
+    tracks.push({
+      lane: lane,
+      // Un poste en cours remonte jusqu'au haut de la carte : il touche
+      // le present. Un poste termine demarre a sa propre rangee.
+      from: it.end == null ? 0 : owner,
+      to: to,
+      ongoing: it.end == null
+    });
+  }
+  return {
+    laneOf: laneOf,
+    tracks: tracks
+  };
+}
+function experienceLaneLeft(lane) {
+  return 'calc(var(--exp-lane-0) + ' + lane + ' * var(--exp-lane-gap))';
+}
 function ExperienceTimeline({
   items
 }) {
@@ -3516,6 +3571,7 @@ function ExperienceTimeline({
   const [revealed, setRevealed] = React.useState(() => items.map(() => false));
   const [armed, setArmed] = React.useState(false);
   const staticRef = React.useRef(false);
+  const layout = React.useMemo(() => computeExperienceLanes(items), [items]);
   React.useEffect(() => {
     staticRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (staticRef.current) {
@@ -3590,6 +3646,8 @@ function ExperienceTimeline({
     return () => io.disconnect();
   }, [items]);
   const railFade = 'linear-gradient(180deg, transparent 0, #000 72px, #000 calc(100% - 72px), transparent 100%)';
+  const branchFade = 'linear-gradient(180deg, transparent 0, #000 72px)';
+  const branchStartFade = 'linear-gradient(180deg, transparent 0, #000 28px)';
   return React.createElement("div", {
     className: "exp-timeline",
     ref: wrapRef,
@@ -3597,7 +3655,8 @@ function ExperienceTimeline({
       position: 'relative',
       display: 'flex',
       flexDirection: 'column',
-      gap: 'var(--space-7)'
+      '--exp-lane-0': '14px',
+      '--exp-lane-gap': '16px'
     }
   }, React.createElement("div", {
     className: "exp-rail",
@@ -3631,12 +3690,8 @@ function ExperienceTimeline({
     style: {
       position: 'relative',
       display: 'grid',
-      gridTemplateColumns: '120px 28px 1fr',
-      alignItems: 'start',
-      opacity: !armed || revealed[i] ? 1 : 0,
-      transform: !armed || revealed[i] ? 'none' : 'translateY(24px)',
-      transition: 'opacity 700ms var(--ease-out), transform 700ms var(--ease-out)',
-      transitionDelay: revealed[i] ? i % 2 === 0 ? '0ms' : '60ms' : '0ms'
+      gridTemplateColumns: '120px 56px 1fr',
+      alignItems: 'start'
     }
   }, React.createElement("div", {
     className: "exp-year",
@@ -3645,19 +3700,57 @@ function ExperienceTimeline({
       fontFamily: 'var(--font-mono)',
       fontSize: 'var(--text-small)',
       color: 'var(--text-faint)',
-      willChange: 'transform'
+      willChange: 'transform',
+      opacity: !armed || revealed[i] ? 1 : 0,
+      transition: 'opacity 700ms var(--ease-out)'
     }
   }, e.period), React.createElement("div", {
     className: "exp-dot-cell",
     "aria-hidden": "true",
     style: {
-      display: 'flex',
-      justifyContent: 'center',
-      paddingTop: '9px'
+      position: 'relative',
+      alignSelf: 'stretch'
     }
-  }, React.createElement("div", {
+  }, layout.tracks.filter(t => i >= t.from && i <= t.to).map(t => {
+    const isTop = i === t.from;
+    const isBottom = i === t.to;
+    const parts = [React.createElement("div", {
+      key: "seg",
+      style: {
+        position: 'absolute',
+        top: 0,
+        bottom: isBottom ? 'calc(' + t.lane + ' * var(--exp-lane-gap))' : 0,
+        left: experienceLaneLeft(t.lane),
+        width: '1px',
+        background: 'var(--line-default)',
+        WebkitMaskImage: isTop ? t.ongoing ? branchFade : branchStartFade : 'none',
+        maskImage: isTop ? t.ongoing ? branchFade : branchStartFade : 'none'
+      }
+    })];
+    // Raccordement a 45 degres vers la voie de gauche.
+    if (isBottom) parts.push(React.createElement("div", {
+      key: "merge",
+      style: {
+        position: 'absolute',
+        bottom: 'calc(' + t.lane + ' * var(--exp-lane-gap))',
+        left: experienceLaneLeft(t.lane),
+        width: 'calc(var(--exp-lane-gap) * 1.4143)',
+        height: '1px',
+        background: 'var(--line-default)',
+        transformOrigin: '0 50%',
+        transform: 'rotate(135deg)'
+      }
+    }));
+    return React.createElement(React.Fragment, {
+      key: t.lane
+    }, parts);
+  }), React.createElement("div", {
     ref: el => dotRefs.current[i] = el,
     style: {
+      position: 'absolute',
+      top: '9px',
+      left: experienceLaneLeft(layout.laneOf[i]),
+      transform: 'translateX(-50%)',
       width: '9px',
       height: '9px',
       borderRadius: '50%',
@@ -3666,7 +3759,14 @@ function ExperienceTimeline({
       transition: 'background 300ms var(--ease-out), border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out)'
     }
   })), React.createElement("div", {
-    className: "exp-body"
+    className: "exp-body",
+    style: {
+      paddingBottom: i === items.length - 1 ? 0 : 'var(--space-7)',
+      opacity: !armed || revealed[i] ? 1 : 0,
+      transform: !armed || revealed[i] ? 'none' : 'translateY(24px)',
+      transition: 'opacity 700ms var(--ease-out), transform 700ms var(--ease-out)',
+      transitionDelay: revealed[i] ? i % 2 === 0 ? '0ms' : '60ms' : '0ms'
+    }
   }, React.createElement("div", {
     style: {
       fontFamily: 'var(--font-display)',
