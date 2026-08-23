@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://killianpichon.art/</loc>
-    <lastmod>2026-08-21</lastmod>
+    <lastmod>2026-08-23</lastmod>
     <image:image>
       <image:loc>https://killianpichon.art/assets/og-image.jpg</image:loc>
     </image:image>
@@ -17,10 +17,10 @@
       <image:loc>https://killianpichon.art/projects/volcano/iceland-cliffs.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/traveler/planet-strands.png</image:loc>
+      <image:loc>https://killianpichon.art/projects/melanie-martinez/k12-seesaw.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/melanie-martinez/k12-seesaw.jpg</image:loc>
+      <image:loc>https://killianpichon.art/projects/traveler/planet-strands.png</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://killianpichon.art/projects/paralleles/installation-neon-x.jpg</image:loc>

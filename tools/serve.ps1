@@ -14,7 +14,10 @@
 param(
   [int]$Port = 8000,
   [switch]$NoBrowser,
-  [int]$IdleTimeoutSeconds = 25
+  [int]$IdleTimeoutSeconds = 25,
+  # Charge les fonctions sans ouvrir de port. Sert a les mettre a l'epreuve
+  # depuis un script de test, sur une copie du site, sans mot de passe.
+  [switch]$NoServe
 )
 
 $ErrorActionPreference = "Stop"
@@ -65,6 +68,25 @@ function Write-Diag([string]$line) {
 if (-not (Test-Path $TargetFile)) { throw "index.html introuvable dans $Root" }
 if (-not (Test-Path $BackupDir))  { New-Item -ItemType Directory -Path $BackupDir | Out-Null }
 
+# ------------------------------------------------------------ fichiers edites
+# index.html porte le site, data/projects.js porte les fiches des projets.
+# Les deux doivent etre inspectes ensemble : depuis que les fiches ont quitte
+# index.html, ne scanner que lui ferait disparaitre tous les textes de projet
+# de l'inventaire, sans que rien ne le signale.
+$DataFile = Join-Path $Root "data\projects.js"
+
+$Sources = @(
+  [pscustomobject]@{ key = "index";    path = $TargetFile; label = "index.html";       backup = "index";    ext = ".html" }
+  [pscustomobject]@{ key = "projects"; path = $DataFile;   label = "data/projects.js"; backup = "projects"; ext = ".js"   }
+)
+
+# Un depot sans fichier de donnees reste utilisable : on n'expose que ce qui
+# existe vraiment, plutot que d'echouer a la lecture.
+function Get-Sources { return @($Sources | Where-Object { Test-Path -LiteralPath $_.path -PathType Leaf }) }
+function Get-Source([string]$key) { return (Get-Sources | Where-Object { $_.key -eq $key } | Select-Object -First 1) }
+function Read-SourceLines($src) { return [System.IO.File]::ReadAllLines($src.path, [System.Text.UTF8Encoding]::new($false)) }
+function Get-SourceRelPath($src) { return ($src.path.Substring($Root.Length).TrimStart('\') -replace '\\', '/') }
+
 # --------------------------------------------------------------- mot de passe
 # auth.json contient un sel aleatoire et une empreinte PBKDF2 du mot de passe :
 # le mot de passe lui-meme n'y figure pas et ne peut pas en etre deduit.
@@ -87,21 +109,28 @@ function Test-BytesEqual([byte[]]$a, [byte[]]$b) {
 }
 
 if (-not (Test-Path $AuthFile)) {
-  Write-Host ""
-  Write-Host "  Aucun mot de passe defini."
-  Write-Host "  Lance d'abord tools\set-password.cmd, puis relance edit-site.cmd."
-  Write-Host ""
-  Read-Host "  Appuie sur Entree pour fermer"
-  return
+  # En mode bibliotheque, aucun port n'est ouvert : il n'y a rien a proteger,
+  # et exiger un mot de passe empecherait simplement de tester les fonctions.
+  if (-not $NoServe) {
+    Write-Host ""
+    Write-Host "  Aucun mot de passe defini."
+    Write-Host "  Lance d'abord tools\set-password.cmd, puis relance edit-site.cmd."
+    Write-Host ""
+    Read-Host "  Appuie sur Entree pour fermer"
+    return
+  }
 }
 
-$auth = Get-Content $AuthFile -Raw | ConvertFrom-Json
-$AuthSalt = [Convert]::FromBase64String($auth.salt)
-$AuthHash = [Convert]::FromBase64String($auth.hash)
-$AuthIter = [int]$auth.iter
+if (Test-Path $AuthFile) {
+  $auth = Get-Content $AuthFile -Raw | ConvertFrom-Json
+  $AuthSalt = [Convert]::FromBase64String($auth.salt)
+  $AuthHash = [Convert]::FromBase64String($auth.hash)
+  $AuthIter = [int]$auth.iter
+}
 
 function Test-Password([string]$candidate) {
   if ([string]::IsNullOrEmpty($candidate)) { return $false }
+  if (-not $AuthHash) { return $false }
   return Test-BytesEqual (Get-Pbkdf2 $candidate $AuthSalt $AuthIter) $AuthHash
 }
 
@@ -196,8 +225,15 @@ function ConvertTo-SourceLiteral([string]$s, [char]$quote) {
 }
 
 function Get-FileStamp {
-  $fi = New-Object System.IO.FileInfo $TargetFile
-  return "$($fi.LastWriteTimeUtc.Ticks)-$($fi.Length)"
+  # L'empreinte couvre tous les fichiers edites : une modification exterieure
+  # de data/projects.js doit alerter au meme titre qu'une modification
+  # d'index.html.
+  $parts = @()
+  foreach ($src in Get-Sources) {
+    $fi = New-Object System.IO.FileInfo $src.path
+    $parts += "$($src.key):$($fi.LastWriteTimeUtc.Ticks)-$($fi.Length)"
+  }
+  return ($parts -join '|')
 }
 
 function Get-Branch {
@@ -222,8 +258,16 @@ function Get-AppCodeStart([string[]]$lines) {
   return -1
 }
 
-function Get-StringsFromLines([string[]]$lines) {
-  $AppCodeStartLine = Get-AppCodeStart $lines
+# Ou commence la zone editable du fichier. index.html embarque React minifie,
+# qu'il ne faut jamais exposer ; data/projects.js ne contient que des donnees,
+# donc tout y est editable des la premiere ligne.
+function Get-ScanStart([string[]]$lines, [string]$key) {
+  if ($key -eq "index") { return Get-AppCodeStart $lines }
+  return 0
+}
+
+function Get-StringsFromLines([string[]]$lines, [string]$key = "index") {
+  $AppCodeStartLine = Get-ScanStart $lines $key
   if ($AppCodeStartLine -lt 0) { return @() }
 
   $items = @()
@@ -233,13 +277,18 @@ function Get-StringsFromLines([string[]]$lines) {
     # Le nom de section vient de la fonction englobante. Sans le second cas, le
     # code de premier niveau qui suit les fonctions (SCREEN_META, PROJECT_DATA)
     # heritait du nom de la derniere fonction rencontree, ce qui etait faux.
-    if ($line -match '^function\s+([A-Za-z0-9_]+)\s*\(') { $section = $Matches[1] }
+    # Dans le fichier de donnees, la section utile est le projet lui-meme.
+    if ($key -eq "projects") {
+      if ($line -match $ProjectKeyPattern) { $section = "Projet " + $Matches['id'] }
+    }
+    elseif ($line -match '^function\s+([A-Za-z0-9_]+)\s*\(') { $section = $Matches[1] }
     elseif ($line -match '^(?:const|let|var)\s+([A-Za-z0-9_]+)\s*=') { $section = $Matches[1] }
     if (($i + 1) -lt $AppCodeStartLine) { continue }
     foreach ($m in $rx.Matches($line)) {
       $v = $m.Groups['val'].Value
       if (-not (Test-Editorial $v)) { continue }
       $items += [pscustomobject]@{
+        file    = $key
         line    = $i + 1
         start   = $m.Groups['val'].Index
         len     = $v.Length
@@ -254,7 +303,11 @@ function Get-StringsFromLines([string[]]$lines) {
 }
 
 function Get-Strings {
-  return Get-StringsFromLines ([System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false)))
+  $items = @()
+  foreach ($src in Get-Sources) {
+    $items += @(Get-StringsFromLines (Read-SourceLines $src) $src.key)
+  }
+  return $items
 }
 
 # ================================================================= MEDIAS ====
@@ -268,8 +321,8 @@ $rxImage = [regex]::new("(?<q>['""])(?<v>[^'""]*\.(?:avif|webp|jpe?g|png|gif|svg
 $rxBaseDecl = [regex]::new("^(?:const|let|var)\s+(?<n>[A-Za-z_][A-Za-z0-9_]*)\s*=\s*['""](?<p>[^'""]*/)['""]")
 $rxConcat = [regex]::new("(?<n>[A-Za-z_][A-Za-z0-9_]*)\s*\+\s*$")
 
-function Get-MediaFromLines([string[]]$lines) {
-  $start = Get-AppCodeStart $lines
+function Get-MediaFromLines([string[]]$lines, [string]$key = "index") {
+  $start = Get-ScanStart $lines $key
   if ($start -lt 0) { return @() }
 
   # Les prefixes de chemin declares en constante, pour resoudre les
@@ -284,7 +337,10 @@ function Get-MediaFromLines([string[]]$lines) {
   $section = "Global"
   for ($i = 0; $i -lt $lines.Length; $i++) {
     $line = $lines[$i]
-    if ($line -match '^function\s+([A-Za-z0-9_]+)\s*\(') { $section = $Matches[1] }
+    if ($key -eq "projects") {
+      if ($line -match $ProjectKeyPattern) { $section = "Projet " + $Matches['id'] }
+    }
+    elseif ($line -match '^function\s+([A-Za-z0-9_]+)\s*\(') { $section = $Matches[1] }
     elseif ($line -match '^(?:const|let|var)\s+([A-Za-z0-9_]+)\s*=') { $section = $Matches[1] }
     if (($i + 1) -lt $start) { continue }
 
@@ -299,6 +355,7 @@ function Get-MediaFromLines([string[]]$lines) {
       $resolved = $base + $literal
       $disk = Join-Path $Root ($resolved -replace '/', '\')
       $items += [pscustomobject]@{
+        file     = $key
         line     = $i + 1
         start    = $m.Groups['v'].Index
         len      = $literal.Length
@@ -316,7 +373,11 @@ function Get-MediaFromLines([string[]]$lines) {
 }
 
 function Get-Media {
-  return Get-MediaFromLines ([System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false)))
+  $items = @()
+  foreach ($src in Get-Sources) {
+    $items += @(Get-MediaFromLines (Read-SourceLines $src) $src.key)
+  }
+  return $items
 }
 
 # Inventaire des fichiers disponibles, pour proposer un choix plutot que de
@@ -361,10 +422,33 @@ function Invoke-Git([string[]]$gitArgs) {
 # Version de index.html telle qu'elle est dans le dernier commit.
 # Passe par un fichier pour recuperer les octets bruts : une capture texte
 # de la sortie de git abimerait les accents.
-function Get-HeadContent {
+# Ce que l'editeur a le droit de commiter. La pathspec finale garantit
+# qu'aucun autre fichier modifie ne sera embarque, quel que soit l'index git.
+$CommitPaths = @("index.html", "data/projects.js", "projects", "sitemap.xml")
+
+# Branche de travail de l'editeur. main est la branche de publication : y
+# ecrire depuis l'outil mettrait le site en ligne sans relecture.
+$ContentBranch = "content"
+
+function Set-ContentBranch {
+  $current = Get-Branch
+  if ($current -eq $ContentBranch) { return @{ ok = $true; switched = $false } }
+  if ($current -eq "(hors git)") { return @{ ok = $false; reason = "Dossier hors depot git." } }
+
+  $exists = (Invoke-Git @("rev-parse", "--verify", "--quiet", "refs/heads/$ContentBranch")).code -eq 0
+  $checkoutArgs = $(if ($exists) { @("checkout", $ContentBranch) } else { @("checkout", "-b", $ContentBranch) })
+  $r = Invoke-Git $checkoutArgs
+  if ($r.code -ne 0) {
+    $why = $(if ([string]::IsNullOrWhiteSpace($r.stderr)) { $r.stdout } else { $r.stderr }).Trim()
+    return @{ ok = $false; reason = "Impossible de passer sur la branche $ContentBranch : $why" }
+  }
+  return @{ ok = $true; switched = $true; from = $current }
+}
+
+function Get-HeadContent([string]$rel = "index.html") {
   $tmp = [System.IO.Path]::GetTempFileName()
   try {
-    $p = Start-Process -FilePath "git" -ArgumentList @("-C", $Root, "show", "HEAD:index.html") `
+    $p = Start-Process -FilePath "git" -ArgumentList @("-C", $Root, "show", "HEAD:$rel") `
            -RedirectStandardOutput $tmp -NoNewWindow -Wait -PassThru
     if ($p.ExitCode -ne 0) { return $null }
     $enc = [System.Text.UTF8Encoding]::new($false)
@@ -402,9 +486,11 @@ function Get-Changes {
     }
   }
 
-  # 2. Les chemins d'images.
-  $nowMedia  = @(Get-Media)
-  $headMedia = @(Get-MediaFromLines $headContent.lines)
+  # 2. Les chemins d'images d'index.html. Ceux des fiches sont compares plus
+  #    bas, projet par projet : les melanger ferait dependre la comparaison du
+  #    nombre de projets, donc echouer des qu'on en ajoute un.
+  $nowMedia  = @(Get-MediaFromLines ([System.IO.File]::ReadAllLines($TargetFile, [System.Text.UTF8Encoding]::new($false))) "index")
+  $headMedia = @(Get-MediaFromLines $headContent.lines "index")
   if ($headMedia.Count -eq $nowMedia.Count) {
     for ($i = 0; $i -lt $nowMedia.Count; $i++) {
       if ($headMedia[$i].raw -ne $nowMedia[$i].raw) {
@@ -423,7 +509,7 @@ function Get-Changes {
 
   if ($head.Count -ne $now.Count) {
     return @{ ok = $false; structural = $true
-              reason = "La structure du fichier a change ($($head.Count) textes commites contre $($now.Count) actuellement). Passe par GitHub Desktop pour ce commit." }
+              reason = "La structure d'index.html a change ($($head.Count) textes commites contre $($now.Count) actuellement). Passe par GitHub Desktop pour ce commit." }
   }
 
   for ($i = 0; $i -lt $now.Count; $i++) {
@@ -435,50 +521,893 @@ function Get-Changes {
       }
     }
   }
+
+  # 4. Les fiches de projet. Elles se comparent champ par champ, et non chaine
+  #    par chaine : ajouter ou retirer un projet change forcement le nombre de
+  #    textes, et ce n'est pas une anomalie mais l'usage normal de l'outil.
+  $changes += @(Get-ProjectChanges)
+
   return @{ ok = $true; changes = $changes; count = $changes.Count }
+}
+
+function Format-FieldValue($v) {
+  if ($null -eq $v) { return '' }
+  if ($v -is [array]) { return (@($v) -join ' · ') }
+  if ($v -is [pscustomobject] -and $v.PSObject.Properties['__raw']) { return '(contenu chiffre)' }
+  if ($v -is [bool]) { return $(if ($v) { 'oui' } else { 'non' }) }
+  return [string]$v
+}
+
+function Get-ProjectChanges {
+  $src = Get-Source "projects"
+  if (-not $src) { return @() }
+  $rel = Get-SourceRelPath $src
+  $headContent = Get-HeadContent $rel
+
+  $nowBlocks = @(Get-ProjectBlocks (Read-SourceLines $src))
+  $headBlocks = @()
+  if ($headContent) { $headBlocks = @(Get-ProjectBlocks $headContent.lines) }
+
+  $nowMap = @{}; foreach ($b in $nowBlocks) { $nowMap[$b.id] = ConvertFrom-ProjectBody $b.body }
+  $headMap = @{}; foreach ($b in $headBlocks) { $headMap[$b.id] = ConvertFrom-ProjectBody $b.body }
+
+  $changes = @()
+  foreach ($id in $nowMap.Keys) {
+    if ($headMap.ContainsKey($id)) { continue }
+    $t = $(if ($nowMap[$id].Contains('title')) { [string]$nowMap[$id]['title'] } else { $id })
+    $changes += [pscustomobject]@{ line = 0; section = "Projet $id"; label = "Projet ajoute"; before = ''; after = $t }
+  }
+  foreach ($id in $headMap.Keys) {
+    if ($nowMap.ContainsKey($id)) { continue }
+    $t = $(if ($headMap[$id].Contains('title')) { [string]$headMap[$id]['title'] } else { $id })
+    $changes += [pscustomobject]@{ line = 0; section = "Projet $id"; label = "Projet retire"; before = $t; after = '' }
+  }
+  foreach ($id in $nowMap.Keys) {
+    if (-not $headMap.ContainsKey($id)) { continue }
+    $a = $headMap[$id]; $b = $nowMap[$id]
+    $keys = @($a.Keys) + @($b.Keys) | Select-Object -Unique
+    foreach ($k in $keys) {
+      $va = $(if ($a.Contains($k)) { Format-FieldValue $a[$k] } else { '' })
+      $vb = $(if ($b.Contains($k)) { Format-FieldValue $b[$k] } else { '' })
+      if ($va -ne $vb) {
+        $changes += [pscustomobject]@{ line = 0; section = "Projet $id"; label = $k; before = $va; after = $vb }
+      }
+    }
+  }
+  return $changes
+}
+
+# Sauvegarde datee du fichier avant ecriture, et purge des plus anciennes.
+# Chaque fichier edite garde sa propre serie : les sauvegardes d'index.html et
+# celles du fichier de donnees ne doivent jamais se chasser l'une l'autre.
+function Backup-Source($src) {
+  $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
+  [System.IO.File]::Copy($src.path, (Join-Path $BackupDir "$($src.backup).$stamp$($src.ext)"), $true)
+  Get-ChildItem $BackupDir -Filter "$($src.backup).*$($src.ext)" |
+    Sort-Object LastWriteTime -Descending | Select-Object -Skip 20 |
+    Remove-Item -Force -ErrorAction SilentlyContinue
 }
 
 function Save-Strings($edits) {
   $enc = [System.Text.UTF8Encoding]::new($false)
-  $content = [System.IO.File]::ReadAllText($TargetFile, $enc)
-  $nl = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" }
-  $lines = [System.Collections.Generic.List[string]]::new()
-  foreach ($l in ($content -split "`r`n|`n")) { $lines.Add($l) }
-
   $applied = 0; $rejected = @()
 
-  $byLine = $edits | Group-Object -Property { $_.line }
-  foreach ($g in $byLine) {
-    $idx = [int]$g.Name - 1
-    if ($idx -lt 0 -or $idx -ge $lines.Count) {
-      foreach ($e in $g.Group) { $rejected += "ligne $($e.line) hors limites" }
+  # Une modification sans fichier vient d'une version anterieure de l'editeur :
+  # elle designe forcement index.html.
+  $byFile = $edits | Group-Object -Property { if ($_.file) { [string]$_.file } else { "index" } }
+  foreach ($fileGroup in $byFile) {
+    $src = Get-Source $fileGroup.Name
+    if (-not $src) {
+      foreach ($e in $fileGroup.Group) { $rejected += "fichier inconnu : $($fileGroup.Name)" }
       continue
     }
-    $line = $lines[$idx]
-    # droite vers gauche : les decalages restent valides
-    foreach ($e in ($g.Group | Sort-Object -Property { [int]$_.start } -Descending)) {
-      $start = [int]$e.start; $len = [int]$e.len
-      if ($start + $len -gt $line.Length) { $rejected += "ligne $($e.line) : decalage"; continue }
-      if ($line.Substring($start, $len) -ne $e.raw) {
-        $rejected += "ligne $($e.line) : la source a change depuis le chargement"; continue
+
+    $content = [System.IO.File]::ReadAllText($src.path, $enc)
+    $nl = if ($content.Contains("`r`n")) { "`r`n" } else { "`n" }
+    $lines = [System.Collections.Generic.List[string]]::new()
+    foreach ($l in ($content -split "`r`n|`n")) { $lines.Add($l) }
+
+    $fileApplied = 0
+
+    $byLine = $fileGroup.Group | Group-Object -Property { $_.line }
+    foreach ($g in $byLine) {
+      $idx = [int]$g.Name - 1
+      if ($idx -lt 0 -or $idx -ge $lines.Count) {
+        foreach ($e in $g.Group) { $rejected += "$($src.label) ligne $($e.line) hors limites" }
+        continue
       }
-      $new = ConvertTo-SourceLiteral $e.text ([char]$e.quote)
-      $line = $line.Substring(0, $start) + $new + $line.Substring($start + $len)
-      $applied++
+      $line = $lines[$idx]
+      # droite vers gauche : les decalages restent valides
+      foreach ($e in ($g.Group | Sort-Object -Property { [int]$_.start } -Descending)) {
+        $start = [int]$e.start; $len = [int]$e.len
+        if ($start + $len -gt $line.Length) { $rejected += "$($src.label) ligne $($e.line) : decalage"; continue }
+        if ($line.Substring($start, $len) -ne $e.raw) {
+          $rejected += "$($src.label) ligne $($e.line) : la source a change depuis le chargement"; continue
+        }
+        $new = ConvertTo-SourceLiteral $e.text ([char]$e.quote)
+        $line = $line.Substring(0, $start) + $new + $line.Substring($start + $len)
+        $fileApplied++
+      }
+      $lines[$idx] = $line
     }
-    $lines[$idx] = $line
+
+    if ($fileApplied -gt 0) {
+      Backup-Source $src
+      [System.IO.File]::WriteAllText($src.path, ($lines -join $nl), $enc)
+      $applied += $fileApplied
+    }
   }
 
-  if ($applied -gt 0) {
-    $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
-    [System.IO.File]::Copy($TargetFile, (Join-Path $BackupDir "index.$stamp.html"), $true)
-    [System.IO.File]::WriteAllText($TargetFile, ($lines -join $nl), $enc)
-    # ne garder que les 20 sauvegardes les plus recentes
-    Get-ChildItem $BackupDir -Filter "index.*.html" |
-      Sort-Object LastWriteTime -Descending | Select-Object -Skip 20 |
-      Remove-Item -Force -ErrorAction SilentlyContinue
-  }
   return @{ ok = ($applied -gt 0); applied = $applied; rejected = $rejected; stamp = (Get-FileStamp) }
+}
+
+# ================================================================ PROJETS ====
+# data/projects.js a une forme stable, ecrite par cet outil : un projet par
+# bloc, ouvert par "  <id>: {" et ferme par "  }" en colonne 2. On peut donc le
+# lire sans embarquer un analyseur JavaScript complet.
+#
+# Deux garde-fous portent tout le reste : une modification ne reecrit que le
+# bloc du projet concerne, et un bloc dont la forme n'est pas reconnue est
+# refuse au lieu d'etre reecrit de travers.
+
+$ProjectIdPattern = '^[a-z0-9][a-z0-9-]*$'
+
+# Champs listes, dans l'ordre ou l'editeur les presente. Tout champ absent de
+# cette table est conserve tel quel a la fin du bloc : une donnee que l'outil
+# ne comprend pas ne doit jamais disparaitre a l'enregistrement.
+$ProjectFields = @(
+  @{ key='title';               kind='text';   group='Identite';    label='Titre' }
+  @{ key='category';            kind='text';   group='Identite';    label='Categorie' }
+  @{ key='cardCategory';        kind='text';   group='Identite';    label='Categorie courte (grille)'; help="Vide, la grille reprend la categorie." }
+  @{ key='date';                kind='text';   group='Identite';    label='Date (AAAA-MM)'; help="Seule source de l'ordre du site." }
+  @{ key='thumb';               kind='media';  group='Identite';    label='Vignette' }
+  @{ key='studio';              kind='text';   group='Contexte';    label='Studio' }
+  @{ key='roleTitle';           kind='text';   group='Contexte';    label='Statut' }
+  @{ key='client';              kind='text';   group='Contexte';    label='Client' }
+  @{ key='venue';               kind='text';   group='Contexte';    label='Lieu' }
+  @{ key='desc';                kind='para';   group='Recit';       label='Accroche' }
+  @{ key='overview';            kind='para';   group='Recit';       label='Contexte' }
+  @{ key='role';                kind='text';   group='Recit';       label='Role' }
+  @{ key='tools';               kind='list';   group='Recit';       label='Outils' }
+  @{ key='contribution';        kind='list';   group='Recit';       label='Contribution' }
+  @{ key='contributionNote';    kind='para';   group='Recit';       label='Note de contribution' }
+  @{ key='designIntent';        kind='para';   group='Recit';       label='Intention' }
+  @{ key='technicalChallenges'; kind='list';   group='Recit';       label='Defi et reponse de production' }
+  @{ key='rnd';                 kind='list';   group='Recit';       label='Recherche' }
+  @{ key='pipeline';            kind='list';   group='Recit';       label='Etapes' }
+  @{ key='impact';              kind='para';   group='Recit';       label='Resultat' }
+  @{ key='recognition';         kind='list';   group='Recit';       label='Reconnaissances' }
+  @{ key='heroImage';           kind='media';  group='Medias';      label='Image principale' }
+  @{ key='galleryImages';       kind='medias'; group='Medias';      label='Galerie' }
+  @{ key='placeholderTiles';    kind='number'; group='Medias';      label='Tuiles vides' }
+  @{ key='trailerUrl';          kind='text';   group='Medias';      label='Lien video' }
+  @{ key='trailerEmbedDisabled';kind='bool';   group='Medias';      label='Interdire la lecture integree' }
+  @{ key='videoPoster';         kind='media';  group='Medias';      label='Affiche video' }
+  @{ key='externalUrl';         kind='text';   group='Liens';       label='Lien externe' }
+  @{ key='externalLabel';       kind='text';   group='Liens';       label='Libelle du lien' }
+  @{ key='creditsNote';         kind='text';   group='Liens';       label='Credits' }
+  @{ key='relatedProjects';     kind='projects'; group='Liens';     label='Projets lies'; help="Choisis parmi les projets existants : un titre saisi a la main ne renvoyait vers rien." }
+  @{ key='listing';             kind='text';   group='Visibilite';  label='Affichage' }
+  @{ key='lockedTitle';         kind='text';   group='Visibilite';  label='Libelle de la tuile verrouillee' }
+)
+
+$ProjectFieldOrder = @($ProjectFields | ForEach-Object { $_.key })
+
+# --- lecture d'un litteral JavaScript ---------------------------------------
+# Le decoupage se fait au caractere : une virgule dans une phrase ne doit
+# jamais etre prise pour un separateur, et une accolade dans un texte ne doit
+# jamais compter comme une imbrication.
+function Split-JsTopLevel([string]$body) {
+  $parts = @()
+  $depth = 0; $quote = $null; $escaped = $false
+  $sb = New-Object System.Text.StringBuilder
+  foreach ($c in $body.ToCharArray()) {
+    if ($escaped) { [void]$sb.Append($c); $escaped = $false; continue }
+    if ($c -eq '\') { [void]$sb.Append($c); $escaped = $true; continue }
+    if ($quote) {
+      [void]$sb.Append($c)
+      if ($c -eq $quote) { $quote = $null }
+      continue
+    }
+    if ($c -eq "'" -or $c -eq '"') { $quote = $c; [void]$sb.Append($c); continue }
+    if ($c -eq '{' -or $c -eq '[') { $depth++; [void]$sb.Append($c); continue }
+    if ($c -eq '}' -or $c -eq ']') { $depth--; [void]$sb.Append($c); continue }
+    if ($c -eq ',' -and $depth -eq 0) { $parts += $sb.ToString(); [void]$sb.Clear(); continue }
+    [void]$sb.Append($c)
+  }
+  if ($sb.Length -gt 0) { $parts += $sb.ToString() }
+  return @($parts | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' })
+}
+
+function ConvertFrom-JsLiteral([string]$raw) {
+  $raw = $raw.Trim()
+  if ($raw.Length -ge 2 -and ($raw[0] -eq "'" -or $raw[0] -eq '"') -and $raw[$raw.Length-1] -eq $raw[0]) {
+    return (ConvertFrom-SourceLiteral $raw.Substring(1, $raw.Length - 2))
+  }
+  if ($raw -eq 'true')  { return $true }
+  if ($raw -eq 'false') { return $false }
+  $n = 0
+  if ([int]::TryParse($raw, [ref]$n)) { return $n }
+  return $raw
+}
+
+# Corps d'un bloc de projet -> table des champs. Les valeurs qui ne sont ni
+# texte, ni liste, ni nombre (protectedMedia, protected) sont conservees
+# telles quelles, sous forme brute.
+function ConvertFrom-ProjectBody([string]$body) {
+  $out = [ordered]@{}
+  foreach ($pair in (Split-JsTopLevel $body)) {
+    $m = [regex]::Match($pair, '^\s*(?<k>[A-Za-z0-9_]+)\s*:\s*(?<v>[\s\S]*)$')
+    if (-not $m.Success) { continue }
+    $k = $m.Groups['k'].Value
+    $v = $m.Groups['v'].Value.Trim()
+    if ($v.StartsWith('[')) {
+      $inner = $v.Substring(1, $v.Length - 2)
+      $out[$k] = @(Split-JsTopLevel $inner | ForEach-Object { ConvertFrom-JsLiteral $_ })
+    }
+    elseif ($v.StartsWith('{')) {
+      $out[$k] = [pscustomobject]@{ __raw = $v }
+    }
+    else {
+      $out[$k] = ConvertFrom-JsLiteral $v
+    }
+  }
+  return $out
+}
+
+# --- ecriture ----------------------------------------------------------------
+# Le guillemet suit le contenu : une apostrophe dans le texte passe en
+# guillemets doubles plutot que d'etre echappee. C'est la convention deja
+# presente dans le fichier, et elle evite un bruit inutile dans les diffs.
+function ConvertTo-JsString([string]$s) {
+  if ($s.Contains("'") -and -not $s.Contains('"')) {
+    return '"' + (ConvertTo-SourceLiteral $s ([char]'"')) + '"'
+  }
+  return "'" + (ConvertTo-SourceLiteral $s ([char]"'")) + "'"
+}
+
+function ConvertTo-JsValue($value, [string]$kind) {
+  if ($kind -eq 'number') { return [string][int]$value }
+  if ($kind -eq 'bool')   { if ($value) { return 'true' } else { return 'false' } }
+  if ($kind -eq 'list' -or $kind -eq 'medias' -or $kind -eq 'projects') {
+    $items = @($value | ForEach-Object { ConvertTo-JsString ([string]$_) })
+    return '[' + ($items -join ', ') + ']'
+  }
+  return (ConvertTo-JsString ([string]$value))
+}
+
+# --- reperage des blocs ------------------------------------------------------
+# Une cle contenant un tiret n'est pas un identifiant JavaScript valide : elle
+# doit etre ecrite entre apostrophes. Les deux formes coexistent donc dans le
+# fichier, et tout ce qui le lit doit accepter les deux.
+$ProjectKeyPattern = "^  (?:'(?<id>[^']+)'|(?<id>[A-Za-z0-9_\$]+)):\s*\{"
+
+function Format-ProjectKey([string]$id) {
+  if ($id -match '^[A-Za-z_$][A-Za-z0-9_$]*$') { return $id }
+  return "'" + $id + "'"
+}
+
+function Get-ProjectBlocks([string[]]$lines) {
+  $blocks = @()
+  $open = -1; $id = $null
+  for ($i = 0; $i -lt $lines.Length; $i++) {
+    if ($open -lt 0) {
+      if ($lines[$i] -match ($ProjectKeyPattern + '\s*$')) { $open = $i; $id = $Matches['id'] }
+      continue
+    }
+    if ($lines[$i] -match '^  \},?\s*$') {
+      $body = ($lines[($open + 1)..($i - 1)] -join "`n")
+      $blocks += [pscustomobject]@{ id = $id; start = $open; end = $i; body = $body }
+      $open = -1; $id = $null
+    }
+  }
+  return $blocks
+}
+
+function Get-ProjectRecords {
+  $src = Get-Source "projects"
+  if (-not $src) { return @() }
+  $lines = Read-SourceLines $src
+  $out = @()
+  foreach ($b in (Get-ProjectBlocks $lines)) {
+    $fields = ConvertFrom-ProjectBody $b.body
+    $out += [pscustomobject]@{ id = $b.id; start = $b.start; end = $b.end; fields = $fields }
+  }
+  return $out
+}
+
+# Vue courte pour la liste de l'editeur : ce qu'il faut pour reconnaitre un
+# projet et voir son etat, rien de plus.
+function Get-ProjectSummaries {
+  $out = @()
+  foreach ($r in (Get-ProjectRecords)) {
+    $f = $r.fields
+    $protected = $f.Contains('protected')
+    $gallery = @()
+    if ($f.Contains('galleryImages')) { $gallery = @($f['galleryImages']) }
+    $listing = if ($f.Contains('listing')) { [string]$f['listing'] } else { '' }
+    $out += [pscustomobject]@{
+      id        = $r.id
+      title     = $(if ($f.Contains('title')) { [string]$f['title'] } else { '' })
+      date      = $(if ($f.Contains('date')) { [string]$f['date'] } else { '' })
+      category  = $(if ($f.Contains('category')) { [string]$f['category'] } else { '' })
+      thumb     = $(if ($f.Contains('thumb')) { [string]$f['thumb'] } else { '' })
+      listing   = $listing
+      protected = $protected
+      hasLink   = $f.Contains('protectedMedia')
+      medias    = $gallery.Count
+    }
+  }
+  return @($out | Sort-Object -Property date -Descending)
+}
+
+function Get-ProjectDetail([string]$id) {
+  $rec = Get-ProjectRecords | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $rec) { return $null }
+  $values = [ordered]@{}
+  $extra = [ordered]@{}
+  foreach ($k in $rec.fields.Keys) {
+    if ($ProjectFieldOrder -contains $k) { $values[$k] = $rec.fields[$k] }
+    else { $extra[$k] = $rec.fields[$k] }
+  }
+  # La ressource chiffree repart telle quelle vers l'editeur : c'est lui qui
+  # dechiffre, avec le code saisi par son utilisateur.
+  $resource = $null
+  if ($rec.fields.Contains('protected')) {
+    $raw = $rec.fields['protected']
+    if ($raw -is [pscustomobject] -and $raw.PSObject.Properties['__raw']) {
+      $inner = $raw.__raw.Trim()
+      $inner = $inner.Substring(1, $inner.Length - 2)
+      $resource = ConvertFrom-ProjectBody $inner
+    }
+  }
+  return @{ id = $rec.id; values = $values; extraKeys = @($extra.Keys); protectedResource = $resource }
+}
+
+# Rend le bloc complet d'un projet.
+#
+# L'ordre des champs suit celui deja present dans le fichier, et les nouveaux
+# champs viennent ensuite. Un enregistrement qui ne change rien doit rendre un
+# bloc identique au caractere pres : sans cela, chaque sauvegarde produirait un
+# diff illisible ou tout le projet parait avoir bouge.
+function Format-ProjectBlock([string]$id, $values, $preserved, $existingOrder) {
+  $order = @()
+  foreach ($k in @($existingOrder)) {
+    if ($null -eq $k) { continue }
+    if (($values.Contains($k) -or ($preserved -and $preserved.Contains($k))) -and $order -notcontains $k) { $order += $k }
+  }
+  foreach ($def in $ProjectFields) {
+    if ($values.Contains($def.key) -and $order -notcontains $def.key) { $order += $def.key }
+  }
+  if ($preserved) {
+    foreach ($k in $preserved.Keys) { if ($order -notcontains $k) { $order += $k } }
+  }
+
+  $out = @("  " + (Format-ProjectKey $id) + ": {")
+  foreach ($k in $order) {
+    if ($values.Contains($k)) {
+      $def = $ProjectFields | Where-Object { $_.key -eq $k } | Select-Object -First 1
+      $kind = $(if ($def) { $def.kind } else { 'text' })
+      $v = $values[$k]
+      if ($null -eq $v) { continue }
+      if ($kind -eq 'list' -or $kind -eq 'medias' -or $kind -eq 'projects') {
+        $arr = @($v | Where-Object { $null -ne $_ -and ([string]$_).Trim() -ne '' })
+        if ($arr.Count -eq 0) { continue }
+        $out += "    ${k}: " + (ConvertTo-JsValue $arr $kind) + ","
+      }
+      elseif ($kind -eq 'bool') {
+        if (-not $v) { continue }
+        $out += "    ${k}: true,"
+      }
+      elseif ($kind -eq 'number') {
+        $out += "    ${k}: " + ([string][int]$v) + ","
+      }
+      else {
+        $s = [string]$v
+        if ($s.Trim() -eq '') { continue }
+        $out += "    ${k}: " + (ConvertTo-JsString $s) + ","
+      }
+    }
+    elseif ($preserved -and $preserved.Contains($k)) {
+      $raw = $preserved[$k]
+      if ($raw -is [pscustomobject] -and $raw.PSObject.Properties['__raw']) {
+        $out += "    ${k}: " + $raw.__raw + ","
+      } elseif ($raw -is [array]) {
+        $out += "    ${k}: " + (ConvertTo-JsValue $raw 'list') + ","
+      } elseif ($raw -is [bool]) {
+        $out += "    ${k}: " + (ConvertTo-JsValue $raw 'bool') + ","
+      } elseif ($raw -is [int]) {
+        $out += "    ${k}: " + (ConvertTo-JsValue $raw 'number') + ","
+      } else {
+        $out += "    ${k}: " + (ConvertTo-JsValue $raw 'text') + ","
+      }
+    }
+  }
+  # derniere virgule retiree : la forme reste celle du fichier genere
+  if ($out.Count -gt 1 -and $out[$out.Count - 1].EndsWith(',')) {
+    $out[$out.Count - 1] = $out[$out.Count - 1].TrimEnd(',')
+  }
+  $out += "  }"
+
+  # Une valeur conservee peut s'etendre sur plusieurs lignes, protectedMedia
+  # notamment. Elle doit ressortir en autant de lignes, sinon ses retours
+  # internes resteraient en LF dans un fichier ecrit en CRLF.
+  $expanded = @()
+  foreach ($line in $out) {
+    foreach ($piece in ($line -split "\r?\n")) { $expanded += $piece }
+  }
+  return $expanded
+}
+
+# La virgule de fin de bloc depend de la position, pas du contenu : on la
+# retablit apres chaque insertion ou suppression plutot que de la calculer au
+# moment d'ecrire un bloc isole.
+function Repair-BlockCommas([System.Collections.Generic.List[string]]$lines) {
+  $blocks = @(Get-ProjectBlocks $lines.ToArray())
+  for ($i = 0; $i -lt $blocks.Count; $i++) {
+    $isLast = ($i -eq $blocks.Count - 1)
+    $lines[$blocks[$i].end] = $(if ($isLast) { "  }" } else { "  }," })
+  }
+}
+
+function Read-ProjectFileLines {
+  $src = Get-Source "projects"
+  if (-not $src) { throw "data/projects.js introuvable." }
+  $list = [System.Collections.Generic.List[string]]::new()
+  foreach ($l in (Read-SourceLines $src)) { $list.Add($l) }
+  # la virgule empeche PowerShell de derouler la liste en tableau fige
+  return ,$list
+}
+
+function Write-ProjectFileLines([System.Collections.Generic.List[string]]$lines) {
+  $src = Get-Source "projects"
+  Backup-Source $src
+  [System.IO.File]::WriteAllLines($src.path, $lines.ToArray(), [System.Text.UTF8Encoding]::new($false))
+}
+
+function Test-ProjectId([string]$id) { return ($id -and ($id -cmatch $ProjectIdPattern)) }
+
+# Ecrit un projet : remplace son bloc s'il existe, l'ajoute sinon. Les autres
+# blocs ne sont pas touches, donc le diff reste lisible.
+function Save-Project($payload) {
+  $id = [string]$payload.id
+  if (-not (Test-ProjectId $id)) {
+    return @{ ok = $false; reason = "Identifiant invalide : minuscules, chiffres et tirets uniquement." }
+  }
+  $incoming = $payload.values
+  if (-not $incoming) { return @{ ok = $false; reason = "Aucune donnee recue." } }
+
+  $date = [string]$incoming.date
+  if ($date -notmatch '^\d{4}-(0[1-9]|1[0-2])$') {
+    return @{ ok = $false; reason = "La date doit s'ecrire AAAA-MM, par exemple 2026-03." }
+  }
+  $title = [string]$incoming.title
+  $existing = Get-ProjectRecords | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  # Ecrire en clair par-dessus une fiche protegee publierait ce que le
+  # chiffrement met a l'abri. La levee de protection est un geste separe.
+  if ($existing -and $existing.fields.Contains('protected')) {
+    return @{ ok = $false; reason = "Cette fiche est protegee. Deprotege-la avant de la modifier." }
+  }
+  if ([string]::IsNullOrWhiteSpace($title)) {
+    return @{ ok = $false; reason = "Le titre est obligatoire." }
+  }
+
+  # Champs conserves : tout ce que l'editeur ne presente pas, contenu chiffre
+  # en tete. Les perdre silencieusement rendrait une fiche protegee illisible.
+  $preserved = [ordered]@{}
+  if ($existing) {
+    foreach ($k in $existing.fields.Keys) {
+      if ($ProjectFieldOrder -notcontains $k) { $preserved[$k] = $existing.fields[$k] }
+    }
+  }
+
+  $values = [ordered]@{}
+  foreach ($def in $ProjectFields) {
+    $prop = $incoming.PSObject.Properties[$def.key]
+    if (-not $prop) { continue }
+    $v = $prop.Value
+    if ($null -eq $v) { continue }
+    if ($def.kind -eq 'list' -or $def.kind -eq 'medias' -or $def.kind -eq 'projects') { $values[$def.key] = @($v) }
+    elseif ($def.kind -eq 'bool') { $values[$def.key] = [bool]$v }
+    elseif ($def.kind -eq 'number') { $values[$def.key] = [int]$v }
+    else { $values[$def.key] = [string]$v }
+  }
+
+  $existingOrder = @()
+  if ($existing) { $existingOrder = @($existing.fields.Keys) }
+  $block = Format-ProjectBlock $id $values $preserved $existingOrder
+  $lines = Read-ProjectFileLines
+  $blocks = @(Get-ProjectBlocks $lines.ToArray())
+  $target = $blocks | Where-Object { $_.id -eq $id } | Select-Object -First 1
+
+  if ($target) {
+    $lines.RemoveRange($target.start, $target.end - $target.start + 1)
+    $lines.InsertRange($target.start, [string[]]$block)
+    $created = $false
+  } else {
+    $close = -1
+    for ($i = $lines.Count - 1; $i -ge 0; $i--) {
+      if ($lines[$i] -match '^\};?\s*$') { $close = $i; break }
+    }
+    if ($close -lt 0) { return @{ ok = $false; reason = "Fin du fichier de donnees introuvable." } }
+    $lines.InsertRange($close, [string[]]$block)
+    $created = $true
+  }
+
+  Repair-BlockCommas $lines
+  Write-ProjectFileLines $lines
+  Update-Sitemap
+  return @{ ok = $true; id = $id; created = $created; stamp = (Get-FileStamp) }
+}
+
+# Retire la fiche. Les medias restent sur le disque : la regle du depot
+# interdit de supprimer un media sans autorisation explicite, et une fiche
+# retiree par erreur doit pouvoir etre refaite sans rien avoir perdu.
+function Remove-Project([string]$id) {
+  if (-not (Test-ProjectId $id)) { return @{ ok = $false; reason = "Identifiant invalide." } }
+  $lines = Read-ProjectFileLines
+  $blocks = @(Get-ProjectBlocks $lines.ToArray())
+  if ($blocks.Count -le 1) {
+    return @{ ok = $false; reason = "Le site doit garder au moins un projet." }
+  }
+  $target = $blocks | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $target) { return @{ ok = $false; reason = "Projet introuvable : $id" } }
+
+  # Les medias d'une fiche protegee portent des noms aleatoires, et la
+  # correspondance avec leurs noms d'origine vit dans le contenu chiffre.
+  # Supprimer la fiche d'abord la detruirait, laissant sur le disque des
+  # fichiers que plus rien ne permet d'identifier.
+  $record = Get-ProjectRecords | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if ($record -and $record.fields.Contains('protected')) {
+    return @{ ok = $false; reason = "Deprotege d'abord cette fiche : sinon ses medias resteraient sur le disque sous des noms illisibles." }
+  }
+
+  $mediaDir = Join-Path $Root ("projects\" + $id)
+  $keptMedia = (Test-Path -LiteralPath $mediaDir -PathType Container)
+
+  $lines.RemoveRange($target.start, $target.end - $target.start + 1)
+  Repair-BlockCommas $lines
+  Write-ProjectFileLines $lines
+  Update-Sitemap
+  return @{ ok = $true; id = $id; keptMedia = $keptMedia; mediaDir = "projects/$id"; stamp = (Get-FileStamp) }
+}
+
+# Le plan du site liste les vignettes des projets. Il se recalcule a chaque
+# ajout, retrait ou mise sous protection, sinon il pointerait vers des images
+# disparues, ou pire : il publierait le chemin d'un media protege, que tout
+# le chiffrement vise justement a garder hors de portee.
+function Update-Sitemap {
+  $path = Join-Path $Root "sitemap.xml"
+  if (-not (Test-Path $path)) { return }
+  $enc = [System.Text.UTF8Encoding]::new($false)
+  $text = [System.IO.File]::ReadAllText($path, $enc)
+
+  $images = @("https://killianpichon.art/assets/og-image.jpg")
+  foreach ($r in (Get-ProjectRecords)) {
+    $f = $r.fields
+    if ($f.Contains('protected')) { continue }
+    if ($f.Contains('listing') -and [string]$f['listing'] -eq 'hidden') { continue }
+    if (-not $f.Contains('thumb')) { continue }
+    $images += "https://killianpichon.art/" + ([string]$f['thumb']).TrimStart('/')
+  }
+
+  $block = ($images | Select-Object -Unique | ForEach-Object { "    <image:image>`r`n      <image:loc>$_</image:loc>`r`n    </image:image>" }) -join "`r`n"
+  $updated = [regex]::Replace($text, '(?s)(\r?\n)\s*<image:image>.*?</image:image>\s*(\r?\n  </url>)', "`r`n$block`$2")
+  $updated = [regex]::Replace($updated, '<lastmod>[^<]*</lastmod>', "<lastmod>$(Get-Date -Format 'yyyy-MM-dd')</lastmod>")
+  if ($updated -ne $text) { [System.IO.File]::WriteAllText($path, $updated, $enc) }
+}
+
+# ------------------------------------------------------- fichiers de projet
+# Tout chemin recu de l'editeur passe par ici. La verification porte sur le
+# chemin resolu, pas sur la chaine : aucune variante d'ecriture ne permet de
+# viser un fichier hors du dossier projects/.
+$MediaExtensions = @('.avif','.webp','.jpg','.jpeg','.png','.gif','.svg','.mp4','.webm')
+
+# Media du site, quel que soit son dossier d'origine : sert a verifier une
+# vignette qu'on laisse en clair, sans autoriser pour autant a designer un
+# fichier hors du site.
+function Resolve-PublicMedia([string]$rel) {
+  if ([string]::IsNullOrWhiteSpace($rel)) { return $null }
+  if ($rel -match '^[A-Za-z]:' -or $rel.StartsWith('/') -or $rel.StartsWith('\')) { return $null }
+  if ($rel.Contains('..')) { return $null }
+  $full = [System.IO.Path]::GetFullPath((Join-Path $Root ($rel -replace '/', '\')))
+  $sep = [System.IO.Path]::DirectorySeparatorChar
+  foreach ($dir in @('projects', 'assets')) {
+    $base = [System.IO.Path]::GetFullPath((Join-Path $Root $dir))
+    if ($full.StartsWith($base + $sep, [StringComparison]::OrdinalIgnoreCase)) { return $full }
+  }
+  return $null
+}
+
+function Resolve-ProjectPath([string]$rel) {
+  if ([string]::IsNullOrWhiteSpace($rel)) { return $null }
+  if ($rel -match '^[A-Za-z]:' -or $rel.StartsWith('/') -or $rel.StartsWith('\')) { return $null }
+  if ($rel.Contains('..')) { return $null }
+  $full = [System.IO.Path]::GetFullPath((Join-Path $Root ($rel -replace '/', '\')))
+  $projectsRoot = [System.IO.Path]::GetFullPath((Join-Path $Root 'projects'))
+  $sep = [System.IO.Path]::DirectorySeparatorChar
+  if (-not $full.StartsWith($projectsRoot + $sep, [StringComparison]::OrdinalIgnoreCase)) { return $null }
+  return $full
+}
+
+# Nom de fichier reduit a ce qui est sur : un media televerse ne doit jamais
+# pouvoir choisir son emplacement, seulement son nom.
+function Get-SafeFileName([string]$name) {
+  $name = [System.IO.Path]::GetFileName($name)
+  $ext = [System.IO.Path]::GetExtension($name).ToLowerInvariant()
+  if ($MediaExtensions -notcontains $ext) { return $null }
+  $base = [System.IO.Path]::GetFileNameWithoutExtension($name).ToLowerInvariant()
+  $base = ($base -replace '[^a-z0-9._-]', '-') -replace '-{2,}', '-'
+  $base = $base.Trim('-', '.')
+  if ([string]::IsNullOrWhiteSpace($base)) { $base = "media" }
+  if ($base.Length -gt 60) { $base = $base.Substring(0, 60) }
+  return "$base$ext"
+}
+
+function Save-UploadedMedia([string]$projectId, [string]$fileName, [byte[]]$bytes) {
+  if (-not (Test-ProjectId $projectId)) { return @{ ok = $false; reason = "Identifiant de projet invalide." } }
+  $safe = Get-SafeFileName $fileName
+  if (-not $safe) { return @{ ok = $false; reason = "Format non accepte. Formats permis : " + ($MediaExtensions -join ' ') }}
+  if ($bytes.Length -eq 0) { return @{ ok = $false; reason = "Fichier vide." } }
+
+  $dir = Join-Path $Root ("projects\" + $projectId)
+  if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+
+  # Un fichier existant n'est jamais ecrase : le doublon prend un suffixe.
+  $target = Join-Path $dir $safe
+  if (Test-Path -LiteralPath $target) {
+    $base = [System.IO.Path]::GetFileNameWithoutExtension($safe)
+    $ext = [System.IO.Path]::GetExtension($safe)
+    $n = 2
+    while (Test-Path -LiteralPath $target) {
+      $safe = "$base-$n$ext"
+      $target = Join-Path $dir $safe
+      $n++
+    }
+  }
+  [System.IO.File]::WriteAllBytes($target, $bytes)
+  return @{ ok = $true; path = "projects/$projectId/$safe"; bytes = $bytes.Length }
+}
+
+# Deplacements de medias demandes lors d'une mise sous protection, ou de sa
+# levee. Rien n'est ecrase, et un deplacement impossible interrompt la serie
+# avant d'avoir touche quoi que ce soit.
+# Un projet ne deplace que ses propres medias. Sans cette regle, proteger un
+# projet qui reutilise l'image d'un autre emporterait cette image et laisserait
+# l'autre fiche avec une vignette morte.
+function Test-OwnedMedia([string]$rel, [string]$id) {
+  return ([string]$rel).StartsWith("projects/$id/", [StringComparison]::OrdinalIgnoreCase)
+}
+
+function Move-ProjectMedia($moves, [string]$ownerId, [string]$side) {
+  $planned = @()
+  foreach ($m in @($moves)) {
+    if ($ownerId) {
+      $owned = $(if ($side -eq 'restore') { [string]$m.to } else { [string]$m.from })
+      if (-not (Test-OwnedMedia $owned $ownerId)) {
+        return @{ ok = $false; reason = "Ce media n'appartient pas au projet $ownerId : $owned. Copie-le dans projects/$ownerId/ avant de proteger la fiche." }
+      }
+    }
+    $from = Resolve-ProjectPath ([string]$m.from)
+    $to   = Resolve-ProjectPath ([string]$m.to)
+    if (-not $from -or -not $to) { return @{ ok = $false; reason = "Chemin de media refuse : $($m.from) -> $($m.to)" } }
+    # Un meme fichier peut etre cite deux fois dans une fiche, en vignette et
+    # en galerie. Il ne se deplace qu'une fois : sans ce filtre, le second
+    # deplacement echouait sur un fichier deja parti.
+    if ($planned | Where-Object { $_.from -eq $from }) { continue }
+    if ($planned | Where-Object { $_.to -eq $to }) { return @{ ok = $false; reason = "Deux medias vises au meme endroit : $($m.to)" } }
+    if (-not (Test-Path -LiteralPath $from -PathType Leaf)) { return @{ ok = $false; reason = "Media introuvable : $($m.from)" } }
+    if (Test-Path -LiteralPath $to) { return @{ ok = $false; reason = "Destination deja occupee : $($m.to)" } }
+    $planned += @{ from = $from; to = $to }
+  }
+  $done = 0
+  foreach ($p in $planned) {
+    try {
+      $dir = Split-Path -Parent $p.to
+      if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+      Move-Item -LiteralPath $p.from -Destination $p.to
+      $done++
+    } catch {
+      # Interrompre ici laisse les fichiers deja deplaces la ou ils sont : on
+      # le dit, plutot que de laisser croire que rien n'a bouge.
+      return @{ ok = $false; reason = "Deplacement interrompu apres $done fichier(s) : $($_.Exception.Message)" }
+    }
+  }
+  # Le dossier d'origine vide n'a plus de raison d'exister. Il n'est retire
+  # que s'il ne contient plus rien : aucun fichier ne peut disparaitre ici.
+  foreach ($dir in (@($planned | ForEach-Object { Split-Path -Parent $_.from }) | Select-Object -Unique)) {
+    try {
+      if ((Test-Path $dir) -and -not (Get-ChildItem -LiteralPath $dir -Force)) { Remove-Item -LiteralPath $dir -Force }
+    } catch {}
+  }
+  return @{ ok = $true; moved = $done }
+}
+
+# Le chiffrement lui-meme se fait dans le navigateur de l'editeur : Windows
+# PowerShell 5.1 n'expose pas AES-GCM, et surtout le code d'acces n'a alors
+# aucune raison de traverser le serveur. Ici on ne fait que verifier la forme
+# de la ressource recue avant de l'ecrire.
+function Test-ProtectedResource($resource) {
+  if (-not $resource) { return "ressource absente" }
+  foreach ($k in @('id','version','iterations','salt','iv','ciphertext')) {
+    if (-not $resource.PSObject.Properties[$k]) { return "champ manquant : $k" }
+  }
+  if ([int]$resource.iterations -lt 100000) { return "nombre d'iterations trop faible" }
+  foreach ($k in @('salt','iv','ciphertext')) {
+    try { [void][Convert]::FromBase64String([string]$resource.$k) }
+    catch { return "champ $k illisible" }
+  }
+  return $null
+}
+
+function Protect-ProjectRecord($payload) {
+  $id = [string]$payload.id
+  if (-not (Test-ProjectId $id)) { return @{ ok = $false; reason = "Identifiant invalide." } }
+  $problem = Test-ProtectedResource $payload.resource
+  if ($problem) { return @{ ok = $false; reason = "Ressource protegee invalide : $problem" } }
+
+  $existing = Get-ProjectRecords | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $existing) { return @{ ok = $false; reason = "Projet introuvable : $id" } }
+  $date = [string]$existing.fields['date']
+  if (-not $date) { return @{ ok = $false; reason = "Le projet n'a pas de date : impossible de le classer une fois protege." } }
+
+  $listing = [string]$payload.listing
+  if ($listing -ne 'locked' -and $listing -ne 'hidden' -and $listing -ne 'nda') { $listing = 'locked' }
+  $lockedTitle = [string]$payload.lockedTitle
+  if ([string]::IsNullOrWhiteSpace($lockedTitle)) { $lockedTitle = 'Projet protege' }
+
+  $moveResult = Move-ProjectMedia $payload.moves $id 'protect'
+  if (-not $moveResult.ok) { return $moveResult }
+
+  # Ne reste en clair que ce qui sert a classer et a afficher la tuile.
+  # En mode NDA, la vignette reste lisible : c'est un choix assume, la tuile
+  # doit montrer une image. Le fichier reste donc a sa place, et lui seul.
+  $values = [ordered]@{ date = $date; listing = $listing }
+  if ($listing -ne 'hidden') { $values['lockedTitle'] = $lockedTitle }
+  if ($listing -eq 'nda') {
+    # La vignette peut venir de n'importe quel dossier de medias du site : elle
+    # ne bouge pas, elle reste simplement lisible. Seul compte le fait qu'elle
+    # existe et qu'elle ne sorte pas du site.
+    $thumb = [string]$payload.thumb
+    $thumbPath = Resolve-PublicMedia $thumb
+    if (-not $thumbPath -or -not (Test-Path -LiteralPath $thumbPath -PathType Leaf)) {
+      return @{ ok = $false; reason = "Vignette introuvable : $thumb" }
+    }
+    $values['thumb'] = $thumb
+  }
+  $preserved = [ordered]@{ protected = [pscustomobject]@{ __raw = (Format-ResourceLiteral $payload.resource) } }
+
+  $block = Format-ProjectBlock $id $values $preserved @('date','listing','lockedTitle','thumb','protected')
+  $lines = Read-ProjectFileLines
+  $blocks = @(Get-ProjectBlocks $lines.ToArray())
+  $target = $blocks | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $target) { return @{ ok = $false; reason = "Bloc introuvable : $id" } }
+  $lines.RemoveRange($target.start, $target.end - $target.start + 1)
+  $lines.InsertRange($target.start, [string[]]$block)
+  Repair-BlockCommas $lines
+  Write-ProjectFileLines $lines
+  Update-Sitemap
+  return @{ ok = $true; id = $id; moved = $moveResult.moved; stamp = (Get-FileStamp) }
+}
+
+# Ressource chiffree -> litteral JavaScript multiligne, dans la forme deja
+# employee par protectedMedia.
+function Format-ResourceLiteral($r) {
+  $lines = @('{')
+  $lines += "      id: " + (ConvertTo-JsString ([string]$r.id)) + ","
+  $lines += "      version: " + ([string][int]$r.version) + ","
+  # Un lien protege porte en plus son libelle et son hote autorise ; une fiche
+  # protegee n'en a pas besoin.
+  if ($r.PSObject.Properties['label'] -and $r.label) {
+    $lines += "      label: " + (ConvertTo-JsString ([string]$r.label)) + ","
+  }
+  if ($r.PSObject.Properties['provider'] -and $r.provider) {
+    $lines += "      provider: " + (ConvertTo-JsString ([string]$r.provider)) + ","
+  }
+  $lines += "      iterations: " + ([string][int]$r.iterations) + ","
+  $lines += "      salt: " + (ConvertTo-JsString ([string]$r.salt)) + ","
+  $lines += "      iv: " + (ConvertTo-JsString ([string]$r.iv)) + ","
+  $lines += "      ciphertext: " + (ConvertTo-JsString ([string]$r.ciphertext))
+  if ($r.PSObject.Properties['allowedHosts'] -and @($r.allowedHosts).Count -gt 0) {
+    $hosts = @($r.allowedHosts | ForEach-Object { ConvertTo-JsString ([string]$_) })
+    $lines[$lines.Count - 1] = $lines[$lines.Count - 1] + ","
+    $lines += "      allowedHosts: [" + ($hosts -join ', ') + "]"
+  }
+  $lines += "    }"
+  return ($lines -join "`n")
+}
+
+# Remplace le bloc d'un projet en conservant ses champs connus, et en imposant
+# la liste des champs conserves. Sert aux operations qui ne touchent qu'a un
+# champ hors formulaire, comme le lien protege.
+function Update-ProjectPreserved([string]$id, $preserved) {
+  $existing = Get-ProjectRecords | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $existing) { return @{ ok = $false; reason = "Projet introuvable : $id" } }
+  if ($existing.fields.Contains('protected')) {
+    return @{ ok = $false; reason = "Cette fiche est protegee dans son ensemble : le lien protege ne s'applique qu'a une fiche publique." }
+  }
+
+  $values = [ordered]@{}
+  foreach ($k in $existing.fields.Keys) {
+    if ($ProjectFieldOrder -contains $k) { $values[$k] = $existing.fields[$k] }
+  }
+  $block = Format-ProjectBlock $id $values $preserved @($existing.fields.Keys)
+  $lines = Read-ProjectFileLines
+  $blocks = @(Get-ProjectBlocks $lines.ToArray())
+  $target = $blocks | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $target) { return @{ ok = $false; reason = "Bloc introuvable : $id" } }
+  $lines.RemoveRange($target.start, $target.end - $target.start + 1)
+  $lines.InsertRange($target.start, [string[]]$block)
+  Repair-BlockCommas $lines
+  Write-ProjectFileLines $lines
+  return @{ ok = $true; id = $id; stamp = (Get-FileStamp) }
+}
+
+# Lien protege : la fiche reste publique, seule une adresse est chiffree.
+# C'est le mecanisme deja employe pour le film de Traveler's Introspection.
+function Set-ProjectLink($payload) {
+  $id = [string]$payload.id
+  if (-not (Test-ProjectId $id)) { return @{ ok = $false; reason = "Identifiant invalide." } }
+  $problem = Test-ProtectedResource $payload.resource
+  if ($problem) { return @{ ok = $false; reason = "Ressource protegee invalide : $problem" } }
+
+  $existing = Get-ProjectRecords | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $existing) { return @{ ok = $false; reason = "Projet introuvable : $id" } }
+  $preserved = [ordered]@{}
+  foreach ($k in $existing.fields.Keys) {
+    if ($ProjectFieldOrder -notcontains $k -and $k -ne 'protectedMedia') { $preserved[$k] = $existing.fields[$k] }
+  }
+  $preserved['protectedMedia'] = [pscustomobject]@{ __raw = (Format-ResourceLiteral $payload.resource) }
+  return Update-ProjectPreserved $id $preserved
+}
+
+function Remove-ProjectLink([string]$id) {
+  if (-not (Test-ProjectId $id)) { return @{ ok = $false; reason = "Identifiant invalide." } }
+  $existing = Get-ProjectRecords | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $existing) { return @{ ok = $false; reason = "Projet introuvable : $id" } }
+  if (-not $existing.fields.Contains('protectedMedia')) { return @{ ok = $false; reason = "Ce projet n'a pas de lien protege." } }
+  $preserved = [ordered]@{}
+  foreach ($k in $existing.fields.Keys) {
+    if ($ProjectFieldOrder -notcontains $k -and $k -ne 'protectedMedia') { $preserved[$k] = $existing.fields[$k] }
+  }
+  return Update-ProjectPreserved $id $preserved
+}
+
+# Leve la protection : l'editeur a dechiffre la fiche et renvoie son contenu.
+function Unprotect-ProjectRecord($payload) {
+  $id = [string]$payload.id
+  if (-not (Test-ProjectId $id)) { return @{ ok = $false; reason = "Identifiant invalide." } }
+  $existing = Get-ProjectRecords | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  if (-not $existing) { return @{ ok = $false; reason = "Projet introuvable : $id" } }
+  if (-not $existing.fields.Contains('protected')) { return @{ ok = $false; reason = "Ce projet n'est pas protege." } }
+
+  $moveResult = Move-ProjectMedia $payload.moves $id 'restore'
+  if (-not $moveResult.ok) { return $moveResult }
+
+  # Le bloc est reconstruit a partir de la fiche dechiffree, sans conserver
+  # l'ancien contenu chiffre : le laisser reviendrait a publier deux versions.
+  $lines = Read-ProjectFileLines
+  $blocks = @(Get-ProjectBlocks $lines.ToArray())
+  $target = $blocks | Where-Object { $_.id -eq $id } | Select-Object -First 1
+  $values = [ordered]@{}
+  foreach ($def in $ProjectFields) {
+    $prop = $payload.values.PSObject.Properties[$def.key]
+    if (-not $prop -or $null -eq $prop.Value) { continue }
+    if ($def.kind -eq 'list' -or $def.kind -eq 'medias' -or $def.kind -eq 'projects') { $values[$def.key] = @($prop.Value) }
+    elseif ($def.kind -eq 'bool') { $values[$def.key] = [bool]$prop.Value }
+    elseif ($def.kind -eq 'number') { $values[$def.key] = [int]$prop.Value }
+    else { $values[$def.key] = [string]$prop.Value }
+  }
+  $values.Remove('listing') | Out-Null
+  $values.Remove('lockedTitle') | Out-Null
+
+  $block = Format-ProjectBlock $id $values $null @()
+  $lines.RemoveRange($target.start, $target.end - $target.start + 1)
+  $lines.InsertRange($target.start, [string[]]$block)
+  Repair-BlockCommas $lines
+  Write-ProjectFileLines $lines
+  Update-Sitemap
+  return @{ ok = $true; id = $id; moved = $moveResult.moved; stamp = (Get-FileStamp) }
 }
 
 # =============================================================== REGLAGES ====
@@ -702,6 +1631,8 @@ function Start-Listener([string]$prefix) {
   }
 }
 
+if ($NoServe) { return }
+
 # Ecoute sur toutes les interfaces si Windows l'autorise (necessaire pour
 # l'iPhone), sinon repli sur localhost.
 $lanMode = $true
@@ -924,7 +1855,7 @@ try {
           $warn = "Le debut du code applicatif est introuvable dans index.html (marqueur window.__asset absent). Aucun texte n'est expose, pour ne pas risquer de modifier le moteur React."
         }
         Send-Json $res @{
-          items = @(Get-StringsFromLines $srcLines); stamp = (Get-FileStamp)
+          items = @(Get-Strings); stamp = (Get-FileStamp)
           branch = (Get-Branch); lanUrl = $lanUrl; boundary = $boundary; warning = $warn
         }
         $res.Close(); continue
@@ -968,6 +1899,80 @@ try {
         $res.Close(); continue
       }
 
+      # ---------------------------------------------------------- projets
+      if ($rel -eq "/__projects" -and $req.HttpMethod -eq "GET") {
+        $lastPing = Get-Date; $everPinged = $true
+        Send-Json $res @{ items = @(Get-ProjectSummaries); fields = @($ProjectFields); stamp = (Get-FileStamp) }
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__project" -and $req.HttpMethod -eq "GET") {
+        $lastPing = Get-Date; $everPinged = $true
+        $detail = Get-ProjectDetail ([string]$req.QueryString["id"])
+        if (-not $detail) { Send-Json $res @{ ok = $false; reason = "Projet introuvable." } }
+        else { Send-Json $res @{ ok = $true; id = $detail.id; values = $detail.values; extraKeys = @($detail.extraKeys); protectedResource = $detail.protectedResource } }
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__project" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        Send-Json $res (Save-Project ($body | ConvertFrom-Json))
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__project-delete" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        Send-Json $res (Remove-Project ([string]($body | ConvertFrom-Json).id))
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__project-protect" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        Send-Json $res (Protect-ProjectRecord ($body | ConvertFrom-Json))
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__project-link" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        $data = $body | ConvertFrom-Json
+        if ($data.remove) { Send-Json $res (Remove-ProjectLink ([string]$data.id)) }
+        else { Send-Json $res (Set-ProjectLink $data) }
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__project-unprotect" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        Send-Json $res (Unprotect-ProjectRecord ($body | ConvertFrom-Json))
+        $res.Close(); continue
+      }
+
+      # Televersement : le fichier arrive brut, son nom et son projet en
+      # en-tete. Pas de multipart a analyser, donc rien a mal interpreter.
+      if ($rel -eq "/__upload" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $projectId = [string]$req.Headers["X-Project-Id"]
+        $fileName = [string]$req.Headers["X-File-Name"]
+        if ($req.ContentLength64 -gt 64MB) {
+          Send-Json $res @{ ok = $false; reason = "Fichier trop volumineux (limite 64 Mo)." }
+          $res.Close(); continue
+        }
+        $ms = New-Object System.IO.MemoryStream
+        $req.InputStream.CopyTo($ms)
+        Send-Json $res (Save-UploadedMedia $projectId $fileName $ms.ToArray())
+        $ms.Dispose()
+        $res.Close(); continue
+      }
+
       if ($rel -eq "/__changes") {
         $lastPing = Get-Date; $everPinged = $true
         $c = Get-Changes
@@ -989,9 +1994,19 @@ try {
           $res.Close(); continue
         }
 
-        $st = Invoke-Git @("status", "--porcelain", "--", "index.html")
+        # La branche de publication ne s'ecrit jamais depuis l'editeur : le
+        # depot l'interdit, et un contenu en cours de redaction n'a rien a
+        # faire en ligne. On bascule sur la branche de contenu, en la creant
+        # au besoin.
+        $switch = Set-ContentBranch
+        if (-not $switch.ok) {
+          Send-Json $res @{ ok = $false; reason = $switch.reason }
+          $res.Close(); continue
+        }
+
+        $st = Invoke-Git (@("status", "--porcelain", "--") + $CommitPaths)
         if ([string]::IsNullOrWhiteSpace($st.stdout)) {
-          Send-Json $res @{ ok = $false; reason = "Aucune modification a commiter dans index.html." }
+          Send-Json $res @{ ok = $false; reason = "Aucune modification a commiter." }
           $res.Close(); continue
         }
 
@@ -999,11 +2014,24 @@ try {
         $msgFile = [System.IO.Path]::GetTempFileName()
         try {
           [System.IO.File]::WriteAllText($msgFile, $msg, [System.Text.UTF8Encoding]::new($false))
-          $r = Invoke-Git @("commit", "-F", $msgFile, "--", "index.html")
+          # Les medias ajoutes ne sont pas encore suivis : sans cet ajout
+          # explicite, un projet serait commite sans ses images.
+          $null = Invoke-Git (@("add", "--") + $CommitPaths)
+          $r = Invoke-Git (@("commit", "-F", $msgFile, "--") + $CommitPaths)
           if ($r.code -eq 0) {
             $h = (Invoke-Git @("rev-parse", "--short", "HEAD")).stdout.Trim()
-            Write-Host "  Commit $h sur $(Get-Branch)"
-            Send-Json $res @{ ok = $true; hash = $h; branch = (Get-Branch) }
+            $branch = Get-Branch
+            Write-Host "  Commit $h sur $branch"
+            $push = Invoke-Git @("push", "--set-upstream", "origin", $branch)
+            $pushed = ($push.code -eq 0)
+            $pushWhy = $null
+            if (-not $pushed) {
+              $pushWhy = $(if ([string]::IsNullOrWhiteSpace($push.stderr)) { $push.stdout } else { $push.stderr }).Trim()
+              Write-Host "  Push refuse : $pushWhy"
+            } else {
+              Write-Host "  Pousse sur origin/$branch"
+            }
+            Send-Json $res @{ ok = $true; hash = $h; branch = $branch; pushed = $pushed; pushReason = $pushWhy; switched = $switch.switched }
           } else {
             $why = if ([string]::IsNullOrWhiteSpace($r.stderr)) { $r.stdout } else { $r.stderr }
             Send-Json $res @{ ok = $false; reason = $why.Trim() }
@@ -1076,8 +2104,20 @@ try {
       }
     } catch {
       try {
-        $res.StatusCode = 500
-        $m = [System.Text.Encoding]::UTF8.GetBytes("500: $($_.Exception.Message)")
+        # Les routes de l'editeur attendent toujours du JSON. Une erreur
+        # renvoyee en texte brut se lisait cote editeur comme un JSON invalide,
+        # et masquait la vraie cause derriere un message de syntaxe.
+        $isEditorRoute = $false
+        try { $isEditorRoute = ($req.Url.AbsolutePath -like "/__*") } catch {}
+        if ($isEditorRoute) {
+          $res.StatusCode = 200
+          $payload = @{ ok = $false; reason = "Erreur du serveur : $($_.Exception.Message)" } | ConvertTo-Json -Compress
+          $m = [System.Text.Encoding]::UTF8.GetBytes($payload)
+          $res.ContentType = "application/json; charset=utf-8"
+        } else {
+          $res.StatusCode = 500
+          $m = [System.Text.Encoding]::UTF8.GetBytes("500: $($_.Exception.Message)")
+        }
         $res.ContentLength64 = $m.Length
         $res.OutputStream.Write($m, 0, $m.Length)
       } catch {}

@@ -136,6 +136,39 @@ textarea:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:tr
 #setsave:disabled{opacity:.3;cursor:not-allowed}
 #setsave:hover:not(:disabled){background:var(--ember);border-color:var(--ember);color:var(--void-950)}
 
+/* ----------------------------------------------------------------- projets */
+#projects{flex:1;overflow-y:auto;padding:12px 16px 60px;display:none}
+#projects.on{display:block}
+.prjbar{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.prjbar .sp{flex:1}
+.prj{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-subtle);align-items:center}
+.prjthumb{width:56px;height:42px;flex:0 0 56px;border:1px solid var(--line-subtle);border-radius:6px;
+  background:var(--void-800) center/cover no-repeat;display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:var(--grey);overflow:hidden}
+.prjbody{flex:1;min-width:0}
+.prjtitle{font-size:13px;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prjmeta{font:10px 'JetBrains Mono',ui-monospace,monospace;color:var(--grey);
+  letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+.prjbadge{display:inline-block;padding:1px 6px;border:1px solid var(--line-subtle);border-radius:4px;margin-left:6px}
+.prjbadge.lock{border-color:var(--ember);color:var(--ember-400)}
+.prjacts{display:flex;gap:6px;flex:0 0 auto}
+.prjacts button{padding:5px 9px;font-size:11px}
+.prjform .set{margin-bottom:12px}
+.prjgroup{margin:18px 0 10px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ember-400);border-bottom:1px solid var(--line-subtle);padding-bottom:6px}
+.prjrow{display:flex;gap:8px;align-items:flex-start}
+.prjrow input{flex:1;min-width:0}
+.prjhead{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.prjhead h2{flex:1;font-size:14px;margin:0;color:var(--white)}
+.prjnote{font-size:11px;color:var(--grey);line-height:1.5;margin:0 0 12px}
+.prjpick{display:flex;flex-direction:column;gap:6px;padding:8px 10px;background:var(--void-850);
+  border:1px solid var(--line-subtle);border-radius:6px;max-height:190px;overflow-y:auto}
+.prjpick label{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--white);cursor:pointer}
+.prjpick input{flex:0 0 auto;accent-color:var(--ember)}
+.prjup{font-size:11px;color:var(--grey);margin-top:5px;line-height:1.5}
+.prjup.warn{color:var(--ember-400)}
+.prjerr{font-size:11px;color:var(--ember-400);margin-top:6px;min-height:15px}
+
 /* ------------------------------------------------------------------ medias */
 #media{flex:1;overflow-y:auto;padding:12px 16px 60px;display:none}
 #media.on{display:block}
@@ -165,6 +198,33 @@ textarea:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:tr
 .browse{flex:0 0 auto;padding:7px 11px;font-size:10px}
 
 /* ------------------------------------------------ selecteur d'image (modal) */
+/* ------------------------------------------------------------- protection */
+#protectbox{position:fixed;inset:0;z-index:210;background:rgba(10,10,11,.92);
+  display:none;align-items:center;justify-content:center;padding:24px}
+#protectbox.on{display:flex}
+.pbpanel{width:min(520px,100%);max-height:calc(100vh - 48px);overflow-y:auto;padding:22px 24px;
+  background:var(--void-900,#101013);border:1px solid var(--line);border-radius:10px}
+.pbpanel h2{margin:0;font-size:15px;color:var(--white)}
+.pbname{margin:4px 0 16px;font:11px 'JetBrains Mono',ui-monospace,monospace;color:var(--grey);
+  letter-spacing:.08em;text-transform:uppercase}
+.pbgroup{padding:12px 0;border-top:1px solid var(--line-subtle);display:flex;flex-direction:column;gap:8px}
+/* display:flex l'emporterait sur la regle du navigateur pour [hidden] */
+.pbgroup[hidden],.pbfield[hidden]{display:none}
+.pblabel{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey)}
+.pbgroup label{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--white);
+  line-height:1.45;cursor:pointer}
+.pbgroup label input{flex:0 0 auto;margin-top:2px;accent-color:var(--ember)}
+.pbfield{display:flex;flex-direction:column;gap:5px}
+.pbfield input{background:var(--void-850);border:1px solid var(--line-subtle);color:var(--white);
+  font:inherit;font-size:13px;padding:8px 10px;border-radius:6px}
+.pbfield input:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:transparent}
+.pbfield input[readonly]{color:var(--grey)}
+.pbhint{margin:0;font-size:11px;color:var(--grey);line-height:1.45}
+.pberr{min-height:16px;margin:10px 0 0;font-size:11.5px;color:var(--ember-400)}
+.pbactions{display:flex;gap:8px;margin-top:14px}
+#pbok{background:var(--white);color:var(--void-950);border-color:var(--white)}
+#pbok:hover{background:var(--ember);border-color:var(--ember)}
+
 #picker{position:fixed;inset:0;z-index:200;background:rgba(10,10,11,.92);
   backdrop-filter:blur(10px);display:none;flex-direction:column;padding:24px}
 #picker.on{display:flex}
@@ -216,6 +276,10 @@ textarea:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:tr
 iframe{border:0;background:var(--void-950);width:100%;height:100%;display:block}
 iframe.framed{box-shadow:0 0 0 1px var(--line)}
 </style>
+<!-- Le meme module que le site utilise pour dechiffrer un contenu protege.
+     L'editeur s'en sert pour rouvrir une fiche : un seul chemin de
+     dechiffrement, donc aucun risque de divergence entre les deux. -->
+<script src="/assets/protected-content.js"></script>
 </head>
 <body>
 
@@ -243,6 +307,7 @@ iframe.framed{box-shadow:0 0 0 1px var(--line)}
     </div>
     <div class="tabs">
       <button id="tabTexts" class="on" type="button">Textes</button>
+      <button id="tabProjects" type="button">Projets</button>
       <button id="tabMedia" type="button">Médias</button>
       <button id="tabSettings" type="button">Réglages</button>
       <button id="tabChanges" type="button">Modifs</button>
@@ -250,6 +315,7 @@ iframe.framed{box-shadow:0 0 0 1px var(--line)}
   </header>
 
   <div id="list"><p class="empty">Chargement…</p></div>
+  <div id="projects"></div>
   <div id="media"></div>
   <div id="settings"></div>
   <div id="changes"></div>
@@ -296,6 +362,64 @@ iframe.framed{box-shadow:0 0 0 1px var(--line)}
   <div id="stage"><iframe id="site" src="/" title="Aperçu du site"></iframe></div>
 </main>
 
+<div id="protectbox">
+  <div class="pbpanel">
+    <h2>Protéger un projet</h2>
+    <p class="pbname" id="pbname"></p>
+
+    <div class="pbgroup">
+      <span class="pblabel">Que protège-t-on ?</span>
+      <label><input type="radio" name="pbscope" value="fiche" checked><span>Toute la fiche — textes et médias chiffrés</span></label>
+      <label><input type="radio" name="pbscope" value="lien"><span>Un lien seulement — la fiche reste publique</span></label>
+    </div>
+
+    <div class="pbgroup" id="pbficheopts">
+      <span class="pblabel">Dans la grille de l'accueil</span>
+      <label><input type="radio" name="pblisting" value="nda" checked><span>Sous NDA — vignette visible, avec un verrou</span></label>
+      <label><input type="radio" name="pblisting" value="locked"><span>Verrou seul — aucune image</span></label>
+      <label><input type="radio" name="pblisting" value="hidden"><span>Masqué — absent des grilles</span></label>
+      <div class="pbfield" id="pbtitlerow">
+        <span class="pblabel">Libellé de la tuile</span>
+        <input type="text" id="pbtitle" value="Projet sous accord de confidentialité">
+      </div>
+      <div class="pbfield" id="pbthumbrow">
+        <span class="pblabel">Vignette laissée visible</span>
+        <input type="text" id="pbthumb" readonly>
+        <p class="pbhint">Ce fichier reste lisible publiquement : c'est ce que la tuile montre.</p>
+      </div>
+    </div>
+
+    <div class="pbgroup" id="pblienopts" hidden>
+      <div class="pbfield">
+        <span class="pblabel">Adresse à protéger</span>
+        <input type="text" id="pburl" placeholder="https://…">
+      </div>
+      <div class="pbfield">
+        <span class="pblabel">Libellé du bouton</span>
+        <input type="text" id="pblabel" value="Watch full film">
+      </div>
+    </div>
+
+    <div class="pbgroup">
+      <div class="pbfield">
+        <span class="pblabel">Code d'accès</span>
+        <input type="password" id="pbcode" autocomplete="off">
+      </div>
+      <div class="pbfield">
+        <span class="pblabel">Confirme le code</span>
+        <input type="password" id="pbcode2" autocomplete="off">
+      </div>
+      <p class="pbhint">Le chiffrement se fait dans cette page : le code ne passe pas par le serveur et n'est écrit nulle part.</p>
+    </div>
+
+    <p class="pberr" id="pberr"></p>
+    <div class="pbactions">
+      <button id="pbok" type="button">Protéger</button>
+      <button id="pbcancel" type="button">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <div id="picker">
   <div class="pkhead">
     <h2>Choisir une image</h2>
@@ -330,7 +454,9 @@ iframe.framed{box-shadow:0 0 0 1px var(--line)}
 const $ = s => document.querySelector(s);
 let items = [], stamp = null;
 const edits = new Map();
-const key = it => it.line + ':' + it.start;
+/* La cle porte le fichier : index.html et data/projects.js ont tous deux une
+   ligne 42, et sans cette distinction les deux textes n'en faisaient qu'un. */
+const key = it => (it.file || 'index') + ':' + it.line + ':' + it.start;
 
 /* ------------------------------------------------------------- session */
 /* Le jeton vit en sessionStorage : il disparait a la fermeture de l'onglet
@@ -517,6 +643,7 @@ $('#save').addEventListener('click', async () => {
   for (const it of items){
     const k = key(it);
     if (edits.has(k)) payload.push({
+      file: it.file || 'index',
       line: it.line, start: it.start, len: it.len,
       quote: it.quote, raw: it.raw, text: edits.get(k)
     });
@@ -533,7 +660,7 @@ $('#save').addEventListener('click', async () => {
     // signale notre propre ecriture comme un changement exterieur
     if (res.stamp) stamp = res.stamp;
     if (res.applied > 0){
-      let msg = `${res.applied} texte(s) enregistré(s) dans index.html.`;
+      let msg = `${res.applied} texte(s) enregistré(s).`;
       if (res.rejected && res.rejected.length) msg += ' Refusés : ' + res.rejected.join(' ; ');
       msg += ' Pense à commiter quand le résultat te convient.';
       status(msg, res.rejected && res.rejected.length ? 'warn' : 'ok');
@@ -778,11 +905,15 @@ function renderChanges(d){
   $('#tabChanges').textContent = changes.length
     ? `Modifications (${changes.length})` : 'Modifications';
 
+  // Le commit part toujours sur la branche de contenu, quelle que soit la
+  // branche sortie : main est la branche de publication, l'editeur n'y ecrit
+  // pas. Autant l'annoncer avant de cliquer, pas apres.
   const br = d.branch || '';
   const cb = $('#cbranch');
   cb.innerHTML = 'vers <b></b>';
-  cb.querySelector('b').textContent = br;
-  cb.classList.toggle('warn', br !== 'main');
+  cb.querySelector('b').textContent = 'content';
+  cb.title = br === 'content' ? 'Branche déjà sortie.' : `Branche courante : ${br}. L'éditeur basculera sur content avant de commiter, puis poussera cette branche.`;
+  cb.classList.toggle('warn', br !== 'content');
 
   if (!$('#cmsg').value.trim()) $('#cmsg').value = suggestMessage(changes);
   $('#commit').disabled = changes.length === 0;
@@ -866,7 +997,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && $('#picker').classL
 /* ------------------------------------------------------------------ medias */
 let media = [];
 const medEdits = new Map();
-const medKey = it => it.line + ':' + it.start;
+const medKey = it => (it.file || 'index') + ':' + it.line + ':' + it.start;
 
 function isVideo(p){ return /\.(mp4|webm)$/i.test(p || ''); }
 
@@ -995,6 +1126,7 @@ $('#medsave').addEventListener('click', async () => {
   for (const it of media){
     const k = medKey(it);
     if (medEdits.has(k)) payload.push({
+      file: it.file || 'index',
       line: it.line, start: it.start, len: it.len,
       quote: it.quote, raw: it.raw, text: medEdits.get(k)
     });
@@ -1009,7 +1141,7 @@ $('#medsave').addEventListener('click', async () => {
     const res = await r.json();
     if (res.stamp) stamp = res.stamp;
     if (res.applied > 0){
-      let m = `${res.applied} chemin(s) enregistré(s) dans index.html.`;
+      let m = `${res.applied} chemin(s) enregistré(s).`;
       if (res.rejected && res.rejected.length) m += ' Refusés : ' + res.rejected.join(' ; ');
       status(m, res.rejected && res.rejected.length ? 'warn' : 'ok');
       await loadMedia();
@@ -1198,22 +1330,701 @@ $('#setsave').addEventListener('click', async () => {
   }
 });
 
+/* ==================================================================== projets
+   Cet onglet ecrit data/projects.js. Deux principes le gouvernent :
+   - le serveur ne reecrit que le bloc du projet concerne, donc une erreur
+     ici ne peut pas emporter les autres fiches ;
+   - le chiffrement se fait dans cette page, jamais sur le serveur. Le code
+     d'acces ne quitte pas le navigateur et n'est jamais ecrit sur le disque.
+*/
+let projectItems = [], projectFields = [], projectFormId = null, projectFormNew = false;
+
+const PROJECT_REQUIRED = ['title', 'category', 'date', 'thumb', 'desc', 'overview', 'role', 'tools', 'contribution', 'pipeline'];
+
+function fieldsByGroup(){
+  const groups = new Map();
+  for (const f of projectFields){
+    if (!groups.has(f.group)) groups.set(f.group, []);
+    groups.get(f.group).push(f);
+  }
+  return groups;
+}
+
+async function loadProjects(){
+  const r = await authFetch('/__projects');
+  const d = await r.json();
+  projectItems = d.items || [];
+  projectFields = d.fields || [];
+  if (d.stamp) stamp = d.stamp;
+  if (projectFormId === null) renderProjectList();
+}
+
+function renderProjectList(){
+  const host = $('#projects');
+  host.innerHTML = '';
+
+  const bar = document.createElement('div');
+  bar.className = 'prjbar';
+  const add = document.createElement('button');
+  add.type = 'button';
+  add.textContent = '+ Nouveau projet';
+  add.addEventListener('click', () => openProjectForm(null));
+  const sp = document.createElement('span');
+  sp.className = 'sp';
+  const count = document.createElement('span');
+  count.className = 'prjmeta';
+  count.textContent = projectItems.length + ' projets';
+  bar.append(add, sp, count);
+  host.appendChild(bar);
+
+  const note = document.createElement('p');
+  note.className = 'prjnote';
+  note.textContent = "L'ordre est calculé à partir de la date : du plus récent au plus ancien, ici comme sur le site. Les quatre premiers occupent la grille du haut.";
+  host.appendChild(note);
+
+  projectItems.forEach((it, i) => {
+    const row = document.createElement('div');
+    row.className = 'prj';
+
+    const th = document.createElement('div');
+    th.className = 'prjthumb';
+    if (it.protected) th.textContent = '🔒';
+    else if (it.thumb) th.style.backgroundImage = `url("/${it.thumb}")`;
+    else th.textContent = '—';
+
+    const body = document.createElement('div');
+    body.className = 'prjbody';
+    const title = document.createElement('div');
+    title.className = 'prjtitle';
+    title.textContent = it.title || it.id;
+    const meta = document.createElement('div');
+    meta.className = 'prjmeta';
+    meta.textContent = `${it.date || 'sans date'} · ${it.id}`;
+    if (i < 4 && it.listing !== 'hidden') {
+      const b = document.createElement('span');
+      b.className = 'prjbadge';
+      b.textContent = 'vitrine';
+      meta.appendChild(b);
+    }
+    if (it.protected){
+      const b = document.createElement('span');
+      b.className = 'prjbadge lock';
+      b.textContent = it.listing === 'hidden' ? 'protégé · masqué'
+        : it.listing === 'nda' ? 'protégé · NDA' : 'protégé · verrou';
+      meta.appendChild(b);
+    }
+    if (it.hasLink){
+      const b = document.createElement('span');
+      b.className = 'prjbadge lock';
+      b.textContent = 'lien protégé';
+      meta.appendChild(b);
+    }
+    body.append(title, meta);
+
+    const acts = document.createElement('div');
+    acts.className = 'prjacts';
+    const edit = document.createElement('button');
+    edit.type = 'button';
+    edit.textContent = it.protected ? 'Déprotéger' : 'Éditer';
+    edit.addEventListener('click', () => it.protected ? unprotectProject(it.id) : openProjectForm(it.id));
+    const lock = document.createElement('button');
+    lock.type = 'button';
+    lock.textContent = it.protected ? 'Voir' : it.hasLink ? 'Retirer le lien' : 'Protéger';
+    lock.addEventListener('click', () => it.protected
+      ? window.open('/#/project/' + it.id, '_blank')
+      : it.hasLink ? removeProjectLink(it.id) : protectProject(it.id));
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.textContent = 'Retirer';
+    del.addEventListener('click', () => deleteProject(it));
+    acts.append(edit, lock, del);
+
+    row.append(th, body, acts);
+    host.appendChild(row);
+  });
+}
+
+/* --------------------------------------------------------------- formulaire */
+async function openProjectForm(id){
+  projectFormNew = !id;
+  projectFormId = id || '';
+  let values = {};
+  if (id){
+    const r = await authFetch('/__project?id=' + encodeURIComponent(id));
+    const d = await r.json();
+    if (!d.ok){ status(d.reason || 'Projet introuvable.', 'err'); projectFormId = null; return; }
+    values = d.values || {};
+  }
+  renderProjectForm(values);
+}
+
+function makeField(def, value){
+  const wrap = document.createElement('div');
+  wrap.className = 'set';
+  const label = document.createElement('label');
+  label.textContent = def.label + (PROJECT_REQUIRED.includes(def.key) ? ' *' : '');
+  wrap.appendChild(label);
+
+  let input;
+  if (def.kind === 'para'){
+    input = document.createElement('textarea');
+    input.value = value == null ? '' : String(value);
+  } else if (def.kind === 'list' || def.kind === 'medias'){
+    input = document.createElement('textarea');
+    input.value = Array.isArray(value) ? value.join('\n') : (value == null ? '' : String(value));
+    input.rows = 4;
+  } else if (def.kind === 'projects'){
+    // Choix parmi les projets existants : une saisie libre laissait passer un
+    // titre qui ne renvoyait vers rien, et la rubrique s'affichait vide.
+    const chosen = new Set(Array.isArray(value) ? value : []);
+    input = document.createElement('div');
+    input.className = 'prjpick';
+    for (const other of projectItems){
+      if (other.id === projectFormId) continue;
+      if (other.listing === 'hidden') continue;
+      const row = document.createElement('label');
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.dataset.id = other.id;
+      // une fiche ecrite avant le selecteur porte le titre, pas l'identifiant
+      box.checked = chosen.has(other.id) || chosen.has(other.title);
+      const name = document.createElement('span');
+      name.textContent = other.title || other.id;
+      row.append(box, name);
+      input.appendChild(row);
+    }
+    if (!input.children.length){
+      const empty = document.createElement('div');
+      empty.className = 'hint';
+      empty.textContent = 'Aucun autre projet à lier.';
+      input.appendChild(empty);
+    }
+  } else if (def.kind === 'bool'){
+    input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = Boolean(value);
+  } else if (def.kind === 'number'){
+    input = document.createElement('input');
+    input.type = 'number';
+    input.min = '0';
+    input.value = value == null ? '' : String(value);
+  } else {
+    input = document.createElement('input');
+    input.type = 'text';
+    input.value = value == null ? '' : String(value);
+  }
+  input.dataset.key = def.key;
+  input.dataset.kind = def.kind;
+
+  if (def.kind === 'media'){
+    const row = document.createElement('div');
+    row.className = 'prjrow';
+    const prev = document.createElement('div');
+    prev.className = 'imgprev';
+    const paint = () => {
+      const v = input.value.trim();
+      prev.style.backgroundImage = v ? `url("/${v}")` : '';
+      prev.textContent = v ? '' : 'vide';
+    };
+    input.addEventListener('input', paint);
+    const browse = document.createElement('button');
+    browse.type = 'button';
+    browse.textContent = 'Parcourir';
+    browse.addEventListener('click', () => openPicker(input.value, p => { input.value = p; paint(); }));
+    row.append(input, browse, prev);
+    wrap.appendChild(row);
+    paint();
+    wrap.appendChild(makeUploader(list => { input.value = list[0]; paint(); }));
+  } else if (def.kind === 'medias'){
+    wrap.appendChild(input);
+    wrap.appendChild(makeUploader(list => {
+      const cur = input.value.trim();
+      input.value = (cur ? cur + '\n' : '') + list.join('\n');
+    }, true));
+  } else {
+    wrap.appendChild(input);
+  }
+
+  if (def.help){
+    const hint = document.createElement('div');
+    hint.className = 'hint';
+    hint.textContent = def.help;
+    wrap.appendChild(hint);
+  }
+  if (def.kind === 'list' || def.kind === 'medias'){
+    const hint = document.createElement('div');
+    hint.className = 'hint';
+    hint.textContent = 'Une entrée par ligne.';
+    wrap.appendChild(hint);
+  }
+  return wrap;
+}
+
+function readChosenProjects(el){
+  return [...el.querySelectorAll('input[type=checkbox]')].filter(b => b.checked).map(b => b.dataset.id);
+}
+
+/* Televersement : le fichier part tel quel, sans conversion. Son poids et ses
+   dimensions sont affiches avant l'envoi, pour que rien de trop lourd ne
+   parte sans qu'on l'ait vu. */
+function makeUploader(onDone, multiple){
+  const box = document.createElement('div');
+  box.className = 'prjup';
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.avif,.webp,.jpg,.jpeg,.png,.gif,.svg,.mp4,.webm';
+  if (multiple) input.multiple = true;
+  const info = document.createElement('div');
+  input.addEventListener('change', async () => {
+    const files = [...input.files];
+    if (!files.length) return;
+    const id = ($('#prjid') && $('#prjid').value.trim()) || projectFormId;
+    if (!id){ info.textContent = "Donne d'abord un identifiant au projet."; box.classList.add('warn'); return; }
+    const added = [];
+    for (const f of files){
+      info.textContent = `Envoi de ${f.name}…`;
+      box.classList.remove('warn');
+      const dims = await readDimensions(f);
+      try {
+        const r = await authFetch('/__upload', {
+          method: 'POST',
+          headers: { 'X-Project-Id': id, 'X-File-Name': f.name, 'Content-Type': 'application/octet-stream' },
+          body: await f.arrayBuffer()
+        });
+        const d = await r.json();
+        if (!d.ok){ info.textContent = d.reason; box.classList.add('warn'); continue; }
+        added.push(d.path);
+        const mo = (f.size / 1048576);
+        info.textContent = `${d.path} · ${mo.toFixed(2)} Mo${dims ? ' · ' + dims : ''}`;
+        // Le fichier n'est pas converti : au-dela de 1 Mo, autant le signaler
+        // plutot que de laisser le depot grossir sans bruit.
+        if (mo > 1) box.classList.add('warn');
+      } catch(e){
+        info.textContent = 'Envoi impossible : ' + e.message;
+        box.classList.add('warn');
+      }
+    }
+    input.value = '';
+    if (added.length) onDone(added);
+  });
+  box.append(input, info);
+  return box;
+}
+
+function readDimensions(file){
+  return new Promise(resolve => {
+    if (!/^image\//.test(file.type)) return resolve(null);
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { resolve(img.naturalWidth + '×' + img.naturalHeight); URL.revokeObjectURL(url); };
+    img.onerror = () => { resolve(null); URL.revokeObjectURL(url); };
+    img.src = url;
+  });
+}
+
+function renderProjectForm(values){
+  const host = $('#projects');
+  host.innerHTML = '';
+
+  const head = document.createElement('div');
+  head.className = 'prjhead';
+  const h = document.createElement('h2');
+  h.textContent = projectFormNew ? 'Nouveau projet' : 'Modifier · ' + projectFormId;
+  const back = document.createElement('button');
+  back.type = 'button';
+  back.textContent = 'Retour';
+  back.addEventListener('click', () => { projectFormId = null; renderProjectList(); });
+  head.append(h, back);
+  host.appendChild(head);
+
+  const form = document.createElement('div');
+  form.className = 'prjform';
+
+  const idWrap = document.createElement('div');
+  idWrap.className = 'set';
+  const idLabel = document.createElement('label');
+  idLabel.textContent = 'Identifiant *';
+  const idInput = document.createElement('input');
+  idInput.type = 'text';
+  idInput.id = 'prjid';
+  idInput.value = projectFormId || '';
+  idInput.disabled = !projectFormNew;
+  const idHint = document.createElement('div');
+  idHint.className = 'hint';
+  idHint.textContent = "Minuscules, chiffres et tirets. Sert d'adresse (#/project/…) et de dossier de médias (projects/…). Il ne se change plus ensuite.";
+  idWrap.append(idLabel, idInput, idHint);
+  form.appendChild(idWrap);
+
+  for (const [group, defs] of fieldsByGroup()){
+    if (group === 'Visibilite') continue;
+    const title = document.createElement('div');
+    title.className = 'prjgroup';
+    title.textContent = group;
+    form.appendChild(title);
+    for (const def of defs) form.appendChild(makeField(def, values[def.key]));
+  }
+
+  const err = document.createElement('div');
+  err.className = 'prjerr';
+  err.id = 'prjerr';
+  form.appendChild(err);
+
+  const actions = document.createElement('div');
+  actions.className = 'prjbar';
+  const save = document.createElement('button');
+  save.type = 'button';
+  save.textContent = 'Enregistrer le projet';
+  save.addEventListener('click', () => saveProjectForm());
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.textContent = 'Annuler';
+  cancel.addEventListener('click', () => { projectFormId = null; renderProjectList(); });
+  actions.append(save, cancel);
+  form.appendChild(actions);
+
+  host.appendChild(form);
+}
+
+function collectProjectForm(){
+  const values = {};
+  for (const el of $('#projects').querySelectorAll('[data-key]')){
+    const kind = el.dataset.kind;
+    const key = el.dataset.key;
+    if (kind === 'projects'){ values[key] = readChosenProjects(el); continue; }
+    if (kind === 'bool'){ values[key] = el.checked; continue; }
+    const raw = el.value.trim();
+    if (kind === 'list' || kind === 'medias'){
+      values[key] = raw ? raw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+      continue;
+    }
+    // Un nombre laisse vide n'est pas un zero a ecrire : le champ n'existe
+    // simplement pas dans la fiche.
+    if (kind === 'number'){ if (raw !== '') values[key] = Number(raw); continue; }
+    values[key] = raw;
+  }
+  return values;
+}
+
+async function saveProjectForm(){
+  const id = $('#prjid').value.trim();
+  const values = collectProjectForm();
+  const err = $('#prjerr');
+
+  const missing = PROJECT_REQUIRED.filter(k => {
+    const v = values[k];
+    return Array.isArray(v) ? v.length === 0 : !String(v || '').trim();
+  });
+  if (!id){ err.textContent = "L'identifiant est obligatoire."; return; }
+  if (missing.length){
+    const labels = missing.map(k => (projectFields.find(f => f.key === k) || {}).label || k);
+    err.textContent = 'À remplir : ' + labels.join(', ') + '.';
+    return;
+  }
+  err.textContent = '';
+
+  const r = await authFetch('/__project', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ id, values })
+  });
+  const d = await r.json();
+  if (!d.ok){ err.textContent = d.reason || 'Enregistrement refusé.'; return; }
+  status(d.created ? `Projet ${id} créé.` : `Projet ${id} enregistré.`, 'ok');
+  if (d.stamp) stamp = d.stamp;
+  projectFormId = null;
+  await loadProjects();
+  renderProjectList();
+  reloadPreview();
+  await loadChanges();
+}
+
+async function deleteProject(item){
+  if (!confirm(`Retirer « ${item.title || item.id} » du site ?\n\nLa fiche disparaît, les médias de projects/${item.id}/ restent sur le disque.`)) return;
+  const r = await authFetch('/__project-delete', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ id: item.id })
+  });
+  const d = await r.json();
+  if (!d.ok){ status(d.reason || 'Suppression refusée.', 'err'); return; }
+  status(`Projet ${item.id} retiré. Médias conservés dans ${d.mediaDir}/.`, 'ok');
+  if (d.stamp) stamp = d.stamp;
+  await loadProjects();
+  renderProjectList();
+  reloadPreview();
+  await loadChanges();
+}
+
+/* ------------------------------------------------------------- protection */
+const b64 = bytes => btoa(String.fromCharCode(...new Uint8Array(bytes)));
+const randHex = n => [...crypto.getRandomValues(new Uint8Array(n))].map(b => b.toString(16).padStart(2, '0')).join('');
+
+async function encryptPayload(resourceId, accessCode, payload, iterations){
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const km = await crypto.subtle.importKey('raw', enc.encode(accessCode.normalize('NFC')), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+    km, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+  const ct = await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv, additionalData: enc.encode(`kp-protected-content:${resourceId}:v1`), tagLength: 128 },
+    key, enc.encode(JSON.stringify(payload)));
+  return { id: resourceId, version: 1, iterations, salt: b64(salt), iv: b64(iv), ciphertext: b64(ct) };
+}
+
+const MEDIA_KEYS = ['thumb', 'heroImage', 'videoPoster'];
+
+/* Les medias d'un projet protege changent de dossier et de nom : un chemin
+   devinable rendrait le chiffrement inutile, puisque les fichiers restent
+   servis en statique. La correspondance part dans le contenu chiffre, seul
+   endroit d'ou la levee de protection pourra la relire. */
+function planMediaMoves(values, id, keepVisible){
+  const folder = 'projects/' + randHex(16);
+  const moves = [];
+  const outside = [];
+  const own = 'projects/' + id + '/';
+  const keep = new Set((keepVisible || []).filter(Boolean));
+  // Un meme fichier peut etre cite en vignette et en galerie : il ne recoit
+  // qu'un seul nouveau nom, et ne se deplace qu'une fois.
+  const seen = new Map();
+  const rename = path => {
+    if (!path || !/^projects\//.test(path)) return path;
+    // La vignette du mode NDA reste ou elle est : c'est ce que montre la tuile.
+    if (keep.has(path)) return path;
+    // Un media range ailleurs appartient a un autre projet : le deplacer
+    // casserait la fiche qui s'en sert. Il reste en place, et donc public.
+    if (!path.startsWith(own)) { if (!outside.includes(path)) outside.push(path); return path; }
+    if (seen.has(path)) return seen.get(path);
+    const ext = (path.match(/\.[a-z0-9]+$/i) || ['.bin'])[0].toLowerCase();
+    const to = `${folder}/${randHex(16)}${ext}`;
+    seen.set(path, to);
+    moves.push({ from: path, to });
+    return to;
+  };
+  const next = Object.assign({}, values);
+  for (const k of MEDIA_KEYS) if (next[k]) next[k] = rename(next[k]);
+  if (Array.isArray(next.galleryImages)) next.galleryImages = next.galleryImages.map(rename);
+  return { values: next, moves, outside };
+}
+
+/* Le dialogue remplace une file de fenetres systeme : les deux portees de
+   protection et les trois presentations en grille se lisent d'un coup d'oeil,
+   au lieu de se decouvrir une question a la fois. */
+let protectTarget = null;
+
+function protectRadio(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+function syncProtectDialog(){
+  const scope = protectRadio('pbscope');
+  const listing = protectRadio('pblisting');
+  $('#pbficheopts').hidden = scope !== 'fiche';
+  $('#pblienopts').hidden = scope !== 'lien';
+  $('#pbtitlerow').hidden = scope !== 'fiche' || listing === 'hidden';
+  $('#pbthumbrow').hidden = scope !== 'fiche' || listing !== 'nda';
+  $('#pbok').textContent = scope === 'lien' ? 'Protéger le lien' : 'Protéger la fiche';
+}
+
+function openProtectDialog(id, values){
+  protectTarget = { id, values };
+  $('#pbname').textContent = (values.title || id) + ' · ' + id;
+  $('#pbthumb').value = values.thumb || '';
+  $('#pbcode').value = '';
+  $('#pbcode2').value = '';
+  $('#pberr').textContent = '';
+  document.querySelector('input[name="pbscope"][value="fiche"]').checked = true;
+  document.querySelector('input[name="pblisting"][value="nda"]').checked = true;
+  syncProtectDialog();
+  $('#protectbox').classList.add('on');
+  $('#pbcode').focus();
+}
+
+function closeProtectDialog(){
+  $('#protectbox').classList.remove('on');
+  $('#pbcode').value = '';
+  $('#pbcode2').value = '';
+  protectTarget = null;
+}
+
+async function protectProject(id){
+  const r = await authFetch('/__project?id=' + encodeURIComponent(id));
+  const d = await r.json();
+  if (!d.ok){ status(d.reason, 'err'); return; }
+  openProtectDialog(id, d.values);
+}
+
+async function runProtect(){
+  if (!protectTarget) return;
+  const { id, values } = protectTarget;
+  const err = $('#pberr');
+  const code = $('#pbcode').value;
+  if (code.length < 6){ err.textContent = 'Code trop court : 6 caractères au minimum.'; return; }
+  if (code !== $('#pbcode2').value){ err.textContent = 'Les deux codes diffèrent.'; return; }
+
+  const scope = protectRadio('pbscope');
+  $('#pbok').disabled = true;
+  try {
+    if (scope === 'lien') await protectLink(id, code, err);
+    else await protectWholeProject(id, values, code, err);
+  } finally {
+    $('#pbok').disabled = false;
+  }
+}
+
+async function protectWholeProject(id, values, code, err){
+  const listing = protectRadio('pblisting');
+  const lockedTitle = $('#pbtitle').value.trim() || 'Projet protégé';
+  if (listing === 'nda' && !values.thumb){
+    err.textContent = "Ce projet n'a pas de vignette : le mode NDA n'a rien à montrer.";
+    return;
+  }
+  // En mode NDA la vignette reste lisible, donc elle ne bouge pas.
+  const plan = planMediaMoves(values, id, listing === 'nda' ? [values.thumb] : []);
+  if (plan.outside.length){
+    const ok = confirm(`Ces médias ne sont pas dans projects/${id}/ :\n\n${plan.outside.join('\n')}\n\nIls appartiennent à un autre projet : ils resteront en place et resteront accessibles publiquement. Protéger quand même ?`);
+    if (!ok) return;
+  }
+  status('Chiffrement…');
+  plan.values.__mediaMap = plan.moves;
+  const resource = await encryptPayload(id, code, { project: plan.values }, 600000);
+
+  const rr = await authFetch('/__project-protect', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ id, resource, listing, lockedTitle, thumb: values.thumb || '', moves: plan.moves })
+  });
+  const dd = await rr.json();
+  if (!dd.ok){ err.textContent = dd.reason || 'Protection refusée.'; return; }
+  closeProtectDialog();
+  const mode = listing === 'nda' ? 'vignette visible, verrou' : listing === 'hidden' ? 'masqué' : 'verrou seul';
+  status(`Projet ${id} protégé (${mode}). ${dd.moved} média(s) déplacé(s) hors des chemins devinables.`, 'ok');
+  if (dd.stamp) stamp = dd.stamp;
+  await loadProjects();
+  renderProjectList();
+  reloadPreview();
+  await loadChanges();
+}
+
+async function protectLink(id, code, err){
+  const raw = $('#pburl').value.trim();
+  let url;
+  try { url = new URL(raw); } catch(e){ err.textContent = "Adresse invalide."; return; }
+  if (url.protocol !== 'https:'){ err.textContent = "L'adresse doit être en HTTPS."; return; }
+  const label = $('#pblabel').value.trim() || 'Open protected content';
+
+  status('Chiffrement…');
+  const resourceId = id + '-link';
+  const resource = await encryptPayload(resourceId, code, { url: url.href }, 600000);
+  resource.label = label;
+  resource.provider = url.hostname.replace(/^www\./, '');
+  resource.allowedHosts = [url.hostname.toLowerCase()];
+
+  const rr = await authFetch('/__project-link', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ id, resource })
+  });
+  const dd = await rr.json();
+  if (!dd.ok){ err.textContent = dd.reason || 'Protection refusée.'; return; }
+  closeProtectDialog();
+  status(`Lien protégé ajouté à ${id}. La fiche reste publique.`, 'ok');
+  if (dd.stamp) stamp = dd.stamp;
+  await loadProjects();
+  renderProjectList();
+  reloadPreview();
+  await loadChanges();
+}
+
+async function removeProjectLink(id){
+  if (!confirm(`Retirer le lien protégé de « ${id} » ?\n\nLa fiche n'affichera plus de bouton d'accès. L'adresse chiffrée est perdue : il faudra la ressaisir.`)) return;
+  const r = await authFetch('/__project-link', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ id, remove: true })
+  });
+  const d = await r.json();
+  if (!d.ok){ status(d.reason || 'Retrait refusé.', 'err'); return; }
+  status(`Lien protégé retiré de ${id}.`, 'ok');
+  if (d.stamp) stamp = d.stamp;
+  await loadProjects();
+  renderProjectList();
+  reloadPreview();
+  await loadChanges();
+}
+
+async function unprotectProject(id){
+  const r = await authFetch('/__project?id=' + encodeURIComponent(id));
+  const d = await r.json();
+  if (!d.ok || !d.protectedResource){ status("Ressource protégée illisible.", 'err'); return; }
+
+  const code = prompt("Code d'accès pour rouvrir cette fiche :");
+  if (code === null) return;
+
+  let fiche;
+  try {
+    const target = await window.KPProtectedContent.unlock(d.protectedResource, code);
+    fiche = target.project;
+  } catch(e){
+    status(e && e.code === 'RATE_LIMITED' ? 'Trop de tentatives, attends un instant.' : "Code d'accès incorrect.", 'err');
+    return;
+  }
+
+  const map = Array.isArray(fiche.__mediaMap) ? fiche.__mediaMap : [];
+  const moves = map.map(m => ({ from: m.to, to: m.from }));
+  const values = Object.assign({}, fiche);
+  delete values.__mediaMap;
+  for (const k of MEDIA_KEYS){
+    const hit = map.find(m => m.to === values[k]);
+    if (hit) values[k] = hit.from;
+  }
+  if (Array.isArray(values.galleryImages)){
+    values.galleryImages = values.galleryImages.map(p => {
+      const hit = map.find(m => m.to === p);
+      return hit ? hit.from : p;
+    });
+  }
+
+  const rr = await authFetch('/__project-unprotect', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ id, values, moves })
+  });
+  const dd = await rr.json();
+  if (!dd.ok){ status(dd.reason || 'Levée de protection refusée.', 'err'); return; }
+  status(`Projet ${id} redevenu public. ${dd.moved} média(s) remis dans projects/${id}/.`, 'ok');
+  if (dd.stamp) stamp = dd.stamp;
+  await loadProjects();
+  renderProjectList();
+  reloadPreview();
+  await loadChanges();
+}
+
 function showTab(which){
-  const map = { texts:'#tabTexts', media:'#tabMedia', settings:'#tabSettings', changes:'#tabChanges' };
+  const map = { texts:'#tabTexts', projects:'#tabProjects', media:'#tabMedia', settings:'#tabSettings', changes:'#tabChanges' };
   for (const [k, sel] of Object.entries(map)) $(sel).classList.toggle('on', k === which);
   $('#list').classList.toggle('off', which !== 'texts');
+  $('#projects').classList.toggle('on', which === 'projects');
   $('#media').classList.toggle('on', which === 'media');
   $('#settings').classList.toggle('on', which === 'settings');
   $('#changes').classList.toggle('on', which === 'changes');
   $('#medbox').classList.toggle('on', which === 'media');
   $('#setbox').classList.toggle('on', which === 'settings');
   $('#commitbox').classList.toggle('on', which === 'changes');
+  if (which === 'projects') loadProjects();
   if (which === 'media') loadMedia();
   if (which === 'settings') loadSettings();
   if (which === 'changes') loadChanges();
 }
 
+for (const el of document.querySelectorAll('input[name="pbscope"], input[name="pblisting"]')){
+  el.addEventListener('change', syncProtectDialog);
+}
+$('#pbok').addEventListener('click', runProtect);
+$('#pbcancel').addEventListener('click', closeProtectDialog);
+$('#protectbox').addEventListener('click', e => { if (e.target.id === 'protectbox') closeProtectDialog(); });
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('#protectbox').classList.contains('on')) closeProtectDialog();
+});
+
 $('#tabTexts').addEventListener('click', () => showTab('texts'));
+$('#tabProjects').addEventListener('click', () => showTab('projects'));
 $('#tabMedia').addEventListener('click', () => showTab('media'));
 $('#tabSettings').addEventListener('click', () => showTab('settings'));
 $('#tabChanges').addEventListener('click', () => showTab('changes'));

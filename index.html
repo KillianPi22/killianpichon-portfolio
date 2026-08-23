@@ -154,6 +154,15 @@ button{color:inherit}
 .view-all-button:hover .view-all-toggle-icon,.view-all-button:focus-visible .view-all-toggle-icon{animation:none;color:var(--accent-hover);transform:scale(1.15)}
 @keyframes kp-toggle-pulse{0%,52%,100%{transform:scale(1);opacity:.85}18%{transform:scale(1.32);opacity:1}36%{transform:scale(1);opacity:.85}}
 .project-media-tile{appearance:none;width:100%;padding:0;text-align:inherit}
+.project-card-lock{position:absolute;top:50%;left:50%;z-index:1;width:34px;height:25px;transform:translate(-50%,-50%);border-radius:4px;background:var(--text-faint)}
+.project-card-lock::before{content:'';position:absolute;left:50%;bottom:100%;width:20px;height:14px;transform:translateX(-50%);border:3px solid var(--text-faint);border-bottom:0;border-radius:11px 11px 0 0}
+/* Tuile sous NDA : la vignette reste visible, assombrie pour que le verrou se
+   detache quelle que soit l'image. */
+.thumb-locked::after{content:'';position:absolute;inset:0;background:rgba(10,10,11,.45)}
+.thumb-locked .project-card-lock{background:var(--text-heading)}
+.thumb-locked .project-card-lock::before{border-color:var(--text-heading)}
+.project-gate{display:flex;justify-content:center;padding:clamp(80px,14vh,160px) var(--container-pad)}
+.project-gate-panel{width:min(520px,100%);padding:clamp(24px,5vw,40px);border:1px solid var(--line-default);border-radius:var(--radius-md);background:var(--surface-2)}
 .modal-backdrop{overscroll-behavior:contain}
 @media (min-width: 768px){
   html.kp-snap .hero{min-height:100vh;min-height:100dvh}
@@ -555,6 +564,9 @@ var d=null!=c&&c.hydratedSources||null,e=!1,f="",g=aj;null!==c&&void 0!==c&&(!0=
 function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmountComponentAtNode=function(a){if(!Vd(a))throw Error(m(40));return a._reactRootContainer?(yb(function(){Wd(null,null,a,!1,function(){a._reactRootContainer=null;a[Ja]=null})}),!0):!1};Q.unstable_batchedUpdates=Tf;Q.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!Vd(c))throw Error(m(200));if(null==a||void 0===a._reactInternals)throw Error(m(38));return Wd(a,b,c,!1,d)};Q.version="18.3.1-next-f1338f8080-20240426"});
 })();
 </script>
+  <!-- Fiches des projets. Chargement classique, sans defer : l'application
+       ci-dessous les lit pendant son evaluation. -->
+  <script src="data/projects.js"></script>
   <script>window.__asset = function (assetPath) {
   return assetPath;
 };
@@ -733,7 +745,8 @@ function ProjectCard({
   thumbAlt = 'Project still',
   thumbImage,
   href = '#/work',
-  onClick
+  onClick,
+  locked = false
 }) {
   return React.createElement("a", {
     href: href,
@@ -753,7 +766,7 @@ function ProjectCard({
       overflow: 'hidden',
       transition: 'box-shadow var(--duration-base) var(--ease-out)'
     },
-    className: "thumb",
+    className: "thumb" + (locked && thumbImage ? ' thumb-locked' : ''),
     "aria-label": thumbAlt,
     onMouseEnter: e => {
       e.currentTarget.style.boxShadow = 'inset 0 0 0 1px var(--accent), 0 0 20px var(--accent-glow)';
@@ -761,7 +774,10 @@ function ProjectCard({
     onMouseLeave: e => {
       e.currentTarget.style.boxShadow = 'none';
     }
-  }), React.createElement("div", {
+  }, locked && React.createElement("span", {
+    className: "project-card-lock",
+    "aria-hidden": "true"
+  })), React.createElement("div", {
     style: {
       fontFamily: 'var(--font-display)',
       fontWeight: 700,
@@ -1895,62 +1911,10 @@ function HomeScreen({
       window.removeEventListener('wheel', onWheel);
     };
   }, []);
-  const PROJECTS = [{
-    id: 'celestia',
-    title: 'Celestia',
-    category: 'Location-Based Immersive Experience',
-    year: 2025,
-    thumbImage: window.__asset('projects/celestia/cathedral-nave.jpg')
-  }, {
-    id: 'hurtubise',
-    title: 'Hurtubise : Saisir le Chaos',
-    category: 'Immersive Film · Fulldome',
-    year: 2025,
-    thumbImage: window.__asset('projects/hurtubise/dome-neon-blue-1.jpg')
-  }, {
-    id: 'volcano',
-    title: 'Into the Volcano',
-    category: 'Immersive Installation',
-    year: 2025,
-    thumbImage: window.__asset('projects/volcano/iceland-cliffs.jpg')
-  }, {
-    id: 'traveler',
-    title: "Traveler's Introspection",
-    category: 'Immersive Film',
-    year: 2025,
-    thumbImage: window.__asset('projects/traveler/planet-strands.png')
-  }];
-  const MORE_PROJECTS = [{
-    id: 'melanie',
-    title: 'Melanie Martinez',
-    category: 'Tour Visuals',
-    year: 2024,
-    thumbImage: window.__asset('projects/melanie-martinez/k12-seesaw.jpg')
-  }, {
-    id: 'paralleles',
-    title: 'PARALLÈLES',
-    category: 'Interactive Installation · Real-Time',
-    year: 2023,
-    thumbImage: window.__asset('projects/paralleles/installation-neon-x.jpg')
-  }, {
-    id: 'batiscan',
-    title: 'Lac Batiscan',
-    category: 'Interactive Scale Model',
-    year: 2024,
-    thumbImage: window.__asset('projects/batiscan/model-top-labels.avif')
-  }, {
-    id: 'epernay',
-    title: '1858 – Habits de Lumière',
-    category: 'Projection Mapping · Architectural',
-    year: 2022,
-    thumbImage: window.__asset('projects/1858-epernay/mapping-green-facade.jpg')
-  }, {
-    id: 'colosseum',
-    title: 'Sangue e Arena',
-    category: 'Projection Mapping · Architectural',
-    year: 2018,
-    thumbImage: window.__asset('projects/colosseum/naumachia-night-wide.jpg')
-  }];
+  // Les deux grilles decoupent la meme liste triee : rien a maintenir a la
+  // main quand un projet arrive ou change de date.
+  const PROJECTS = VISIBLE_PROJECTS.slice(0, FEATURED_COUNT);
+  const MORE_PROJECTS = VISIBLE_PROJECTS.slice(FEATURED_COUNT);
   const AWARDS = [{
     image: window.__asset('assets/awards/public-award-sat-fest.png'),
     type: 'Public Award',
@@ -2052,7 +2016,8 @@ function HomeScreen({
       onOpenProject(p.id);
     },
     title: p.title,
-    category: p.category,
+    category: p.cardCategory || p.category,
+    locked: p.locked,
     year: p.year,
     thumbImage: p.thumbImage
   })))), showAll && React.createElement("div", {
@@ -2072,7 +2037,8 @@ function HomeScreen({
       onOpenProject(p.id);
     },
     title: p.title,
-    category: p.category,
+    category: p.cardCategory || p.category,
+    locked: p.locked,
     year: p.year,
     thumbImage: p.thumbImage
   }))))), React.createElement("section", {
@@ -2115,217 +2081,67 @@ function HomeScreen({
   }, React.createElement(Footer, null)));
 }
 window.HomeScreen = HomeScreen;
-const PROJECT_DATA = {
-  celestia: {
-    title: 'Celestia',
-    category: 'Location-Based Immersive Experience',
-    year: 2025,
-    studio: 'Normal Studio',
-    venue: 'Denver & Chicago',
-    client: 'Paquin et associés',
-    desc: 'A traveling immersive production shaped around a practical question: how could a monumental show remain art-directable across two venues without rebuilding its workflow?',
-    overview: "Produced at Normal Studio, Celestia premiered in Denver before being remounted in Chicago. The production called for large flocks that could move clearly across a monumental projection surface, creating a magical visual language that remained legible at scale. The system also had to stay flexible enough to support late creative decisions and adapt reliably from one installation to the next.",
-    role: 'Realtime 3D Generalist — Procedural Animation, Look Development & Compositing',
-    tools: ['Unreal Engine 5', 'Niagara', 'Notch', 'Unreal Media Player', ''],
-    contribution: ['Designed procedural flock behaviours and animation blending for background groups, while keeping hero birds separate for close-up moments that required directed performance.', 'Developed a simplified, Fresnel-led visual treatment with the art direction team so silhouettes and motion remained legible on the projection surface.', 'Prepared separated light, mask and base passes so final adjustments could happen in compositing without reopening every rendered element.'],
-    technicalChallenges: ['Challenge — large projection surfaces can erase fine detail, while a literal rendering approach would make late visual changes slower and harder to control.', 'Production response — the look was organized around readable forms, separated passes and early compositing tests; procedural flocks handled scale while hero animation preserved authored moments.', 'Production impact — the team could refine timing and finish later in the process, and the same production logic carried from the Denver installation into the Chicago remount.'],
-    rnd: ['Before the VR workflow was connected to the existing PC visualization system, I delivered an initial playable VR build so artists, production and the client could already review the experience in space. A second technical artist then completed an optimization pass and merged both systems.', 'Playback tests focused on the spectator experience: preserving clarity and visual impact at monumental scale while staying within real-time performance limits. We compared image dimensions, resolution, player behaviour and encoding, then moved to Bink to achieve more reliable high-resolution playback.\n\nThe artist-preview workflow was adjusted around the same constraints, allowing creators to review imagery that remained close to the final show without maintaining a separate low-fidelity version.', 'This phased approach enabled earlier decisions around staging, scale and pacing, with less reliance on rendered exports or installation-day feedback.'],
-    pipeline: ['Procedural flock blocking and hero animation', 'Projection-scale look development', 'Separated render-pass preparation', 'Real-time compositing review', 'PC/VR pre-installation research'],
-    impact: 'The resulting workflow kept visual decisions editable through compositing and remained adaptable when the production moved from Denver to Chicago.',
-    trailerUrl: 'https://www.instagram.com/reel/DZdTE_xAg4z/',
-    galleryImages: [window.__asset('projects/celestia/cathedral-nave.jpg'), window.__asset('projects/celestia/cathedral-arches.jpg')],
-    prev: 'PARALLÈLES',
-    next: "Traveler's Introspection"
-  },
-  hurtubise: {
-    title: 'Hurtubise : Saisir le Chaos',
-    category: 'Immersive Film · Fulldome',
-    year: 2025,
-    studio: 'Normal Studio',
-    venue: 'Montréal Planetarium',
-    desc: "A fulldome production translating Jacques Hurtubise's paintings into synchronized light, movement and spatial composition.",
-    overview: "Presented at the Montréal Planetarium, the film placed Jacques Hurtubise's work inside a dome-scale audiovisual experience set to music by Hippie Hourrah. The production challenge was to animate the paintings without losing their graphic rhythm, then coordinate multiple visual layers across a continuous immersive surface.",
-    role: 'Realtime 3D Artist — Animation Systems, Synchronization & Fulldome Compositing',
-    tools: ['Unreal Engine 5', 'Photoshop', 'After Effects'],
-    contribution: ['Developed reusable animation rigs for the neon-light sequences so large groups of bulbs could be directed without losing the irregular energy of the source artwork.', 'Prepared and animated mapped window sequences and digital interpretations of Hurtubise paintings.', 'Composited the fulldome material, including visual-delay treatments and timing adjustments required for synchronization across the dome.', 'Worked through motion and pacing decisions with composer Tommy Caron so the animation supported the music without becoming mechanically repetitive.'],
-    technicalChallenges: ['Challenge — hundreds of animated lights and layered artworks had to feel coordinated across the dome while preserving the tension and spontaneity of Hurtubise’s visual language.', 'Production response — reusable rigs organized the light animation, while mapped sequences and delay-based compositing were timed as connected layers rather than isolated shots.', 'Production impact — the system supported iteration on rhythm and synchronization without rebuilding each element individually.'],
-    rnd: ['Camera and motion-rhythm studies were developed through repeated exchanges with composer Tommy Caron, searching for timing rules that could support the score while leaving room for variation.'],
-    pipeline: ['Artwork preparation and mapped animation', 'Reusable neon-light rigging', 'Music-led timing studies', 'Fulldome compositing', 'Dome synchronization and technical integration'],
-    impact: 'The production connected painting, light and music through a shared timing structure designed for the spatial demands of fulldome projection.',
-    heroImage: window.__asset('projects/hurtubise/dome-neon-blue-1.jpg'),
-    trailerUrl: 'https://www.youtube.com/watch?v=V8K4WwrpNwI',
-    trailerEmbedDisabled: true,
-    galleryImages: [window.__asset('projects/hurtubise/dome-neon-blue-1.jpg'), window.__asset('projects/hurtubise/dome-neon-blue-2.png'), window.__asset('projects/hurtubise/dome-neon-amber.jpg'), window.__asset('projects/hurtubise/dome-paint-animation.jpg')],
-    prev: "Traveler's Introspection",
-    next: 'Into the Volcano'
-  },
-  volcano: {
-    title: 'Into the Volcano',
-    category: 'Immersive Installation · 270°',
-    year: 2025,
-    studio: 'Normal Studio',
-    venue: 'Perlan Museum, Reykjavík',
-    desc: 'A 270° museum experience combining volcanic footage with digital landscapes prepared for close, large-format viewing.',
-    overview: 'Created for the custom-built planetarium at Perlan in Reykjavík, the installation is a permanent, daily-screened descent beneath the Snæfellsnes Peninsula, moving from documentary footage of eruptions into reconstructed volcanic environments. The image runs on a continuous LED surface wrapping the audience 270° vertically and 360° horizontally, extended by a glass floor underfoot, so rock is read from close range rather than at a framed distance. Those environments were rebuilt in part from photogrammetry of Icelandic rock and cliff faces. My contribution centered on making the resulting ultra-high-resolution geological assets usable in production while preserving the surface detail that viewing distance exposes.',
-    role: 'Environment Artist — Look Development & High-Resolution Asset Integration',
-    tools: ['Unreal Engine 5', 'Cinema 4D', 'Substance 3D', 'Photoshop'],
-    contribution: ['Assessed and prepared geological assets carrying 16K texture sources.', 'Cleaned and repaired texture areas that would become visible at installation scale.', 'Integrated the assets into the real-time environment and balanced fidelity against production performance.', 'Documented a repeatable handoff between texture repair, look development and final scene integration.'],
-    technicalChallenges: ['Challenge — the 16K textures carried the geological detail required by the experience, but their size made inspection, repair and iteration difficult.', 'Production response — the textures were divided into deliberate repair and validation stages so only the areas that affected the final view received intensive work.', 'Production impact — high-resolution assets could move through look development and integration without treating every source file as an equally expensive operation.'],
-    recognition: ['Prix NUMIX 2026 — Winner, International · Exhibition'],
-    pipeline: ['16K source-texture assessment', 'Targeted cleaning and repair', 'High-resolution asset integration', 'Look-development review', 'Performance-aware scene preparation'],
-    impact: 'The workflow preserved the geological detail needed for the 270° presentation while making the assets practical to review and integrate during production.',
-    galleryImages: [window.__asset('projects/volcano/iceland-cliffs.jpg'), window.__asset('projects/volcano/installation-view.png')],
-    placeholderTiles: 2,
-    creditsNote: 'Directed by Tommy Caron — Normal Studio',
-    externalUrl: 'https://normal.studio/en/projects/into-the-volcano/',
-    externalLabel: 'See more on Normal Studio',
-    prev: 'Hurtubise : Saisir le Chaos',
-    next: 'Melanie Martinez'
-  },
-  melanie: {
-    title: 'Melanie Martinez',
-    category: 'Tour Visuals',
-    year: 2024,
-    studio: 'Normal Studio',
-    venue: 'The Trilogy Tour — K-12 / Portals worlds',
-    desc: 'Touring visuals translating Melanie Martinez’s storybook worlds into scenes designed for repeatable large-venue playback.',
-    overview: 'Produced with Normal Studio for the Trilogy Tour, the work moved through playground, carousel, dollhouse and marionette-theatre environments. Each scene had to preserve the hand-crafted art direction while remaining dependable within the pacing and technical constraints of a touring show.',
-    role: 'Realtime 3D Generalist',
-    tools: ['Unreal Engine 5', 'Cinema 4D', 'Substance Designer', 'After Effects'],
-    contribution: ['Modeled the wooden-box set piece and developed the carousel horses through modeling, sculpting and material work.', 'Adapted the seesaw asset and assembled the environments for live playback.', 'Maintained visual continuity as the show moved between distinct storybook settings.', 'Prepared and optimized scenes for the repeatability expected of a touring production.'],
-    technicalChallenges: ['Challenge — the scenes had to preserve a detailed, hand-made visual identity while playing consistently across a live touring system.', 'Production response — assets were evaluated in the context of each scene, and repeated object-throw simulations were replaced with reusable in-scene logic that could be adjusted without another external simulation pass.', 'Production impact — motion and staging changes could be reviewed inside the live scene, reducing back-and-forth during iteration.'],
-    galleryImages: [window.__asset('projects/melanie-martinez/k12-seesaw.jpg'), window.__asset('projects/melanie-martinez/carousel-bunny.avif'), window.__asset('projects/melanie-martinez/carousel-arch.avif'), window.__asset('projects/melanie-martinez/mansion-arch.avif'), window.__asset('projects/melanie-martinez/red-room-dancers.avif'), window.__asset('projects/melanie-martinez/puppet-theater.avif')],
-    pipeline: ['Asset modeling and adaptation', 'Material and environment development', 'Scene assembly and continuity review', 'Reusable motion logic', 'Touring-playback preparation'],
-    impact: 'The scenes were prepared as dependable parts of a larger touring sequence, with visual decisions made in relation to live pacing rather than a single rendered shot.',
-    prev: 'Into the Volcano',
-    next: '1858 – Habits de Lumière'
-  },
-  traveler: {
-    title: "Traveler's Introspection",
-    category: 'Immersive Film · Dome',
-    year: 2025,
-    studio: 'Fantastik Obsolete',
-    roleTitle: 'Co-Founder',
-    desc: 'Co-creation of an original fulldome film exploring how camera movements, rhythm and scale shape storytelling and motion that appears natural in a 360-type format.',
-    overview: 'This is a short film that we developed as part of our Fantastik Obsolete collective. An exercise in camera rhythm, special effects and a singular narrative. The story tells the Traveler’s story through a life cycle depicted across different scenes.',
-    role: 'Co-Founder — Camera, Visual Effects, Compositing and Technical',
-    tools: ['Unreal Engine 5', 'OffWorld Camera 360', 'After Effects', 'Cinema 4D', 'Dome Tools - Prefrontal Cortex (PC/VR)'],
-    contribution: ['I produced the Golden Waterfall and Mirror of Shadows scenes, as well as the final scene with Nicolas Lachance-Brais for the egg modeling and motion.', 'Development of Niagara visual-effects studies, exploration of the recently implemented motion-design modules and cloners.'],
-    technicalChallenges: ['Problem: Watching our own scenes on a 16:9 screen with our viewing habits.', 'Production solution: Each sequence was reviewed iteratively in virtual reality to evaluate the comfort, acceleration, deceleration and fluidity of spatial movements.', 'Impact on production: Camera and timing decisions were validated before the final render for the dome, allowing revisions to focus on audience perception rather than technical rigidities. Between metric rigor and shortcuts to complete the visual recipe.'],
-    rnd: ['The virtual-reality review served as a production study throughout the film, allowing movement and scale to be evaluated from the inside rather than relying on a static preview.', 'This process established a common basis for discussing comfort, rhythm and immersion before the final presentation in the dome.'],
-    recognition: ['SAT Fest 2026 — Audience Award', 'SAT Fest 2026 — Official Selection', 'FDUK 2026 — Official Selection', 'Dome Under Film Festival 2026 — Official Selection', 'Macon Film Festival 2026 — Official Selection', 'Portland Festival of Cinema, Animation & Technology 2026 — Nomination'],
-    pipeline: ['Camera setup and movement', 'Verification in virtual reality from the audience’s point of view', 'Motion improvements', 'Visual-effects development', 'Compositing between After Effects and 3D software', 'Technical challenges with the sweep animation effect and the liquid around the planet', 'Performance so we could render without crashing the graphics card (maximum VRAM used)'],
-    impact: 'This allowed us to expand our creative potential and consolidate our structure as well as our brand image.',
-    protectedMedia: {
-      id: 'traveler-full-film',
-      version: 1,
-      label: 'Watch full film',
-      provider: 'YouTube',
-      iterations: 600000,
-      salt: '8bBUpo9BisLtgUIv9VCEog==',
-      iv: 'rS8u+48dcp/vUA7M',
-      ciphertext: 'VnvaW18XOVGMJ/QksESC5GWVmfkkIXU6Tys677o0Ou7tm8rjcY4YJW4aO/5wr7xx7ZaiqOsy',
-      allowedHosts: ['youtu.be']
-    },
-    galleryImages: [window.__asset('projects/traveler/planet-strands.png'), window.__asset('projects/traveler/asteroid-field.png'), window.__asset('projects/traveler/cave-crystals.webp'), window.__asset('projects/traveler/tunnel-vortex.webp'), window.__asset('projects/traveler/golden-strands-2.webp')],
-    prev: 'Celestia',
-    next: 'Hurtubise : Saisir le Chaos'
-  },
-  paralleles: {
-    title: 'PARALLÈLES',
-    category: 'Interactive Installation · Real-Time',
-    year: 2023,
-    studio: 'Transversal',
-    desc: 'An interactive installation built around a synchronized camera and presentation pipeline linking cinematic sequences with procedural visuals. Completed in 28 hours.',
-    overview: "Developed with Transversal, PARALLÈLES required two visual systems to behave as one production timeline. Cinematic camera sequences drove the presentation, OSC cues triggered procedural events in TouchDesigner, and the resulting imagery returned to the real-time scene for capture and review.",
-    role: 'Realtime Artist — Camera, Sequencing & Technical Integration',
-    tools: ['Unreal Engine', 'Sequencer', 'OSC', 'TouchDesigner'],
-    contribution: ['Designed the camera language and animated the cinematic sequences used to present the installation.', 'Structured the master timeline and connected its cues to procedural visual events through OSC.', 'Integrated the returned visual output into the scene for synchronized capture and compositing.', 'Prepared presentation-ready sequences used during project validation.'],
-    technicalChallenges: ['Challenge — camera motion, procedural imagery and presentation timing lived in separate systems but had to remain synchronized during review.', 'Production response — the cinematic timeline acted as the master clock, sending OSC cues outward and receiving the generated imagery back into the presentation scene.', 'Production impact — the team could review camera work and procedural visuals as one coherent sequence instead of validating each system separately.'],
-    pipeline: ['Camera design and cinematic animation', 'Master timeline sequencing', 'OSC cue exchange', 'Procedural visual generation', 'Return capture and real-time compositing', 'Presentation validation'],
-    impact: 'The connected workflow turned separate visual processes into a reviewable presentation sequence within the project’s 28-hour production window.',
-    galleryImages: [window.__asset('projects/paralleles/installation-neon-x.jpg'), window.__asset('projects/paralleles/installation-day.webp'), window.__asset('projects/paralleles/unreal-viewport.png')],
-    prev: 'Lac Batiscan',
-    next: 'Celestia'
-  },
-  batiscan: {
-    title: 'Lac Batiscan',
-    category: 'Interactive Scale Model · Projection Mapping Design',
-    year: 2024,
-    studio: 'XYZ Technologies',
-    roleTitle: 'Freelance',
-    venue: 'Parc de la Rivière Batiscan',
-    desc: 'Projection mapping design for an interactive scale model helping visitors read the park’s geography and seasonal character before entering the site. Completed in 72 hours.',
-    overview: 'Created for Parc de la Rivière Batiscan with XYZ Technologies, the installation introduces the site through an interactive model at reception. I produced the complete visual content for the physical model before the interactive layer was integrated by the wider team.',
-    designIntent: 'The objective was to make the park understandable at a glance rather than reproduce every detail literally. Lighting, shading, water and seasonal transitions were judged by how clearly visitors could read the terrain from different positions around the model.',
-    role: 'Freelance — Visual Content & Projection Mapping Design',
-    tools: ['Cinema 4D', 'Unreal Engine', 'Fluid Flux', 'After Effects', 'Photoshop', 'Illustrator'],
-    contribution: ['Created the complete projection mapping design for the physical model.', 'Developed the summer and winter visual content projected onto the terrain.', 'Handled terrain look development, water behaviour, shading, lighting and visual effects.', 'Prepared the final compositing delivered before integration of the interactive layer.'],
-    contributionNote: 'The interactive features were developed afterwards, by others, and were outside my responsibilities.',
-    technicalChallenges: ['Challenge — projected content had to align with the model’s physical geometry and remain legible from several visitor viewpoints.', 'Production response — projection accuracy, terrain contrast, seasonal transitions, water behaviour and lighting were evaluated together against public readability.', 'Production impact — the visual system gave visitors a clear seasonal overview of the landscape before they began exploring the park.'],
-    impact: 'The final content became the visual foundation of the interactive installation, helping visitors better understand the landscapes and seasonal transformations of Parc de la Rivière Batiscan before beginning their visit. The full visual production was completed in 72 hours.',
-    pipeline: ['Physical-model projection planning', 'Terrain and seasonal look development', 'Water and environmental motion', 'Multi-angle readability review', 'Final compositing', 'Handoff for interactive integration'],
-    placeholderTiles: 4,
-    creditsNote: 'Courtesy and photography: XYZ Technologies',
-    externalUrl: 'https://www.xyztechnologies.com/en/realisations/interactive-model-at-batiscan-river-park/',
-    externalLabel: 'See more on XYZ Technologies',
-    trailerUrl: 'https://drive.google.com/file/d/1uixdKNK3wAQAihA3xj8i-67IQN4xWFAj/preview',
-    videoPoster: window.__asset('projects/batiscan/video-poster.jpg'),
-    galleryImages: [window.__asset('projects/batiscan/reception-projection.avif'), window.__asset('projects/batiscan/aerial-lake-winter.avif'), window.__asset('projects/batiscan/model-top-labels.avif'), window.__asset('projects/batiscan/model-angle-labels.avif'), window.__asset('projects/batiscan/model-tablet-poi.avif')],
-    placeholderTiles: 0,
-    relatedProjects: ['1858 – Habits de Lumière', 'Sangue e Arena'],
-    prev: 'Sangue e Arena',
-    next: 'PARALLÈLES'
-  },
-  epernay: {
-    title: '1858 – Habits de Lumière',
-    category: 'Projection Mapping · Architectural',
-    year: 2022,
-    studio: 'Graphics eMotion',
-    venue: 'Épernay, France',
-    client: "Ville d'Épernay",
-    desc: 'An architectural projection mapping production using the Hôtel de Ville itself to carry the story of its history and reconstruction.',
-    overview: 'Created by Graphics eMotion for Habits de Lumière 2022 in Épernay, the 15-minute show followed the building’s history through the voice of architect Victor Lenoir. My contribution covered several sequences combining lighting, particles, compositing and motion design within the studio’s larger production.',
-    designIntent: 'The façade was treated as part of the narration rather than a neutral screen. Composition and movement followed the building’s structure so historical and poetic moments remained readable from the public viewing distance.',
-    role: 'Projection Mapping Artist',
-    tools: ['Cinema 4D', 'After Effects', 'Photoshop'],
-    contribution: ['Prepared projection mapping layouts for the façade geometry.', 'Developed assigned scenes through lighting, shading, particles and compositing.', 'Designed motion at a scale and rhythm appropriate for architectural viewing.', 'Integrated the sequences within the studio’s broader narrative and technical framework.'],
-    contributionNote: 'I contributed multiple projection mapping sequences to the show as part of the Graphics eMotion team; the overall show — direction, narration, staging and other sequences — was a full studio production, not a solo work.',
-    technicalChallenges: ['Challenge — every visual event had to align with the façade while remaining clear at long viewing distances.', 'Production response — architectural lines guided composition, lighting and particle movement, with projection accuracy reviewed alongside narrative rhythm.', 'Production impact — the assigned sequences supported the historical story without separating the imagery from the building that carried it.'],
-    impact: 'The finished show used large-scale projection to connect the Hôtel de Ville’s architecture with the history being narrated across its façade.',
-    pipeline: ['Façade mapping preparation', 'Narrative scene development', 'Lighting and particle integration', 'Distance-readability review', 'Compositing and show integration'],
-    trailerUrl: 'https://drive.google.com/file/d/1wrjlpzt2n4l3SEmFaD_lSg4Nd9VQQDzV/preview',
-    videoPoster: window.__asset('projects/1858-epernay/video-poster.jpg'),
-    galleryImages: [window.__asset('projects/1858-epernay/mapping-green-facade.jpg'), window.__asset('projects/1858-epernay/lighting-intro.png'), window.__asset('projects/1858-epernay/vfx-green-growth.png'), window.__asset('projects/1858-epernay/vfx-briques-1.png'), window.__asset('projects/1858-epernay/vfx-briques-2.png')],
-    creditsNote: 'Employer: Graphics eMotion — Event: Habits de Lumière 2022 — Location: Épernay, France',
-    relatedProjects: ['Sangue e Arena', 'Lac Batiscan'],
-    prev: 'Melanie Martinez',
-    next: 'Sangue e Arena'
-  },
-  colosseum: {
-    title: 'Sangue e Arena',
-    category: 'Projection Mapping · Architectural',
-    year: 2018,
-    studio: 'Graphics eMotion',
-    venue: 'Colosseum of Rome',
-    desc: 'One of my first large-scale international productions, combining filmed performance, animation and architectural projection at the Colosseum of Rome.',
-    overview: 'Sangue e Arena brought gladiatorial combat, mythological scenes and a naval battle to the Colosseum through a studio-wide combination of live action and CGI. As an early-career artist on a major international production, I contributed defined sequences while learning how specialized work is coordinated inside a much larger visual system.',
-    designIntent: 'Each contribution had to support the historical narrative and remain consistent with material produced by other departments. The work was shaped as part of a shared architectural projection, not as a collection of isolated effects.',
-    role: 'Projection Mapping Artist',
-    tools: ['Cinema 4D', '3ds Max', 'After Effects', 'CrazyTalk', 'Photoshop', 'MakeHuman'],
-    contribution: ['Rotoscoped and composited filmed gladiators for their integration into the projected scenes.', 'Animated stone statues and developed wireframe construction sequences for the architecture.', 'Created the complete 3D Naumachia scene, including characters, hand-animated walk cycles and particle work.', 'Integrated assigned scenes within the wider projection mapping workflow and shared art direction.'],
-    contributionNote: 'This was my first large-scale international projection mapping production. I was responsible for the full 3D production of the Naumachia sequence, while compositing for that sequence was handled separately by others on the team.',
-    technicalChallenges: ['Challenge — filmed performers, character animation, particles and architectural imagery had to read as parts of one production despite coming from different disciplines.', 'Production response — responsibilities were divided across the team, with each sequence reviewed against the shared visual direction and the geometry of the monument.', 'Production impact — the process established practical experience in handoffs, compositing and large-scale animation within an international collaborative production.'],
-    impact: 'The project became a formative lesson in how individual craft, clear boundaries of responsibility and close collaboration support a production larger than any single sequence.',
-    pipeline: ['Live-action preparation and compositing', 'Character and statue animation', 'Naumachia scene production', 'Particle and architectural effects', 'Cross-department review', 'Projection integration'],
-    creditsNote: 'Employer: Graphics eMotion — Location: Colosseum of Rome',
-    relatedProjects: ['1858 – Habits de Lumière', 'Lac Batiscan'],
-    galleryImages: [window.__asset('projects/colosseum/naumachia-night-wide.jpg'), window.__asset('projects/colosseum/naumachia-ships-blue.jpg'), window.__asset('projects/colosseum/naumachia-ships-fire.jpg'), window.__asset('projects/colosseum/gladiators-wide.jpg'), window.__asset('projects/colosseum/gladiator-duel.jpg'), window.__asset('projects/colosseum/gladiators-lineup.jpg'), window.__asset('projects/colosseum/priscus-verus-banner.jpg'), window.__asset('projects/colosseum/emperor-bust-projection.jpg'), window.__asset('projects/colosseum/wireframe-architecture.jpg')],
-    placeholderTiles: 0,
-    prev: '1858 – Habits de Lumière',
-    next: 'Lac Batiscan'
+// ------------------------------------------------------------------- projets
+// Les fiches vivent dans data/projects.js. Ici on ne fait que les preparer :
+// chemins de medias resolus, annee deduite de la date, puis tri.
+//
+// Ce tri est la seule source d'ordre du site. Il vaut pour les deux grilles
+// de l'accueil comme pour la navigation entre fiches : un projet ajoute se
+// place tout seul, sans aucune liste a remettre a jour.
+// La meme preparation sert aux fiches du fichier et aux fiches dechiffrees a
+// l'ecran : une fiche protegee doit s'afficher exactement comme les autres une
+// fois le code saisi.
+function prepareProject(id, p) {
+  const project = Object.assign({
+    id
+  }, p);
+  project.year = Number(String(p.date || '').slice(0, 4)) || p.year;
+  // Fiche protegee : seuls la date, le mode d'affichage et le libelle de la
+  // tuile sont en clair. Tout le reste attend le code d'acces.
+  project.locked = Boolean(p.protected);
+  if (project.locked) {
+    project.title = p.lockedTitle || 'Protected project';
+    project.category = 'Access code required';
   }
-};
+  // La fiche attend ces trois listes. Vides, elle affiche une section sans
+  // contenu ; absentes, elle ne s'affiche pas du tout. L'editeur les exige a
+  // la creation, mais une modification faite a la main ne doit pas pouvoir
+  // faire tomber la page.
+  project.tools = p.tools || [];
+  project.contribution = p.contribution || [];
+  project.pipeline = p.pipeline || [];
+  if (p.thumb) project.thumbImage = window.__asset(p.thumb);
+  if (p.heroImage) project.heroImage = window.__asset(p.heroImage);
+  if (p.videoPoster) project.videoPoster = window.__asset(p.videoPoster);
+  if (p.galleryImages) project.galleryImages = p.galleryImages.map(src => window.__asset(src));
+  return project;
+}
+const PROJECT_LIST = Object.entries(window.KP_PROJECTS || {}).map(([id, p]) => prepareProject(id, p)).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+// Un projet marque hidden sort des grilles et de la navigation. Il reste
+// atteignable par son adresse directe, et par elle seule.
+const VISIBLE_PROJECTS = PROJECT_LIST.filter(p => p.listing !== 'hidden');
+
+// prev et next ne s'ecrivent plus dans chaque fiche : ils suivent l'ordre
+// chronologique et bouclent aux deux extremites.
+// L'identifiant sert de reference, le titre seulement d'affichage : deux
+// fiches protegees peuvent porter le meme libelle de tuile, et la navigation
+// ne doit pas avoir a les distinguer par leur nom.
+if (VISIBLE_PROJECTS.length > 1) {
+  VISIBLE_PROJECTS.forEach((p, i) => {
+    const before = VISIBLE_PROJECTS[(i - 1 + VISIBLE_PROJECTS.length) % VISIBLE_PROJECTS.length];
+    const after = VISIBLE_PROJECTS[(i + 1) % VISIBLE_PROJECTS.length];
+    p.prev = before.title;
+    p.prevId = before.id;
+    p.next = after.title;
+    p.nextId = after.id;
+  });
+}
+
+// La grille du haut montre les projets les plus recents ; les suivants
+// attendent derriere le bouton de l'accueil.
+const FEATURED_COUNT = 4;
+const PROJECT_DATA = Object.fromEntries(PROJECT_LIST.map(p => [p.id, p]));
 const TITLE_TO_ID = Object.fromEntries(Object.entries(PROJECT_DATA).map(([k, v]) => [v.title, k]));
 function ProtectedAccess({
   resource
@@ -2581,8 +2397,132 @@ function ProtectedAccess({
     }
   }, "Open film \u2197"))))));
 }
-function ProjectScreen({
+// Fiches deverrouillees pendant la visite. Rien n'est conserve d'une visite a
+// l'autre : fermer l'onglet redemande le code.
+const UNLOCKED_PROJECTS = new Map();
+
+// Ecran d'attente d'une fiche protegee. Il ne masque pas la page : la page
+// n'existe pas encore. Tant que le code n'est pas saisi, le navigateur ne
+// detient que du texte chiffre.
+function ProjectGate({
+  project,
+  onUnlocked,
+  onBack,
+  onNav
+}) {
+  const {
+    Navbar,
+    Footer,
+    Button
+  } = window.KillianPichonDesignSystem_16387b;
+  const [accessCode, setAccessCode] = React.useState('');
+  const [status, setStatus] = React.useState('idle');
+  const [message, setMessage] = React.useState('');
+  const inputRef = React.useRef(null);
+  React.useEffect(() => {
+    const frame = window.requestAnimationFrame(() => inputRef.current?.focus());
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (status === 'checking') return;
+    if (!window.KPProtectedContent || typeof window.KPProtectedContent.unlock !== 'function') {
+      setStatus('error');
+      setMessage('Secure access is unavailable in this browser.');
+      return;
+    }
+    setStatus('checking');
+    setMessage('');
+    try {
+      const target = await window.KPProtectedContent.unlock(project.protected, accessCode);
+      if (!target.project) throw new Error('INVALID_RESOURCE');
+      onUnlocked(prepareProject(project.id, Object.assign({}, target.project, {
+        date: project.date,
+        prev: project.prev,
+        prevId: project.prevId,
+        next: project.next,
+        nextId: project.nextId
+      })));
+    } catch (error) {
+      setStatus('error');
+      if (error && error.code === 'RATE_LIMITED') {
+        setMessage(`Too many attempts. Try again in ${error.retryAfter || 15} seconds.`);
+      } else {
+        setMessage('Incorrect access code.');
+      }
+    }
+  }
+  return React.createElement("div", {
+    style: {
+      background: 'var(--surface-page)',
+      minHeight: '100vh'
+    }
+  }, React.createElement(Navbar, {
+    onNav: onNav
+  }), React.createElement("main", {
+    className: "project-gate"
+  }, React.createElement("div", {
+    className: "project-gate-panel"
+  }, React.createElement("p", {
+    className: "kp-protected-eyebrow"
+  }, "Protected project"), React.createElement("h1", {
+    className: "kp-protected-title"
+  }, project.title), React.createElement("p", {
+    className: "kp-protected-description"
+  }, "This project is covered by a confidentiality agreement. Enter the access code to open it."), React.createElement("form", {
+    className: "kp-protected-form",
+    onSubmit: handleSubmit
+  }, React.createElement("label", {
+    className: "kp-protected-label",
+    htmlFor: "project-access-code"
+  }, "Access code"), React.createElement("input", {
+    id: "project-access-code",
+    ref: inputRef,
+    className: "kp-protected-input",
+    type: "password",
+    autoComplete: "off",
+    value: accessCode,
+    "aria-invalid": status === 'error',
+    "aria-describedby": "project-access-error",
+    onChange: e => setAccessCode(e.target.value)
+  }), React.createElement("p", {
+    className: "kp-protected-error",
+    id: "project-access-error",
+    role: "status"
+  }, message), React.createElement("div", {
+    className: "kp-protected-actions"
+  }, React.createElement(Button, {
+    type: "submit",
+    disabled: status === 'checking' || !accessCode
+  }, status === 'checking' ? 'Checking…' : 'Unlock'), React.createElement(Button, {
+    variant: "outline",
+    onClick: onBack
+  }, "All projects"))))), React.createElement(Footer, null));
+}
+function ProjectScreen(props) {
+  const base = PROJECT_DATA[props.id] || PROJECT_DATA.volcano;
+  const [unlocked, setUnlocked] = React.useState(() => UNLOCKED_PROJECTS.get(base.id) || null);
+  React.useEffect(() => {
+    setUnlocked(UNLOCKED_PROJECTS.get(base.id) || null);
+  }, [base.id]);
+  if (base.locked && !unlocked) {
+    return React.createElement(ProjectGate, {
+      project: base,
+      onBack: props.onBack,
+      onNav: props.onNav,
+      onUnlocked: fiche => {
+        UNLOCKED_PROJECTS.set(base.id, fiche);
+        setUnlocked(fiche);
+      }
+    });
+  }
+  return React.createElement(ProjectScreenContent, Object.assign({}, props, {
+    project: unlocked || base
+  }));
+}
+function ProjectScreenContent({
   id = 'volcano',
+  project,
   onBack,
   onOpenProject,
   onNav
@@ -2594,9 +2534,14 @@ function ProjectScreen({
     Footer,
     Button
   } = window.KillianPichonDesignSystem_16387b;
-  const p = PROJECT_DATA[id] || PROJECT_DATA.volcano;
-  const prevId = TITLE_TO_ID[p.prev];
-  const nextId = TITLE_TO_ID[p.next];
+  const p = project || PROJECT_DATA[id] || PROJECT_DATA.volcano;
+  const prevId = p.prevId || TITLE_TO_ID[p.prev];
+  const nextId = p.nextId || TITLE_TO_ID[p.next];
+  // Une entree qui ne designe aucun projet ne donne aucun bouton. Filtre en
+  // aval, la rubrique s'affichait quand meme, vide sous son intitule.
+  // Identifiant ou titre : l'editeur ecrit des identifiants, les fiches ecrites
+  // avant lui portent des titres.
+  const relatedIds = (p.relatedProjects || []).map(t => PROJECT_DATA[t] ? t : TITLE_TO_ID[t]).filter(Boolean);
   const [trailerOpen, setTrailerOpen] = React.useState(false);
   const trailerMatch = p.trailerUrl && p.trailerUrl.match(/(?:youtu\.be\/|v=)([\w-]+)/);
   const trailerId = trailerMatch ? trailerMatch[1] : null;
@@ -3211,7 +3156,7 @@ function ProjectScreen({
     onMouseLeave: e => {
       e.currentTarget.style.color = 'var(--text-muted)';
     }
-  }, p.externalLabel || 'See more', " \u2197")), p.relatedProjects && React.createElement("div", {
+  }, p.externalLabel || 'See more', " \u2197")), relatedIds.length > 0 && React.createElement("div", {
     style: {
       marginTop: 'var(--space-7)',
       paddingTop: 'var(--space-6)',
@@ -3231,11 +3176,11 @@ function ProjectScreen({
       gap: '12px',
       flexWrap: 'wrap'
     }
-  }, p.relatedProjects.filter(t => TITLE_TO_ID[t]).map(t => React.createElement("button", {
+  }, relatedIds.map(relatedId => React.createElement("button", {
     className: "related-project-button",
     type: "button",
-    key: t,
-    onClick: () => onOpenProject(TITLE_TO_ID[t]),
+    key: relatedId,
+    onClick: () => onOpenProject(relatedId),
     style: {
       display: 'inline-flex',
       alignItems: 'center',
@@ -3256,7 +3201,7 @@ function ProjectScreen({
       e.currentTarget.style.borderColor = 'var(--line-default)';
       e.currentTarget.style.boxShadow = 'none';
     }
-  }, t))))), trailerOpen && (trailerId || igId || isFbVideo || gdriveId) && !p.trailerEmbedDisabled && React.createElement("div", {
+  }, (PROJECT_DATA[relatedId] || {}).title || relatedId))))), trailerOpen && (trailerId || igId || isFbVideo || gdriveId) && !p.trailerEmbedDisabled && React.createElement("div", {
     className: "modal-backdrop",
     role: "dialog",
     "aria-modal": "true",

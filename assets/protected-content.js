@@ -61,7 +61,16 @@
   }
 
   function validateTarget(resource, target) {
-    if (!target || typeof target.url !== 'string') throw accessError('INVALID_RESOURCE');
+    if (!target || typeof target !== 'object') throw accessError('INVALID_RESOURCE');
+
+    // Deux formes de contenu protege : une adresse a ouvrir, ou une fiche de
+    // projet entiere. Dans le second cas il n'y a pas d'hote a verifier, le
+    // contenu ne sort pas du document.
+    if (target.project && typeof target.project === 'object' && !Array.isArray(target.project)) {
+      return Object.freeze({ project: target.project });
+    }
+
+    if (typeof target.url !== 'string') throw accessError('INVALID_RESOURCE');
     let url;
     try {
       url = new URL(target.url, window.location.href);

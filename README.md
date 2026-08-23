@@ -2,6 +2,48 @@
 
 Site statique du portfolio de Killian Pichon, pret pour GitHub Pages puis pour un futur domaine personnalise.
 
+## Fiches des projets
+
+Les projets vivent dans `data/projects.js`, charge par `index.html` juste avant
+l'application. C'est un script classique, pas un `fetch` : rien a attendre au
+chargement, rien qui depende d'un serveur applicatif.
+
+Le fichier est un objet indexe par identifiant de projet. Cet identifiant est
+aussi l'adresse de la fiche, `#/project/<id>`, et le nom du dossier de medias
+`projects/<id>/`.
+
+### Ce qui decide de l'ordre
+
+Un seul champ : `date`, au format `AAAA-MM`. Le site trie **toujours** du plus
+recent au plus ancien, et ce meme tri sert a trois endroits a la fois :
+
+- la grille du haut de l'accueil, qui montre les quatre projets les plus recents ;
+- la grille dépliée par le bouton, qui montre tous les suivants ;
+- la navigation precedent/suivant en bord de fiche projet, qui boucle aux extremites.
+
+Consequence a garder en tete : ajouter un projet plus recent que les quatre
+actuels le fait monter en vitrine et en fait redescendre un autre, sans rien
+demander.
+
+### Champs particuliers
+
+| Champ | Role |
+|---|---|
+| `date` | `AAAA-MM`. Seule source de l'ordre. L'annee affichee en est deduite. |
+| `thumb` | Vignette de la grille, chemin relatif a la racine du site. |
+| `cardCategory` | Intitule court pour la grille, quand la fiche en porte un plus detaille. Absent, la grille reprend `category`. |
+| `listing` | Fiche protegee seulement : `nda` (vignette visible + cadenas), `locked` (cadenas seul), `hidden` (absent des grilles, atteignable par son adresse directe). |
+| `relatedProjects` | Identifiants des projets lies. Les fiches ecrites avant l'editeur portent des titres ; les deux formes sont acceptees. |
+| `protected` | Fiche entiere chiffree. Voir la section Contenus a acces restreint. |
+| `protectedMedia` | Lien chiffre dans une fiche publique. Meme section. |
+
+`year`, `prev` et `next` ne se saisissent plus : l'annee vient de la date, et la
+navigation entre fiches suit l'ordre chronologique. Ajouter un projet ne demande
+donc plus de corriger la chaine de ses deux voisins.
+
+Les chemins de medias s'ecrivent nus, sans `window.__asset(...)` : la resolution
+se fait au chargement.
+
 ## Editeur de contenu local
 
 `tools/` contient un editeur de texte local, destine aux corrections redactionnelles.
@@ -12,8 +54,8 @@ statiques et n'execute jamais ces scripts.
 |---|---|
 | `tools/edit-site.cmd` | Double-clic : demarre le serveur et ouvre l'editeur |
 | `tools/set-password.cmd` | Definit ou change le mot de passe de l'editeur |
-| `tools/serve.ps1` | Serveur local (previsualisation + lecture/ecriture des textes) |
-| `tools/editor.html` | Interface : liste des textes a gauche, apercu du site a droite |
+| `tools/serve.ps1` | Serveur local : previsualisation, lecture/ecriture d'`index.html` et de `data/projects.js`, televersement des medias |
+| `tools/editor.html` | Interface : panneau d'edition a gauche, apercu du site a droite |
 | `tools/setup-wifi.cmd` | A lancer une seule fois pour autoriser l'acces iPhone en Wi-Fi |
 
 ### Premier lancement
@@ -27,18 +69,100 @@ versionnee.
 1. Double-cliquer sur `tools/edit-site.cmd`. L'editeur s'ouvre sur
    `http://localhost:8000/__editor` et demande le mot de passe.
 2. Onglet **Textes** : rechercher un texte, le corriger, cliquer sur
-   **Enregistrer**. L'ecriture se fait directement dans `index.html`.
-3. Onglet **Medias** : remplacer un chemin d'image, avec vignette et
+   **Enregistrer**. L'ecriture se fait dans `index.html` ou dans
+   `data/projects.js` selon l'origine du texte ; les textes des fiches sont
+   groupes par projet.
+3. Onglet **Projets** : creer, modifier, proteger ou retirer une fiche.
+   Voir la section suivante.
+4. Onglet **Medias** : remplacer un chemin d'image, avec vignette et
    autocompletion sur les fichiers presents dans `assets/` et `projects/`.
-4. Onglet **Reglages** : titre d'onglet, description, favicon, image de
+5. Onglet **Reglages** : titre d'onglet, description, favicon, image de
    partage, langue, titres des pages secondaires.
-5. Verifier le rendu dans l'apercu de droite. Le bouton **Pointer** de la barre
+6. Verifier le rendu dans l'apercu de droite. Le bouton **Pointer** de la barre
    d'apercu permet de cliquer un texte ou une image sur la page pour l'ouvrir
    directement dans le panneau de gauche.
-6. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
+7. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
    le message propose, puis **Commiter**.
-7. Pousser depuis GitHub Desktop quand le resultat convient. C'est ce push,
-   et lui seul, qui met a jour killianpichon.art.
+
+### Gestion des projets
+
+L'onglet **Projets** liste les fiches dans l'ordre du site, la plus recente en
+tete, et marque celles qui occupent la grille du haut.
+
+**Creer.** Le bouton *Nouveau projet* ouvre un formulaire suivant l'ordre de
+lecture de la fiche : identite, contexte, recit, medias, liens. L'identifiant
+sert a la fois d'adresse (`#/project/<id>`) et de dossier de medias
+(`projects/<id>/`) ; il ne se change plus ensuite. Sont obligatoires le titre,
+la categorie, la date, la vignette, l'accroche, le contexte, le role, les
+outils, la contribution et les etapes : ce sont les sections que la fiche
+publique affiche sans condition.
+
+**Televerser.** Chaque champ media accepte un fichier depose depuis le disque.
+Le fichier part **tel quel**, sans conversion : son poids et ses dimensions
+sont affiches apres l'envoi, et un fichier de plus de 1 Mo est signale. C'est
+un rappel, pas un blocage ; l'optimisation reste a faire en amont, comme le
+demande la section Medias d'`AGENTS.md`.
+
+**Proteger.** Le bouton *Proteger* ouvre un dialogue qui demande d'abord **ce
+qu'on protege** :
+
+- **toute la fiche** — textes et medias chiffres, seuls la date, le mode
+  d'affichage et le libelle de la tuile restent en clair ;
+- **un lien seulement** — la fiche reste publique, et seule une adresse est
+  chiffree derriere un bouton. C'est le mecanisme du film de *Traveler's
+  Introspection*.
+
+Le chiffrement se fait **dans le navigateur** : le code d'acces ne passe pas par
+le serveur local et n'est ecrit nulle part. C'est le meme code que celui des
+autres contenus proteges.
+
+Pour une fiche entiere, trois presentations dans la grille de l'accueil :
+
+| Mode | Dans la grille | Medias |
+|---|---|---|
+| **Sous NDA** | vignette visible, assombrie, avec un cadenas | tous deplaces sauf la vignette |
+| **Verrou seul** | cadenas sans image | tous deplaces |
+| **Masque** | absent des grilles et de la navigation | tous deplaces |
+
+En mode NDA, **la vignette reste lisible publiquement** : c'est ce que la tuile
+montre, et le dialogue le rappelle. Elle peut venir de n'importe quel dossier de
+medias du site.
+
+Les autres medias partent dans un dossier au nom imprevisible, sous des noms
+imprevisibles eux aussi. C'est necessaire : GitHub Pages sert des fichiers
+statiques, donc un chemin devinable resterait lisible malgre le chiffrement. Un
+media range hors de `projects/<id>/` appartient a un autre projet : il n'est pas
+deplace, et l'outil previent qu'il restera public.
+
+Une fiche protegee ne peut etre ni modifiee ni retiree tant qu'elle l'est : la
+correspondance entre les noms aleatoires et les noms d'origine vit dans le
+contenu chiffre, et la detruire laisserait des fichiers illisibles sur le
+disque.
+
+Un lien protege se retire par le bouton *Retirer le lien*. L'adresse chiffree
+disparait avec lui : il faut la ressaisir pour la remettre.
+
+**Deproteger.** Le bouton *Deproteger* redemande le code, dechiffre la fiche,
+la reecrit en clair et ramene les medias dans `projects/<id>/` sous leurs noms
+d'origine. La correspondance des noms voyage dans le contenu chiffre : c'est le
+seul endroit d'ou elle peut etre relue.
+
+**Retirer.** La fiche disparait du site, **les medias restent sur le disque**.
+Rien d'irreversible : le dossier `projects/<id>/` est conserve.
+
+Toute ecriture met a jour `sitemap.xml`. Les projets proteges ou masques en
+sont exclus : y publier le chemin d'un media protege annulerait la protection.
+
+### Commit et publication
+
+Le bouton **Commiter** bascule d'abord sur la branche `content`, en la creant
+au besoin, puis commite et pousse cette branche. `main` reste la branche de
+publication : l'editeur n'y ecrit jamais, et c'est la fusion vers `main`,
+decidee a la main, qui met a jour killianpichon.art.
+
+Le commit porte sur `index.html`, `data/projects.js`, `projects/` et
+`sitemap.xml`. Les medias ajoutes sont indexes explicitement, sinon un projet
+partirait sans ses images.
 
 ### Medias
 
@@ -130,14 +254,17 @@ a jour uniquement la constante `MEASUREMENT_ID` dans
 L'onglet **Modifications** compare le fichier de travail au dernier commit et
 affiche chaque texte modifie, avec sa section et sa ligne.
 
-- Le commit ne porte que sur `index.html`. Les autres fichiers modifies ne sont
-  jamais embarques, quel que soit l'etat de l'index git.
-- Le commit se fait sur la **branche courante**, affichee a cote du bouton.
-  Elle apparait en orange si ce n'est pas `main`.
-- Rien n'est pousse : le site ne bouge qu'au `git push`.
-- Si la structure du fichier a change en dehors de l'editeur (nombre de textes
-  different), la comparaison est refusee et renvoie vers GitHub Desktop plutot
-  que de deviner.
+- Le commit porte sur `index.html`, `data/projects.js`, `projects/` et
+  `sitemap.xml`. Aucun autre fichier modifie n'est embarque, quel que soit
+  l'etat de l'index git.
+- Le commit se fait toujours sur la branche `content`, jamais sur `main`.
+  L'editeur y bascule seul, puis pousse cette branche.
+- Les fiches de projet se comparent champ par champ, et non chaine par chaine :
+  ajouter ou retirer un projet change le nombre de textes, et c'est l'usage
+  normal de l'outil.
+- Si la structure d'`index.html` a change en dehors de l'editeur (nombre de
+  textes different), la comparaison est refusee et renvoie vers GitHub Desktop
+  plutot que de deviner.
 
 Le serveur s'arrete automatiquement une vingtaine de secondes apres la fermeture
 de l'onglet de l'editeur, ou immediatement via le bouton **Quitter**.
@@ -189,6 +316,16 @@ Pour preparer une nouvelle ressource, lancer depuis PowerShell 7 :
 ```powershell
 ./tools/protect-content.ps1 -ResourceId nom-stable -Target 'https://example.com/contenu'
 ```
+
+Ce script exige **PowerShell 7** : Windows PowerShell 5.1 n'expose pas AES-GCM.
+C'est aussi pourquoi la protection d'une fiche entiere, dans l'onglet Projets,
+chiffre depuis le navigateur plutot que depuis le serveur local — qui, lui,
+tourne en 5.1. Les deux chemins produisent la meme forme de ressource et se
+relisent avec le meme module.
+
+Une fiche protegee depuis l'editeur suit exactement le meme schema, a une
+difference pres : la charge chiffree contient la fiche complete
+(`{ project: … }`) au lieu d'une simple adresse (`{ url: … }`).
 
 Le script demande le code sans l'afficher et imprime une configuration a copier
 dans la donnee de projet ou de section. Chaque ressource recoit un sel et un
