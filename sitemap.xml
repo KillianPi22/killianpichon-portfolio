@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://killianpichon.art/</loc>
-    <lastmod>2026-08-23</lastmod>
+    <lastmod>2026-08-24</lastmod>
     <image:image>
       <image:loc>https://killianpichon.art/assets/og-image.jpg</image:loc>
     </image:image>
@@ -33,6 +33,9 @@
     </image:image>
     <image:image>
       <image:loc>https://killianpichon.art/projects/colosseum/naumachia-night-wide.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/luminart/logo-panels.webp</image:loc>
     </image:image>
   </url>
 </urlset>
