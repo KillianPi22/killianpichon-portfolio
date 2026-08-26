@@ -15,6 +15,57 @@
   <link rel="stylesheet" href="assets/analytics-consent.css">
   <script defer src="assets/analytics-consent.js"></script>
   <title>Privacy — Killian Pichon</title>
+  <!-- Cette page est statique : elle ne passe pas par l'application React et
+       ne peut donc pas utiliser data/fr.js. Les deux langues sont ecrites cote
+       a cote dans le document, et un attribut sur <html> decide de celle qui
+       s'affiche. Le script est place ici, avant le corps, pour que le choix
+       soit fait avant le premier rendu : autrement l'anglais apparaitrait une
+       fraction de seconde. La regle d'ordre est la meme que sur le site :
+       l'adresse, puis le choix memorise, puis le navigateur, puis l'anglais. -->
+  <script>
+    (function () {
+      var lang = 'en';
+      try {
+        var param = new URLSearchParams(window.location.search).get('lang');
+        if (param === 'fr' || param === 'en') {
+          lang = param;
+        } else {
+          var stored = window.localStorage.getItem('kp-lang');
+          if (stored === 'fr' || stored === 'en') lang = stored;
+          else if ((window.navigator.language || '').toLowerCase().indexOf('fr') === 0) lang = 'fr';
+        }
+      } catch (e) { /* sans URLSearchParams ou sans stockage : on reste en anglais */ }
+      var racine = document.documentElement;
+      racine.setAttribute('lang', lang === 'fr' ? 'fr-CA' : 'en');
+      racine.setAttribute('data-lang', lang);
+      if (lang === 'fr') {
+        document.title = 'Confidentialité — Killian Pichon';
+      }
+
+      // La banniere de consentement (assets/analytics-consent.js) cherche
+      // window.KP_I18N. Sur l'accueil il vient de l'application ; ici on lui
+      // fournit le strict minimum. Charger data/fr.js pour six phrases
+      // couterait 53 Ko sur une page ou personne ne s'attarde.
+      // Ces six traductions existent en double dans data/fr.js : si l'une
+      // change, changer l'autre.
+      var banniere = {
+        'Optional analytics': 'Statistiques facultatives',
+        'Close privacy choices': 'Fermer les choix de confidentialité',
+        'Google Analytics helps measure visits and improve this portfolio. It stays completely unloaded unless you allow it. ':
+          'Google Analytics sert à mesurer les visites et à améliorer ce portfolio. Il reste entièrement inactif tant que tu ne l’autorises pas. ',
+        'Privacy details': 'Détails de confidentialité',
+        'Decline': 'Refuser',
+        'Allow analytics': 'Autoriser les statistiques'
+      };
+      window.KP_I18N = {
+        lang: lang,
+        t: function (text) {
+          if (lang !== 'fr') return text;
+          return typeof banniere[text] === 'string' ? banniere[text] : text;
+        }
+      };
+    })();
+  </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
     :root{--font-display:'Archivo',system-ui,sans-serif;--font-body:'Inter',system-ui,sans-serif;--void-950:#0a0a0b;--void-850:#131316;--line-subtle:rgba(255,255,255,.07);--line-default:rgba(255,255,255,.13);--line-strong:rgba(255,255,255,.22);--white-100:#f5f4f0;--white-80:#c9c8c4;--grey-500:#9a999f;--grey-700:#57565c;--ember-500:#ff5a2a;--ember-400:#ff8259;--surface-page:var(--void-950);--text-heading:var(--white-100);--color-text-body:var(--white-80);--text-muted:var(--grey-500);--text-faint:var(--grey-700);--accent:var(--ember-500);--accent-hover:var(--ember-400);--radius-sm:4px;--radius-md:8px;--shadow-soft:0 12px 40px rgba(0,0,0,.35);--focus-ring:rgba(255,90,42,.55)}
@@ -40,53 +91,101 @@
     .choice-button{margin-top:18px;min-height:42px;padding:10px 16px;color:var(--void-950);background:var(--accent);border:1px solid var(--accent);border-radius:var(--radius-sm);font:600 13px var(--font-body);cursor:pointer}
     .choice-button:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
     footer{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:32px 0 48px;border-top:1px solid var(--line-subtle);color:var(--text-faint);font-size:11px}
+
+    /* Une seule langue s'affiche. Le contenu de l'autre reste dans le document
+       mais sort de l'affichage et de l'arbre d'accessibilite. */
+    html[data-lang="en"] [data-fr]{display:none}
+    html[data-lang="fr"] [data-en]{display:none}
+
+    /* Choix de langue, aligne sur celui du site : la langue courante en clair
+       et soulignee d'accent, l'autre en retrait. */
+    .lang{display:flex;align-items:center;gap:6px}
+    .lang a{color:var(--text-muted);border-bottom:1px solid transparent;padding-bottom:3px}
+    .lang a[aria-current="true"]{color:var(--text-heading);border-bottom-color:var(--accent)}
+    .lang span{color:var(--text-faint);font-size:12px;user-select:none}
+    .header-right{display:flex;align-items:center;gap:20px}
   </style>
 </head>
 <body>
   <header>
-    <a href="./#/work" aria-label="Return to the portfolio">Killian Pichon</a>
-    <a href="./#/contact">Contact</a>
+    <a href="./#/work" data-portfolio aria-label="Killian Pichon"><span data-en>Killian Pichon</span><span data-fr>Killian Pichon</span></a>
+    <div class="header-right">
+      <a href="./#/contact" data-portfolio>Contact</a>
+      <div class="lang" role="group" aria-label="Language">
+        <a href="privacy.html" hreflang="en" lang="en" aria-label="English">EN</a>
+        <span aria-hidden="true">/</span>
+        <a href="privacy.html?lang=fr" hreflang="fr" lang="fr" aria-label="Français">FR</a>
+      </div>
+    </div>
   </header>
   <main>
-    <p class="eyebrow">Privacy</p>
-    <h1>Privacy information</h1>
-    <p class="updated">Last updated August 20, 2026</p>
+    <p class="eyebrow"><span data-en>Privacy</span><span data-fr>Confidentialité</span></p>
+    <h1><span data-en>Privacy information</span><span data-fr>Informations de confidentialité</span></h1>
+    <p class="updated"><span data-en>Last updated August 20, 2026</span><span data-fr>Dernière mise à jour le 20 août 2026</span></p>
 
     <section>
-      <h2>Who operates this site</h2>
-      <p>This portfolio is operated by Killian Pichon in Montréal, Québec, Canada. Privacy questions can be sent through the <a href="./#/contact">contact page</a>.</p>
+      <h2><span data-en>Who operates this site</span><span data-fr>Qui exploite ce site</span></h2>
+      <p data-en>This portfolio is operated by Killian Pichon in Montréal, Québec, Canada. Privacy questions can be sent through the <a href="./#/contact" data-portfolio>contact page</a>.</p>
+      <p data-fr>Ce portfolio est exploité par Killian Pichon à Montréal, Québec, Canada. Les questions de confidentialité peuvent être envoyées par la <a href="./#/contact" data-portfolio>page de contact</a>.</p>
     </section>
 
     <section>
-      <h2>Optional audience measurement</h2>
-      <p>This site uses Google Analytics 4 only after a visitor explicitly allows analytics. It helps understand aggregate traffic, the pages and projects people view, referral sources, approximate geography, device and browser characteristics, scrolling and outbound-link interactions.</p>
-      <p>Advertising storage, advertising user data and ad personalization remain disabled. Analytics data is not used here to sell products or target advertising.</p>
+      <h2><span data-en>Optional audience measurement</span><span data-fr>Mesure d’audience facultative</span></h2>
+      <p data-en>This site uses Google Analytics 4 only after a visitor explicitly allows analytics. It helps understand aggregate traffic, the pages and projects people view, referral sources, approximate geography, device and browser characteristics, scrolling and outbound-link interactions.</p>
+      <p data-en>Advertising storage, advertising user data and ad personalization remain disabled. Analytics data is not used here to sell products or target advertising.</p>
+      <p data-fr>Ce site utilise Google Analytics 4 uniquement après qu’un visiteur a explicitement autorisé les statistiques. Cela permet de comprendre le trafic agrégé, les pages et les projets consultés, les sources de référence, la géographie approximative, les caractéristiques d’appareil et de navigateur, le défilement et les clics vers l’extérieur.</p>
+      <p data-fr>Le stockage publicitaire, les données publicitaires d’utilisateur et la personnalisation des annonces restent désactivés. Les données de mesure ne servent ici ni à vendre des produits, ni à cibler de la publicité.</p>
     </section>
 
     <section>
-      <h2>Your choice</h2>
-      <p>The Google Analytics tag is not downloaded and no analytics data is sent before consent. Declining does not limit access to the portfolio. The choice is stored in the browser as <code>kp_analytics_consent_v1</code> so the site can remember it; clearing site data removes that preference.</p>
-      <button class="choice-button" type="button" data-analytics-choices>Review privacy choices</button>
+      <h2><span data-en>Your choice</span><span data-fr>Ton choix</span></h2>
+      <p data-en>The Google Analytics tag is not downloaded and no analytics data is sent before consent. Declining does not limit access to the portfolio. The choice is stored in the browser as <code>kp_analytics_consent_v1</code> so the site can remember it; clearing site data removes that preference.</p>
+      <p data-fr>La balise Google Analytics n’est pas téléchargée et aucune donnée de mesure n’est envoyée avant le consentement. Refuser ne limite en rien l’accès au portfolio. Le choix est conservé dans le navigateur sous le nom <code>kp_analytics_consent_v1</code> pour que le site s’en souvienne ; effacer les données du site supprime cette préférence.</p>
+      <button class="choice-button" type="button" data-analytics-choices><span data-en>Review privacy choices</span><span data-fr>Revoir les choix de confidentialité</span></button>
     </section>
 
     <section>
-      <h2>Google as a service provider</h2>
-      <p>When analytics is allowed, Google processes measurement data for this site and may process it outside Canada. Learn more about <a href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer">how Google uses information from sites that use its services</a> and review the <a href="https://policies.google.com/privacy" rel="noopener noreferrer">Google Privacy Policy</a>.</p>
+      <h2><span data-en>Google as a service provider</span><span data-fr>Google comme fournisseur de service</span></h2>
+      <p data-en>When analytics is allowed, Google processes measurement data for this site and may process it outside Canada. Learn more about <a href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer">how Google uses information from sites that use its services</a> and review the <a href="https://policies.google.com/privacy" rel="noopener noreferrer">Google Privacy Policy</a>.</p>
+      <p data-fr>Lorsque les statistiques sont autorisées, Google traite les données de mesure de ce site et peut les traiter hors du Canada. En savoir plus sur <a href="https://policies.google.com/technologies/partner-sites" rel="noopener noreferrer">la façon dont Google utilise les informations provenant de sites qui font appel à ses services</a>, et consulter les <a href="https://policies.google.com/privacy" rel="noopener noreferrer">règles de confidentialité de Google</a>.</p>
     </section>
 
     <section>
-      <h2>Retention and control</h2>
-      <p>User-level and event-level data retention is configured for two months in the Google Analytics property. Aggregate reporting may remain available after user-level data expires. You can withdraw consent at any time using “Privacy choices” in the portfolio footer; the page reloads once to ensure the Analytics tag is removed.</p>
+      <h2><span data-en>Retention and control</span><span data-fr>Conservation et contrôle</span></h2>
+      <p data-en>User-level and event-level data retention is configured for two months in the Google Analytics property. Aggregate reporting may remain available after user-level data expires. You can withdraw consent at any time using “Privacy choices” in the portfolio footer; the page reloads once to ensure the Analytics tag is removed.</p>
+      <p data-fr>La conservation des données au niveau de l’utilisateur et de l’événement est réglée à deux mois dans la propriété Google Analytics. Les rapports agrégés peuvent rester disponibles après l’expiration des données d’utilisateur. Le consentement peut être retiré à tout moment par «&#8239;Choix de confidentialité&#8239;» dans le pied de page du portfolio ; la page se recharge une fois pour garantir le retrait de la balise Analytics.</p>
     </section>
 
     <section>
-      <h2>Changes</h2>
-      <p>This notice may be updated when the site or its measurement practices change. The current revision date appears above.</p>
+      <h2><span data-en>Changes</span><span data-fr>Modifications</span></h2>
+      <p data-en>This notice may be updated when the site or its measurement practices change. The current revision date appears above.</p>
+      <p data-fr>Cet avis peut être mis à jour lorsque le site ou ses pratiques de mesure changent. La date de révision en vigueur figure ci-dessus.</p>
     </section>
   </main>
   <footer>
-    <button class="kp-footer-link" type="button" data-analytics-choices>Privacy choices</button>
-    <span>© 2026 · All rights reserved</span>
+    <button class="kp-footer-link" type="button" data-analytics-choices><span data-en>Privacy choices</span><span data-fr>Choix de confidentialité</span></button>
+    <span data-en>© 2026 · All rights reserved</span>
+    <span data-fr>© 2026 · Tous droits réservés</span>
   </footer>
+  <script>
+    (function () {
+      var lang = document.documentElement.getAttribute('data-lang');
+      var liens = document.querySelectorAll('.lang a');
+      for (var i = 0; i < liens.length; i++) {
+        if (liens[i].getAttribute('hreflang') === lang) liens[i].setAttribute('aria-current', 'true');
+      }
+      // Les retours vers le portfolio doivent conserver la langue, sinon on
+      // repart en anglais depuis une page francaise. La description suit aussi,
+      // meme si la page est en noindex : un partage l'affiche quand meme.
+      if (lang !== 'fr') return;
+      var vers = document.querySelectorAll('a[data-portfolio]');
+      for (var j = 0; j < vers.length; j++) {
+        var href = vers[j].getAttribute('href');
+        if (href && href.indexOf('./#') === 0) vers[j].setAttribute('href', './?lang=fr' + href.slice(2));
+      }
+      var desc = document.querySelector('meta[name="description"]');
+      if (desc) desc.setAttribute('content', 'Informations de confidentialité du site portfolio de Killian Pichon.');
+    })();
+  </script>
 </body>
 </html>

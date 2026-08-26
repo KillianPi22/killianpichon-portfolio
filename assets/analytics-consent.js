@@ -10,6 +10,14 @@
   let memoryDismissed = false;
   let tagLoaded = false;
   let lastPageLocation = '';
+
+  // Traduction. index.html definit KP_I18N pendant l'analyse du document,
+  // donc avant l'execution de ce script differe. Le repli garde l'anglais si
+  // la page ne fournit pas le moteur : cette banniere doit pouvoir s'afficher
+  // meme servie seule.
+  function t(text) {
+    return window.KP_I18N && window.KP_I18N.t ? window.KP_I18N.t(text) : text;
+  }
   let pageViewTimer = 0;
   let banner = null;
 
@@ -155,16 +163,16 @@
     banner.hidden = true;
     banner.innerHTML = [
       '<div class="kp-analytics-consent__header">',
-      '<h2 class="kp-analytics-consent__title" id="kp-analytics-consent-title">Optional analytics</h2>',
-      '<button class="kp-analytics-consent__close" type="button" aria-label="Close privacy choices">&times;</button>',
+      '<h2 class="kp-analytics-consent__title" id="kp-analytics-consent-title">' + t('Optional analytics') + '</h2>',
+      '<button class="kp-analytics-consent__close" type="button" aria-label="' + t('Close privacy choices') + '">&times;</button>',
       '</div>',
       '<p class="kp-analytics-consent__copy" id="kp-analytics-consent-copy">',
-      'Google Analytics helps measure visits and improve this portfolio. It stays completely unloaded unless you allow it. ',
-      '<a href="privacy.html">Privacy details</a>.',
+      t('Google Analytics helps measure visits and improve this portfolio. It stays completely unloaded unless you allow it. '),
+      '<a href="privacy.html">' + t('Privacy details') + '</a>.',
       '</p>',
       '<div class="kp-analytics-consent__actions">',
-      '<button class="kp-analytics-consent__button kp-analytics-consent__button--decline" type="button" data-consent="denied">Decline</button>',
-      '<button class="kp-analytics-consent__button kp-analytics-consent__button--allow" type="button" data-consent="granted">Allow analytics</button>',
+      '<button class="kp-analytics-consent__button kp-analytics-consent__button--decline" type="button" data-consent="denied">' + t('Decline') + '</button>',
+      '<button class="kp-analytics-consent__button kp-analytics-consent__button--allow" type="button" data-consent="granted">' + t('Allow analytics') + '</button>',
       '</div>'
     ].join('');
 

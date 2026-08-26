@@ -74,11 +74,20 @@ if (-not (Test-Path $BackupDir))  { New-Item -ItemType Directory -Path $BackupDi
 # index.html, ne scanner que lui ferait disparaitre tous les textes de projet
 # de l'inventaire, sans que rien ne le signale.
 $DataFile = Join-Path $Root "data\projects.js"
+$FrFile   = Join-Path $Root "data\fr.js"
 
+# scan indique si le fichier est balaye a la recherche de textes et de medias
+# editables. data/fr.js n'est pas balaye : il ne contient pas l'anglais du site
+# mais sa traduction, et l'exposer dans l'onglet Textes ferait apparaitre chaque
+# phrase deux fois. Il figure quand meme ici pour que l'empreinte de fichier et
+# les sauvegardes le couvrent comme les autres.
 $Sources = @(
-  [pscustomobject]@{ key = "index";    path = $TargetFile; label = "index.html";       backup = "index";    ext = ".html" }
-  [pscustomobject]@{ key = "projects"; path = $DataFile;   label = "data/projects.js"; backup = "projects"; ext = ".js"   }
+  [pscustomobject]@{ key = "index";    path = $TargetFile; label = "index.html";       backup = "index";    ext = ".html"; scan = $true  }
+  [pscustomobject]@{ key = "projects"; path = $DataFile;   label = "data/projects.js"; backup = "projects"; ext = ".js";   scan = $true  }
+  [pscustomobject]@{ key = "fr";       path = $FrFile;     label = "data/fr.js";       backup = "fr";       ext = ".js";   scan = $false }
 )
+
+function Get-ScannedSources { return @(Get-Sources | Where-Object { $_.scan }) }
 
 # Un depot sans fichier de donnees reste utilisable : on n'expose que ce qui
 # existe vraiment, plutot que d'echouer a la lecture.
@@ -304,7 +313,7 @@ function Get-StringsFromLines([string[]]$lines, [string]$key = "index") {
 
 function Get-Strings {
   $items = @()
-  foreach ($src in Get-Sources) {
+  foreach ($src in Get-ScannedSources) {
     $items += @(Get-StringsFromLines (Read-SourceLines $src) $src.key)
   }
   return $items
@@ -374,7 +383,7 @@ function Get-MediaFromLines([string[]]$lines, [string]$key = "index") {
 
 function Get-Media {
   $items = @()
-  foreach ($src in Get-Sources) {
+  foreach ($src in Get-ScannedSources) {
     $items += @(Get-MediaFromLines (Read-SourceLines $src) $src.key)
   }
   return $items
@@ -588,9 +597,75 @@ function Backup-Source($src) {
     Remove-Item -Force -ErrorAction SilentlyContinue
 }
 
+# Renomme une cle sans perdre sa place : une table ordonnee ne sait pas renommer,
+# on la reconstruit donc a l'identique en substituant au passage.
+function Rename-FrKey($map, [string]$old, [string]$new) {
+  $out = New-OrderedMap
+  foreach ($k in $map.Keys) {
+    if ($k -ceq $old) { $out[$new] = $map[$k] } else { $out[$k] = $map[$k] }
+  }
+  return $out
+}
+
+# Remove() d'une table ordonnee compare sans tenir compte de la casse : il
+# emporterait 'Next project' en visant 'Next Project'. On reconstruit.
+function Remove-FrKey($map, [string]$cle) {
+  $out = New-OrderedMap
+  foreach ($k in $map.Keys) { if ($k -cne $cle) { $out[$k] = $map[$k] } }
+  return $out
+}
+
+# Report des traductions quand l'anglais change.
+# La cle du dictionnaire est la phrase anglaise : modifier un texte anglais
+# rendrait sa traduction orpheline, en silence. On la deplace donc sur la
+# nouvelle cle et on l'inscrit dans stale, pour que l'editeur la signale a
+# relire plutot que de laisser passer un francais qui ne dit plus la meme chose.
+function Move-FrTranslations($renames) {
+  if (@($renames).Count -eq 0) { return 0 }
+  $d = Read-FrDictionary
+  if ($d.ui.Count -eq 0) { return 0 }
+
+  $deplacees = 0
+  foreach ($r in $renames) {
+    $old = [string]$r.old; $new = [string]$r.new
+    if ($old -ceq $new -or -not $d.ui.Contains($old)) { continue }
+
+    if ($d.ui.Contains($new)) {
+      # La nouvelle phrase avait deja sa traduction : on garde celle-la et on
+      # retire l'ancienne entree, dont l'anglais n'existe plus nulle part.
+      $d.ui = Remove-FrKey $d.ui $old
+      $deplacees++
+      continue
+    }
+
+    $d.ui = Rename-FrKey $d.ui $old $new
+    $dejaSignalee = $false
+    foreach ($s in @($d.stale)) { if ($s -and ([string]$s -ceq $new)) { $dejaSignalee = $true } }
+    if (-not $dejaSignalee) {
+      $liste = @(); foreach ($s in @($d.stale)) { if ($s) { $liste += [string]$s } }
+      $liste += $new
+      $d.stale = $liste
+    }
+    $deplacees++
+  }
+
+  # Une entree signalee dont la cle a disparu n'a plus de sens.
+  # Boucle explicite plutot que Where-Object : un tableau vide range dans une
+  # table ordonnee ressort parfois avec un element nul, et Contains($null) leve.
+  $propre = @()
+  foreach ($s in @($d.stale)) {
+    if ($s -and $d.ui.Contains([string]$s)) { $propre += [string]$s }
+  }
+  $d.stale = $propre
+
+  if ($deplacees -gt 0) { Write-FrDictionary $d (Get-FrSectionMap) }
+  return $deplacees
+}
+
 function Save-Strings($edits) {
   $enc = [System.Text.UTF8Encoding]::new($false)
   $applied = 0; $rejected = @()
+  $renames = New-Object System.Collections.Generic.List[hashtable]
 
   # Une modification sans fichier vient d'une version anterieure de l'editeur :
   # elle designe forcement index.html.
@@ -627,6 +702,10 @@ function Save-Strings($edits) {
         $new = ConvertTo-SourceLiteral $e.text ([char]$e.quote)
         $line = $line.Substring(0, $start) + $new + $line.Substring($start + $len)
         $fileApplied++
+        # L'ancien texte anglais est la cle de sa traduction. On note le
+        # changement ; le report se fait une fois, apres l'ecriture des fichiers.
+        $ancien = ConvertFrom-SourceLiteral $e.raw
+        if ($ancien -cne [string]$e.text) { $renames.Add(@{ old = $ancien; new = [string]$e.text }) }
       }
       $lines[$idx] = $line
     }
@@ -638,7 +717,12 @@ function Save-Strings($edits) {
     }
   }
 
-  return @{ ok = ($applied -gt 0); applied = $applied; rejected = $rejected; stamp = (Get-FileStamp) }
+  # Apres l'ecriture seulement : une traduction ne se deplace que si le texte
+  # anglais a reellement change sur le disque.
+  $reportees = 0
+  if ($applied -gt 0) { $reportees = Move-FrTranslations $renames }
+
+  return @{ ok = ($applied -gt 0); applied = $applied; rejected = $rejected; carried = $reportees; stamp = (Get-FileStamp) }
 }
 
 # ================================================================ PROJETS ====
@@ -656,27 +740,27 @@ $ProjectIdPattern = '^[a-z0-9][a-z0-9-]*$'
 # cette table est conserve tel quel a la fin du bloc : une donnee que l'outil
 # ne comprend pas ne doit jamais disparaitre a l'enregistrement.
 $ProjectFields = @(
-  @{ key='title';               kind='text';   group='Identite';    label='Titre' }
-  @{ key='category';            kind='text';   group='Identite';    label='Categorie' }
-  @{ key='cardCategory';        kind='text';   group='Identite';    label='Categorie courte (grille)'; help="Vide, la grille reprend la categorie." }
+  @{ key='title'; translate=$true;               kind='text';   group='Identite';    label='Titre' }
+  @{ key='category'; translate=$true;            kind='text';   group='Identite';    label='Categorie' }
+  @{ key='cardCategory'; translate=$true;        kind='text';   group='Identite';    label='Categorie courte (grille)'; help="Vide, la grille reprend la categorie." }
   @{ key='date';                kind='text';   group='Identite';    label='Date (AAAA-MM)'; help="Seule source de l'ordre du site." }
   @{ key='thumb';               kind='media';  group='Identite';    label='Vignette' }
   @{ key='studio';              kind='text';   group='Contexte';    label='Studio' }
-  @{ key='roleTitle';           kind='text';   group='Contexte';    label='Statut' }
-  @{ key='client';              kind='text';   group='Contexte';    label='Client' }
-  @{ key='venue';               kind='text';   group='Contexte';    label='Lieu' }
-  @{ key='desc';                kind='para';   group='Recit';       label='Accroche' }
-  @{ key='overview';            kind='para';   group='Recit';       label='Contexte' }
-  @{ key='role';                kind='text';   group='Recit';       label='Role' }
+  @{ key='roleTitle'; translate=$true;           kind='text';   group='Contexte';    label='Statut' }
+  @{ key='client'; translate=$true;              kind='text';   group='Contexte';    label='Client' }
+  @{ key='venue'; translate=$true;               kind='text';   group='Contexte';    label='Lieu' }
+  @{ key='desc'; translate=$true;                kind='para';   group='Recit';       label='Accroche' }
+  @{ key='overview'; translate=$true;            kind='para';   group='Recit';       label='Contexte' }
+  @{ key='role'; translate=$true;                kind='text';   group='Recit';       label='Role' }
   @{ key='tools';               kind='list';   group='Recit';       label='Outils' }
-  @{ key='contribution';        kind='list';   group='Recit';       label='Contribution' }
-  @{ key='contributionNote';    kind='para';   group='Recit';       label='Note de contribution' }
-  @{ key='designIntent';        kind='para';   group='Recit';       label='Intention' }
-  @{ key='technicalChallenges'; kind='list';   group='Recit';       label='Defi et reponse de production' }
-  @{ key='rnd';                 kind='list';   group='Recit';       label='Recherche' }
-  @{ key='pipeline';            kind='list';   group='Recit';       label='Etapes' }
-  @{ key='impact';              kind='para';   group='Recit';       label='Resultat' }
-  @{ key='recognition';         kind='list';   group='Recit';       label='Reconnaissances' }
+  @{ key='contribution'; translate=$true;        kind='list';   group='Recit';       label='Contribution' }
+  @{ key='contributionNote'; translate=$true;    kind='para';   group='Recit';       label='Note de contribution' }
+  @{ key='designIntent'; translate=$true;        kind='para';   group='Recit';       label='Intention' }
+  @{ key='technicalChallenges'; translate=$true; kind='list';   group='Recit';       label='Defi et reponse de production' }
+  @{ key='rnd'; translate=$true;                 kind='list';   group='Recit';       label='Recherche' }
+  @{ key='pipeline'; translate=$true;            kind='list';   group='Recit';       label='Etapes' }
+  @{ key='impact'; translate=$true;              kind='para';   group='Recit';       label='Resultat' }
+  @{ key='recognition'; translate=$true;         kind='list';   group='Recit';       label='Reconnaissances' }
   @{ key='heroImage';           kind='media';  group='Medias';      label='Image principale' }
   @{ key='galleryImages';       kind='medias'; group='Medias';      label='Galerie' }
   @{ key='placeholderTiles';    kind='number'; group='Medias';      label='Tuiles vides' }
@@ -684,11 +768,11 @@ $ProjectFields = @(
   @{ key='trailerEmbedDisabled';kind='bool';   group='Medias';      label='Interdire la lecture integree' }
   @{ key='videoPoster';         kind='media';  group='Medias';      label='Affiche video' }
   @{ key='externalUrl';         kind='text';   group='Liens';       label='Lien externe' }
-  @{ key='externalLabel';       kind='text';   group='Liens';       label='Libelle du lien' }
-  @{ key='creditsNote';         kind='text';   group='Liens';       label='Credits' }
+  @{ key='externalLabel'; translate=$true;       kind='text';   group='Liens';       label='Libelle du lien' }
+  @{ key='creditsNote'; translate=$true;         kind='text';   group='Liens';       label='Credits' }
   @{ key='relatedProjects';     kind='projects'; group='Liens';     label='Projets lies'; help="Choisis parmi les projets existants : un titre saisi a la main ne renvoyait vers rien." }
   @{ key='listing';             kind='text';   group='Visibilite';  label='Affichage' }
-  @{ key='lockedTitle';         kind='text';   group='Visibilite';  label='Libelle de la tuile verrouillee' }
+  @{ key='lockedTitle'; translate=$true;         kind='text';   group='Visibilite';  label='Libelle de la tuile verrouillee' }
 )
 
 $ProjectFieldOrder = @($ProjectFields | ForEach-Object { $_.key })
@@ -774,6 +858,394 @@ function ConvertTo-JsValue($value, [string]$kind) {
     return '[' + ($items -join ', ') + ']'
   }
   return (ConvertTo-JsString ([string]$value))
+}
+
+# ============================================================ traduction FR ==
+# Lecture et ecriture de data/fr.js. Le dictionnaire a pour cle la phrase
+# anglaise elle-meme ; il n'y a donc pas de cle inventee a tenir en parallele,
+# mais les cles sont des phrases entieres, parfois des paragraphes.
+#
+# Le fichier est reecrit en entier a chaque enregistrement, jamais retouche par
+# ligne et decalage comme index.html. Une entree occupe une ou deux lignes selon
+# sa longueur : l'ancrage par decalage y serait fragile pour ne rien gagner.
+# Seul l'en-tete de documentation est conserve verbatim.
+
+# Les cles JavaScript distinguent la casse, les tables PowerShell non :
+# [ordered]@{} fondrait 'Next Project' et 'Next project' en une seule entree,
+# et une traduction disparaitrait en silence. D'ou le comparateur ordinal.
+function New-OrderedMap {
+  return (New-Object System.Collections.Specialized.OrderedDictionary([System.StringComparer]::Ordinal))
+}
+
+# Indispensable avant tout decoupage : les commentaires de fr.js contiennent des
+# apostrophes francaises (l'anglais, d'entree). Sans ce passage, une apostrophe
+# isolee dans un commentaire ouvre une chaine qui ne se referme jamais et avale
+# tout ce qui suit. Le retrait est lui-meme conscient des chaines, sinon une
+# adresse contenant // serait tronquee.
+function Remove-JsComments([string]$src) {
+  $sb = New-Object System.Text.StringBuilder
+  $quote = $null; $escaped = $false
+  for ($i = 0; $i -lt $src.Length; $i++) {
+    $c = $src[$i]
+    if ($escaped) { [void]$sb.Append($c); $escaped = $false; continue }
+    if ($quote) {
+      [void]$sb.Append($c)
+      if ($c -eq '\') { $escaped = $true }
+      elseif ($c -eq $quote) { $quote = $null }
+      continue
+    }
+    if ($c -eq "'" -or $c -eq '"') { $quote = $c; [void]$sb.Append($c); continue }
+    if ($c -eq '/' -and $i + 1 -lt $src.Length) {
+      $n = $src[$i + 1]
+      if ($n -eq '/') {
+        while ($i -lt $src.Length -and $src[$i] -ne "`n") { $i++ }
+        [void]$sb.Append("`n"); continue
+      }
+      if ($n -eq '*') {
+        $i += 2
+        while ($i + 1 -lt $src.Length -and -not ($src[$i] -eq '*' -and $src[$i + 1] -eq '/')) { $i++ }
+        $i++; [void]$sb.Append(' '); continue
+      }
+    }
+    [void]$sb.Append($c)
+  }
+  return $sb.ToString()
+}
+
+# Une paire "cle: valeur" dont la cle peut etre un identifiant nu ou une chaine
+# entre guillemets. ConvertFrom-ProjectBody n'accepte que la premiere forme ;
+# les cles de fr.js sont des phrases anglaises, donc toujours entre guillemets.
+function Split-JsPair([string]$pair) {
+  $s = $pair.Trim()
+  if ($s.Length -eq 0) { return $null }
+  $quote = $null
+  if ($s[0] -eq "'" -or $s[0] -eq '"') { $quote = $s[0] }
+
+  if ($quote) {
+    $escaped = $false
+    for ($i = 1; $i -lt $s.Length; $i++) {
+      $c = $s[$i]
+      if ($escaped) { $escaped = $false; continue }
+      if ($c -eq '\') { $escaped = $true; continue }
+      if ($c -eq $quote) {
+        $key = ConvertFrom-SourceLiteral $s.Substring(1, $i - 1)
+        $rest = $s.Substring($i + 1).TrimStart()
+        if (-not $rest.StartsWith(':')) { return $null }
+        return @{ key = $key; value = $rest.Substring(1).Trim() }
+      }
+    }
+    return $null
+  }
+
+  $m = [regex]::Match($s, '^(?<k>[A-Za-z0-9_$-]+)\s*:\s*(?<v>[\s\S]*)$')
+  if (-not $m.Success) { return $null }
+  return @{ key = $m.Groups['k'].Value; value = $m.Groups['v'].Value.Trim() }
+}
+
+function Get-JsInnerBody([string]$raw) {
+  $t = $raw.Trim()
+  if ($t.Length -lt 2) { return '' }
+  return $t.Substring(1, $t.Length - 2)
+}
+
+function Read-FrFlatMap([string]$raw) {
+  $out = New-OrderedMap
+  foreach ($pair in (Split-JsTopLevel (Get-JsInnerBody $raw))) {
+    $p = Split-JsPair $pair
+    if ($p) { $out[$p.key] = [string](ConvertFrom-JsLiteral $p.value) }
+  }
+  return $out
+}
+
+function Read-FrStringList([string]$raw) {
+  return @(Split-JsTopLevel (Get-JsInnerBody $raw) | ForEach-Object { [string](ConvertFrom-JsLiteral $_) })
+}
+
+function Read-FrHeadMap([string]$raw) {
+  $out = New-OrderedMap
+  foreach ($pair in (Split-JsTopLevel (Get-JsInnerBody $raw))) {
+    $p = Split-JsPair $pair
+    if ($p) { $out[$p.key] = Read-FrFlatMap $p.value }
+  }
+  return $out
+}
+
+function Read-FrProjectsMap([string]$raw) {
+  $out = New-OrderedMap
+  foreach ($pair in (Split-JsTopLevel (Get-JsInnerBody $raw))) {
+    $p = Split-JsPair $pair
+    if (-not $p) { continue }
+    $fields = New-OrderedMap
+    foreach ($f in (Split-JsTopLevel (Get-JsInnerBody $p.value))) {
+      $fp = Split-JsPair $f
+      if (-not $fp) { continue }
+      if ($fp.value.StartsWith('[')) {
+        $fields[$fp.key] = @(Split-JsTopLevel (Get-JsInnerBody $fp.value) | ForEach-Object { [string](ConvertFrom-JsLiteral $_) })
+      } else {
+        $fields[$fp.key] = [string](ConvertFrom-JsLiteral $fp.value)
+      }
+    }
+    $out[$p.key] = $fields
+  }
+  return $out
+}
+
+function Read-FrDictionary {
+  $vide = [ordered]@{ ui = (New-OrderedMap); uiSection = (New-OrderedMap); projects = (New-OrderedMap); head = (New-OrderedMap); stale = @() }
+  if (-not (Test-Path -LiteralPath $FrFile -PathType Leaf)) { return $vide }
+
+  $src = [System.IO.File]::ReadAllText($FrFile, [System.Text.UTF8Encoding]::new($false))
+  $clean = Remove-JsComments $src
+
+  $m = [regex]::Match($clean, 'window\.KP_FR\s*=\s*\{')
+  if (-not $m.Success) { return $vide }
+
+  # Fin du bloc : on suit la profondeur depuis l'accolade ouvrante plutot que
+  # de chercher un motif, pour ne pas se faire piper par une accolade en texte.
+  $start = $m.Index + $m.Length
+  $depth = 1; $quote = $null; $escaped = $false; $end = -1
+  for ($i = $start; $i -lt $clean.Length; $i++) {
+    $c = $clean[$i]
+    if ($escaped) { $escaped = $false; continue }
+    if ($quote) {
+      if ($c -eq '\') { $escaped = $true }
+      elseif ($c -eq $quote) { $quote = $null }
+      continue
+    }
+    if ($c -eq "'" -or $c -eq '"') { $quote = $c; continue }
+    if ($c -eq '{' -or $c -eq '[') { $depth++; continue }
+    if ($c -eq '}' -or $c -eq ']') { $depth--; if ($depth -eq 0) { $end = $i; break }; continue }
+  }
+  if ($end -lt 0) { return $vide }
+
+  $out = [ordered]@{ ui = (New-OrderedMap); uiSection = (New-OrderedMap); projects = (New-OrderedMap); head = (New-OrderedMap); stale = @() }
+  foreach ($pair in (Split-JsTopLevel $clean.Substring($start, $end - $start))) {
+    $p = Split-JsPair $pair
+    if (-not $p) { continue }
+    switch ($p.key) {
+      'ui'        { $out.ui        = Read-FrFlatMap     $p.value }
+      'uiSection' { $out.uiSection = Read-FrFlatMap     $p.value }
+      'head'      { $out.head      = Read-FrHeadMap     $p.value }
+      'stale'     { $out.stale     = Read-FrStringList  $p.value }
+      'projects'  { $out.projects  = Read-FrProjectsMap $p.value }
+    }
+  }
+  return $out
+}
+
+# --- format de transport -----------------------------------------------------
+# Tout circule a plat, en tableaux de paires, jamais en objets JSON.
+# Deux raisons : ConvertFrom-Json rend un PSCustomObject dont les noms de
+# propriete sont insensibles a la casse, ce qui ferait entrer en collision
+# 'Next Project' et 'Next project' ; et une structure plate reste sous la
+# profondeur de serialisation de Send-Json.
+function ConvertTo-FrPayload($data) {
+  $ui = @(); foreach ($k in $data.ui.Keys)        { $ui        += @{ k = $k; v = [string]$data.ui[$k] } }
+  $us = @(); foreach ($k in $data.uiSection.Keys) { $us        += @{ k = $k; v = [string]$data.uiSection[$k] } }
+  $pr = @()
+  foreach ($id in $data.projects.Keys) {
+    foreach ($f in $data.projects[$id].Keys) {
+      $v = $data.projects[$id][$f]
+      if ($v -is [array]) { $pr += @{ id = $id; field = $f; list = $true;  v = @($v | ForEach-Object { [string]$_ }) } }
+      else                { $pr += @{ id = $id; field = $f; list = $false; v = @([string]$v) } }
+    }
+  }
+  $hd = @()
+  foreach ($e in $data.head.Keys) {
+    foreach ($f in $data.head[$e].Keys) { $hd += @{ screen = $e; field = $f; v = [string]$data.head[$e][$f] } }
+  }
+  return @{ ui = $ui; uiSection = $us; projects = $pr; head = $hd; stale = @($data.stale) }
+}
+
+function ConvertFrom-FrPayload($body) {
+  $out = [ordered]@{ ui = (New-OrderedMap); uiSection = (New-OrderedMap); projects = (New-OrderedMap); head = (New-OrderedMap); stale = @() }
+
+  foreach ($p in @($body.ui))        { if ($p -and $p.k) { $out.ui[[string]$p.k]        = [string]$p.v } }
+  foreach ($p in @($body.uiSection)) { if ($p -and $p.k) { $out.uiSection[[string]$p.k] = [string]$p.v } }
+
+  foreach ($p in @($body.projects)) {
+    if (-not $p -or -not $p.id -or -not $p.field) { continue }
+    $id = [string]$p.id
+    if (-not $out.projects.Contains($id)) { $out.projects[$id] = New-OrderedMap }
+    if ($p.list) { $out.projects[$id][[string]$p.field] = @(@($p.v) | ForEach-Object { [string]$_ }) }
+    else         { $out.projects[$id][[string]$p.field] = [string](@($p.v)[0]) }
+  }
+
+  foreach ($p in @($body.head)) {
+    if (-not $p -or -not $p.screen -or -not $p.field) { continue }
+    $e = [string]$p.screen
+    if (-not $out.head.Contains($e)) { $out.head[$e] = New-OrderedMap }
+    $out.head[$e][[string]$p.field] = [string]$p.v
+  }
+
+  $out.stale = @(@($body.stale) | ForEach-Object { [string]$_ } | Where-Object { $_ -ne '' })
+  return $out
+}
+
+# Associe chaque phrase anglaise au nom de la fonction qui la contient dans
+# index.html, pour que les regroupements du fichier suivent la liste de l'editeur.
+function Get-FrSectionMap {
+  $map = New-OrderedMap
+  foreach ($it in (Get-Strings)) {
+    if (-not $map.Contains($it.text)) { $map[$it.text] = $it.section }
+  }
+  return $map
+}
+
+# Cle et valeur sur une ligne tant que ca reste lisible, sinon la valeur passe a
+# la ligne suivante. Le seuil vaut pour le confort de relecture des diffs.
+function Format-FrEntry([string]$key, [string]$value, [int]$indent) {
+  $pad = ' ' * $indent
+  $line = $pad + $key + ': ' + $value
+  if ($line.Length -le 110) { return @($line) }
+  # Parentheses obligatoires : la virgule lie plus fort que +, sans elles les
+  # deux lignes se concatenaient en une seule.
+  return @(($pad + $key + ':'), ($pad + '  ' + $value))
+}
+
+# $sections associe une phrase anglaise au nom de la fonction qui la contient
+# dans index.html. Les regroupements du fichier en sont deduits : l'ordre du
+# dictionnaire suit ainsi celui de la liste affichee dans l'editeur.
+function Write-FrDictionary($data, $sections) {
+  $entete = @"
+/**
+ * Traduction francaise du portfolio.
+ *
+ * FICHIER GENERE par l'editeur local (tools/). Il se relit sans peine et se
+ * corrige a la main sans risque, mais tout enregistrement depuis l'outil le
+ * reecrit en entier : les commentaires ajoutes ici ne survivent pas.
+ *
+ * L'anglais reste la source unique. Il vit dans index.html et data/projects.js
+ * et s'edite normalement ; ce fichier est une couche posee par-dessus. Une
+ * entree absente retombe sur l'anglais, donc le site ne casse jamais, meme a
+ * moitie traduit.
+ *
+ * ui        La cle est la phrase anglaise elle-meme, au caractere pres.
+ * uiSection Cas rares ou la meme phrase doit diverger selon l'endroit.
+ * projects  Surcharges des fiches, par identifiant puis par champ.
+ * head      Titres et descriptions de page, par ecran.
+ * stale     Traductions dont l'anglais a change depuis. A relire, puis a
+ *           retirer d'ici. L'editeur les signale par un badge.
+ *
+ * Les reperes {...} se remplacent apres traduction : le francais peut donc les
+ * remettre dans un autre ordre que l'anglais.
+ *
+ * Les noms propres ne se traduisent pas : titres d'oeuvres, studios, clients,
+ * festivals, prix, logiciels.
+ */
+"@
+  $entete = ($entete -replace "`r`n", "`n") -replace "`n", "`r`n"
+
+  $L = New-Object System.Collections.Generic.List[string]
+  [void]$L.Add('window.KP_FR = {')
+
+  [void]$L.Add('  ui: {')
+  $parSection = New-OrderedMap
+  foreach ($k in $data.ui.Keys) {
+    $sec = 'Autres'
+    if ($sections -and $sections.Contains($k)) { $sec = [string]$sections[$k] }
+    if (-not $parSection.Contains($sec)) { $parSection[$sec] = (New-Object System.Collections.Generic.List[string]) }
+    $parSection[$sec].Add($k)
+  }
+  $premier = $true
+  foreach ($sec in $parSection.Keys) {
+    if (-not $premier) { [void]$L.Add('') }
+    $premier = $false
+    [void]$L.Add('    /* ' + $sec + ' */')
+    foreach ($k in $parSection[$sec]) {
+      foreach ($ligne in (Format-FrEntry (ConvertTo-JsString $k) ((ConvertTo-JsString ([string]$data.ui[$k])) + ',') 4)) {
+        [void]$L.Add($ligne)
+      }
+    }
+  }
+  [void]$L.Add('  },')
+  [void]$L.Add('')
+
+  if ($data.uiSection.Count -eq 0) {
+    [void]$L.Add('  uiSection: {},')
+  } else {
+    [void]$L.Add('  uiSection: {')
+    foreach ($k in $data.uiSection.Keys) {
+      foreach ($ligne in (Format-FrEntry (ConvertTo-JsString $k) ((ConvertTo-JsString ([string]$data.uiSection[$k])) + ',') 4)) {
+        [void]$L.Add($ligne)
+      }
+    }
+    [void]$L.Add('  },')
+  }
+  [void]$L.Add('')
+
+  if ($data.projects.Count -eq 0) {
+    [void]$L.Add('  projects: {},')
+  } else {
+    [void]$L.Add('  projects: {')
+    $premier = $true
+    foreach ($id in $data.projects.Keys) {
+      if (-not $premier) { [void]$L.Add('') }
+      $premier = $false
+      [void]$L.Add('    ' + (Format-ProjectKey $id) + ': {')
+      $champs = $data.projects[$id]
+      $noms = @($champs.Keys)
+      for ($i = 0; $i -lt $noms.Count; $i++) {
+        $nom = $noms[$i]
+        $v = $champs[$nom]
+        $virgule = $(if ($i -lt $noms.Count - 1) { ',' } else { '' })
+        if ($v -is [array]) {
+          $items = @($v | ForEach-Object { ConvertTo-JsString ([string]$_) })
+          $rendu = '[' + ($items -join ', ') + ']'
+        } else {
+          $rendu = ConvertTo-JsString ([string]$v)
+        }
+        foreach ($ligne in (Format-FrEntry (Format-ProjectKey $nom) ($rendu + $virgule) 6)) {
+          [void]$L.Add($ligne)
+        }
+      }
+      [void]$L.Add('    },')
+    }
+    $L[$L.Count - 1] = '    }'
+    [void]$L.Add('  },')
+  }
+  [void]$L.Add('')
+
+  if ($data.head.Count -eq 0) {
+    [void]$L.Add('  head: {},')
+  } else {
+    [void]$L.Add('  head: {')
+    $noms = @($data.head.Keys)
+    for ($i = 0; $i -lt $noms.Count; $i++) {
+      $ecran = $noms[$i]
+      $virgule = $(if ($i -lt $noms.Count - 1) { ',' } else { '' })
+      [void]$L.Add('    ' + (Format-ProjectKey $ecran) + ': {')
+      $champs = $data.head[$ecran]
+      $cles = @($champs.Keys)
+      for ($j = 0; $j -lt $cles.Count; $j++) {
+        $vg = $(if ($j -lt $cles.Count - 1) { ',' } else { '' })
+        foreach ($ligne in (Format-FrEntry (Format-ProjectKey $cles[$j]) ((ConvertTo-JsString ([string]$champs[$cles[$j]])) + $vg) 6)) {
+          [void]$L.Add($ligne)
+        }
+      }
+      [void]$L.Add('    }' + $virgule)
+    }
+    [void]$L.Add('  },')
+  }
+  [void]$L.Add('')
+
+  if (@($data.stale).Count -eq 0) {
+    [void]$L.Add('  stale: []')
+  } else {
+    [void]$L.Add('  stale: [')
+    $items = @($data.stale)
+    for ($i = 0; $i -lt $items.Count; $i++) {
+      $vg = $(if ($i -lt $items.Count - 1) { ',' } else { '' })
+      [void]$L.Add('    ' + (ConvertTo-JsString ([string]$items[$i])) + $vg)
+    }
+    [void]$L.Add('  ]')
+  }
+  [void]$L.Add('};')
+
+  $src = Get-Source "fr"
+  if ($src) { Backup-Source $src }
+  $texte = $entete + "`r`n" + ($L -join "`r`n") + "`r`n"
+  [System.IO.File]::WriteAllText($FrFile, $texte, [System.Text.UTF8Encoding]::new($false))
 }
 
 # --- reperage des blocs ------------------------------------------------------
@@ -1437,7 +1909,7 @@ function New-JsonLdPattern([string]$type, [string]$field) {
 }
 
 $SettingsDef = @(
-  @{ key='title'; group='Identite'; label="Titre d'onglet"; kind='text'
+  @{ key='title'; translate=$true; group='Identite'; label="Titre d'onglet"; kind='text'
      help="Ecrit aussi dans og:title, twitter:title, SCREEN_META.home et les donnees structurees."
      targets=@( '(?<pre><title>)(?<v>[^<]*)(?<post></title>)',
                 (New-MetaPattern 'property' 'og:title'),
@@ -1882,6 +2354,29 @@ try {
         $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
         $body = $reader.ReadToEnd(); $reader.Close()
         Send-Json $res (Save-Strings (($body | ConvertFrom-Json).edits))
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__fr" -and $req.HttpMethod -eq "GET") {
+        $lastPing = Get-Date; $everPinged = $true
+        $d = Read-FrDictionary
+        $p = ConvertTo-FrPayload $d
+        $p.stamp = (Get-FileStamp)
+        Send-Json $res $p
+        $res.Close(); continue
+      }
+
+      if ($rel -eq "/__fr" -and $req.HttpMethod -eq "POST") {
+        $lastPing = Get-Date; $everPinged = $true
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        $body = $reader.ReadToEnd(); $reader.Close()
+        try {
+          $data = ConvertFrom-FrPayload (($body | ConvertFrom-Json))
+          Write-FrDictionary $data (Get-FrSectionMap)
+          Send-Json $res @{ ok = $true; entries = $data.ui.Count; stamp = (Get-FileStamp) }
+        } catch {
+          Send-Json $res @{ ok = $false; error = $_.Exception.Message }
+        }
         $res.Close(); continue
       }
 

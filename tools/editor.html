@@ -10,6 +10,10 @@
   --line:rgba(255,255,255,.13);--line-subtle:rgba(255,255,255,.07);
   --white:#f5f4f0;--white-80:#c9c8c4;--grey:#9a999f;
   --ember:#ff5a2a;--ember-400:#ff8259;--ok:#3ddc84;
+  /* Ambre reserve a un seul usage : une traduction dont l'anglais a change
+     depuis. Ce n'est ni une erreur ni une modification en attente, c'est une
+     phrase a relire, et elle merite sa propre couleur. */
+  --warn:#e8b339;
   --sidebar:440px;
 }
 *{box-sizing:border-box}
@@ -46,16 +50,51 @@ button:hover:not(:disabled){border-color:var(--ember);color:var(--ember-400)}
   color:var(--ember);margin:0 0 8px;padding-bottom:5px;
   border-bottom:1px solid var(--line-subtle);position:sticky;top:-12px;
   background:var(--void-950);padding-top:6px}
-.row{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--line-subtle)}
+/* Anglais puis francais : l'anglais est la source, le francais la couche posee
+   dessus, et l'ordre de lecture le dit.
+   La disposition suit la largeur de la COLONNE, pas celle de la fenetre : le
+   panneau fait 440 px par defaut, le reste etant l'apercu du site, et deux
+   colonnes y tiendraient dans 167 px chacune — inutilisable pour un paragraphe.
+   Empile par defaut, donc, et cote a cote des que la barre est elargie par sa
+   poignee, ce que l'outil sait deja faire. */
+#list{container-type:inline-size}
+.row{display:grid;grid-template-columns:42px 1fr;gap:8px;align-items:start;
+  padding:6px 0;border-bottom:1px solid var(--line-subtle)}
+.row .ln{grid-row:1 / span 2}
+@container (min-width: 720px){
+  .row{grid-template-columns:42px 1fr 1fr}
+  .row .ln{grid-row:auto}
+}
 .row.dirty{background:rgba(255,90,42,.07)}
-.ln{flex:0 0 42px;font:11px 'JetBrains Mono',ui-monospace,monospace;color:var(--grey);
+.ln{font:11px 'JetBrains Mono',ui-monospace,monospace;color:var(--grey);
   padding-top:9px;text-align:right;user-select:none}
-textarea{flex:1;min-width:0;background:var(--void-850);border:1px solid var(--line-subtle);
+textarea{width:100%;min-width:0;background:var(--void-850);border:1px solid var(--line-subtle);
   color:var(--white);font:inherit;font-size:13px;padding:8px 10px;border-radius:6px;
   resize:none;overflow:hidden;line-height:1.5}
 textarea:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:transparent}
-.row.dirty textarea{border-color:var(--ember)}
+/* La bordure suit le cote reellement modifie : voir d'un coup d'oeil si c'est
+   l'anglais ou la traduction qui attend d'etre enregistre. */
+.row.en-dirty .ta-en{border-color:var(--ember)}
+.row.fr-dirty .ta-fr{border-color:var(--ember)}
 .empty{color:var(--grey);padding:36px 0;text-align:center;font-size:13px}
+
+/* --------------------------------------------------------- colonne francaise */
+.cell{min-width:0;position:relative}
+/* Une cle du dictionnaire sans ligne balayee : l'anglais existe mais l'editeur
+   ne sait pas ou il est ecrit, donc il se lit sans se modifier. */
+.ro{background:var(--void-900);border:1px solid var(--line-subtle);border-radius:6px;
+  color:var(--white-80);font-size:13px;line-height:1.5;padding:8px 10px;
+  white-space:pre-wrap;word-break:break-word}
+.ta-fr::placeholder{color:var(--grey);opacity:.55}
+.badge{position:absolute;top:-7px;right:8px;z-index:1;
+  font:9px 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;
+  background:var(--void-950);color:var(--warn);border:1px solid var(--warn);
+  border-radius:999px;padding:1px 7px}
+.row.stale .ta-fr{border-color:var(--warn)}
+.filters{display:flex;gap:6px;align-items:center}
+.filters button{font-size:11px;padding:5px 11px}
+.filters button.on{border-color:var(--ember);color:var(--ember-400)}
+
 
 /* ------------------------------------------------------------ verrouillage */
 #lock{position:fixed;inset:0;z-index:100;background:var(--void-950);
@@ -118,6 +157,12 @@ textarea:focus{outline:2px solid var(--ember);outline-offset:1px;border-color:tr
 .set input:focus,.set textarea:focus{outline:2px solid var(--ember);outline-offset:1px;
   border-color:transparent}
 .set.dirty input,.set.dirty textarea{border-color:var(--ember)}
+/* Le champ francais appartient a celui qui le precede : le filet et le retrait
+   le disent, plutot qu'un titre de plus dans un formulaire deja long. */
+.frset{margin:-8px 0 16px;padding-left:12px;border-left:2px solid var(--line-subtle)}
+.frset label{color:var(--grey);opacity:.8}
+.frset textarea{min-height:0}
+.frset textarea::placeholder{color:var(--grey);opacity:.5}
 .set .hint{font-size:11px;color:var(--text-faint,#57565c);margin-top:4px;line-height:1.45}
 .set .warn{font-size:11px;color:var(--ember-400);margin-top:4px}
 .set .withimg{display:flex;gap:10px;align-items:flex-start}
@@ -300,6 +345,11 @@ iframe.framed{box-shadow:0 0 0 1px var(--line)}
       <span id="branch">…</span>
     </div>
     <input id="search" type="search" placeholder="Rechercher un texte, une section…" autocomplete="off">
+    <div class="filters" id="frFilters">
+      <button type="button" data-f="tous" class="on">Tous</button>
+      <button type="button" data-f="manquants">Sans traduction</button>
+      <button type="button" data-f="revoir">À revoir</button>
+    </div>
     <div class="actions">
       <span id="count">chargement…</span>
       <button id="reload" type="button">Recharger</button>
@@ -454,6 +504,71 @@ iframe.framed{box-shadow:0 0 0 1px var(--line)}
 const $ = s => document.querySelector(s);
 let items = [], stamp = null;
 const edits = new Map();
+
+/* ------------------------------------------------------------- traduction FR
+   Le dictionnaire est indexe par la phrase anglaise elle-meme, pas par la
+   position dans le fichier. Une ligne de l'onglet Textes porte donc deux
+   identites : l'anglais se repere par fichier + ligne + decalage, sa traduction
+   par le texte anglais. Ne pas les confondre.
+
+   frEdits a pour cle la phrase anglaise, comme le dictionnaire. */
+let fr = { ui: new Map(), uiSection: new Map(), projects: new Map(), head: new Map(), stale: new Set() };
+const frEdits = new Map();
+let frFilter = 'tous';
+
+async function loadFr(){
+  const r = await authFetch('/__fr');
+  const d = await r.json();
+  fr = {
+    ui: new Map((d.ui || []).map(p => [p.k, p.v])),
+    uiSection: new Map((d.uiSection || []).map(p => [p.k, p.v])),
+    projects: new Map(),
+    head: new Map(),
+    stale: new Set(d.stale || [])
+  };
+  for (const p of (d.projects || [])){
+    if (!fr.projects.has(p.id)) fr.projects.set(p.id, new Map());
+    fr.projects.get(p.id).set(p.field, p.list ? (p.v || []) : (p.v || [])[0] || '');
+  }
+  for (const p of (d.head || [])){
+    if (!fr.head.has(p.screen)) fr.head.set(p.screen, new Map());
+    fr.head.get(p.screen).set(p.field, p.v);
+  }
+  frEdits.clear();
+}
+
+/* La valeur affichee : la modification en attente si elle existe, sinon celle
+   du fichier, sinon rien. */
+function frValue(englishText){
+  if (frEdits.has(englishText)) return frEdits.get(englishText);
+  return fr.ui.get(englishText) || '';
+}
+
+/* Le dictionnaire tel qu'il partira au serveur : le fichier, plus les
+   modifications en attente. Une valeur vidée retire l'entree. */
+function frPayload(){
+  const ui = new Map(fr.ui);
+  for (const [k, v] of frEdits){
+    if (v === '') ui.delete(k); else ui.set(k, v);
+  }
+  const projects = [];
+  for (const [id, champs] of fr.projects){
+    for (const [f, v] of champs){
+      projects.push({ id, field: f, list: Array.isArray(v), v: Array.isArray(v) ? v : [v] });
+    }
+  }
+  const head = [];
+  for (const [screen, champs] of fr.head){
+    for (const [f, v] of champs) head.push({ screen, field: f, v });
+  }
+  return {
+    ui: [...ui].map(([k, v]) => ({ k, v })),
+    uiSection: [...fr.uiSection].map(([k, v]) => ({ k, v })),
+    projects, head,
+    // Une entree qu'on vient de retraduire n'est plus a revoir.
+    stale: [...fr.stale].filter(k => ui.has(k) && !frEdits.has(k))
+  };
+}
 /* La cle porte le fichier : index.html et data/projects.js ont tous deux une
    ligne 42, et sans cette distinction les deux textes n'en faisaient qu'un. */
 const key = it => (it.file || 'index') + ':' + it.line + ':' + it.start;
@@ -519,18 +634,101 @@ $('#lockform').addEventListener('submit', async e => {
 function autosize(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
 
 function updateCount(){
-  const n = edits.size;
-  $('#count').textContent = n ? `${n} modif${n>1?'s':''} en attente` : `${items.length} textes`;
-  $('#save').disabled = n === 0;
+  const n = edits.size, f = frEdits.size;
+  const bouts = [];
+  if (n) bouts.push(`${n} anglais`);
+  if (f) bouts.push(`${f} français`);
+  $('#count').textContent = bouts.length
+    ? bouts.join(' · ') + ' en attente'
+    : `${items.length} textes · ${nonTraduits()} sans traduction`;
+  $('#save').disabled = (n + f) === 0;
+}
+
+/* Nombre de phrases connues sans traduction, toutes origines confondues. */
+function nonTraduits(){
+  let n = 0;
+  for (const t of clesConnues()) if (!frValue(t)) n++;
+  return n;
+}
+
+/* L'ensemble des phrases anglaises traduisibles : celles que le balayage
+   trouve dans le code, plus celles que seul le dictionnaire connait.
+   Sans ce second ensemble, les libelles d'un seul mot — Work, Rôle, Outils —
+   n'auraient aucune ligne, car le balayage exige un espace dans la chaine. */
+function clesConnues(){
+  const s = new Set(items.map(it => it.text));
+  for (const k of fr.ui.keys()) s.add(k);
+  for (const k of frEdits.keys()) s.add(k);
+  return s;
+}
+
+function passeFiltre(texte){
+  if (frFilter === 'manquants') return !frValue(texte);
+  if (frFilter === 'revoir')    return fr.stale.has(texte) && !frEdits.has(texte);
+  return true;
+}
+
+/* Construit la cellule francaise d'une ligne. englishText sert de cle : c'est
+   lui, et pas la position dans le fichier, qui identifie la traduction. */
+function celluleFr(englishText, row){
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+
+  if (fr.stale.has(englishText) && !frEdits.has(englishText)){
+    row.classList.add('stale');
+    const b = document.createElement('span');
+    b.className = 'badge';
+    b.textContent = 'à revoir';
+    b.title = "L'anglais a changé depuis cette traduction.";
+    cell.appendChild(b);
+  }
+
+  const ta = document.createElement('textarea');
+  ta.className = 'ta-fr';
+  ta.rows = 1;
+  ta.placeholder = 'Français…';
+  ta.value = frValue(englishText);
+  ta.addEventListener('input', () => {
+    autosize(ta);
+    const dansLeFichier = fr.ui.get(englishText) || '';
+    if (ta.value === dansLeFichier) frEdits.delete(englishText);
+    else frEdits.set(englishText, ta.value);
+    row.classList.toggle('fr-dirty', frEdits.has(englishText));
+    if (frEdits.has(englishText)){
+      row.classList.remove('stale');
+      const badge = cell.querySelector('.badge');
+      if (badge) badge.remove();
+    }
+    updateCount();
+  });
+  cell.appendChild(ta);
+  requestAnimationFrame(() => autosize(ta));
+  return cell;
 }
 
 function render(filter){
   const host = $('#list');
   const f = (filter||'').trim().toLowerCase();
-  const shown = f ? items.filter(it =>
-      it.text.toLowerCase().includes(f) || it.section.toLowerCase().includes(f)) : items;
+  const cherche = it => !f
+    || it.text.toLowerCase().includes(f)
+    || it.section.toLowerCase().includes(f)
+    || (frValue(it.text) || '').toLowerCase().includes(f);
 
-  if (!shown.length){ host.innerHTML = '<p class="empty">Aucun résultat.</p>'; return; }
+  const shown = items.filter(it => cherche(it) && passeFiltre(it.text));
+
+  /* Les cles que le balayage ne trouve pas : libelles d'un seul mot, phrases
+     des fichiers non balayes. Elles n'ont pas de position dans un fichier, donc
+     leur anglais s'affiche en lecture seule. Sans ce groupe, 18 % de
+     l'interface serait intraduisible depuis l'outil. */
+  const balayees = new Set(items.map(it => it.text));
+  const horsBalayage = [...clesConnues()]
+    .filter(t => !balayees.has(t))
+    .filter(t => !f || t.toLowerCase().includes(f) || (frValue(t) || '').toLowerCase().includes(f))
+    .filter(passeFiltre);
+
+  if (!shown.length && !horsBalayage.length){
+    host.innerHTML = '<p class="empty">Aucun résultat.</p>'; return;
+  }
 
   const groups = new Map();
   for (const it of shown){
@@ -539,31 +737,71 @@ function render(filter){
   }
 
   host.innerHTML = '';
-  for (const [section, list] of groups){
+
+  const ouvrirSection = titre => {
     const sec = document.createElement('section');
     sec.className = 'section';
     const h = document.createElement('h2');
-    h.textContent = section + ' · ' + list.length;
+    h.textContent = titre;
     sec.appendChild(h);
+    return sec;
+  };
+
+  for (const [section, list] of groups){
+    const sec = ouvrirSection(section + ' · ' + list.length);
     for (const it of list){
       const k = key(it);
       const row = document.createElement('div');
-      row.className = 'row' + (edits.has(k) ? ' dirty' : '');
+      row.className = 'row'
+        + (edits.has(k) ? ' dirty en-dirty' : '')
+        + (frEdits.has(it.text) ? ' fr-dirty' : '');
       row.dataset.key = k;
+
       const ln = document.createElement('div');
       ln.className = 'ln'; ln.textContent = it.line;
+
+      const cellEn = document.createElement('div');
+      cellEn.className = 'cell';
       const ta = document.createElement('textarea');
+      ta.className = 'ta-en';
       ta.value = edits.has(k) ? edits.get(k) : it.text;
       ta.rows = 1;
       ta.addEventListener('input', () => {
         autosize(ta);
-        if (ta.value === it.text){ edits.delete(k); row.classList.remove('dirty'); }
-        else { edits.set(k, ta.value); row.classList.add('dirty'); }
+        if (ta.value === it.text){ edits.delete(k); row.classList.remove('dirty','en-dirty'); }
+        else { edits.set(k, ta.value); row.classList.add('dirty','en-dirty'); }
         updateCount();
       });
-      row.append(ln, ta);
+      cellEn.appendChild(ta);
+
+      row.append(ln, cellEn, celluleFr(it.text, row));
       sec.appendChild(row);
       requestAnimationFrame(() => autosize(ta));
+    }
+    host.appendChild(sec);
+  }
+
+  if (horsBalayage.length){
+    const sec = ouvrirSection('Hors balayage · ' + horsBalayage.length);
+    const note = document.createElement('p');
+    note.className = 'empty';
+    note.style.cssText = 'text-align:left;padding:0 0 10px;font-size:12px';
+    note.textContent = "L'anglais de ces phrases n'est pas modifiable ici — libellés d'un seul mot, "
+      + "ou textes vivant hors des fichiers balayés. Leur traduction, elle, s'édite normalement.";
+    sec.appendChild(note);
+    for (const texte of horsBalayage){
+      const row = document.createElement('div');
+      row.className = 'row' + (frEdits.has(texte) ? ' fr-dirty' : '');
+      const ln = document.createElement('div');
+      ln.className = 'ln'; ln.textContent = '—';
+      const cellEn = document.createElement('div');
+      cellEn.className = 'cell';
+      const ro = document.createElement('div');
+      ro.className = 'ro';
+      ro.textContent = texte;
+      cellEn.appendChild(ro);
+      row.append(ln, cellEn, celluleFr(texte, row));
+      sec.appendChild(row);
     }
     host.appendChild(sec);
   }
@@ -586,6 +824,8 @@ async function load(){
   setLan(d.lanUrl);
   if (d.warning) status(d.warning, 'err');
   edits.clear();
+  // Le dictionnaire avant le rendu : chaque ligne affiche sa traduction.
+  await loadFr();
   render($('#search').value);
   updateCount();
 }
@@ -616,12 +856,15 @@ setInterval(async () => {
     const r = await authFetch('/__meta');
     const d = await r.json();
     if (d.stamp && stamp && d.stamp !== stamp){
-      if (edits.size){
-        status(`index.html a été modifié en dehors de l'éditeur. Tes ${edits.size} modif(s) en attente risquent d'être refusées. Enregistre ou recharge.`, 'warn');
+      // L'empreinte couvre index.html, data/projects.js et data/fr.js : le
+      // message ne nomme donc plus un fichier en particulier.
+      const enAttente = edits.size + frEdits.size;
+      if (enAttente){
+        status(`Un fichier a été modifié en dehors de l'éditeur. Tes ${enAttente} modif(s) en attente risquent d'être refusées. Enregistre ou recharge.`, 'warn');
       } else {
         await load();
         reloadPreview();
-        status('Rechargé — index.html a changé sur le disque.', 'ok');
+        status('Rechargé — un fichier a changé sur le disque.', 'ok');
       }
     }
     $('#branch').textContent = d.branch || '';
@@ -633,8 +876,17 @@ setInterval(async () => {
 /* ---------------------------------------------------------------- controles */
 $('#search').addEventListener('input', e => render(e.target.value));
 
+$('#frFilters').addEventListener('click', e => {
+  const b = e.target.closest('button[data-f]');
+  if (!b) return;
+  frFilter = b.dataset.f;
+  for (const autre of $('#frFilters').querySelectorAll('button')) autre.classList.toggle('on', autre === b);
+  render($('#search').value);
+});
+
 $('#reload').addEventListener('click', async () => {
-  if (edits.size && !confirm(`${edits.size} modification(s) non enregistrée(s). Recharger et les perdre ?`)) return;
+  const enAttente = edits.size + frEdits.size;
+  if (enAttente && !confirm(`${enAttente} modification(s) non enregistrée(s). Recharger et les perdre ?`)) return;
   await load(); reloadPreview(); status('');
 });
 
@@ -651,6 +903,28 @@ $('#save').addEventListener('click', async () => {
   $('#save').disabled = true;
   status('Enregistrement…');
   try{
+    /* Le francais d'abord, l'anglais ensuite, et l'ordre n'est pas arbitraire :
+       les cles du dictionnaire sont les phrases anglaises. Enregistrer
+       l'anglais d'abord les renommerait, et le francais partirait ensuite avec
+       les anciennes cles, ecrasant le report que le serveur vient de faire. */
+    if (frEdits.size){
+      const rf = await authFetch('/__fr', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(frPayload())
+      });
+      const df = await rf.json();
+      if (!df.ok) throw new Error(df.error || 'écriture de data/fr.js refusée');
+      if (df.stamp) stamp = df.stamp;
+    }
+
+    if (!payload.length){
+      status(`${frEdits.size} traduction(s) enregistrée(s). Pense à commiter quand le résultat te convient.`, 'ok');
+      await load();
+      reloadPreview();
+      await loadChanges();
+      return;
+    }
+
     const r = await authFetch('/__save', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ edits: payload })
@@ -661,6 +935,9 @@ $('#save').addEventListener('click', async () => {
     if (res.stamp) stamp = res.stamp;
     if (res.applied > 0){
       let msg = `${res.applied} texte(s) enregistré(s).`;
+      if (res.carried > 0){
+        msg += ` ${res.carried} traduction(s) reportée(s) sur le nouveau texte, à revoir.`;
+      }
       if (res.rejected && res.rejected.length) msg += ' Refusés : ' + res.rejected.join(' ; ');
       msg += ' Pense à commiter quand le résultat te convient.';
       status(msg, res.rejected && res.rejected.length ? 'warn' : 'ok');
@@ -819,7 +1096,7 @@ $('#pick').addEventListener('click', () => {
 $('#site').addEventListener('load', () => { if (picking) attachPicking(); });
 
 $('#quit').addEventListener('click', async () => {
-  if (edits.size && !confirm(`${edits.size} modification(s) non enregistrée(s). Quitter quand même ?`)) return;
+  if ((edits.size + frEdits.size) && !confirm(`${edits.size + frEdits.size} modification(s) non enregistrée(s). Quitter quand même ?`)) return;
   try { await authFetch('/__quit'); } catch(e){}
   status('Serveur arrêté. Tu peux fermer cet onglet.', 'ok');
 });
@@ -1515,6 +1792,7 @@ function makeField(def, value){
   }
   input.dataset.key = def.key;
   input.dataset.kind = def.kind;
+  input.dataset.lang = 'en';
 
   if (def.kind === 'media'){
     const row = document.createElement('div');
@@ -1622,6 +1900,42 @@ function readDimensions(file){
   });
 }
 
+/* Le pendant francais d'un champ de fiche. Rien pour les champs qui ne se
+   traduisent pas — medias, dates, listes d'outils, projets lies — ni pour une
+   fiche en cours de creation : tant que l'anglais n'est pas ecrit, il n'y a
+   rien a traduire.
+   Les valeurs vivent dans data/fr.js, pas dans data/projects.js : ce champ ne
+   part donc pas avec le formulaire du projet mais par la route /__fr. */
+function makeFrField(def){
+  if (!def.translate || projectFormNew || !projectFormId) return null;
+
+  const champs = fr.projects.get(projectFormId);
+  const brut = champs ? champs.get(def.key) : undefined;
+  const estListe = def.kind === 'list';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'set frset';
+  const label = document.createElement('label');
+  label.textContent = def.label + ' — français';
+  wrap.appendChild(label);
+
+  const input = document.createElement('textarea');
+  input.dataset.key = def.key;
+  input.dataset.kind = def.kind;
+  input.dataset.lang = 'fr';
+  input.placeholder = 'Vide, la fiche garde l’anglais.';
+  if (estListe){
+    input.value = Array.isArray(brut) ? brut.join('\n') : '';
+    input.rows = 4;
+  } else {
+    input.value = brut == null ? '' : String(brut);
+    if (def.kind === 'para') input.rows = 3;
+  }
+  input.addEventListener('input', () => wrap.classList.add('dirty'));
+  wrap.appendChild(input);
+  return wrap;
+}
+
 function renderProjectForm(values){
   const host = $('#projects');
   host.innerHTML = '';
@@ -1661,7 +1975,11 @@ function renderProjectForm(values){
     title.className = 'prjgroup';
     title.textContent = group;
     form.appendChild(title);
-    for (const def of defs) form.appendChild(makeField(def, values[def.key]));
+    for (const def of defs){
+      form.appendChild(makeField(def, values[def.key]));
+      const champFr = makeFrField(def);
+      if (champFr) form.appendChild(champFr);
+    }
   }
 
   const err = document.createElement('div');
@@ -1687,7 +2005,9 @@ function renderProjectForm(values){
 
 function collectProjectForm(){
   const values = {};
-  for (const el of $('#projects').querySelectorAll('[data-key]')){
+  // Les champs francais portent data-lang="fr" et vont dans data/fr.js, pas
+  // dans la fiche : les inclure ici ecraserait l'anglais par sa traduction.
+  for (const el of $('#projects').querySelectorAll('[data-key]:not([data-lang="fr"])')){
     const kind = el.dataset.kind;
     const key = el.dataset.key;
     if (kind === 'projects'){ values[key] = readChosenProjects(el); continue; }
@@ -1703,6 +2023,41 @@ function collectProjectForm(){
     values[key] = raw;
   }
   return values;
+}
+
+/* Ecrit dans data/fr.js les champs francais du formulaire ouvert.
+   Un champ vide retire la surcharge : la fiche retombe alors sur l'anglais,
+   ce qui est le comportement voulu et non une entree vide a conserver. */
+async function saveFrProject(id){
+  const champs = $('#projects').querySelectorAll('[data-lang="fr"]');
+  if (!champs.length) return 0;
+
+  const avant = fr.projects.get(id) || new Map();
+  const apres = new Map();
+  let n = 0;
+  for (const el of champs){
+    const brut = el.value.trim();
+    if (!brut) continue;
+    apres.set(el.dataset.key, el.dataset.kind === 'list'
+      ? brut.split('\n').map(s => s.trim()).filter(Boolean)
+      : brut);
+    n++;
+  }
+
+  const memeChose = apres.size === avant.size
+    && [...apres].every(([k, v]) => JSON.stringify(v) === JSON.stringify(avant.get(k)));
+  if (memeChose) return 0;
+
+  if (apres.size) fr.projects.set(id, apres); else fr.projects.delete(id);
+
+  const r = await authFetch('/__fr', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(frPayload())
+  });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error || 'écriture de data/fr.js refusée');
+  if (d.stamp) stamp = d.stamp;
+  return n;
 }
 
 async function saveProjectForm(){
@@ -1728,7 +2083,15 @@ async function saveProjectForm(){
   });
   const d = await r.json();
   if (!d.ok){ err.textContent = d.reason || 'Enregistrement refusé.'; return; }
-  status(d.created ? `Projet ${id} créé.` : `Projet ${id} enregistré.`, 'ok');
+
+  // La traduction part ensuite, et seulement si la fiche anglaise est passee :
+  // ecrire un francais qui traduit un anglais refuse n'aurait aucun sens.
+  let traduits = 0;
+  try { traduits = await saveFrProject(id); }
+  catch (e){ err.textContent = 'Fiche enregistrée, mais la traduction a échoué : ' + e.message; }
+
+  const suffixe = traduits ? ` ${traduits} champ(s) traduit(s).` : '';
+  status((d.created ? `Projet ${id} créé.` : `Projet ${id} enregistré.`) + suffixe, 'ok');
   if (d.stamp) stamp = d.stamp;
   projectFormId = null;
   await loadProjects();
@@ -2030,7 +2393,7 @@ $('#tabSettings').addEventListener('click', () => showTab('settings'));
 $('#tabChanges').addEventListener('click', () => showTab('changes'));
 
 $('#commit').addEventListener('click', async () => {
-  if (edits.size || setEdits.size || medEdits.size){
+  if (edits.size || frEdits.size || setEdits.size || medEdits.size){
     status('Enregistre d\'abord tes modifications en attente.', 'warn');
     return;
   }
@@ -2060,7 +2423,7 @@ $('#commit').addEventListener('click', async () => {
 });
 
 addEventListener('beforeunload', e => {
-  if (edits.size || setEdits.size || medEdits.size){ e.preventDefault(); e.returnValue = ''; }
+  if (edits.size || frEdits.size || setEdits.size || medEdits.size){ e.preventDefault(); e.returnValue = ""; }
 });
 
 async function boot(){

@@ -9,6 +9,11 @@
   <meta name="description" content="Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="canonical" href="https://killianpichon.art/">
+  <!-- Versions linguistiques. x-default designe l'adresse servie a qui n'a
+       aucune preference reconnue : la racine, en anglais. -->
+  <link rel="alternate" hreflang="en" href="https://killianpichon.art/">
+  <link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/?lang=fr">
+  <link rel="alternate" hreflang="x-default" href="https://killianpichon.art/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="assets/analytics-consent.css">
@@ -140,6 +145,17 @@ button{color:inherit}
 ::selection{background:var(--accent);color:var(--void-950)}
 
 .site-nav{position:relative;z-index:30}
+/* Le filet de gauche separe le choix de langue des liens de navigation : ce
+   n'est pas une cinquieme destination. Meme graisse et meme casse que les
+   liens voisins, pour qu'il se lise comme un reglage et non comme un bouton. */
+.site-lang{display:flex;align-items:center;gap:6px;margin-left:32px;padding-left:32px;border-left:1px solid var(--line-subtle);align-self:stretch}
+.site-lang-link{font-size:var(--text-micro);letter-spacing:var(--tracking-widest);text-transform:uppercase;padding-bottom:4px;transition:color var(--duration-base) var(--ease-out)}
+.site-lang-link:hover{color:var(--text-heading)}
+/* Teinte de texte et non de filet : une barre oblique posee en --line-default
+   se perdait completement sur le fond, et les deux libelles paraissaient
+   flotter cote a cote. --text-faint la rend lisible tout en la gardant
+   inferieure aux deux langues qu'elle separe. */
+.site-lang-sep{font-size:var(--text-micro);color:var(--text-faint);padding-bottom:4px;user-select:none}
 .hero{min-height:calc(100vh + 2px);min-height:calc(100dvh + 2px)}
 .site-mark{display:inline-flex;align-items:center;min-height:32px}
 .view-all-button,.project-back,.related-project-button{appearance:none;background:none;border:0;padding:0}
@@ -232,6 +248,36 @@ button{color:inherit}
   .site-nav{padding:20px var(--container-pad)!important;gap:10px}
   .site-nav-links{gap:10px!important;min-width:0}
   .site-nav-link{font-size:10px!important;letter-spacing:.12em!important;white-space:nowrap}
+  /* Sur telephone, les quatre liens et la paire de langues ne tiennent pas
+     ensemble a droite : en francais le bloc debordait des 375 px. Deux
+     ajustements, et un seul element dans les deux cas, jamais un exemplaire
+     cache en double.
+     1. Le bloc passe a gauche, contre le monogramme, par un simple ordre.
+     2. Seule la langue vers laquelle on bascule reste affichee. La langue
+        courante et la barre oblique disparaissent : le contenu de la page dit
+        deja dans quelle langue on se trouve, et un libellé unique demande
+        trois fois moins de place. */
+  .site-mark{order:0}
+  .site-lang{order:1;margin-left:12px;padding-left:0;border-left:0;gap:0}
+  .site-nav-links{order:2;gap:8px!important}
+  .site-lang-link,.site-lang-sep{font-size:10px!important;letter-spacing:.12em!important}
+  .site-lang-link[aria-current="true"],.site-lang-sep{display:none}
+  /* Seule de son espece, la langue restante n'est plus le terme secondaire
+     d'une paire : c'est une action, et elle doit se lire comme telle. La
+     pastille reprend le trace des etiquettes du site — meme rayon, meme filet,
+     meme casse — plutot que d'inventer une forme. Le libelle nu offrait une
+     cible de 16 x 21 px, tres en dessous des 44 px recommandes ; le
+     pseudo-element etend la zone tactile sans rien agrandir a l'ecran, et la
+     hauteur de la pastille s'aligne sur celle du monogramme pour ne pas
+     changer la hauteur de la barre. */
+  .site-lang-link{
+    position:relative;display:inline-flex;align-items:center;
+    min-height:30px;padding:0 10px!important;
+    border:1px solid var(--line-default)!important;
+    border-radius:var(--radius-pill);
+    color:var(--text-heading)!important;
+  }
+  .site-lang-link::after{content:'';position:absolute;inset:-7px -4px}
   .site-mark{font-size:16px!important;flex:0 0 auto}
 
   .hero{padding:108px var(--container-pad) 0!important;min-height:0!important}
@@ -285,6 +331,31 @@ button{color:inherit}
   .exp-row .exp-dot-cell{grid-column:1;grid-row:1/span 2}
   .exp-row .exp-year{grid-column:2;grid-row:1;transform:none!important;margin-bottom:6px}
   .exp-row .exp-body{grid-column:2;grid-row:2}
+}
+
+/* Deux paliers pour les ecrans etroits, tous deux places APRES le bloc
+   telephone et jamais au milieu : glisse dedans, un tel palier en refermait la
+   moitie et privait les fiches projet de toute leur mise en page.
+
+   Le francais coute une trentaine de pixels de plus que l'anglais dans la
+   barre, et la pastille une vingtaine. En dessous d'une certaine largeur, ces
+   deux couts ne rentrent plus. On rend alors du confort, jamais de la lecture :
+   un lien de navigation tronque est une perte reelle. */
+
+/* 360 a 374 px : tout tient encore, mais d'un cheveu. Un point de corps en
+   moins vaut mieux qu'une barre tassee. 9 px est deja employe ailleurs sur
+   telephone, dans les vignettes de la grille. */
+@media (max-width: 374px){
+  .site-nav-link,.site-lang-link{font-size:9px!important}
+}
+
+/* Sous 360 px : meme a 9 px la pastille ne rentre plus. On revient au libelle
+   nu, dont la zone tactile reste etendue par le pseudo-element. */
+@media (max-width: 359px){
+  .site-lang{margin-left:10px}
+  .site-nav-links{gap:8px!important}
+  .site-lang-link{min-height:0;padding:0!important;border:0!important}
+  .site-lang-link::after{inset:-11px -8px}
 }
 
 @media (hover: none){
@@ -616,9 +687,161 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
   <script src="data/projects.js"></script>
+  <!-- Traduction francaise. Meme regle que les fiches : charge avant
+       l'application, en script classique. Differe, l'anglais apparaitrait une
+       fraction de seconde avant la bascule. -->
+  <script src="data/fr.js"></script>
   <script>window.__asset = function (assetPath) {
   return assetPath;
 };
+
+/* ==================================================================== i18n ==
+   L'anglais est la source unique et reste ecrit en clair dans les composants.
+   Le francais est une couche posee par-dessus, dans data/fr.js, dont la cle
+   est la phrase anglaise elle-meme.
+
+   Le point d'accroche est unique : React.createElement. Les textes enfants
+   d'un element HTML passent par le dictionnaire, et seulement s'ils y ont une
+   entree exacte. Le dictionnaire etant une liste ecrite a la main, une chaine
+   sans entree traverse intacte : rien ne peut etre traduit par accident, et
+   les composants n'ont pas une ligne a changer.
+
+   La langue se resout avant l'evaluation de l'application, donc avant que
+   PROJECT_LIST ne soit construit et avant le premier rendu. Changer de langue
+   recharge la page : les constantes de module se reconstruisent proprement,
+   plutot que de laisser un arbre a moitie traduit.
+   ========================================================================= */
+window.KP_I18N = (function () {
+  var DICT = window.KP_FR || {};
+  var STORAGE_KEY = 'kp-lang';
+
+  // Ordre de decision : l'adresse d'abord, parce qu'un lien partage doit
+  // s'ouvrir dans la langue de celui qui l'a envoye ; puis le choix deja fait
+  // sur cet appareil ; puis la langue du navigateur ; puis l'anglais.
+  function resolve() {
+    var param = null;
+    try {
+      param = new URLSearchParams(window.location.search).get('lang');
+    } catch (e) { /* navigateur sans URLSearchParams : on passe a la suite */ }
+    if (param === 'fr' || param === 'en') return { lang: param, explicit: true };
+
+    var stored = null;
+    try { stored = window.localStorage.getItem(STORAGE_KEY); } catch (e) { /* stockage refuse */ }
+    if (stored === 'fr' || stored === 'en') return { lang: stored, explicit: false };
+
+    var nav = (window.navigator.language || '').toLowerCase();
+    return { lang: nav.indexOf('fr') === 0 ? 'fr' : 'en', explicit: false };
+  }
+
+  var resolved = resolve();
+  var lang = resolved.lang;
+
+  // L'adresse, l'attribut lang et l'URL canonique doivent toujours dire la
+  // meme chose. En francais on inscrit donc ?lang=fr meme quand la langue
+  // vient du navigateur. Un robot d'indexation n'a ni stockage local ni
+  // preference francaise : il atterrit en anglais sur la racine, ce qui est
+  // exactement ce que declare la canonique.
+  if (lang === 'fr' && !resolved.explicit) {
+    try {
+      var url = new URL(window.location.href);
+      url.searchParams.set('lang', 'fr');
+      window.history.replaceState(null, '', url.toString());
+    } catch (e) { /* sans history, l'adresse reste nue : sans consequence */ }
+  }
+
+  document.documentElement.setAttribute('lang', lang === 'fr' ? 'fr-CA' : 'en');
+
+  var ui = DICT.ui || {};
+  var uiSection = DICT.uiSection || {};
+
+  /* Traduit une phrase. section ne sert qu'aux rares cas ou la meme phrase
+     anglaise doit diverger selon l'endroit ; les appels ordinaires l'omettent. */
+  function t(text, section) {
+    if (lang === 'en' || typeof text !== 'string') return text;
+    if (section) {
+      var keyed = uiSection[section + '::' + text];
+      if (typeof keyed === 'string') return keyed;
+    }
+    var hit = ui[text];
+    return typeof hit === 'string' ? hit : text;
+  }
+
+  /* Phrases construites avec une valeur : t.f('Wait {n}s', { n: 12 }).
+     Le gabarit anglais reste la cle, et les reperes {…} se remplacent apres
+     traduction, donc le francais peut les remettre dans un autre ordre. */
+  t.f = function (template, values, section) {
+    var out = t(template, section);
+    return out.replace(/\{(\w+)\}/g, function (whole, name) {
+      return Object.prototype.hasOwnProperty.call(values || {}, name)
+        ? String(values[name])
+        : whole;
+    });
+  };
+
+  /* Surcharge une fiche projet champ par champ. Un champ absent garde
+     l'anglais, ce qui permet de traduire une fiche par morceaux. */
+  function project(id, source) {
+    if (lang === 'en') return source;
+    var over = (DICT.projects || {})[id];
+    if (!over) return source;
+    return Object.assign({}, source, over);
+  }
+
+  function head(screen) {
+    if (lang === 'en') return null;
+    return (DICT.head || {})[screen] || null;
+  }
+
+  function set(next) {
+    if (next !== 'fr' && next !== 'en') return;
+    try { window.localStorage.setItem(STORAGE_KEY, next); } catch (e) { /* stockage refuse */ }
+    var url = new URL(window.location.href);
+    if (next === 'fr') url.searchParams.set('lang', 'fr');
+    else url.searchParams.delete('lang');
+    // Rechargement volontaire : voir l'entete de ce bloc.
+    window.location.href = url.toString();
+  }
+
+  return { lang: lang, t: t, project: project, head: head, set: set };
+})();
+
+/* Le point d'accroche. Seuls les elements HTML sont traites : un texte confie
+   a un composant finit toujours par atterrir dans l'un d'eux, donc le prendre
+   ici suffit et evite de toucher aux proprietes des composants.
+   style et script sont ecartes explicitement : leur contenu est du code. */
+(function () {
+  if (window.KP_I18N.lang === 'en') return;
+
+  var t = window.KP_I18N.t;
+  var natif = React.createElement;
+  var OPAQUES = { style: 1, script: 1 };
+  var PROPS_TEXTE = ['aria-label', 'alt', 'title', 'placeholder', 'aria-placeholder'];
+
+  React.createElement = function (type, props) {
+    var args = Array.prototype.slice.call(arguments);
+
+    if (typeof type === 'string' && !OPAQUES[type]) {
+      for (var i = 2; i < args.length; i++) {
+        if (typeof args[i] === 'string') args[i] = t(args[i]);
+      }
+      if (props) {
+        var copie = null;
+        for (var j = 0; j < PROPS_TEXTE.length; j++) {
+          var nom = PROPS_TEXTE[j];
+          var valeur = props[nom];
+          if (typeof valeur !== 'string') continue;
+          var traduit = t(valeur);
+          if (traduit === valeur) continue;
+          if (!copie) copie = Object.assign({}, props);
+          copie[nom] = traduit;
+        }
+        if (copie) args[1] = copie;
+      }
+    }
+
+    return natif.apply(React, args);
+  };
+})();
 function Button({
   children,
   variant = 'primary',
@@ -722,6 +945,50 @@ function Tag({
     }
   }, children);
 }
+/* Deux langues seulement : une paire visible vaut mieux qu'un menu deroulant,
+   qui demanderait un clic de plus pour montrer une seule autre option.
+   De vrais liens, pas des boutons : l'adresse est partageable, le clic du
+   milieu ouvre dans un onglet, et un robot d'indexation peut suivre le lien
+   vers la version francaise. Le clic ordinaire passe quand meme par set(),
+   qui memorise le choix avant de naviguer. */
+function LanguageSwitch() {
+  const current = window.KP_I18N.lang;
+  const langs = [{
+    code: 'en',
+    label: 'EN',
+    full: 'English'
+  }, {
+    code: 'fr',
+    label: 'FR',
+    full: 'Français'
+  }];
+  const hash = typeof window !== 'undefined' ? window.location.hash : '';
+  return React.createElement("div", {
+    className: "site-lang",
+    role: "group",
+    "aria-label": "Language"
+  }, langs.map((l, i) => React.createElement(React.Fragment, {
+    key: l.code
+  }, i > 0 && React.createElement("span", {
+    className: "site-lang-sep",
+    "aria-hidden": "true"
+  }, "/"), React.createElement("a", {
+    className: "site-lang-link",
+    href: (l.code === 'fr' ? '?lang=fr' : './') + hash,
+    hrefLang: l.code,
+    lang: l.code,
+    "aria-current": current === l.code ? 'true' : undefined,
+    "aria-label": l.full,
+    onClick: e => {
+      e.preventDefault();
+      window.KP_I18N.set(l.code);
+    },
+    style: {
+      color: current === l.code ? 'var(--text-heading)' : 'var(--text-muted)',
+      borderBottom: current === l.code ? '1px solid var(--accent)' : '1px solid transparent'
+    }
+  }, l.label))));
+}
 function Navbar({
   mark = 'KP',
   links = ['Work', 'About', 'Technical', 'Contact'],
@@ -740,7 +1007,11 @@ function Navbar({
     style: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
+      // Le choix de langue est un troisieme enfant, pas un cinquieme lien.
+      // space-between le centrerait ; l'alignement au debut plus une marge
+      // automatique sur les liens redonne exactement la barre d'origine, tout
+      // en laissant le telephone deplacer le bloc par un simple ordre.
+      justifyContent: 'flex-start',
       padding: '28px var(--container-pad)',
       fontFamily: 'var(--font-body)'
     }
@@ -765,7 +1036,8 @@ function Navbar({
     className: "site-nav-links",
     style: {
       display: 'flex',
-      gap: '32px'
+      gap: '32px',
+      marginLeft: 'auto'
     }
   }, links.map(l => React.createElement("a", {
     className: "site-nav-link",
@@ -785,7 +1057,7 @@ function Navbar({
       borderBottom: activeLink === l ? '1px solid var(--accent)' : '1px solid transparent',
       paddingBottom: '4px'
     }
-  }, l))));
+  }, l))), React.createElement(LanguageSwitch, null));
 }
 function ProjectCard({
   title,
@@ -1422,7 +1694,9 @@ function Gallery({
       border: '1px solid var(--line-subtle)',
       background: i % 2 ? 'linear-gradient(160deg,#1b1c20,#0e0e10)' : 'linear-gradient(160deg,#221a15,#0e0e10)'
     },
-    "aria-label": it.alt || `Gallery still ${i + 1}`
+    "aria-label": it.alt || window.KP_I18N.t.f('Gallery still {n}', {
+      n: i + 1
+    })
   })));
 }
 function Awards({
@@ -2132,7 +2406,9 @@ function HomeScreen({
     type: "button",
     "aria-expanded": indexOuvert,
     onClick: () => setIndexOuvert(v => !v)
-  }, indexOuvert ? 'Réduire la liste' : `Tout afficher (${VISIBLE_PROJECTS.length})`))), React.createElement("section", {
+  }, indexOuvert ? 'Reduce the list' : window.KP_I18N.t.f('Show all ({n})', {
+    n: VISIBLE_PROJECTS.length
+  })))), React.createElement("section", {
     className: "clients-section",
     style: {
       padding: '0 var(--container-pad) 64px',
@@ -2183,16 +2459,28 @@ window.HomeScreen = HomeScreen;
 // l'ecran : une fiche protegee doit s'afficher exactement comme les autres une
 // fois le code saisi.
 function prepareProject(id, p) {
+  // La traduction s'applique avant tout le reste : l'annee deduite, les
+  // vignettes, les voisins precedent/suivant et le titre de l'onglet en
+  // decoulent tous, et doivent donc partir de la fiche deja traduite.
+  // Le titre d'origine est mis de cote : relatedProjects designe encore
+  // certains projets par leur titre anglais, et ces renvois doivent continuer
+  // de tomber juste une fois les titres traduits.
+  const sourceTitle = p.title;
+  p = window.KP_I18N.project(id, p);
   const project = Object.assign({
     id
   }, p);
+  project.sourceTitle = sourceTitle;
   project.year = Number(String(p.date || '').slice(0, 4)) || p.year;
   // Fiche protegee : seuls la date, le mode d'affichage et le libelle de la
   // tuile sont en clair. Tout le reste attend le code d'acces.
   project.locked = Boolean(p.protected);
   if (project.locked) {
-    project.title = p.lockedTitle || 'Protected project';
-    project.category = 'Access code required';
+    // Traduits ici et non au rendu : ces deux libelles alimentent aussi le
+    // titre de l'onglet et la description de la page, qui ne passent pas par
+    // les composants.
+    project.title = window.KP_I18N.t(p.lockedTitle || 'Protected project');
+    project.category = window.KP_I18N.t('Access code required');
   }
   // La fiche attend ces trois listes. Vides, elle affiche une section sans
   // contenu ; absentes, elle ne s'affiche pas du tout. L'editeur les exige a
@@ -2249,7 +2537,10 @@ if (VISIBLE_PROJECTS.length > 1) {
 // attendent derriere le bouton de l'accueil.
 const FEATURED_COUNT = 4;
 const PROJECT_DATA = Object.fromEntries(PROJECT_LIST.map(p => [p.id, p]));
-const TITLE_TO_ID = Object.fromEntries(Object.entries(PROJECT_DATA).map(([k, v]) => [v.title, k]));
+// Indexe le titre affiche et le titre d'origine. En anglais les deux sont
+// identiques et la table ne change pas ; en francais, un renvoi ecrit avec le
+// titre anglais continue de trouver sa fiche.
+const TITLE_TO_ID = Object.fromEntries(Object.values(PROJECT_DATA).flatMap(v => [v.title, v.sourceTitle].filter(Boolean).map(nom => [nom, v.id])));
 function ProtectedAccess({
   resource
 }) {
@@ -2351,7 +2642,9 @@ function ProtectedAccess({
       const wait = Number(error && error.retryAfter) || 0;
       setRetryAfter(wait);
       setStatus(wait > 0 ? 'limited' : 'error');
-      setMessage(error && error.code === 'UNSUPPORTED' ? 'Secure access is unavailable in this browser.' : wait > 0 ? `Too many attempts. Try again in ${wait}s.` : error && error.code === 'INVALID_RESOURCE' ? 'This protected link is not configured correctly.' : 'Access code not recognized.');
+      setMessage(error && error.code === 'UNSUPPORTED' ? 'Secure access is unavailable in this browser.' : wait > 0 ? window.KP_I18N.t.f('Too many attempts. Try again in {n}s.', {
+        n: wait
+      }) : error && error.code === 'INVALID_RESOURCE' ? 'This protected link is not configured correctly.' : 'Access code not recognized.');
     }
   }
 
@@ -2452,18 +2745,24 @@ function ProtectedAccess({
     id: `protected-message-${resource.id}`,
     role: "alert",
     "aria-live": "polite"
-  }, retryAfter > 0 ? `Too many attempts. Try again in ${retryAfter}s.` : message), React.createElement("div", {
+  }, retryAfter > 0 ? window.KP_I18N.t.f('Too many attempts. Try again in {n}s.', {
+    n: retryAfter
+  }) : message), React.createElement("div", {
     className: "kp-protected-actions"
   }, React.createElement(Button, {
     type: "submit",
     variant: "accent",
     disabled: checking || retryAfter > 0 || !accessCode
-  }, checking ? 'Checking…' : retryAfter > 0 ? `Wait ${retryAfter}s` : 'Unlock film'))) : React.createElement("div", {
+  }, checking ? 'Checking…' : retryAfter > 0 ? window.KP_I18N.t.f('Wait {n}s', {
+    n: retryAfter
+  }) : 'Unlock film'))) : React.createElement("div", {
     className: "kp-protected-success"
   }, React.createElement("label", {
     className: "kp-protected-label",
     htmlFor: `protected-link-${resource.id}`
-  }, `${resource.provider || 'Protected'} link`), React.createElement("div", {
+  }, window.KP_I18N.t.f('{provider} link', {
+    provider: resource.provider || 'Protected'
+  })), React.createElement("div", {
     className: "kp-protected-link-row"
   }, React.createElement("input", {
     className: "kp-protected-input kp-protected-link-input",
@@ -2757,7 +3056,9 @@ function ProjectGate({
     } catch (error) {
       setStatus('error');
       if (error && error.code === 'RATE_LIMITED') {
-        setMessage(`Too many attempts. Try again in ${error.retryAfter || 15} seconds.`);
+        setMessage(window.KP_I18N.t.f('Too many attempts. Try again in {n} seconds.', {
+          n: error.retryAfter || 15
+        }));
       } else {
         setMessage('Incorrect access code.');
       }
@@ -3039,7 +3340,12 @@ function ProjectScreenContent({
     className: "project-media-tile",
     type: "button",
     disabled: !t.video && !t.src,
-    "aria-label": t.video ? `Play ${p.title} video` : t.src ? `Open ${p.title} image ${i + 1}` : undefined,
+    "aria-label": t.video ? window.KP_I18N.t.f('Play {title} video', {
+      title: p.title
+    }) : t.src ? window.KP_I18N.t.f('Open {title} image {n}', {
+      title: p.title,
+      n: i + 1
+    }) : undefined,
     key: i,
     onClick: () => {
       if (t.video) setTrailerOpen(true);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
@@ -3352,7 +3658,9 @@ function ProjectScreenContent({
     className: "modal-backdrop",
     role: "dialog",
     "aria-modal": "true",
-    "aria-label": `${p.title} video`,
+    "aria-label": window.KP_I18N.t.f('{title} video', {
+      title: p.title
+    }),
     onClick: () => setTrailerOpen(false),
     style: {
       position: 'fixed',
@@ -3437,7 +3745,9 @@ function ProjectScreenContent({
     className: "modal-backdrop",
     role: "dialog",
     "aria-modal": "true",
-    "aria-label": `${p.title} image preview`,
+    "aria-label": window.KP_I18N.t.f('{title} image preview', {
+      title: p.title
+    }),
     onClick: () => setLightbox(null),
     style: {
       position: 'fixed',
@@ -3516,7 +3826,11 @@ function ProjectScreenContent({
     d: "M8 4l8 8-8 8"
   })))), React.createElement("img", {
     src: galleryImages[lightbox],
-    alt: `${p.title} project image ${lightbox + 1} of ${galleryCount}`,
+    alt: window.KP_I18N.t.f('{title} project image {n} of {total}', {
+      title: p.title,
+      n: lightbox + 1,
+      total: galleryCount
+    }),
     style: {
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -4276,7 +4590,9 @@ function ContactScreen({
       }
     }).catch(() => setStatus('failed'));
   }
-  const buttonLabel = status === 'sending' ? 'Sending…' : status === 'cooldown' ? `Sent — Resend in ${cooldownLeft}s` : status === 'blocked' ? 'Try Again' : status === 'failed' ? 'Failed — Try Again' : 'Send Message';
+  const buttonLabel = status === 'sending' ? 'Sending…' : status === 'cooldown' ? window.KP_I18N.t.f('Sent — Resend in {n}s', {
+    n: cooldownLeft
+  }) : status === 'blocked' ? 'Try Again' : status === 'failed' ? 'Failed — Try Again' : 'Send Message';
   return React.createElement("div", null, React.createElement(Navbar, {
     activeLink: "Contact",
     onLinkClick: onNav
@@ -4456,7 +4772,9 @@ function ContactScreen({
       color: 'var(--text-faint)',
       marginTop: '14px'
     }
-  }, "Sent directly \u2014 no email client required. Limited to one message per ", RATE_LIMIT_MS / 1000, "s."))), React.createElement(Footer, null));
+  }, window.KP_I18N.t.f("Sent directly \u2014 no email client required. Limited to one message per {n}s.", {
+    n: RATE_LIMIT_MS / 1000
+  })))), React.createElement(Footer, null));
 }
 window.ContactScreen = ContactScreen;
 const SCREEN_META = {
@@ -4477,6 +4795,14 @@ const SCREEN_META = {
     description: 'Contact Killian Pichon for hiring opportunities, general questions and studio collaboration proposals.'
   }
 };
+
+// Le titre de l'onglet et la description ne traversent aucun composant : ils
+// sont ecrits directement dans le document. Ils se traduisent donc ici, par
+// ecran, depuis data/fr.js. Un ecran non traduit garde l'anglais.
+Object.keys(SCREEN_META).forEach(screen => {
+  const fr = window.KP_I18N.head(screen);
+  if (fr) SCREEN_META[screen] = Object.assign({}, SCREEN_META[screen], fr);
+});
 function routeFromHash() {
   const path = window.location.hash.replace(/^#\/?/, '').replace(/\/$/, '');
   if (!path || path === 'work') return {
@@ -4526,6 +4852,17 @@ function App() {
     const twitterDescription = document.querySelector('meta[name="twitter:description"]');
     if (twitterTitle) twitterTitle.setAttribute('content', meta.title);
     if (twitterDescription) twitterDescription.setAttribute('content', meta.description);
+    // La langue declaree et l'adresse canonique doivent dire la meme chose que
+    // la page affichee, sinon un moteur indexe l'anglais sous l'adresse
+    // francaise. La canonique pointe la racine, pas la route en diese : les
+    // fragments ne sont pas des adresses distinctes pour un moteur.
+    const enFrancais = window.KP_I18N.lang === 'fr';
+    const ogLocale = document.querySelector('meta[property="og:locale"]');
+    if (ogLocale) ogLocale.setAttribute('content', enFrancais ? 'fr_CA' : 'en_CA');
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute('href', 'https://killianpichon.art/' + (enFrancais ? '?lang=fr' : ''));
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.setAttribute('content', 'https://killianpichon.art/' + (enFrancais ? '?lang=fr' : ''));
   }, [route.screen, route.projectId]);
   React.useEffect(() => {
     const fallback = document.getElementById('offline-fallback');

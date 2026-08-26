@@ -44,6 +44,181 @@ donc plus de corriger la chaine de ses deux voisins.
 Les chemins de medias s'ecrivent nus, sans `window.__asset(...)` : la resolution
 se fait au chargement.
 
+## Version francaise
+
+L'anglais est la source unique. Il reste ecrit en clair dans `index.html` et
+`data/projects.js`, et il s'edite comme avant. Le francais est une couche posee
+par-dessus, dans `data/fr.js`, charge juste apres les fiches.
+
+La cle du dictionnaire est **la phrase anglaise elle-meme**, pas un identifiant
+invente a tenir en parallele. Une entree absente retombe sur l'anglais : le site
+ne casse jamais, meme a moitie traduit.
+
+`data/fr.js` contient cinq sections, documentees en tete du fichier : `ui` pour
+les textes d'interface, `uiSection` pour les rares phrases qui doivent diverger
+selon l'endroit, `projects` pour les surcharges de fiches champ par champ, `head`
+pour les titres et descriptions de page, `stale` pour les traductions dont
+l'anglais a change depuis.
+
+### Comment la traduction s'applique
+
+Le point d'accroche est unique : `React.createElement` est enveloppe au
+demarrage, et les textes enfants d'un element HTML passent par le dictionnaire.
+Seules les chaines qui y ont une entree exacte sont remplacees, donc aucun
+composant n'a de `t(...)` a porter et rien ne peut etre traduit par accident.
+**En anglais l'enveloppe n'est meme pas installee** : le site tourne sur le React
+d'origine, sans surcout.
+
+Les phrases construites avec une valeur ne peuvent pas passer par une
+correspondance exacte. Elles s'ecrivent avec des reperes :
+
+```js
+window.KP_I18N.t.f('Too many attempts. Try again in {n}s.', { n: 15 })
+```
+
+Les reperes sont remplaces **apres** traduction, donc le francais peut les
+remettre dans un autre ordre que l'anglais. Une quinzaine d'appels de ce type
+existent, dans la fenetre de film protege, les libelles de galerie et le
+formulaire de contact.
+
+### Choix de la langue
+
+- `?lang=fr` dans l'adresse a la priorite : un lien partage s'ouvre dans la
+  langue de celui qui l'a envoye.
+- Sinon, le choix deja fait sur l'appareil, retenu dans `localStorage`.
+- Sinon, la langue du navigateur.
+- Sinon, l'anglais.
+
+En francais, `?lang=fr` est reinscrit dans l'adresse meme quand la langue vient
+du navigateur, pour que l'adresse, l'attribut `lang` et l'adresse canonique
+disent toujours la meme chose. Un robot d'indexation, qui n'a ni stockage local
+ni preference francaise, atterrit en anglais sur la racine.
+
+Changer de langue **recharge la page**. Les listes de projets se construisent a
+l'evaluation du script ; les reconstruire a chaud laisserait un arbre a moitie
+traduit.
+
+Le selecteur est dans la barre de navigation. Sur ordinateur, la paire `EN / FR`
+apparait a droite des liens, separee par un filet. Sur telephone, elle passe a
+gauche contre le monogramme, prend la forme d'une pastille bordee et n'affiche
+que la langue vers laquelle on bascule : les quatre liens francais et la paire
+complete ne tiennent pas ensemble sous 390 px. Deux paliers etroits suivent,
+`374px` puis `359px`, decrits en commentaire dans la feuille de style.
+
+**Ces paliers se placent apres le bloc `@media (max-width: 767px)`, jamais a
+l'interieur.** Glissee au milieu de ce bloc, une accolade fermante en coupe la
+moitie et prive les fiches projet de toute leur mise en page telephone. C'est
+arrive une fois ; le controle rapide est de verifier que les accolades du
+`<style>` s'equilibrent et qu'aucun selecteur du bloc telephone n'a disparu.
+
+### Portee de la traduction
+
+Traduits : la navigation, l'accueil, le profil et son CV, la page technique, le
+formulaire de contact, les intitules et le contenu des 11 fiches projet, les
+messages du contenu protege, les libelles pour lecteurs d'ecran, la banniere de
+consentement et `privacy.html`.
+
+Volontairement conserves en anglais, parce que ce sont des noms propres : titres
+d'oeuvres, noms de studios, de clients, de festivals et de prix, et noms de
+logiciels. Les traduire rendrait le portfolio impossible a recouper avec les
+credits publies ailleurs.
+
+### Traduire depuis l'editeur local
+
+L'onglet **Textes** affiche l'anglais et sa traduction ensemble. Le panneau fait
+440 px par defaut, ou deux colonnes tiendraient dans 167 px chacune : la
+traduction se place donc sous l'anglais, et passe **a cote** des que la barre est
+elargie par sa poignee, au-dela de 720 px. C'est une requete de conteneur, pas de
+fenetre : la disposition suit la largeur du panneau, pas celle de l'ecran.
+
+Trois filtres : tous, sans traduction, a revoir.
+
+L'onglet **Projets** ajoute un champ francais sous chaque champ traduisible, 20
+des 33. Ni les medias, ni les dates, ni les listes d'outils, ni les projets lies.
+Un champ francais laisse vide retire la surcharge et la fiche retombe sur
+l'anglais, ce qui est le comportement voulu.
+
+**L'enregistrement ecrit le francais d'abord, l'anglais ensuite.** L'ordre
+compte : les cles du dictionnaire sont les phrases anglaises, donc enregistrer
+l'anglais en premier les renommerait, et le francais partirait ensuite avec les
+anciennes cles en ecrasant le report que le serveur vient de faire.
+
+### Le report de traduction
+
+Modifier un texte anglais rend sa traduction orpheline, puisque la cle est la
+phrase anglaise. Le serveur deplace donc la traduction sur la nouvelle cle et
+l'inscrit dans `stale` ; l'editeur la marque **a revoir** en ambre jusqu'a ce
+qu'elle soit relue. Une entree signalee dont la cle a disparu est nettoyee toute
+seule.
+
+### Ce que l'editeur ne balaie pas
+
+`Test-Editorial`, dans `tools/serve.ps1`, exige un espace dans la chaine : les
+libelles d'un seul mot — `Work`, `Role`, `Tools`, `Nom` — n'ont jamais eu de
+ligne dans l'onglet Textes. S'y ajoutent les phrases vivant hors des fichiers
+balayes, comme celles de la banniere de consentement. Au total **34 des 192 cles**
+sont dans ce cas.
+
+L'onglet Textes les regroupe donc sous **Hors balayage**, anglais en lecture
+seule et francais editable. Sans ce groupe, 18 % de l'interface serait
+intraduisible depuis l'outil.
+
+### Ecriture de data/fr.js
+
+Le fichier est **reecrit en entier** a chaque enregistrement, jamais retouche par
+ligne et decalage comme `index.html` : une entree occupe une ou deux lignes selon
+sa longueur et porte parfois un paragraphe entier en guise de cle. Les
+regroupements en commentaire sont **generes** a partir des noms de section du
+scanner, donc l'ordre du fichier suit celui de la liste affichee dans l'editeur.
+Un commentaire ajoute a la main dans ce fichier ne survit pas au premier
+enregistrement depuis l'outil ; son en-tete le rappelle.
+
+Une sauvegarde datee part dans `tools/.backups/` avant chaque ecriture, comme
+pour les autres fichiers.
+
+**Piege a connaitre pour qui touche a ce code :** les cles JavaScript
+distinguent la casse, les tables PowerShell non. `[ordered]@{}` fond `Next
+Project` et `Next project` en une seule entree et fait disparaitre une traduction
+sans rien signaler. Le code utilise `New-OrderedMap`, qui impose un comparateur
+ordinal. Meme raison pour le transport en tableaux de paires plutot qu'en objets
+JSON : `ConvertFrom-Json` rend des objets dont les noms de propriete ignorent la
+casse.
+
+### Tests
+
+`tools/serve.ps1 -NoServe` charge le script en bibliotheque, sans ouvrir de port
+ni exiger de mot de passe. C'est ainsi que la mecanique de traduction a ete
+eprouvee : lecture, ecriture, aller-retour sans perte sur les 192 entrees et les
+11 fiches, report de cle, et refus d'une modification perimee.
+
+### Les deux fichiers hors application
+
+`assets/analytics-consent.js` et `privacy.html` ne passent pas par React.
+
+Le premier appelle `window.KP_I18N.t(...)` avec un repli sur l'anglais : il est
+charge en `defer`, donc apres que `index.html` a defini le moteur.
+
+`privacy.html` est une page statique : elle porte ses deux langues cote a cote
+dans le document, `[data-en]` et `[data-fr]`, et un attribut sur `<html>` decide
+de celle qui s'affiche. Elle definit aussi un `KP_I18N` minimal pour la banniere,
+avec **six traductions dupliquees depuis `data/fr.js`** — charger le dictionnaire
+entier pour six phrases couterait 53 Ko sur une page ou personne ne s'attarde.
+Si l'une de ces six phrases change, la changer aux deux endroits ; un commentaire
+le rappelle dans chaque fichier.
+
+### Referencement
+
+`index.html` declare `hreflang` pour `en`, `fr-CA` et `x-default`, et
+`sitemap.xml` liste les deux versions. L'attribut `lang`, le titre, la
+description, `og:locale`, `og:url` et l'adresse canonique suivent la langue
+affichee.
+
+A savoir : une version francaise servie derriere `?lang=fr` est indexee moins
+solidement qu'un vrai dossier `/fr/` en HTML statique, parce qu'elle demande au
+moteur d'executer le script. Le choix a ete fait pour n'avoir qu'un seul fichier
+a tenir a jour. Passer a `/fr/` plus tard reste possible sans toucher au
+dictionnaire.
+
 ## Editeur de contenu local
 
 `tools/` contient un editeur de texte local, destine aux corrections redactionnelles.

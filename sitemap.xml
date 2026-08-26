@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://killianpichon.art/</loc>
-    <lastmod>2026-08-24</lastmod>
+    <lastmod>2026-08-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/"/>
     <image:image>
       <image:loc>https://killianpichon.art/assets/og-image.jpg</image:loc>
     </image:image>
@@ -40,5 +44,15 @@
     <image:image>
       <image:loc>https://killianpichon.art/projects/memoire-eau/mapping-eglise.webp</image:loc>
     </image:image>
+  </url>
+  <!-- Version francaise. Chaque version linguistique doit se declarer elle-meme
+       et lister toutes les autres, sinon la correspondance n'est pas retenue.
+       Les images sont les memes : elles ne sont pas dupliquees ici. -->
+  <url>
+    <loc>https://killianpichon.art/?lang=fr</loc>
+    <lastmod>2026-08-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/"/>
   </url>
 </urlset>
