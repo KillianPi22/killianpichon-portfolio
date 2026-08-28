@@ -4468,7 +4468,40 @@ function TechnicalScreen({
       flexWrap: 'wrap',
       marginTop: 'var(--space-4)'
     }
-  }, React.createElement(Tag, null, "Iteration Time"), React.createElement(Tag, null, "Previsualization"), React.createElement(Tag, null, "Camera & Timing"), React.createElement(Tag, null, "Cross-System Synchronization"), React.createElement(Tag, null, "Compositing Strategy")))), React.createElement(Footer, null));
+  }, React.createElement(Tag, null, "Iteration Time"), React.createElement(Tag, null, "Previsualization"), React.createElement(Tag, null, "Camera & Timing"), React.createElement(Tag, null, "Cross-System Synchronization"), React.createElement(Tag, null, "Compositing Strategy")), React.createElement("div", {
+    style: {
+      marginTop: 'var(--space-6)'
+    }
+  }, React.createElement("div", {
+    "aria-hidden": "true",
+    style: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+      gap: '12px',
+      maxWidth: '720px'
+    }
+  }, [0, 1, 2].map(i => React.createElement("div", {
+    key: i,
+    style: {
+      aspectRatio: '16 / 9',
+      borderRadius: 'var(--radius-sm)',
+      border: '1px solid var(--line-subtle)',
+      position: 'relative',
+      background: 'linear-gradient(150deg,rgba(28,29,34,.55),rgba(17,17,20,.4) 55%,rgba(36,22,16,.35))'
+    }
+  }, React.createElement("span", {
+    className: "project-card-lock",
+    "aria-hidden": "true"
+  })))), React.createElement("p", {
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'var(--text-micro)',
+      letterSpacing: 'var(--tracking-wide)',
+      color: 'var(--text-faint)',
+      marginTop: 'var(--space-4)',
+      maxWidth: '720px'
+    }
+  }, "Detailed case studies are in preparation: process notes and screenshots behind an access code. Available on request.")))), React.createElement(Footer, null));
 }
 window.TechnicalScreen = TechnicalScreen;
 const SUBJECTS = ['General Inquiry', 'Hiring Opportunity', 'Studio Collaboration Proposal'];
