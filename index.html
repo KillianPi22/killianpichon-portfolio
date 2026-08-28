@@ -3161,7 +3161,10 @@ function ProjectScreenContent({
   // Identifiant ou titre : l'editeur ecrit des identifiants, les fiches ecrites
   // avant lui portent des titres.
   const relatedIds = (p.relatedProjects || []).map(t => PROJECT_DATA[t] ? t : TITLE_TO_ID[t]).filter(Boolean);
-  const [trailerOpen, setTrailerOpen] = React.useState(false);
+  // Lecteur en place : la tuile de la galerie reste une affiche tant qu'on ne
+  // clique pas. L'iframe, et donc la requete vers l'hebergeur, n'arrive qu'au
+  // clic — la page ne charge aucun tiers d'elle-meme.
+  const [inlineVideo, setInlineVideo] = React.useState(false);
   const trailerMatch = p.trailerUrl && p.trailerUrl.match(/(?:youtu\.be\/|v=)([\w-]+)/);
   const trailerId = trailerMatch ? trailerMatch[1] : null;
   const igMatch = p.trailerUrl && p.trailerUrl.match(/instagram\.com\/(?:reel|p)\/([\w-]+)/);
@@ -3169,6 +3172,8 @@ function ProjectScreenContent({
   const isFbVideo = p.trailerUrl && p.trailerUrl.includes('facebook.com');
   const gdriveMatch = p.trailerUrl && p.trailerUrl.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   const gdriveId = gdriveMatch ? gdriveMatch[1] : null;
+  const videoEmbedSrc = p.trailerEmbedDisabled ? null : igId ? `https://www.instagram.com/reel/${igId}/embed` : gdriveId ? `https://drive.google.com/file/d/${gdriveId}/preview` : isFbVideo ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(p.trailerUrl)}&show_text=0&autoplay=1` : trailerId ? `https://www.youtube.com/embed/${trailerId}?autoplay=1` : null;
+  const videoPlaying = inlineVideo && !!videoEmbedSrc;
   const [lightbox, setLightbox] = React.useState(null);
   const modalCloseRef = React.useRef(null);
   const headingRef = React.useRef(null);
@@ -3191,21 +3196,22 @@ function ProjectScreenContent({
       preventScroll: true
     });
     window.scrollTo(0, 0);
+    setInlineVideo(false);
   }, [id]);
   React.useEffect(() => {
-    if (!trailerOpen && !lightboxOpen) return;
+    if (!lightboxOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     modalCloseRef.current?.focus();
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [trailerOpen, lightboxOpen]);
+  }, [lightboxOpen]);
   React.useEffect(() => {
     function onKey(e) {
       if (document.querySelector('.kp-protected-backdrop')) return;
       if (e.key === 'Escape') {
-        if (trailerOpen) setTrailerOpen(false);else if (lightbox !== null) setLightbox(null);else onBack();
+        if (lightbox !== null) setLightbox(null);else if (inlineVideo) setInlineVideo(false);else onBack();
         return;
       }
       if (lightbox !== null) {
@@ -3216,13 +3222,13 @@ function ProjectScreenContent({
         }
         return;
       }
-      if (trailerOpen) return;
+      if (inlineVideo) return;
       if (e.key === 'ArrowLeft' && prevId) onOpenProject(prevId);
       if (e.key === 'ArrowRight' && nextId) onOpenProject(nextId);
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [prevId, nextId, onOpenProject, onBack, trailerOpen, lightbox, galleryCount]);
+  }, [prevId, nextId, onOpenProject, onBack, inlineVideo, lightbox, galleryCount]);
   return React.createElement("div", null, React.createElement(Navbar, {
     activeLink: "Work",
     onLinkClick: onNav
@@ -3336,10 +3342,10 @@ function ProjectScreenContent({
       gap: 'var(--space-3)',
       minHeight: '340px'
     }
-  }, tiles.map((t, i) => React.createElement("button", {
+  }, tiles.map((t, i) => React.createElement(t.video && videoPlaying ? "div" : "button", {
     className: "project-media-tile",
-    type: "button",
-    disabled: !t.video && !t.src,
+    type: t.video && videoPlaying ? undefined : "button",
+    disabled: t.video && videoPlaying ? undefined : !t.video && !t.src,
     "aria-label": t.video ? window.KP_I18N.t.f('Play {title} video', {
       title: p.title
     }) : t.src ? window.KP_I18N.t.f('Open {title} image {n}', {
@@ -3348,10 +3354,18 @@ function ProjectScreenContent({
     }) : undefined,
     key: i,
     onClick: () => {
-      if (t.video) setTrailerOpen(true);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
+      if (t.video) setInlineVideo(true);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
     },
     style: {
-      gridRow: i === 0 && tiles.length > 1 ? 'span 2' : 'span 1',
+      // En lecture, la tuile prend toute la largeur de la grille et reprend le
+      // format de la source : le lecteur n'est plus enferme dans une vignette.
+      gridColumn: t.video && videoPlaying ? '1 / -1' : undefined,
+      gridRow: t.video && videoPlaying ? 'span 1' : i === 0 && tiles.length > 1 ? 'span 2' : 'span 1',
+      aspectRatio: t.video && videoPlaying ? igId ? '9 / 16' : '16 / 9' : undefined,
+      alignSelf: t.video && videoPlaying ? 'start' : undefined,
+      maxWidth: t.video && videoPlaying && igId ? '400px' : undefined,
+      justifySelf: t.video && videoPlaying && igId ? 'center' : undefined,
+      width: t.video && videoPlaying && igId ? '100%' : undefined,
       borderRadius: 'var(--radius-sm)',
       border: '1px solid var(--line-subtle)',
       overflow: 'hidden',
@@ -3366,7 +3380,22 @@ function ProjectScreenContent({
     onMouseLeave: e => {
       e.currentTarget.style.boxShadow = 'none';
     }
-  }, t.video && React.createElement("div", {
+  }, t.video && (videoPlaying ? React.createElement("iframe", {
+    src: videoEmbedSrc,
+    title: window.KP_I18N.t.f('{title} video', {
+      title: p.title
+    }),
+    allow: "autoplay; encrypted-media; fullscreen; picture-in-picture",
+    allowFullScreen: true,
+    style: {
+      position: 'absolute',
+      inset: 0,
+      width: '100%',
+      height: '100%',
+      border: 'none',
+      background: 'var(--void-900)'
+    }
+  }) : React.createElement("div", {
     style: {
       position: 'absolute',
       inset: 0,
@@ -3387,7 +3416,7 @@ function ProjectScreenContent({
       fontSize: '13px',
       color: 'var(--text-heading)'
     }
-  }, "\u25B6")), t.comingSoon && React.createElement("div", {
+  }, "\u25B6"))), t.comingSoon && React.createElement("div", {
     style: {
       position: 'absolute',
       inset: 0,
@@ -3654,94 +3683,7 @@ function ProjectScreenContent({
       e.currentTarget.style.borderColor = 'var(--line-default)';
       e.currentTarget.style.boxShadow = 'none';
     }
-  }, (PROJECT_DATA[relatedId] || {}).title || relatedId))))), trailerOpen && (trailerId || igId || isFbVideo || gdriveId) && !p.trailerEmbedDisabled && React.createElement("div", {
-    className: "modal-backdrop",
-    role: "dialog",
-    "aria-modal": "true",
-    "aria-label": window.KP_I18N.t.f('{title} video', {
-      title: p.title
-    }),
-    onClick: () => setTrailerOpen(false),
-    style: {
-      position: 'fixed',
-      inset: 0,
-      zIndex: 50,
-      background: 'rgba(10,10,11,.92)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '40px'
-    }
-  }, React.createElement("div", {
-    onClick: e => e.stopPropagation(),
-    style: {
-      width: igId ? 'min(400px, 100%)' : 'min(960px, 100%)',
-      aspectRatio: igId ? '9 / 16' : '16 / 9',
-      position: 'relative'
-    }
-  }, React.createElement("button", {
-    ref: modalCloseRef,
-    onClick: () => setTrailerOpen(false),
-    "aria-label": "Close",
-    style: {
-      position: 'absolute',
-      top: '-44px',
-      right: 0,
-      background: 'none',
-      border: 'none',
-      color: 'var(--text-heading)',
-      fontSize: '28px',
-      lineHeight: 1,
-      cursor: 'pointer'
-    }
-  }, "\xD7"), igId ? React.createElement("iframe", {
-    src: `https://www.instagram.com/reel/${igId}/embed`,
-    style: {
-      width: '100%',
-      height: '100%',
-      border: 'none',
-      borderRadius: 'var(--radius-md)',
-      background: 'var(--void-900)'
-    },
-    allow: "autoplay; encrypted-media",
-    allowFullScreen: true,
-    title: "Preview"
-  }) : gdriveId ? React.createElement("iframe", {
-    src: `https://drive.google.com/file/d/${gdriveId}/preview`,
-    style: {
-      width: '100%',
-      height: '100%',
-      border: 'none',
-      borderRadius: 'var(--radius-md)',
-      background: 'var(--void-900)'
-    },
-    allow: "autoplay",
-    allowFullScreen: true,
-    title: "Preview"
-  }) : isFbVideo ? React.createElement("iframe", {
-    src: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(p.trailerUrl)}&show_text=0&autoplay=1`,
-    style: {
-      width: '100%',
-      height: '100%',
-      border: 'none',
-      borderRadius: 'var(--radius-md)',
-      background: 'var(--void-900)'
-    },
-    allow: "autoplay; encrypted-media; picture-in-picture",
-    allowFullScreen: true,
-    title: "Preview"
-  }) : React.createElement("iframe", {
-    src: `https://www.youtube.com/embed/${trailerId}?autoplay=1`,
-    style: {
-      width: '100%',
-      height: '100%',
-      border: 'none',
-      borderRadius: 'var(--radius-md)'
-    },
-    allow: "autoplay; fullscreen; picture-in-picture",
-    allowFullScreen: true,
-    title: "Trailer"
-  }))), lightbox !== null && React.createElement("div", {
+  }, (PROJECT_DATA[relatedId] || {}).title || relatedId))))), lightbox !== null && React.createElement("div", {
     className: "modal-backdrop",
     role: "dialog",
     "aria-modal": "true",
