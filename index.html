@@ -3871,7 +3871,11 @@ function ProjectScreenContent({
   }, `${lightbox + 1} / ${galleryCount}`)), React.createElement(Footer, null));
 }
 window.ProjectScreen = ProjectScreen;
-const CV_PDF = 'https://drive.google.com/file/d/1PTHsGhPivU5w3pQKRpSCrGZCv-uND0l5/view?usp=sharing';
+// Deux fichiers : le CV telecharge suit la langue affichee, comme les badges
+// de prix. La langue est fixee au chargement, donc une seule lecture suffit.
+const CV_PDF_EN = 'https://drive.google.com/file/d/1PTHsGhPivU5w3pQKRpSCrGZCv-uND0l5/view?usp=sharing';
+const CV_PDF_FR = 'https://drive.google.com/file/d/1wWxFd2IbL0sQ_LPO9_Ule0_SRgu6mWgV/view?usp=sharing';
+const CV_PDF = window.KP_I18N.lang === 'fr' ? CV_PDF_FR : CV_PDF_EN;
 const CORE_EXPERTISE = ['3D Asset Production', 'Unreal Engine Integration', 'Real-Time Optimization', 'Technical Art', 'Production Workflow Design', 'Immersive Experience Production', 'Realtime Rendering', 'Camera & Motion', 'Fulldome Compositing', 'Projection Mapping Design', 'Cross-disciplinary Collaboration', 'R&D & Previsualization', 'Visual Storytelling'];
 const SPECIALIZATIONS = ['Fulldome Cinema', 'Immersive Experiences', 'Projection Mapping', 'Virtual Production', 'Realtime Visual Systems', 'Immersive Storytelling', 'Electronic Music & AV Performance'];
 const LANGUAGES = ['French (native)', 'English (professional)', 'German (elementary)'];

@@ -85,6 +85,10 @@ Les badges qui contiennent un libelle localise portent les suffixes `-en` et
 `-fr`. La liste des prix choisit la variante avec `window.KP_I18N.lang` au
 chargement de la page ; les badges sans suffixe restent communs aux deux langues.
 
+Le CV telechargeable suit la meme regle : `CV_PDF_EN` et `CV_PDF_FR` dans
+`index.html`, choisis eux aussi par `window.KP_I18N.lang`. Changer de CV demande
+donc de remplacer la bonne des deux adresses, pas une seule constante.
+
 La cle du dictionnaire est **la phrase anglaise elle-meme**, pas un identifiant
 invente a tenir en parallele. Une entree absente retombe sur l'anglais : le site
 ne casse jamais, meme a moitie traduit.
