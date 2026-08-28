@@ -17,6 +17,32 @@ Ce fichier s'applique à l'ensemble du dépôt. Avant toute modification, lire a
 - Respecter l'accessibilité de base : HTML sémantique, navigation au clavier, textes alternatifs pertinents, libellés explicites et contraste suffisant.
 - Pour tout nouveau média, choisir un format adapté au Web, le compresser, limiter ses dimensions au besoin réel et renseigner ses dimensions intrinsèques lorsque possible. Privilégier WebP ou AVIF pour les images, avec une solution de repli si nécessaire, et le chargement différé pour les médias hors écran.
 
+## Sécurité
+
+Le site publié est statique : aucune de ces protections ne s'exécute sur GitHub Pages. Elles encadrent l'outil local et les contenus chiffrés, et une modification qui les affaiblit doit être signalée explicitement.
+
+### Éditeur local (`tools/serve.ps1`)
+
+- Les routes `/__*` sont refusées à toute requête non locale (403). Ne pas les ouvrir au réseau, même pour un test sur téléphone.
+- `tools/auth.json` contient un sel aléatoire et une empreinte PBKDF2-SHA256 (310 000 itérations), jamais le mot de passe. Le fichier est ignoré par Git et ne doit ni être versionné, ni être copié ailleurs.
+- La liste `$ForbiddenPaths` (`tools/auth.json`, `tools/.backups/`, `tools/.diagnostic-ping.log`, `.git/`, `.claude/`) est filtrée sur le chemin résolu, pas sur l'URL. Ne pas la réduire ni remplacer ce filtre par une comparaison de chaîne : sans lui, un appareil du réseau local lirait l'empreinte du mot de passe.
+- Le blocage progressif après cinq échecs et l'expiration de session à 12 h font partie du dispositif. Ne pas les désactiver pour faciliter un test.
+- Le commit depuis l'éditeur vise la branche `content`, jamais `main`. Conserver cette contrainte.
+
+### Contenus à accès restreint
+
+- Le chiffrement repose sur PBKDF2-HMAC-SHA256 (600 000 itérations) et AES-256-GCM, avec un sel et un nonce aléatoires par ressource. Ne pas baisser le nombre d'itérations ni réutiliser un sel.
+- `tools/protect-content.ps1` exige PowerShell 7 et refuse une cible externe qui n'est pas en HTTPS. La protection d'une fiche entière chiffre depuis le navigateur, car le serveur local tourne en PowerShell 5.1, qui n'expose pas AES-GCM.
+- Ne jamais écrire un code d'accès ou une URL protégée en clair : ni dans le dépôt, ni dans un message de commit, ni dans un compte rendu de tâche, ni dans une capture.
+- Cette protection est entièrement exécutée dans le navigateur et ne remplace pas une authentification serveur : la charge chiffrée est publique et peut être attaquée hors ligne. Ne pas placer de document sous NDA dans le dépôt et ne pas présenter ce mécanisme comme une garantie de confidentialité.
+- Préférer un code distinct par ressource, d'entropie suffisante (phrase de cinq mots aléatoires ou seize caractères aléatoires), jamais dérivé du nom du projet, du client ou du festival.
+
+### Site public
+
+- La mesure d'audience est en mode de consentement basique : la balise Google n'est ni téléchargée ni exécutée avant un accord explicite. Ne rien charger, ne rien envoyer et ne poser aucun identifiant avant ce consentement.
+- Ne pas ajouter de script tiers, de police distante ou d'appel réseau externe sans demande explicite du propriétaire.
+- Aucun secret, aucune clé et aucune donnée personnelle ne doit entrer dans le dépôt : il est public.
+
 ## Vérifications obligatoires
 
 Avant de considérer une modification terminée :
@@ -27,6 +53,7 @@ Avant de considérer une modification terminée :
 4. Contrôler le rendu responsive au minimum aux largeurs mobile, tablette et ordinateur, sans débordement horizontal ni contenu inaccessible.
 5. Vérifier la console du navigateur et l'onglet Réseau ; ne laisser aucune nouvelle erreur, ressource manquante ou régression évidente.
 6. Vérifier que `CNAME`, `.nojekyll` et le mécanisme GitHub Pages sont toujours présents et fonctionnels.
+7. Vérifier qu'aucun secret n'entre dans le diff : pas de code d'accès ni d'URL protégée en clair, et `tools/auth.json`, `tools/.backups/`, `.git/` et `.claude/` toujours refusés par le serveur local.
 
 ## Documentation et livraison
 
