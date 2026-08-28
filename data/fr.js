@@ -162,8 +162,8 @@ window.KP_FR = {
     'Le Livre de la Chasse — Museum installation at the château de Foix, 2019. Projection plans, modeling, equipment placement and projection simulation, plus the camera rig and the boar animation.':
       'Le Livre de la Chasse — Installation muséale au château de Foix, 2019. Plans de projection, modélisation, implantation du matériel et simulation de projection, ainsi que le rig de caméra et l’animation du sanglier.',
 
-    'Art Explora — Projection simulation studies.':
-      'Art Explora — Études de simulation de projection.',
+    'Art Explora — Projection simulation prepared for a bid submission, not the content itself.':
+      'Art Explora — Simulation de projection préparée pour un appel de projet, pas le contenu lui-même.',
 
     'Celestia — Developed scalable flock animation, a projection-readable visual treatment and separated compositing passes; also delivered a first working VR review application so artists, production and the client could test the scenes before installation.':
       'Celestia — Animation de nuées à grande échelle, traitement visuel lisible en projection et passes de compositing séparées ; livraison également d’une première application de revue VR fonctionnelle, pour que les artistes, la production et le client puissent tester les scènes avant l’installation.',
