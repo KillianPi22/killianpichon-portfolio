@@ -36,6 +36,30 @@ demander.
 | `relatedProjects` | Identifiants des projets lies. Les fiches ecrites avant l'editeur portent des titres ; les deux formes sont acceptees. |
 | `protected` | Fiche entiere chiffree. Voir la section Contenus a acces restreint. |
 | `protectedMedia` | Lien chiffre dans une fiche publique. Meme section. |
+| `trailerUrl` | Une seule video. C'est le champ que l'editeur ecrit. |
+| `videoUrls` | Plusieurs videos, une tuile chacune. Present, il remplace `trailerUrl`. Voir Videos de la galerie. |
+
+### Videos de la galerie
+
+Chaque video ajoute une tuile a la grille de medias. La tuile reste une affiche
+avec son triangle de lecture : **l'iframe n'est creee qu'au clic**, donc une
+fiche projet n'emet aucune requete vers YouTube, Instagram, Google Drive ou
+Facebook tant que personne ne demande la video. C'est ce qui garde le site
+coherent avec sa banniere de consentement.
+
+Au clic, le lecteur s'ouvre **au-dessus de la grille**, dans le meme bloc de
+medias, et la grille garde exactement sa geometrie. Il a d'abord ete essaye dans
+la tuile elle-meme : les rangees de la grille etant egalisees, un lecteur
+vertical y faisait passer le bloc de 484 a 2 880 px. Le format suit la source :
+16/9 pleine largeur, ou 9/16 large de 320 px et centre pour un Short YouTube ou
+un reel Instagram, reconnus a leur adresse.
+
+Un second clic sur la meme tuile arrete la video, comme la touche Echap. Une
+seule video joue a la fois.
+
+`trailerEmbedDisabled` retire la tuile et laisse un bouton sortant : c'est le cas
+d'*Hurtubise*, dont la source refuse l'integration. Aucun reglage du site ne
+contourne ce refus.
 
 `year`, `prev` et `next` ne se saisissent plus : l'annee vient de la date, et la
 navigation entre fiches suit l'ordre chronologique. Ajouter un projet ne demande

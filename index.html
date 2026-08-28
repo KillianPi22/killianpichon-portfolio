@@ -3139,6 +3139,32 @@ function ProjectScreen(props) {
     project: unlocked || base
   }));
 }
+// Adresse d'integration d'une video, et son format. Le vertical se decide a
+// l'adresse : un reel Instagram et un Short YouTube ne se cadrent pas comme un
+// 16/9, et les etirer les rendrait illisibles.
+function videoEmbed(url) {
+  if (!url) return null;
+  const ig = url.match(/instagram\.com\/(?:reel|p)\/([\w-]+)/);
+  if (ig) return {
+    src: `https://www.instagram.com/reel/${ig[1]}/embed`,
+    vertical: true
+  };
+  const gdrive = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+  if (gdrive) return {
+    src: `https://drive.google.com/file/d/${gdrive[1]}/preview`,
+    vertical: false
+  };
+  if (url.includes('facebook.com')) return {
+    src: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0&autoplay=1`,
+    vertical: false
+  };
+  const yt = url.match(/(?:youtu\.be\/|v=|shorts\/)([\w-]+)/);
+  if (yt) return {
+    src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1`,
+    vertical: url.includes('/shorts/')
+  };
+  return null;
+}
 function ProjectScreenContent({
   id = 'volcano',
   project,
@@ -3164,16 +3190,10 @@ function ProjectScreenContent({
   // Lecteur en place : la tuile de la galerie reste une affiche tant qu'on ne
   // clique pas. L'iframe, et donc la requete vers l'hebergeur, n'arrive qu'au
   // clic — la page ne charge aucun tiers d'elle-meme.
-  const [inlineVideo, setInlineVideo] = React.useState(false);
-  const trailerMatch = p.trailerUrl && p.trailerUrl.match(/(?:youtu\.be\/|v=)([\w-]+)/);
-  const trailerId = trailerMatch ? trailerMatch[1] : null;
-  const igMatch = p.trailerUrl && p.trailerUrl.match(/instagram\.com\/(?:reel|p)\/([\w-]+)/);
-  const igId = igMatch ? igMatch[1] : null;
-  const isFbVideo = p.trailerUrl && p.trailerUrl.includes('facebook.com');
-  const gdriveMatch = p.trailerUrl && p.trailerUrl.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
-  const gdriveId = gdriveMatch ? gdriveMatch[1] : null;
-  const videoEmbedSrc = p.trailerEmbedDisabled ? null : igId ? `https://www.instagram.com/reel/${igId}/embed` : gdriveId ? `https://drive.google.com/file/d/${gdriveId}/preview` : isFbVideo ? `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(p.trailerUrl)}&show_text=0&autoplay=1` : trailerId ? `https://www.youtube.com/embed/${trailerId}?autoplay=1` : null;
-  const videoPlaying = inlineVideo && !!videoEmbedSrc;
+  const [playingVideo, setPlayingVideo] = React.useState(null);
+  // videoUrls porte plusieurs videos ; trailerUrl reste la forme a une seule
+  // video, celle que l'editeur ecrit et que portent les autres fiches.
+  const videoEmbeds = p.trailerEmbedDisabled ? [] : (p.videoUrls && p.videoUrls.length ? p.videoUrls : p.trailerUrl ? [p.trailerUrl] : []).map(videoEmbed).filter(Boolean);
   const [lightbox, setLightbox] = React.useState(null);
   const modalCloseRef = React.useRef(null);
   const headingRef = React.useRef(null);
@@ -3181,10 +3201,12 @@ function ProjectScreenContent({
   const galleryImages = collageImages.filter(Boolean);
   const galleryCount = galleryImages.length;
   const lightboxOpen = lightbox !== null;
-  const tiles = [...(p.trailerUrl && !p.trailerEmbedDisabled ? [{
+  const tiles = [...videoEmbeds.map((embed, n) => ({
     video: true,
-    poster: p.videoPoster || null
-  }] : []), ...collageImages.map(src => ({
+    embed: embed,
+    index: n,
+    poster: n === 0 ? p.videoPoster || null : null
+  })), ...collageImages.map(src => ({
     src
   })), ...Array.from({
     length: p.placeholderTiles || 0
@@ -3196,7 +3218,7 @@ function ProjectScreenContent({
       preventScroll: true
     });
     window.scrollTo(0, 0);
-    setInlineVideo(false);
+    setPlayingVideo(null);
   }, [id]);
   React.useEffect(() => {
     if (!lightboxOpen) return;
@@ -3211,7 +3233,7 @@ function ProjectScreenContent({
     function onKey(e) {
       if (document.querySelector('.kp-protected-backdrop')) return;
       if (e.key === 'Escape') {
-        if (lightbox !== null) setLightbox(null);else if (inlineVideo) setInlineVideo(false);else onBack();
+        if (lightbox !== null) setLightbox(null);else if (playingVideo !== null) setPlayingVideo(null);else onBack();
         return;
       }
       if (lightbox !== null) {
@@ -3222,13 +3244,13 @@ function ProjectScreenContent({
         }
         return;
       }
-      if (inlineVideo) return;
+      if (playingVideo !== null) return;
       if (e.key === 'ArrowLeft' && prevId) onOpenProject(prevId);
       if (e.key === 'ArrowRight' && nextId) onOpenProject(nextId);
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [prevId, nextId, onOpenProject, onBack, inlineVideo, lightbox, galleryCount]);
+  }, [prevId, nextId, onOpenProject, onBack, playingVideo, lightbox, galleryCount]);
   return React.createElement("div", null, React.createElement(Navbar, {
     activeLink: "Work",
     onLinkClick: onNav
@@ -3334,6 +3356,39 @@ function ProjectScreenContent({
   }, "Watch on YouTube"), p.protectedMedia && React.createElement(ProtectedAccess, {
     resource: p.protectedMedia
   })), React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'var(--space-3)'
+    }
+  }, playingVideo !== null && videoEmbeds[playingVideo] && React.createElement("div", {
+    style: {
+      position: 'relative',
+      // Le lecteur vit hors de la grille : une source verticale peut donc
+      // prendre son format sans etirer les rangees de vignettes.
+      aspectRatio: videoEmbeds[playingVideo].vertical ? '9 / 16' : '16 / 9',
+      width: videoEmbeds[playingVideo].vertical ? 'min(320px, 100%)' : undefined,
+      alignSelf: videoEmbeds[playingVideo].vertical ? 'center' : undefined,
+      borderRadius: 'var(--radius-sm)',
+      border: '1px solid var(--line-subtle)',
+      overflow: 'hidden',
+      background: 'var(--void-900)'
+    }
+  }, React.createElement("iframe", {
+    src: videoEmbeds[playingVideo].src,
+    title: window.KP_I18N.t.f('{title} video', {
+      title: p.title
+    }),
+    allow: "autoplay; encrypted-media; fullscreen; picture-in-picture",
+    allowFullScreen: true,
+    style: {
+      position: 'absolute',
+      inset: 0,
+      width: '100%',
+      height: '100%',
+      border: 'none'
+    }
+  })), React.createElement("div", {
     className: "project-media-grid",
     style: {
       display: 'grid',
@@ -3342,10 +3397,10 @@ function ProjectScreenContent({
       gap: 'var(--space-3)',
       minHeight: '340px'
     }
-  }, tiles.map((t, i) => React.createElement(t.video && videoPlaying ? "div" : "button", {
+  }, tiles.map((t, i) => React.createElement("button", {
     className: "project-media-tile",
-    type: t.video && videoPlaying ? undefined : "button",
-    disabled: t.video && videoPlaying ? undefined : !t.video && !t.src,
+    type: "button",
+    disabled: !t.video && !t.src,
     "aria-label": t.video ? window.KP_I18N.t.f('Play {title} video', {
       title: p.title
     }) : t.src ? window.KP_I18N.t.f('Open {title} image {n}', {
@@ -3354,18 +3409,12 @@ function ProjectScreenContent({
     }) : undefined,
     key: i,
     onClick: () => {
-      if (t.video) setInlineVideo(true);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
+      if (t.video) setPlayingVideo(playingVideo === t.index ? null : t.index);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
     },
     style: {
       // En lecture, la tuile prend toute la largeur de la grille et reprend le
       // format de la source : le lecteur n'est plus enferme dans une vignette.
-      gridColumn: t.video && videoPlaying ? '1 / -1' : undefined,
-      gridRow: t.video && videoPlaying ? 'span 1' : i === 0 && tiles.length > 1 ? 'span 2' : 'span 1',
-      aspectRatio: t.video && videoPlaying ? igId ? '9 / 16' : '16 / 9' : undefined,
-      alignSelf: t.video && videoPlaying ? 'start' : undefined,
-      maxWidth: t.video && videoPlaying && igId ? '400px' : undefined,
-      justifySelf: t.video && videoPlaying && igId ? 'center' : undefined,
-      width: t.video && videoPlaying && igId ? '100%' : undefined,
+      gridRow: i === 0 && tiles.length > 1 ? 'span 2' : 'span 1',
       borderRadius: 'var(--radius-sm)',
       border: '1px solid var(--line-subtle)',
       overflow: 'hidden',
@@ -3380,22 +3429,7 @@ function ProjectScreenContent({
     onMouseLeave: e => {
       e.currentTarget.style.boxShadow = 'none';
     }
-  }, t.video && (videoPlaying ? React.createElement("iframe", {
-    src: videoEmbedSrc,
-    title: window.KP_I18N.t.f('{title} video', {
-      title: p.title
-    }),
-    allow: "autoplay; encrypted-media; fullscreen; picture-in-picture",
-    allowFullScreen: true,
-    style: {
-      position: 'absolute',
-      inset: 0,
-      width: '100%',
-      height: '100%',
-      border: 'none',
-      background: 'var(--void-900)'
-    }
-  }) : React.createElement("div", {
+  }, t.video && React.createElement("div", {
     style: {
       position: 'absolute',
       inset: 0,
@@ -3416,7 +3450,7 @@ function ProjectScreenContent({
       fontSize: '13px',
       color: 'var(--text-heading)'
     }
-  }, "\u25B6"))), t.comingSoon && React.createElement("div", {
+  }, "\u25B6")), t.comingSoon && React.createElement("div", {
     style: {
       position: 'absolute',
       inset: 0,
@@ -3432,7 +3466,7 @@ function ProjectScreenContent({
       textTransform: 'uppercase',
       color: 'var(--text-faint)'
     }
-  }, "Coming Soon")))))), React.createElement("div", {
+  }, "Coming Soon"))))))), React.createElement("div", {
     className: "project-details-grid",
     style: {
       display: 'grid',

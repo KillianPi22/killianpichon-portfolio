@@ -765,6 +765,7 @@ $ProjectFields = @(
   @{ key='galleryImages';       kind='medias'; group='Medias';      label='Galerie' }
   @{ key='placeholderTiles';    kind='number'; group='Medias';      label='Tuiles vides' }
   @{ key='trailerUrl';          kind='text';   group='Medias';      label='Lien video' }
+  @{ key='videoUrls';           kind='list';   group='Medias';      label='Liens video (plusieurs)'; help="Rempli, il remplace le lien video unique : une tuile par adresse." }
   @{ key='trailerEmbedDisabled';kind='bool';   group='Medias';      label='Interdire la lecture integree' }
   @{ key='videoPoster';         kind='media';  group='Medias';      label='Affiche video' }
   @{ key='externalUrl';         kind='text';   group='Liens';       label='Lien externe' }
