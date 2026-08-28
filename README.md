@@ -57,9 +57,15 @@ un reel Instagram, reconnus a leur adresse.
 Un second clic sur la meme tuile arrete la video, comme la touche Echap. Une
 seule video joue a la fois.
 
-`trailerEmbedDisabled` retire la tuile et laisse un bouton sortant : c'est le cas
-d'*Hurtubise*, dont la source refuse l'integration. Aucun reglage du site ne
-contourne ce refus.
+`trailerEmbedDisabled` retire la tuile et laisse un bouton sortant. A reserver
+aux sources qui refusent reellement l'integration : *Hurtubise* l'a porte a tort
+jusqu'au 28 aout 2026, et sa bande-annonce se lit tres bien dans la page.
+
+**Piege a connaitre avant de poser ce drapeau.** Ouvrir `youtube.com/embed/<id>`
+directement dans la barre d'adresse renvoie souvent l'erreur 153, meme pour une
+video parfaitement integrable : YouTube regarde l'origine de la page appelante,
+et il n'y en a pas. Le seul test valable est la fiche elle-meme, servie en local,
+drapeau retire.
 
 `year`, `prev` et `next` ne se saisissent plus : l'annee vient de la date, et la
 navigation entre fiches suit l'ordre chronologique. Ajouter un projet ne demande
