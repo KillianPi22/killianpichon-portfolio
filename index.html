@@ -2264,13 +2264,13 @@ function HomeScreen({
     project: "Traveler's Introspection"
   }, {
     image: window.__asset(window.KP_I18N.lang === 'fr' ? 'assets/awards/award-innovation-dome-fr.png' : 'assets/awards/award-innovation-dome-en.png'),
-    type: 'Award',
-    festival: 'Innovation Dome — PFCAT 2026',
+    type: 'Winner',
+    festival: 'Innovation Award, Full Dome — PFCAT 2026',
     project: "Traveler's Introspection"
   }, {
     image: window.__asset('assets/awards/nominee-innovation-animation.png'),
     type: 'Official Nominee',
-    festival: 'Innovation Animation — PFCAT 2026',
+    festival: 'Innovation Award, Animation — PFCAT 2026',
     project: "Traveler's Introspection"
   }, {
     image: window.__asset(window.KP_I18N.lang === 'fr' ? 'assets/awards/winner-prix-numix-fr.png' : 'assets/awards/winner-prix-numix-en.png'),
@@ -3410,7 +3410,7 @@ function ProjectScreenContent({
     href: t.external ? p.externalUrl : undefined,
     target: t.external ? "_blank" : undefined,
     rel: t.external ? "noopener noreferrer" : undefined,
-    "aria-label": t.video ? window.KP_I18N.t.f('Play {title} video', {
+    "aria-label": t.external ? p.externalLabel || p.studio : t.video ? window.KP_I18N.t.f('Play {title} video', {
       title: p.title
     }) : t.src ? window.KP_I18N.t.f('Open {title} image {n}', {
       title: p.title,
@@ -3463,15 +3463,16 @@ function ProjectScreenContent({
       position: 'absolute',
       inset: 0,
       display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: t.src ? 'flex-end' : 'center',
+      justifyContent: t.src ? 'flex-end' : 'center',
       gap: '6px',
-      padding: '12px',
-      textAlign: 'center',
-      background: t.src ? 'linear-gradient(rgba(10,10,11,.28),rgba(10,10,11,.62))' : 'none'
+      padding: '10px',
+      textAlign: 'center'
     }
-  }, React.createElement("span", {
+    // Sur un visuel, le libelle est porte par l'image elle-meme : n'en
+    // rajouter qu'une fleche, sinon deux titres se superposent. Le lien reste
+    // annonce aux lecteurs d'ecran par son aria-label.
+  }, !t.src && React.createElement("span", {
     style: {
       fontFamily: 'var(--font-mono)',
       fontSize: 'var(--text-micro)',
@@ -3482,6 +3483,14 @@ function ProjectScreenContent({
   }, p.externalLabel || p.studio), React.createElement("span", {
     "aria-hidden": "true",
     style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: t.src ? '26px' : undefined,
+      height: t.src ? '26px' : undefined,
+      borderRadius: t.src ? '50%' : undefined,
+      background: t.src ? 'rgba(10,10,11,.62)' : undefined,
+      border: t.src ? '1px solid var(--line-strong)' : undefined,
       fontSize: '14px',
       color: 'var(--accent)'
     }
@@ -3879,7 +3888,7 @@ const EXPERIENCE = [{
   role: 'Co-founder / Realtime Artist',
   org: 'Fantastik Obsolete — Montréal, QC',
   desc: "Co-founded an independent collective for immersive cinema and real-time storytelling with Pascal Lavallé and Nicolas Lachance-Brais. I set up the structure we use to coordinate scenes, shared assets and technical decisions, and I take part in the artistic and technical choices and in following projects from early studies through fulldome delivery. We work as peers, each of us driving where availability and experience allow, and creative choices stay connected to how an audience experiences the work inside the dome.",
-  productions: ["Traveler's Introspection — Public Award, SATFest 2026. Award: Innovation Dome, PFCAT 2026. Official Nominee: Innovation Animation, PFCAT 2026. Official Selection: Dome Under Film Festival, Macon Film Festival, FDUK."]
+  productions: ["Traveler's Introspection — Public Award, SATFest 2026. Winner: Innovation Award, Full Dome, PFCAT 2026. Official Nominee: Innovation Award, Animation, PFCAT 2026. Official Selection: Dome Under Film Festival, Macon Film Festival, FDUK."]
 }, {
   period: '2023 — Present',
   start: 2023,
