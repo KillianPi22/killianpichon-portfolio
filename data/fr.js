@@ -159,8 +159,11 @@ window.KP_FR = {
     'Contributed to projection mapping, museum installations and live-event productions for international clients, inside a small and autonomous team. The work required adapting animation, compositing and visual effects to architectural surfaces, public viewing distances and the shared delivery needs of multidisciplinary teams — and planning it: I used Gantter and shared spreadsheets to break the stages down, follow projects and connect artistic deliverables to production needs. I also ran the projector simulations and coverage calculations that went into tender submissions and project files.':
       'Contribution à des projets de mapping vidéo, des installations muséales et des productions événementielles pour des clients internationaux, au sein d’une petite équipe autonome. Il fallait adapter l’animation, le compositing et les effets visuels aux surfaces architecturales, aux distances de lecture du public et aux besoins de livraison partagés d’équipes pluridisciplinaires — et planifier ce travail : je m’appuyais sur Gantter et des tableaux partagés pour découper les étapes, suivre les projets et relier les livrables artistiques aux besoins de production. Je réalisais aussi les simulations et les calculs de projecteurs qui alimentaient les dossiers d’appel d’offres et de projet.',
 
-    'Le Livre de la Chasse — Camera rig and boar animation.':
-      'Le Livre de la Chasse — Rig de caméra et animation du sanglier.',
+    'Le Livre de la Chasse — Museum installation at the château de Foix, 2019. Projection plans, modeling, equipment placement and projection simulation, plus the camera rig and the boar animation.':
+      'Le Livre de la Chasse — Installation muséale au château de Foix, 2019. Plans de projection, modélisation, implantation du matériel et simulation de projection, ainsi que le rig de caméra et l’animation du sanglier.',
+
+    'Art Explora — Projection simulation studies.':
+      'Art Explora — Études de simulation de projection.',
 
     'Celestia — Developed scalable flock animation, a projection-readable visual treatment and separated compositing passes; also delivered a first working VR review application so artists, production and the client could test the scenes before installation.':
       'Celestia — Animation de nuées à grande échelle, traitement visuel lisible en projection et passes de compositing séparées ; livraison également d’une première application de revue VR fonctionnelle, pour que les artistes, la production et le client puissent tester les scènes avant l’installation.',
@@ -179,8 +182,8 @@ window.KP_FR = {
     'Clients & Projects: Melanie Martinez Tour (Normal Studio), Lac Batiscan (XYZ Technologies), Lumin-Art, Transversal.':
       'Clients et projets : tournée de Melanie Martinez (Normal Studio), Lac Batiscan (XYZ Technologies), Lumin-Art, Transversal.',
 
-    'Van Gogh and King Tut exhibitions — After Effects reformat passes on existing exhibition content, for Normal Studio.':
-      'Expositions Van Gogh et King Tut — passes de reformat dans After Effects sur des contenus d’exposition existants, pour Normal Studio.',
+    'Van Gogh and King Tut exhibitions — Freelance After Effects reformat passes on existing exhibition content for Normal Studio, before I joined the studio.':
+      'Expositions Van Gogh et King Tut — passes de reformat dans After Effects sur des contenus d’exposition existants, à la pige pour Normal Studio, avant d’y entrer.',
 
     'Unannounced project — a projected interactive game controlled from a mobile interface. I produced the animated assets, including sprite-atlas generation, and created the environments. Details to follow once the project is announced.':
       'Projet non annoncé — un jeu interactif projeté, piloté depuis une interface mobile. J’ai réalisé les assets animés, avec génération d’atlas de sprites, et créé les environnements. Les détails suivront à l’annonce du projet.',
