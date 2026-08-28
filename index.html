@@ -1724,7 +1724,7 @@ function Awards({
     }
   }, a.image ? React.createElement("img", {
     src: a.image,
-    alt: `${a.type} — ${a.festival}`,
+    alt: `${window.KP_I18N.t(a.type)} — ${window.KP_I18N.t(a.festival)}`,
     style: {
       width: '100%',
       maxWidth: '220px',
@@ -2263,8 +2263,8 @@ function HomeScreen({
     festival: 'Macon Film Festival 2026',
     project: "Traveler's Introspection"
   }, {
-    image: window.__asset('assets/awards/nominee-innovation-dome.png'),
-    type: 'Official Nominee',
+    image: window.__asset(window.KP_I18N.lang === 'fr' ? 'assets/awards/award-innovation-dome-fr.png' : 'assets/awards/award-innovation-dome-en.png'),
+    type: 'Award',
     festival: 'Innovation Dome — PFCAT 2026',
     project: "Traveler's Introspection"
   }, {
@@ -2273,6 +2273,7 @@ function HomeScreen({
     festival: 'Innovation Animation — PFCAT 2026',
     project: "Traveler's Introspection"
   }, {
+    image: window.__asset(window.KP_I18N.lang === 'fr' ? 'assets/awards/winner-prix-numix-fr.png' : 'assets/awards/winner-prix-numix-en.png'),
     type: 'Winner',
     festival: 'Prix NUMIX 2026 — International Exhibition',
     project: 'Into the Volcano'
@@ -3208,7 +3209,10 @@ function ProjectScreenContent({
     poster: n === 0 ? p.videoPoster || null : null
   })), ...collageImages.map(src => ({
     src
-  })), ...Array.from({
+  })), ...(p.externalTile && p.externalUrl ? [{
+    external: true,
+    src: typeof p.externalTile === 'string' ? p.externalTile : null
+  }] : []), ...Array.from({
     length: p.placeholderTiles || 0
   }, () => ({
     comingSoon: true
@@ -3397,10 +3401,15 @@ function ProjectScreenContent({
       gap: 'var(--space-3)',
       minHeight: '340px'
     }
-  }, tiles.map((t, i) => React.createElement("button", {
+  }, tiles.map((t, i) => React.createElement(t.external ? "a" : "button", {
     className: "project-media-tile",
-    type: "button",
-    disabled: !t.video && !t.src,
+    type: t.external ? undefined : "button",
+    disabled: t.external ? undefined : !t.video && !t.src,
+    // Une tuile qui quitte le site est un lien, pas un bouton : le clic du
+    // milieu, l'ouverture dans un onglet et le menu contextuel doivent marcher.
+    href: t.external ? p.externalUrl : undefined,
+    target: t.external ? "_blank" : undefined,
+    rel: t.external ? "noopener noreferrer" : undefined,
     "aria-label": t.video ? window.KP_I18N.t.f('Play {title} video', {
       title: p.title
     }) : t.src ? window.KP_I18N.t.f('Open {title} image {n}', {
@@ -3408,18 +3417,17 @@ function ProjectScreenContent({
       n: i + 1
     }) : undefined,
     key: i,
-    onClick: () => {
+    onClick: t.external ? undefined : () => {
       if (t.video) setPlayingVideo(playingVideo === t.index ? null : t.index);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
     },
     style: {
-      // En lecture, la tuile prend toute la largeur de la grille et reprend le
-      // format de la source : le lecteur n'est plus enferme dans une vignette.
       gridRow: i === 0 && tiles.length > 1 ? 'span 2' : 'span 1',
       borderRadius: 'var(--radius-sm)',
       border: '1px solid var(--line-subtle)',
       overflow: 'hidden',
       position: 'relative',
-      cursor: t.video || t.src ? 'pointer' : 'default',
+      cursor: t.video || t.src || t.external ? 'pointer' : 'default',
+      textDecoration: t.external ? 'none' : undefined,
       background: t.src ? `url(${t.src}) center/cover` : t.video ? t.poster ? `linear-gradient(rgba(10,10,11,.28),rgba(10,10,11,.5)), url(${t.poster}) center/cover` : 'linear-gradient(150deg,#2a2723,#151417 40%,#3a1c10)' : 'linear-gradient(150deg,rgba(28,29,34,.55),rgba(17,17,20,.4) 55%,rgba(36,22,16,.35))',
       transition: 'box-shadow var(--duration-base) var(--ease-out)'
     },
@@ -3450,7 +3458,34 @@ function ProjectScreenContent({
       fontSize: '13px',
       color: 'var(--text-heading)'
     }
-  }, "\u25B6")), t.comingSoon && React.createElement("div", {
+  }, "\u25B6")), t.external && React.createElement("div", {
+    style: {
+      position: 'absolute',
+      inset: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '6px',
+      padding: '12px',
+      textAlign: 'center',
+      background: t.src ? 'linear-gradient(rgba(10,10,11,.28),rgba(10,10,11,.62))' : 'none'
+    }
+  }, React.createElement("span", {
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'var(--text-micro)',
+      letterSpacing: 'var(--tracking-wide)',
+      textTransform: 'uppercase',
+      color: 'var(--text-heading)'
+    }
+  }, p.externalLabel || p.studio), React.createElement("span", {
+    "aria-hidden": "true",
+    style: {
+      fontSize: '14px',
+      color: 'var(--accent)'
+    }
+  }, "\u2197")), t.comingSoon && React.createElement("div", {
     style: {
       position: 'absolute',
       inset: 0,
@@ -3844,7 +3879,7 @@ const EXPERIENCE = [{
   role: 'Co-founder / Realtime Artist',
   org: 'Fantastik Obsolete — Montréal, QC',
   desc: "Co-founded an independent collective for immersive cinema and real-time storytelling with Pascal Lavallé and Nicolas Lachance-Brais. I set up the structure we use to coordinate scenes, shared assets and technical decisions, and I take part in the artistic and technical choices and in following projects from early studies through fulldome delivery. We work as peers, each of us driving where availability and experience allow, and creative choices stay connected to how an audience experiences the work inside the dome.",
-  productions: ["Traveler's Introspection — Public Award, SATFest 2026. Official Selection: Dome Under Film Festival, PFCAT, Macon Film Festival, FDUK."]
+  productions: ["Traveler's Introspection — Public Award, SATFest 2026. Award: Innovation Dome, PFCAT 2026. Official Nominee: Innovation Animation, PFCAT 2026. Official Selection: Dome Under Film Festival, Macon Film Festival, FDUK."]
 }, {
   period: '2023 — Present',
   start: 2023,
@@ -3854,12 +3889,12 @@ const EXPERIENCE = [{
   desc: 'Develop immersive visuals, cinematic environments and interactive content for entertainment, cultural and live-event productions. The work combines image-making with practical production decisions: clarifying handoffs, protecting iteration time and adapting content to the display system where it will be experienced.',
   productions: ['Clients & Projects: Melanie Martinez Tour (Normal Studio), Lac Batiscan (XYZ Technologies), Lumin-Art, Transversal.', 'Van Gogh and King Tut exhibitions — Freelance After Effects reformat passes on existing exhibition content for Normal Studio, before I joined the studio.']
 }, {
-  period: '2025 — 2026',
+  period: '2025 — Present',
   start: 2025,
-  end: 2026,
+  end: null,
   role: 'Realtime 3D Generalist / Motion Designer',
   org: 'Normal Studio — Montréal, QC',
-  desc: 'Contributed to immersive installations, traveling shows and fulldome productions alongside artists, designers and developers. My work focused on animation systems, projection-scale look development, compositing handoffs and preview studies that helped teams review spatial content earlier in production. I tracked my own time and tasks in Monday.com and Timely, which kept the production floor informed of where each piece stood.',
+  desc: 'Contribute to immersive installations, traveling shows and fulldome productions alongside artists, designers and developers. My work focuses on animation systems, projection-scale look development, compositing handoffs and preview studies that help teams review spatial content earlier in production. I track my own time and tasks in Monday.com and Timely, which keeps the production floor informed of where each piece stands.',
   productions: ['Celestia — Developed scalable flock animation, a projection-readable visual treatment and separated compositing passes; also delivered a first working VR review application so artists, production and the client could test the scenes before installation.', 'Hurtubise — Built reusable neon-animation systems and synchronized layered artwork with music for a fulldome presentation.', 'Volcano — Winner, Prix NUMIX 2026 (International · Exhibition). Structured the cleaning, repair and integration of 16K geological textures for a large-format immersive environment.', 'Unannounced project — a projected interactive game controlled from a mobile interface. I produced the animated assets, including sprite-atlas generation, and created the environments. Details to follow once the project is announced.']
 }, {
   period: '2018 — 2022',

@@ -770,6 +770,7 @@ $ProjectFields = @(
   @{ key='videoPoster';         kind='media';  group='Medias';      label='Affiche video' }
   @{ key='externalUrl';         kind='text';   group='Liens';       label='Lien externe' }
   @{ key='externalLabel'; translate=$true;       kind='text';   group='Liens';       label='Libelle du lien' }
+  @{ key='externalTile';        kind='media';  group='Liens';      label='Vignette du lien externe'; help="Ajoute une tuile a la galerie qui ouvre le lien externe." }
   @{ key='creditsNote'; translate=$true;         kind='text';   group='Liens';       label='Credits' }
   @{ key='relatedProjects';     kind='projects'; group='Liens';     label='Projets lies'; help="Choisis parmi les projets existants : un titre saisi a la main ne renvoyait vers rien." }
   @{ key='listing';             kind='text';   group='Visibilite';  label='Affichage' }

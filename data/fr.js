@@ -91,6 +91,7 @@ window.KP_FR = {
     'Awards & Recognition': 'Prix et reconnaissances',
     'Official Selection': 'Sélection officielle',
     'Official Nominee': 'Finaliste',
+    'Award': 'Prix',
     'Public Award': 'Prix du public',
     'Winner': 'Lauréat',
     'Prix NUMIX 2026 — International Exhibition': 'Prix NUMIX 2026 — International · Exposition',
@@ -148,13 +149,14 @@ window.KP_FR = {
        langues : pas d'entree, le repli les conserve. */
     '2024 — Present': '2024 — aujourd’hui',
     '2023 — Present': '2023 — aujourd’hui',
+    '2025 — Present': '2025 — aujourd’hui',
     'Freelance — Montréal, QC': 'À mon compte — Montréal, QC',
 
     'Develop immersive visuals, cinematic environments and interactive content for entertainment, cultural and live-event productions. The work combines image-making with practical production decisions: clarifying handoffs, protecting iteration time and adapting content to the display system where it will be experienced.':
       'Création de visuels immersifs, d’environnements cinématographiques et de contenus interactifs pour des productions de divertissement, culturelles et événementielles. Le travail mêle la fabrication d’images à des décisions de production concrètes : clarifier les transferts entre équipes, préserver le temps d’itération et adapter le contenu au dispositif où il sera vu.',
 
-    'Contributed to immersive installations, traveling shows and fulldome productions alongside artists, designers and developers. My work focused on animation systems, projection-scale look development, compositing handoffs and preview studies that helped teams review spatial content earlier in production. I tracked my own time and tasks in Monday.com and Timely, which kept the production floor informed of where each piece stood.':
-      'Contribution à des installations immersives, des spectacles itinérants et des productions fulldôme, aux côtés d’artistes, de designers et de développeurs. Mon travail portait sur les systèmes d’animation, le look development à l’échelle de la projection, les transferts vers le compositing et les études de prévisualisation qui ont permis aux équipes de juger le contenu spatial plus tôt en production. Je suivais mon temps et mes tâches dans Monday.com et Timely, ce qui tenait l’équipe de production au courant de l’avancement de chaque élément.',
+    'Contribute to immersive installations, traveling shows and fulldome productions alongside artists, designers and developers. My work focuses on animation systems, projection-scale look development, compositing handoffs and preview studies that help teams review spatial content earlier in production. I track my own time and tasks in Monday.com and Timely, which keeps the production floor informed of where each piece stands.':
+      'Contribution à des installations immersives, des spectacles itinérants et des productions fulldôme, aux côtés d’artistes, de designers et de développeurs. Mon travail porte sur les systèmes d’animation, le look development à l’échelle de la projection, les transferts vers le compositing et les études de prévisualisation qui permettent aux équipes de juger le contenu spatial plus tôt en production. Je suis mon temps et mes tâches dans Monday.com et Timely, ce qui tient l’équipe de production au courant de l’avancement de chaque élément.',
 
     'Contributed to projection mapping, museum installations and live-event productions for international clients, inside a small and autonomous team. The work required adapting animation, compositing and visual effects to architectural surfaces, public viewing distances and the shared delivery needs of multidisciplinary teams — and planning it: I used Gantter and shared spreadsheets to break the stages down, follow projects and connect artistic deliverables to production needs. I also ran the projector simulations and coverage calculations that went into tender submissions and project files.':
       'Contribution à des projets de mapping vidéo, des installations muséales et des productions événementielles pour des clients internationaux, au sein d’une petite équipe autonome. Il fallait adapter l’animation, le compositing et les effets visuels aux surfaces architecturales, aux distances de lecture du public et aux besoins de livraison partagés d’équipes pluridisciplinaires — et planifier ce travail : je m’appuyais sur Gantter et des tableaux partagés pour découper les étapes, suivre les projets et relier les livrables artistiques aux besoins de production. Je réalisais aussi les simulations et les calculs de projecteurs qui alimentaient les dossiers d’appel d’offres et de projet.',
@@ -176,8 +178,8 @@ window.KP_FR = {
 
     /* Cle entre guillemets doubles : la source porte une apostrophe droite,
        et une cle doit reproduire l'anglais au caractere pres. */
-    "Traveler's Introspection — Public Award, SATFest 2026. Official Selection: Dome Under Film Festival, PFCAT, Macon Film Festival, FDUK.":
-      'Traveler\'s Introspection — Prix du public, SATFest 2026. Sélection officielle : Dome Under Film Festival, PFCAT, Macon Film Festival, FDUK.',
+    "Traveler's Introspection — Public Award, SATFest 2026. Award: Innovation Dome, PFCAT 2026. Official Nominee: Innovation Animation, PFCAT 2026. Official Selection: Dome Under Film Festival, Macon Film Festival, FDUK.":
+      'Traveler\'s Introspection — Prix du public, SATFest 2026. Prix : Innovation Dome, PFCAT 2026. Finaliste : Innovation Animation, PFCAT 2026. Sélection officielle : Dome Under Film Festival, Macon Film Festival, FDUK.',
 
     'Clients & Projects: Melanie Martinez Tour (Normal Studio), Lac Batiscan (XYZ Technologies), Lumin-Art, Transversal.':
       'Clients et projets : tournée de Melanie Martinez (Normal Studio), Lac Batiscan (XYZ Technologies), Lumin-Art, Transversal.',
@@ -392,13 +394,14 @@ window.KP_FR = {
       category: 'Film immersif · Dôme',
       cardCategory: 'Film immersif',
       roleTitle: 'Cofondateur',
+      externalLabel: 'Plus sur Fantastik Obsolete',
       desc: 'Cocréation d’un film fulldôme original qui explore comment les mouvements de caméra, le rythme et l’échelle façonnent le récit et un mouvement qui paraît naturel dans un format à 360°.',
       overview: 'Un court métrage développé au sein de notre collectif Fantastik Obsolete. Un exercice de rythme de caméra, d’effets spéciaux et de narration singulière. L’histoire suit le Voyageur à travers un cycle de vie déployé sur plusieurs scènes.',
       role: 'Cofondateur — caméra, effets visuels, compositing et technique',
       contribution: ['J’ai produit les scènes de la Chute d’or et du Miroir des ombres, ainsi que la scène finale avec Nicolas Lachance-Brais pour la modélisation et le mouvement de l’oeuf.', 'Développement d’études d’effets visuels dans Niagara, exploration des modules de motion design et des cloners récemment implantés.'],
       technicalChallenges: ['Le problème : regarder nos propres scènes sur un écran 16:9, avec nos habitudes de spectateurs.', 'La solution de production : chaque séquence a été revue en réalité virtuelle, de façon itérative, pour évaluer le confort, l’accélération, la décélération et la fluidité des mouvements spatiaux.', 'L’effet sur la production : les décisions de caméra et de rythme ont été validées avant le rendu final pour le dôme, ce qui a permis aux révisions de porter sur la perception du public plutôt que sur des rigidités techniques. Entre rigueur métrique et raccourcis pour boucler la recette visuelle.'],
       rnd: ['La revue en réalité virtuelle a servi d’étude de production tout au long du film : elle permettait d’évaluer le mouvement et l’échelle de l’intérieur, plutôt que de s’en remettre à un aperçu figé.', 'Ce processus a donné une base commune pour parler de confort, de rythme et d’immersion avant la présentation finale sous le dôme.'],
-      recognition: ['SAT Fest 2026 — Prix du public', 'SAT Fest 2026 — Sélection officielle', 'FDUK 2026 — Sélection officielle', 'Dome Under Film Festival 2026 — Sélection officielle', 'Macon Film Festival 2026 — Sélection officielle', 'Portland Festival of Cinema, Animation & Technology 2026 — Nomination'],
+      recognition: ['SAT Fest 2026 — Prix du public', 'SAT Fest 2026 — Sélection officielle', 'FDUK 2026 — Sélection officielle', 'Dome Under Film Festival 2026 — Sélection officielle', 'Macon Film Festival 2026 — Sélection officielle', 'Portland Festival of Cinema, Animation & Technology 2026 — Prix Innovation Dome', 'Portland Festival of Cinema, Animation & Technology 2026 — Nomination Innovation Animation'],
       pipeline: ['Mise en place et mouvement de caméra', 'Vérification en réalité virtuelle, du point de vue du public', 'Améliorations du mouvement', 'Développement des effets visuels', 'Compositing entre After Effects et les logiciels 3D', 'Défis techniques de l’effet de balayage et du liquide autour de la planète', 'Performances, pour rendre sans faire tomber la carte graphique (VRAM maximale utilisée)'],
       impact: 'Le projet nous a permis d’élargir notre potentiel créatif et de consolider notre structure comme notre image de marque.'
     },

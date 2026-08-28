@@ -111,7 +111,7 @@ window.KP_PROJECTS = {
     contribution: ['I produced the Golden Waterfall and Mirror of Shadows scenes, as well as the final scene with Nicolas Lachance-Brais for the egg modeling and motion.', 'Development of Niagara visual-effects studies, exploration of the recently implemented motion-design modules and cloners.'],
     technicalChallenges: ['Problem: Watching our own scenes on a 16:9 screen with our viewing habits.', 'Production solution: Each sequence was reviewed iteratively in virtual reality to evaluate the comfort, acceleration, deceleration and fluidity of spatial movements.', 'Impact on production: Camera and timing decisions were validated before the final render for the dome, allowing revisions to focus on audience perception rather than technical rigidities. Between metric rigor and shortcuts to complete the visual recipe.'],
     rnd: ['The virtual-reality review served as a production study throughout the film, allowing movement and scale to be evaluated from the inside rather than relying on a static preview.', 'This process established a common basis for discussing comfort, rhythm and immersion before the final presentation in the dome.'],
-    recognition: ['SAT Fest 2026 — Audience Award', 'SAT Fest 2026 — Official Selection', 'FDUK 2026 — Official Selection', 'Dome Under Film Festival 2026 — Official Selection', 'Macon Film Festival 2026 — Official Selection', 'Portland Festival of Cinema, Animation & Technology 2026 — Nomination'],
+    recognition: ['SAT Fest 2026 — Audience Award', 'SAT Fest 2026 — Official Selection', 'FDUK 2026 — Official Selection', 'Dome Under Film Festival 2026 — Official Selection', 'Macon Film Festival 2026 — Official Selection', 'Portland Festival of Cinema, Animation & Technology 2026 — Innovation Dome Award', 'Portland Festival of Cinema, Animation & Technology 2026 — Innovation Animation Nomination'],
     pipeline: ['Camera setup and movement', 'Verification in virtual reality from the audience’s point of view', 'Motion improvements', 'Visual-effects development', 'Compositing between After Effects and 3D software', 'Technical challenges with the sweep animation effect and the liquid around the planet', 'Performance so we could render without crashing the graphics card (maximum VRAM used)'],
     impact: 'This allowed us to expand our creative potential and consolidate our structure as well as our brand image.',
     protectedMedia: {
@@ -125,6 +125,9 @@ window.KP_PROJECTS = {
       ciphertext: 'VnvaW18XOVGMJ/QksESC5GWVmfkkIXU6Tys677o0Ou7tm8rjcY4YJW4aO/5wr7xx7ZaiqOsy',
       allowedHosts: ['youtu.be']
     },
+    externalUrl: 'https://fantastikobsolete.art/',
+    externalLabel: 'More on Fantastik Obsolete',
+    externalTile: true,
     galleryImages: ['projects/traveler/planet-strands.png', 'projects/traveler/asteroid-field.png', 'projects/traveler/cave-crystals.webp', 'projects/traveler/tunnel-vortex.webp', 'projects/traveler/golden-strands-2.webp']
   },
   paralleles: {
@@ -239,7 +242,7 @@ window.KP_PROJECTS = {
     galleryImages: ['projects/luminart/logo-panels.webp', 'projects/luminart/fresnel-core.webp', 'projects/luminart/glass-column-rings.webp'],
     placeholderTiles: 0,
     creditsNote: 'Sound: Nidesco',
-    externalUrl: 'https://lumin-art.com/en/home/',
+    externalUrl: 'https://lumin-art.com/',
     externalLabel: 'See Lumin-ART Productions'
   },
   'memoire-eau': {

@@ -36,6 +36,7 @@ demander.
 | `relatedProjects` | Identifiants des projets lies. Les fiches ecrites avant l'editeur portent des titres ; les deux formes sont acceptees. |
 | `protected` | Fiche entiere chiffree. Voir la section Contenus a acces restreint. |
 | `protectedMedia` | Lien chiffre dans une fiche publique. Meme section. |
+| `externalTile` | Ajoute a la galerie une tuile qui ouvre `externalUrl` dans un nouvel onglet. `true` pour une tuile sobre, ou un chemin d'image pour la poser sur un visuel. Sans `externalUrl`, rien ne s'affiche. |
 | `trailerUrl` | Une seule video. C'est le champ que l'editeur ecrit. |
 | `videoUrls` | Plusieurs videos, une tuile chacune. Present, il remplace `trailerUrl`. Voir Videos de la galerie. |
 
@@ -79,6 +80,10 @@ se fait au chargement.
 L'anglais est la source unique. Il reste ecrit en clair dans `index.html` et
 `data/projects.js`, et il s'edite comme avant. Le francais est une couche posee
 par-dessus, dans `data/fr.js`, charge juste apres les fiches.
+
+Les badges qui contiennent un libelle localise portent les suffixes `-en` et
+`-fr`. La liste des prix choisit la variante avec `window.KP_I18N.lang` au
+chargement de la page ; les badges sans suffixe restent communs aux deux langues.
 
 La cle du dictionnaire est **la phrase anglaise elle-meme**, pas un identifiant
 invente a tenir en parallele. Une entree absente retombe sur l'anglais : le site
