@@ -158,6 +158,10 @@ button{color:inherit}
 .site-lang-sep{font-size:var(--text-micro);color:var(--text-faint);padding-bottom:4px;user-select:none}
 .hero{min-height:calc(100vh + 2px);min-height:calc(100dvh + 2px)}
 .site-mark{display:inline-flex;align-items:center;min-height:32px}
+.about-intro{display:grid;grid-template-columns:minmax(0,640px) minmax(240px,360px);gap:clamp(40px,7vw,112px);align-items:end;max-width:1120px}
+.about-profile-figure{width:100%;max-width:360px;margin:0;justify-self:end}
+.about-profile-image{display:block;width:100%;height:auto;border:1px solid var(--line-subtle);border-radius:var(--radius-sm);background:var(--surface-2)}
+.about-profile-caption{margin-top:10px;font-family:var(--font-mono);font-size:var(--text-micro);line-height:var(--leading-normal);color:var(--text-faint);letter-spacing:var(--tracking-wide);text-transform:uppercase}
 .view-all-button,.project-back,.related-project-button{appearance:none;background:none;border:0;padding:0}
 .view-all-button{display:inline-flex;align-items:center;gap:10px;font-size:var(--text-small);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--tracking-wide);cursor:pointer}
 .view-all-button:hover{color:var(--text-heading)}
@@ -279,6 +283,9 @@ button{color:inherit}
   }
   .site-lang-link::after{content:'';position:absolute;inset:-7px -4px}
   .site-mark{font-size:16px!important;flex:0 0 auto}
+
+  .about-intro{grid-template-columns:1fr;gap:var(--space-6);align-items:start}
+  .about-profile-figure{max-width:420px;justify-self:start}
 
   .hero{padding:108px var(--container-pad) 0!important;min-height:0!important}
   .hero-main{display:block!important}
@@ -4257,9 +4264,9 @@ function AboutScreen({
       padding: '64px var(--container-pad) 0'
     }
   }, React.createElement("div", {
-    style: {
-      maxWidth: '640px'
-    }
+    className: "about-intro"
+  }, React.createElement("div", {
+    className: "about-intro-copy"
   }, React.createElement("div", {
     style: {
       fontSize: 'var(--text-small)',
@@ -4282,7 +4289,18 @@ function AboutScreen({
       marginTop: '20px',
       lineHeight: 'var(--leading-relaxed)'
     }
-  }, "I build 3D assets and environments for real-time productions and follow them through to engine integration: modeling, sculpting, texturing, optimization and scene assembly in Unreal. The work moves across disciplines — interactive scenography, pre-rendered film, and interactive tools built inside the engine — where the image often has to hold at architectural scale. Based in Montréal, I shape both the visuals and the workflow that carries them, and I look for the answer inside the constraints a production sets as readily as outside them when the usual path doesn't hold."))), React.createElement("section", {
+  }, "I build 3D assets and environments for real-time productions and follow them through to engine integration: modeling, sculpting, texturing, optimization and scene assembly in Unreal. The work moves across disciplines — interactive scenography, pre-rendered film, and interactive tools built inside the engine — where the image often has to hold at architectural scale. Based in Montréal, I shape both the visuals and the workflow that carries them, and I look for the answer inside the constraints a production sets as readily as outside them when the usual path doesn't hold.")), React.createElement("figure", {
+    className: "about-profile-figure"
+  }, React.createElement("img", {
+    className: "about-profile-image",
+    src: window.__asset('assets/profile/normal-studio-can.webp'),
+    alt: "A pink Normal Studio can featuring an illustrated portrait of Killian Pichon, held in front of a desk.",
+    width: 820,
+    height: 1093,
+    decoding: "async"
+  }), React.createElement("figcaption", {
+    className: "about-profile-caption"
+  }, "Design courtesy of Eliane Ashcar at Normal Studio.")))), React.createElement("section", {
     style: {
       padding: '0 var(--container-pad) 96px'
     }

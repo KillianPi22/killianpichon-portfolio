@@ -103,6 +103,10 @@ window.KP_FR = {
     'Work Experience': 'Expérience',
     'Education': 'Formation',
     'Download CV': 'Télécharger le CV',
+    'A pink Normal Studio can featuring an illustrated portrait of Killian Pichon, held in front of a desk.':
+      'Canette rose de Normal Studio avec un portrait illustré de Killian Pichon, tenue devant un bureau.',
+    'Design courtesy of Eliane Ashcar at Normal Studio.':
+      'Design courtoisie d’Eliane Ashcar chez Normal Studio.',
 
     '3D Asset Production': 'Production de ressources 3D',
     'Unreal Engine Integration': 'Intégration Unreal Engine',
