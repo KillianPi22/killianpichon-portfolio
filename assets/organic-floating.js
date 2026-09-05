@@ -154,7 +154,10 @@
       const permission = typeof DeviceOrientationEvent.requestPermission === 'function'
         ? await DeviceOrientationEvent.requestPermission() : 'granted';
       if (attempt !== permissionAttempt) return;
-      if (permission !== 'granted') { stopSensor('Autorisation refusée. Les cadres restent stables au toucher.'); return; }
+      if (permission !== 'granted') {
+        stopSensor('Autorisation refusée par le navigateur. Sur iPhone, ferme complètement Safari ou Chrome, rouvre ce lien puis réessaie. Choisis « Autoriser » si une demande apparaît.');
+        return;
+      }
       sensorPending = false; sensorOn = true;
       resetAll(); baseline = inclination = null;
       html.dataset.kpInclination = 'on';
@@ -162,7 +165,7 @@
       addEventListener('deviceorientation', onOrientation, { passive: true });
       updateSensorControls('Garde ta position de lecture pendant la détection du capteur.');
       sensorTimer = setTimeout(() => {
-        if (!baseline) stopSensor('Aucun capteur disponible. Les cadres restent stables au toucher.');
+        if (!baseline) stopSensor('Autorisation accordée, mais aucune donnée du capteur reçue. Recharge la page puis réessaie dans Safari ou Chrome.');
       }, 4000);
     } catch {
       if (attempt === permissionAttempt) stopSensor('L’inclinaison est indisponible. Les cadres restent stables au toucher.');
@@ -171,9 +174,9 @@
   function onOrientation(event) {
     if (!sensorOn || !enabled() || !Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
     if (!baseline) {
-      baseline = { beta: event.beta, gamma: event.gamma };
+      baseline = { beta: event.beta, gamma: event.gamma, movementReceived: false };
       clearTimeout(sensorTimer);
-      updateSensorControls('Incline doucement l’appareil. Recentrer adapte l’effet à ta position de lecture.');
+      updateSensorControls('Capteur actif. Incline doucement l’appareil ; Recentrer adapte l’effet à ta position de lecture.');
     }
     const delta = (value, origin) => ((value - origin + 540) % 360) - 180;
     const angle = (screen.orientation?.angle ?? window.orientation ?? 0) * Math.PI / 180;
@@ -181,6 +184,10 @@
     // Zone neutre et quantification : le bruit du capteur ne maintient pas une animation au repos.
     const axis = value => Math.round(clamp(Math.sign(value) * Math.max(0, Math.abs(value) - .8) / 28, -.5, .5) * 100) / 100;
     inclination = { x: axis(roll * Math.cos(angle) + pitch * Math.sin(angle)), y: axis(pitch * Math.cos(angle) - roll * Math.sin(angle)) };
+    if (!baseline.movementReceived && (inclination.x || inclination.y)) {
+      baseline.movementReceived = true;
+      updateSensorControls('Mouvement reçu. Les cadres visibles suivent l’inclinaison ; Recentrer adapte l’effet à ta position de lecture.');
+    }
     updateSensorTargets();
   }
   const sensorObserver = new IntersectionObserver(entries => {

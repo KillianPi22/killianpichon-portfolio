@@ -220,6 +220,28 @@ mouvements. Les chemins sensibles restent refuses ; `CNAME`, `.nojekyll`, les
 donnees des projets et les protections sont inchanges. Le ressenti sur un vrai
 iPhone reste a confirmer.
 
+Diagnostic de l'inclinaison sur `codex/iphone-inclination-response` : le retour
+« Autorisation refusee » correspond a un refus renvoye par le navigateur, avant
+l'ecoute du capteur. Augmenter l'amplitude ne corrige pas cet etat. Le message
+propose desormais de fermer completement le navigateur, rouvrir le lien et
+reessayer ; une decision memorisee peut persister dans la session du navigateur.
+Choisir Autoriser si une demande apparait. Ce redemarrage est une piste de
+depannage, pas une garantie de reinitialisation de tous les reglages iOS.
+
+Le panneau distingue aussi une autorisation sans donnees, un capteur actif et
+le premier mouvement recu. Ces messages ne changent qu'aux transitions utiles,
+pas a chaque releve. Les reglages de mouvement sur PC et mobile, l'autorisation
+explicite et la reduction des mouvements restent identiques. Les fichiers
+concernes sont `assets/organic-floating.js`, sa version de cache dans `index.html`
+et ce README. Cette aide rejoint `main` pour publication a la demande du
+proprietaire, sur le meme apercu HTTPS avec `explore=2`.
+Verification HTTP aux largeurs 390, 768 et 1440 px : message entierement lisible,
+navigation vers Hurtubise conservee, script en HTTP 200 et console sans erreur.
+Les scenarios simules confirment les etats de refus, de capteur actif et de
+mouvement recu, ainsi que les limites et arrets existants. Le retablissement de
+l'autorisation sur l'iPhone du proprietaire reste a confirmer sur cet appareil.
+Reference : [gestion des autorisations dans WebKit](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/DeviceOrientationAndMotionAccessController.cpp).
+
 ## Version francaise
 
 L'anglais est la source unique. Il reste ecrit en clair dans `index.html` et
