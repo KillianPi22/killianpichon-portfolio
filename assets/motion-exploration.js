@@ -1,7 +1,7 @@
-/* Prototype local sans dependance. Le defilement natif et les lecteurs restent intacts. */
+/* Mouvement valide sans dependance. Le defilement natif et les lecteurs restent intacts. */
 (() => {
   'use strict';
-  if (new URLSearchParams(location.search).get('explore') !== '1') return;
+  const showControls = new URLSearchParams(location.search).get('explore') === '1';
   const root = document.getElementById('root');
   if (!root || !window.IntersectionObserver || !window.ResizeObserver) return;
   const html = document.documentElement;
@@ -20,19 +20,21 @@
   atmosphere.width = 128; atmosphere.height = 80;
   document.body.insertBefore(atmosphere, root);
   const atmosphereContext = atmosphere.getContext('2d');
-  const panel = document.createElement('details');
-  panel.className = 'kp-exploration-panel';
-  panel.innerHTML = '<summary>Exploration 01 · <span>Équilibrée</span></summary><div class="kp-exploration-options"><button type="button" data-mode="off" aria-pressed="false">Actuel</button><button type="button" data-mode="balanced" aria-pressed="true">Équilibré</button><button type="button" data-mode="expressive" aria-pressed="false">Expressif</button><label><input type="checkbox" checked> Halo des images</label><p class="kp-exploration-note">Comparer les versions sur toutes les pages. Palette et typographie inchangées.</p></div>';
-  document.body.append(panel);
-  panel.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {
-    mode = button.dataset.mode;
-    panel.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
-    panel.querySelector('summary span').textContent = { off: 'Version actuelle', balanced: 'Équilibrée', expressive: 'Expressive' }[mode];
-    applyMode();
-  }));
-  panel.querySelector('input').addEventListener('change', event => {
-    html.dataset.kpHalo = event.target.checked ? 'on' : 'off';
-  });
+  if (showControls) {
+    const panel = document.createElement('details');
+    panel.className = 'kp-exploration-panel';
+    panel.innerHTML = '<summary>Exploration 01 · <span>Équilibrée</span></summary><div class="kp-exploration-options"><button type="button" data-mode="off" aria-pressed="false">Actuel</button><button type="button" data-mode="balanced" aria-pressed="true">Équilibré</button><button type="button" data-mode="expressive" aria-pressed="false">Expressif</button><label><input type="checkbox" checked> Halo des images</label><p class="kp-exploration-note">Comparer les versions sur toutes les pages. Palette et typographie inchangées.</p></div>';
+    document.body.append(panel);
+    panel.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {
+      mode = button.dataset.mode;
+      panel.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      panel.querySelector('summary span').textContent = { off: 'Version actuelle', balanced: 'Équilibrée', expressive: 'Expressive' }[mode];
+      applyMode();
+    }));
+    panel.querySelector('input').addEventListener('change', event => {
+      html.dataset.kpHalo = event.target.checked ? 'on' : 'off';
+    });
+  }
   html.dataset.kpHalo = 'on';
 
   function applyMode() {

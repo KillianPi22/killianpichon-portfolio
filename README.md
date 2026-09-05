@@ -96,15 +96,17 @@ donc plus de corriger la chaine de ses deux voisins.
 Les chemins de medias s'ecrivent nus, sans `window.__asset(...)` : la resolution
 se fait au chargement.
 
-<!-- L'exploration reste opt-in ; retirer les deux inclusions motion-exploration
-     dans index.html suffit a la retirer du site sans toucher au contenu. -->
+<!-- Retirer les deux inclusions motion-exploration dans index.html suffit
+     a retirer les effets sans toucher au contenu. -->
 
-## Exploration de mouvement (prototype)
+## Mouvement et profondeur
 
-Ouvrir `/?lang=fr&explore=1#/project/hurtubise` sur le serveur local pour
-comparer **Actuel**, **Equilibre** et **Expressif** dans le panneau en bas a
-gauche. Sans `explore=1`, la version validee reste affichee. Cette exploration
-vit sur `codex/design-motion-exploration`, issue du commit valide `48d69c6`.
+La version equilibree validee est active par defaut sur le site public, sans
+parametre d'URL ni panneau de reglage. Elle respecte la reduction des mouvements.
+Ajouter `?lang=fr&explore=1` avant le fragment d'une page permet de retrouver
+le panneau de comparaison **Actuel**, **Equilibre** et **Expressif** en bas a
+gauche. L'iteration a ete validee sur `codex/design-motion-exploration`, puis
+integree a `main` pour publication.
 
 Direction choisie : mouvement equilibre, palette et typographie conservees,
 recadrage leger autorise dans les vignettes, images entieres dans la visionneuse.

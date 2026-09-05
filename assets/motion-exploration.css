@@ -1,4 +1,4 @@
-/* Exploration opt-in : ?explore=1. La palette et les polices viennent du site. */
+/* Mouvement valide ; panneau de comparaison via ?explore=1. Palette et polices du site. */
 [data-kp-explore="on"] #root{position:relative;z-index:1}
 [data-kp-explore="on"] .project-media-grid{
   grid-template-columns:repeat(6,minmax(0,1fr))!important;
