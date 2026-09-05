@@ -108,6 +108,11 @@ le panneau de comparaison **Actuel**, **Equilibre** et **Expressif** en bas a
 gauche. L'iteration a ete validee sur `codex/design-motion-exploration`, puis
 integree a `main` pour publication.
 
+Les scripts de donnees et les fichiers de mouvement portent un parametre de
+version dans `index.html`. Le mettre a jour quand ces fichiers changent lors
+d'une publication, afin d'eviter de melanger une page recente avec des donnees
+encore presentes dans le cache du navigateur.
+
 Direction choisie : mouvement equilibre, palette et typographie conservees,
 recadrage leger autorise dans les vignettes, images entieres dans la visionneuse.
 References : [Foundry](https://www.foundryuk.com/) pour les apparitions de texte
