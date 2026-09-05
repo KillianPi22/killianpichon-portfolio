@@ -9,6 +9,8 @@ Ce fichier s'applique à l'ensemble du dépôt. Avant toute modification, lire a
 - Maintenir la compatibilité avec GitHub Pages. Préserver notamment `CNAME` et `.nojekyll`, les chemins sensibles à la casse et le fonctionnement du site statique sans serveur applicatif.
 - Ne pas fusionner dans `main`, pousser directement sur `main` ou modifier la configuration de publication sans confirmation explicite du propriétaire.
 - Limiter chaque intervention au périmètre demandé et ne pas supprimer du contenu ou des médias existants sans autorisation.
+- Avant toute intervention, comparer la branche de travail à la version actuelle de `main` pour ne pas réintroduire une ancienne version du site.
+- Une modification visuelle des médias ne doit jamais modifier leur accès NDA, leur chiffrement, leurs sources vidéo ou leur mode de lecture intégré. Vérifier ces états avant et après ; ne les changer que sur demande explicite.
 
 ## Développement
 

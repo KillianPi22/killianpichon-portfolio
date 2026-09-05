@@ -43,10 +43,10 @@ demander.
 ### Videos de la galerie
 
 Chaque video ajoute une tuile a la grille de medias. La tuile reste une affiche
-avec son triangle de lecture : **l'iframe n'est creee qu'au clic**, donc une
-fiche projet n'emet aucune requete vers YouTube, Instagram, Google Drive ou
-Facebook tant que personne ne demande la video. C'est ce qui garde le site
-coherent avec sa banniere de consentement.
+avec son triangle de lecture : **l'iframe n'est creee qu'au clic**. Les vignettes
+officielles YouTube sont chargees depuis `i.ytimg.com` avant la lecture, a la
+demande du proprietaire. Aucun lecteur ni script de suivi n'est ajoute avant
+le clic. Les fiches chiffrees ne chargent aucun apercu video avant deverrouillage.
 
 Au clic, le lecteur s'ouvre **au-dessus de la grille**, dans le meme bloc de
 medias, et la grille garde exactement sa geometrie. Il a d'abord ete essaye dans
@@ -57,6 +57,27 @@ un reel Instagram, reconnus a leur adresse.
 
 Un second clic sur la meme tuile arrete la video, comme la touche Echap. Une
 seule video joue a la fois.
+
+Les vignettes gardent un format 16:9 avec au plus trois colonnes sur ordinateur,
+deux sur mobile. Le contour accentue indique le survol, le focus clavier et la
+video selectionnee pendant la lecture, sans ajouter de texte sur l'image.
+
+YouTube utilise la vignette officielle de chaque video. Instagram utilise une
+copie locale preparee depuis les metadonnees officielles de la publication.
+En cas d'indisponibilite, `videoPosters` (tableau dans l'ordre de `videoUrls`)
+permet de fournir une image par video ; `videoPoster` reste l'image de la premiere.
+Les videos hebergees sur Drive conservent ces affiches locales. En dernier
+recours, la fiche utilise `heroImage`, la premiere image de galerie ou `thumb`.
+
+Pour actualiser les apercus Instagram publics, executer avec Node 20+ et le
+module `sharp` disponible : `node tools/update-video-posters.cjs`. Un chemin
+vers le module `sharp` peut aussi etre passe en premier argument. Le script
+ignore les fiches protegees et masquees, conserve l'apercu precedent si Instagram
+bloque l'acces, et compresse les images en WebP (960 px maximum). Il genere
+`data/video-posters.js` et `assets/video-posters/`, a inclure dans la livraison.
+Il ne demande aucun code d'acces et ne lit aucun contenu chiffre. Pour une video
+d'une fiche protegee, choisir son affiche dans la fiche via l'editeur, sans
+exporter sa source vers ce registre public.
 
 `trailerEmbedDisabled` retire la tuile et laisse un bouton sortant. A reserver
 aux sources qui refusent reellement l'integration : *Hurtubise* l'a porte a tort

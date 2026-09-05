@@ -173,7 +173,12 @@ button{color:inherit}
 .view-all-button[aria-expanded="false"] .view-all-toggle-icon{animation:kp-toggle-pulse 2.6s cubic-bezier(.45,0,.55,1) infinite}
 .view-all-button:hover .view-all-toggle-icon,.view-all-button:focus-visible .view-all-toggle-icon{animation:none;color:var(--accent-hover);transform:scale(1.15)}
 @keyframes kp-toggle-pulse{0%,52%,100%{transform:scale(1);opacity:.85}18%{transform:scale(1.32);opacity:1}36%{transform:scale(1);opacity:.85}}
-.project-media-tile{appearance:none;width:100%;padding:0;text-align:inherit}
+.project-media-grid{min-width:0;align-content:start}
+.project-media-tile{appearance:none;width:100%;min-width:0;aspect-ratio:16/9;padding:0;text-align:inherit}
+.project-media-tile:hover:not(:disabled),.project-media-tile:focus-visible,.project-media-tile[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:2px;box-shadow:0 0 16px var(--accent-glow)}
+.project-media-tile:focus-visible .project-video-play,.project-media-tile:hover .project-video-play,.project-media-tile[aria-pressed="true"] .project-video-play{border-color:var(--accent);color:var(--accent)}
+.project-video-play{width:48px;height:48px;border-radius:50%;background:rgba(10,10,11,.8);border:2px solid var(--text-heading);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-heading)}
+.project-video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
 .project-card-lock{position:absolute;top:50%;left:50%;z-index:1;width:34px;height:25px;transform:translate(-50%,-50%);border-radius:4px;background:var(--text-faint)}
 .project-card-lock::before{content:'';position:absolute;left:50%;bottom:100%;width:20px;height:14px;transform:translateX(-50%);border:3px solid var(--text-faint);border-bottom:0;border-radius:11px 11px 0 0}
 /* Tuile sous NDA : la vignette reste visible, assombrie pour que le verrou se
@@ -322,8 +327,7 @@ button{color:inherit}
   .project-page-container{padding:0 var(--container-pad)!important}
   .project-hero-grid{grid-template-columns:1fr!important;gap:var(--space-6)!important}
   .project-summary{min-width:0}
-  .project-media-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-auto-rows:140px!important;min-height:0!important}
-  .project-media-tile{grid-row:auto!important;min-height:140px}
+  .project-media-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .project-details-grid{grid-template-columns:1fr!important;gap:var(--space-5)!important;margin-top:var(--space-7)!important}
   .project-nav-edge{top:50%!important;top:50dvh!important;bottom:auto!important;transform:translateY(-50%)!important}
   .project-nav-edge-prev{left:12px!important}
@@ -694,6 +698,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
   <script src="data/projects.js"></script>
+  <script src="data/video-posters.js"></script>
   <!-- Traduction francaise. Meme regle que les fiches : charge avant
        l'application, en script classique. Differe, l'anglais apparaitrait une
        fraction de seconde avant la bascule. -->
@@ -2500,6 +2505,7 @@ function prepareProject(id, p) {
   if (p.thumb) project.thumbImage = window.__asset(p.thumb);
   if (p.heroImage) project.heroImage = window.__asset(p.heroImage);
   if (p.videoPoster) project.videoPoster = window.__asset(p.videoPoster);
+  if (p.videoPosters) project.videoPosters = p.videoPosters.map(src => src ? window.__asset(src) : null);
   if (p.galleryImages) project.galleryImages = p.galleryImages.map(src => window.__asset(src));
   return project;
 }
@@ -3155,6 +3161,7 @@ function videoEmbed(url) {
   const ig = url.match(/instagram\.com\/(?:reel|p)\/([\w-]+)/);
   if (ig) return {
     src: `https://www.instagram.com/reel/${ig[1]}/embed`,
+    poster: window.KP_VIDEO_POSTERS?.[url] ? window.__asset(window.KP_VIDEO_POSTERS[url]) : null,
     vertical: true
   };
   const gdrive = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
@@ -3169,6 +3176,7 @@ function videoEmbed(url) {
   const yt = url.match(/(?:youtu\.be\/|v=|shorts\/)([\w-]+)/);
   if (yt) return {
     src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1`,
+    poster: `https://i.ytimg.com/vi/${yt[1]}/hqdefault.jpg`,
     vertical: url.includes('/shorts/')
   };
   return null;
@@ -3196,8 +3204,8 @@ function ProjectScreenContent({
   // avant lui portent des titres.
   const relatedIds = (p.relatedProjects || []).map(t => PROJECT_DATA[t] ? t : TITLE_TO_ID[t]).filter(Boolean);
   // Lecteur en place : la tuile de la galerie reste une affiche tant qu'on ne
-  // clique pas. L'iframe, et donc la requete vers l'hebergeur, n'arrive qu'au
-  // clic — la page ne charge aucun tiers d'elle-meme.
+  // clique pas. Seule la vignette officielle YouTube peut charger avant le clic.
+  // Ce composant n'est monte qu'apres deverrouillage des fiches protegees.
   const [playingVideo, setPlayingVideo] = React.useState(null);
   // videoUrls porte plusieurs videos ; trailerUrl reste la forme a une seule
   // video, celle que l'editeur ecrit et que portent les autres fiches.
@@ -3213,7 +3221,8 @@ function ProjectScreenContent({
     video: true,
     embed: embed,
     index: n,
-    poster: n === 0 ? p.videoPoster || null : null
+    poster: embed.poster || p.videoPosters?.[n] || (n === 0 ? p.videoPoster : null),
+    fallbackPoster: p.videoPosters?.[n] || (n === 0 ? p.videoPoster : null) || p.heroImage || galleryImages[0] || p.thumbImage || null
   })), ...collageImages.map(src => ({
     src
   })), ...(p.externalTile && p.externalUrl ? [{
@@ -3370,6 +3379,8 @@ function ProjectScreenContent({
     style: {
       display: 'flex',
       flexDirection: 'column',
+      minWidth: 0,
+      alignSelf: 'start',
       gap: 'var(--space-3)'
     }
   }, playingVideo !== null && videoEmbeds[playingVideo] && React.createElement("div", {
@@ -3403,13 +3414,12 @@ function ProjectScreenContent({
     className: "project-media-grid",
     style: {
       display: 'grid',
-      gridTemplateColumns: `repeat(${Math.min(3, tiles.length)}, 1fr)`,
-      gridAutoRows: 'minmax(90px, 1fr)',
-      gap: 'var(--space-3)',
-      minHeight: '340px'
+      gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, max(180px, calc((100% - 2 * var(--space-3)) / 3))), 1fr))',
+      gap: 'var(--space-3)'
     }
   }, tiles.map((t, i) => React.createElement(t.external ? "a" : "button", {
     className: "project-media-tile",
+    "aria-pressed": t.video ? playingVideo === t.index : undefined,
     type: t.external ? undefined : "button",
     disabled: t.external ? undefined : !t.video && !t.src,
     // Une tuile qui quitte le site est un lien, pas un bouton : le clic du
@@ -3428,23 +3438,26 @@ function ProjectScreenContent({
       if (t.video) setPlayingVideo(playingVideo === t.index ? null : t.index);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
     },
     style: {
-      gridRow: i === 0 && tiles.length > 1 ? 'span 2' : 'span 1',
       borderRadius: 'var(--radius-sm)',
       border: '1px solid var(--line-subtle)',
       overflow: 'hidden',
       position: 'relative',
       cursor: t.video || t.src || t.external ? 'pointer' : 'default',
       textDecoration: t.external ? 'none' : undefined,
-      background: t.src ? `url(${t.src}) center/cover` : t.video ? t.poster ? `linear-gradient(rgba(10,10,11,.28),rgba(10,10,11,.5)), url(${t.poster}) center/cover` : 'linear-gradient(150deg,#2a2723,#151417 40%,#3a1c10)' : 'linear-gradient(150deg,rgba(28,29,34,.55),rgba(17,17,20,.4) 55%,rgba(36,22,16,.35))',
+      background: t.src ? `url(${t.src}) center/cover` : t.video ? t.fallbackPoster ? `url(${t.fallbackPoster}) center/cover` : 'linear-gradient(150deg,#2a2723,#151417 40%,#3a1c10)' : 'linear-gradient(150deg,rgba(28,29,34,.55),rgba(17,17,20,.4) 55%,rgba(36,22,16,.35))',
       transition: 'box-shadow var(--duration-base) var(--ease-out)'
-    },
-    onMouseEnter: e => {
-      e.currentTarget.style.boxShadow = 'inset 0 0 0 1px var(--accent), 0 0 16px var(--accent-glow)';
-    },
-    onMouseLeave: e => {
-      e.currentTarget.style.boxShadow = 'none';
     }
-  }, t.video && React.createElement("div", {
+  }, t.video && t.poster && React.createElement("img", {
+    key: t.poster,
+    className: "project-video-poster",
+    src: t.poster,
+    alt: "",
+    width: 480,
+    height: 360,
+    loading: "lazy",
+    referrerPolicy: "no-referrer",
+    onError: e => { e.currentTarget.hidden = true; }
+  }), t.video && React.createElement("div", {
     style: {
       position: 'absolute',
       inset: 0,
@@ -3453,18 +3466,8 @@ function ProjectScreenContent({
       justifyContent: 'center'
     }
   }, React.createElement("span", {
-    style: {
-      width: '40px',
-      height: '40px',
-      borderRadius: '50%',
-      background: 'rgba(10,10,11,.55)',
-      border: '1px solid var(--line-strong)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '13px',
-      color: 'var(--text-heading)'
-    }
+    className: "project-video-play",
+    "aria-hidden": true
   }, "\u25B6")), t.external && React.createElement("div", {
     style: {
       position: 'absolute',
