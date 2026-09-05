@@ -1,0 +1,19 @@
+/* Variante opt-in ?explore=2 : les dimensions, couleurs et contours restent ceux du site. */
+@media (prefers-reduced-motion:no-preference){
+  [data-kp-organic="on"][data-kp-motion="on"] .kp-surface:not(.about-profile-figure)>.kp-warp-canvas{
+    transform:scale(1.045);
+  }
+  [data-kp-organic="on"][data-kp-motion="on"] .kp-panel-depth{transform:none}
+  [data-kp-organic="on"][data-kp-motion="on"] [data-kp-organic-active="true"]{
+    transform:perspective(1800px) translate3d(var(--kp-float-x,0px),var(--kp-float-y,0px),var(--kp-float-z,0px)) rotateX(var(--kp-float-rx,0deg)) rotateY(var(--kp-float-ry,0deg)) rotateZ(var(--kp-float-rz,0deg));
+    transform-origin:center;
+    will-change:transform;
+  }
+  [data-kp-organic="on"] .kp-surface[data-kp-organic-active="true"]{z-index:2}
+  /* Une carte inclinee ne doit pas declencher un nouvel alignement du carrousel. */
+  [data-kp-organic="on"] .clients-track:has([data-kp-organic-active="true"]){scroll-snap-type:none!important}
+}
+.kp-inclination-controls{display:flex;flex-wrap:wrap;gap:10px;width:100%;border-top:1px solid var(--line-subtle);padding-top:12px}
+.kp-inclination-controls button{min-height:44px}
+.kp-inclination-controls button:disabled{cursor:default;opacity:.55}
+@media print{[data-kp-organic-active]{transform:none!important;will-change:auto!important}}

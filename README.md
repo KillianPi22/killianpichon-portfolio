@@ -148,6 +148,59 @@ du pointeur ou au focus ; la saisie reste stable. Cette profondeur est inactive
 au tactile et avec la reduction des mouvements. Les commandes, le consentement
 et le controle des acces gardent leur fonctionnement existant.
 
+<!-- L'apercu ci-dessous n'est pas actif sur les URLs normales. -->
+
+### Apercu de cadres flottants
+
+L'exploration `codex/organic-floating-frames` est publiee pour essai sur appareil
+reel : ouvrir [l'apercu HTTPS](https://killianpichon.art/?lang=fr&explore=2#/project/hurtubise)
+pour comparer **Version publiee** et **Flottant**. Le cadre entier suit le curseur
+avec un ressort amorti : environ 3 degres pour les images, 2 pour les fenetres,
+et quelques pixels de translation. Le halo et la composition valides sont conserves.
+La navigation interne conserve la langue et l'apercu selectionnes.
+Le carrousel suspend son alignement automatique seulement pendant la rotation
+d'une carte, pour eviter qu'il ne se recale a chaque image de l'animation.
+
+`assets/organic-floating.js` et `assets/organic-floating.css` ajoutent cette variante
+independamment du moteur de mouvement publie. Les transformations CSS 3D conservent
+les vrais boutons et champs HTML ; aucun contexte WebGL, script tiers, proxy,
+chargement de media ou acces supplementaire n'est introduit. Les sources de medias,
+le chiffrement, les verrous NDA et le consentement ne sont pas modifies.
+
+Le mouvement s'arrete apres stabilisation, hors onglet, au clavier
+et pendant la saisie. Les anciens cadres sont nettoyes lors des changements de
+page ou lorsqu'ils deviennent des tuiles vides. Cette variante s'active uniquement
+avec `explore=2` ; les URLs normales gardent la version equilibree validee.
+
+Sur telephone et tablette, **Activer l'inclinaison** utilise `deviceorientation`
+uniquement apres un geste volontaire et l'autorisation du navigateur lorsqu'elle
+est requise. Le premier relevé definit la position de lecture ; **Recentrer** et
+un changement portrait/paysage recalibrent cette position. La rotation est limitee
+a 0,75 degre pour les images, 0,5 pour les fenetres, avec moins d'un pixel de
+translation. Seuls les cadres visibles bougent. Une zone neutre filtre le bruit.
+Les donnees du capteur ne sont ni conservees ni envoyees. La desactivation, le
+passage en arriere-plan et la reduction des mouvements retirent l'ecouteur.
+Sans capteur, sans autorisation ou hors contexte securise, le tactile reste stable.
+Un appareil reel doit acceder a une version HTTPS ; ne pas ouvrir les routes de
+l'editeur local au reseau pour cet essai.
+Sur iPhone, ouvrir le lien dans Safari, deplier **Exploration 02** en bas a gauche,
+appuyer sur **Activer l'inclinaison**, puis autoriser le mouvement si Safari le
+demande. Garder sa position de lecture au demarrage et utiliser **Recentrer**
+au besoin. Aucun acces reseau a l'editeur local n'est necessaire.
+
+Verification de l'apercu : rendu HTTP aux largeurs 390, 768 et 1920 px,
+navigation interne, comparaison, visionneuse, consentement, champ NDA et tuiles
+a venir. Le controleur d'inclinaison a ete verifie avec des evenements simules
+(autorisation, refus, absence de capteur, recentrage, paysage, limites, saisie,
+onglet masque et reduction des mouvements). L'essai des capteurs et de la demande
+d'autorisation sur un vrai appareil iOS/Android reste a faire.
+Les fichiers ajoutes se chargent en HTTP 200. Les controles ont aussi retrouve
+une requete automatique vers `/favicon.ico` en 404 et des messages de canal
+d'extension du navigateur, egalement observes hors de cette variante.
+
+References techniques : [transformations CSS 3D (MDN)](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Transforms/Using)
+et [orientation de l'appareil (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events/Detecting_device_orientation).
+
 ## Version francaise
 
 L'anglais est la source unique. Il reste ecrit en clair dans `index.html` et
