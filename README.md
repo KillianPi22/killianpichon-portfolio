@@ -176,8 +176,8 @@ Sur telephone et tablette, **Activer l'inclinaison** utilise `deviceorientation`
 uniquement apres un geste volontaire et l'autorisation du navigateur lorsqu'elle
 est requise. Le premier relevé definit la position de lecture ; **Recentrer** et
 un changement portrait/paysage recalibrent cette position. La rotation est limitee
-a 1,125 degre pour les images, 0,75 pour les fenetres, avec au maximum 1,2 px de
-translation laterale. Seuls les cadres visibles bougent. Une zone neutre filtre le bruit.
+a 6 degres pour les images, 3 pour les fenetres, avec au maximum 8 px et 4 px de
+translation laterale respectivement. Seuls les cadres visibles bougent. Une zone neutre filtre le bruit.
 Les donnees du capteur ne sont ni conservees ni envoyees. La desactivation, le
 passage en arriere-plan et la reduction des mouvements retirent l'ecouteur.
 Sans capteur, sans autorisation ou hors contexte securise, le tactile reste stable.
@@ -238,9 +238,29 @@ proprietaire, sur le meme apercu HTTPS avec `explore=2`.
 Verification HTTP aux largeurs 390, 768 et 1440 px : message entierement lisible,
 navigation vers Hurtubise conservee, script en HTTP 200 et console sans erreur.
 Les scenarios simules confirment les etats de refus, de capteur actif et de
-mouvement recu, ainsi que les limites et arrets existants. Le retablissement de
-l'autorisation sur l'iPhone du proprietaire reste a confirmer sur cet appareil.
+mouvement recu, ainsi que les limites et arrets existants. Le proprietaire a
+ensuite confirme « Mouvement recu » sur son iPhone : le capteur est bien actif.
 Reference : [gestion des autorisations dans WebKit](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/dom/DeviceOrientationAndMotionAccessController.cpp).
+
+Reponse mobile renforcee sur `codex/mobile-inclination-strength` : les reglages
+du capteur sont separes de l'amplitude souris validee. Une inclinaison de 5 degres
+produit environ 3,12 degres de rotation et 4,16 px de translation sur une image,
+contre 0,3375 degre et 0,36 px auparavant. Les limites sont de 6 degres / 8 px
+pour les images et 3 degres / 4 px pour les fenetres et cartes clients ; elles
+sont atteintes a 8,8 degres d'inclinaison. La profondeur est de 3 px et 2 px
+respectivement. Le ressort, la zone neutre, le recentrage, les permissions et
+les arrets existants restent identiques. Aucun nouveau calcul continu ni appel
+reseau n'est ajoute. Le reglage souris conserve exactement ses valeurs.
+
+Fichiers : `assets/organic-floating.js` pour les parametres capteur, `index.html`
+pour sa version de cache, et ce README. L'essai rejoint `main` pour publication
+a la demande du proprietaire, via l'apercu HTTPS avec `explore=2`.
+Verification HTTP aux largeurs 390, 768 et 1440 px,
+navigation vers les projets, ouverture et fermeture de la visionneuse, script
+en HTTP 200 et console sans erreur. Les evenements simules verifient la reponse
+a 5 degres, les plafonds, le recentrage, le bruit, les refus, la saisie, les tuiles
+vides, la reduction des mouvements et les amplitudes souris inchangees. Le rendu
+en mouvement sur un vrai iPhone reste a valider par le proprietaire.
 
 ## Version francaise
 

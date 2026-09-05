@@ -9,7 +9,12 @@
   const selector = '.kp-surface,.kp-panel-depth';
   const states = new Map(), active = new Set();
   const properties = ['x', 'y', 'z', 'rx', 'ry', 'rz'];
-  const intensity = 1.5; // +50 % d'amplitude, sans changer le ressort ni la sensibilite du capteur.
+  const intensity = 1.5; // Amplitude souris validee ; les limites capteur restent independantes.
+  // Les axes capteur vont de -.5 a .5 : au maximum 6 degres / 8 px pour une image,
+  // 3 degres / 4 px pour une fenetre. Une inclinaison de 8,8 degres atteint la limite.
+  const sensorResponse = 16;
+  const sensorImageMotion = { angle: 12, travel: 16, depth: 3 };
+  const sensorPanelMotion = { angle: 6, travel: 8, depth: 2 };
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
   let floating = true, hovered = null, frameId = 0, lastFrame = 0;
   let sensorOn = false, sensorPending = false, permissionAttempt = 0, sensorTimer = 0;
@@ -182,7 +187,7 @@
     const angle = (screen.orientation?.angle ?? window.orientation ?? 0) * Math.PI / 180;
     const pitch = delta(event.beta, baseline.beta), roll = delta(event.gamma, baseline.gamma);
     // Zone neutre et quantification : le bruit du capteur ne maintient pas une animation au repos.
-    const axis = value => Math.round(clamp(Math.sign(value) * Math.max(0, Math.abs(value) - .8) / 28, -.5, .5) * 100) / 100;
+    const axis = value => Math.round(clamp(Math.sign(value) * Math.max(0, Math.abs(value) - .8) / sensorResponse, -.5, .5) * 100) / 100;
     inclination = { x: axis(roll * Math.cos(angle) + pitch * Math.sin(angle)), y: axis(pitch * Math.cos(angle) - roll * Math.sin(angle)) };
     if (!baseline.movementReceived && (inclination.x || inclination.y)) {
       baseline.movementReceived = true;
@@ -241,11 +246,13 @@
         s.vx = s.vy = s.vlift = 0;
         if (!s.tlift) { reset(s); return; }
       }
-      const angle = (s.sensor ? (s.image ? 1.5 : 1) : s.angle) * intensity;
-      const travel = (s.sensor ? 1.6 : s.travel) * intensity;
+      const sensorMotion = s.image ? sensorImageMotion : sensorPanelMotion;
+      const angle = s.sensor ? sensorMotion.angle : s.angle * intensity;
+      const travel = s.sensor ? sensorMotion.travel : s.travel * intensity;
+      const depth = s.sensor ? sensorMotion.depth : s.depth * intensity;
       const values = {
         x: (s.x * travel).toFixed(3) + 'px', y: (s.y * travel * .7).toFixed(3) + 'px',
-        z: (s.lift * (s.sensor ? .5 : s.depth) * intensity).toFixed(3) + 'px',
+        z: (s.lift * depth).toFixed(3) + 'px',
         rx: (-s.y * angle).toFixed(3) + 'deg', ry: (s.x * angle).toFixed(3) + 'deg',
         rz: (s.sensor ? 0 : s.x * s.y * (s.image ? .7 : .4) * intensity).toFixed(3) + 'deg'
       };
