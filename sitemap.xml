@@ -4,7 +4,7 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://killianpichon.art/</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/?lang=fr"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/"/>
@@ -12,25 +12,22 @@
       <image:loc>https://killianpichon.art/assets/og-image.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/celestia/cathedral-nave.jpg</image:loc>
-    </image:image>
-    <image:image>
       <image:loc>https://killianpichon.art/projects/hurtubise/dome-neon-blue-1.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/volcano/iceland-cliffs.jpg</image:loc>
+      <image:loc>https://killianpichon.art/projects/volcano/installation-view-thumb.webp</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/melanie-martinez/k12-seesaw.jpg</image:loc>
+      <image:loc>https://killianpichon.art/projects/melanie-martinez/mansion-arch.avif</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/traveler/planet-strands.png</image:loc>
+      <image:loc>https://killianpichon.art/projects/traveler/asteroid-field-thumb.webp</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://killianpichon.art/projects/paralleles/installation-neon-x.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/batiscan/model-top-labels.avif</image:loc>
+      <image:loc>https://killianpichon.art/projects/batiscan/model-tablet-poi.avif</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://killianpichon.art/projects/1858-epernay/mapping-green-facade.jpg</image:loc>
@@ -50,7 +47,7 @@
        Les images sont les memes : elles ne sont pas dupliquees ici. -->
   <url>
     <loc>https://killianpichon.art/?lang=fr</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-05</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/?lang=fr"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/"/>
