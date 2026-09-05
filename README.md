@@ -96,6 +96,51 @@ donc plus de corriger la chaine de ses deux voisins.
 Les chemins de medias s'ecrivent nus, sans `window.__asset(...)` : la resolution
 se fait au chargement.
 
+<!-- L'exploration reste opt-in ; retirer les deux inclusions motion-exploration
+     dans index.html suffit a la retirer du site sans toucher au contenu. -->
+
+## Exploration de mouvement (prototype)
+
+Ouvrir `/?lang=fr&explore=1#/project/hurtubise` sur le serveur local pour
+comparer **Actuel**, **Equilibre** et **Expressif** dans le panneau en bas a
+gauche. Sans `explore=1`, la version validee reste affichee. Cette exploration
+vit sur `codex/design-motion-exploration`, issue du commit valide `48d69c6`.
+
+Direction choisie : mouvement equilibre, palette et typographie conservees,
+recadrage leger autorise dans les vignettes, images entieres dans la visionneuse.
+References : [Foundry](https://www.foundryuk.com/) pour les apparitions de texte
+et le fond floute ; [Yanne Sidibe](https://www.yannesidibe.com/work) pour la
+courbure des visuels pendant le defilement.
+
+`assets/motion-exploration.css` et `assets/motion-exploration.js` ajoutent les
+revelations de paragraphes, la profondeur au pointeur, la courbure des images
+et une galerie qui remplit la hauteur de la presentation sur ordinateur. Les
+rangees suivent l'ordre des medias, avec un visuel principal plus grand quand
+leur nombre le permet. Sur tablette le texte precede la galerie ; sur mobile
+les medias utilisent deux colonnes avec une premiere image large si necessaire.
+
+Le fond reprend un media deja affiche, reduit a 128 x 80 px, floute a rayon
+constant. A la demande du proprietaire, le halo conserve 80 % de la saturation
+du media et une opacite de 23 % pour rendre ses couleurs plus presentes,
+sans modifier la palette de l'interface. La courbure utilise Canvas 2D (24 bandes sur ordinateur,
+12 sur ecran tactile), une resolution plafonnee et un rendu limite aux medias
+visibles. Les nouvelles animations s'arretent au repos, dans un onglet masque,
+et avec `prefers-reduced-motion`. Le defilement reste natif. Aucune nouvelle
+bibliotheque ni source externe n'est ajoutee. Les acces NDA, sources video,
+lecteurs integres, textes et fichiers de publication restent inchanges.
+
+Le halo colore est valide. Les visuels utilisent une seule decoupe arrondie,
+sans filet interieur, avec un debord ajuste a la perspective. Une tuile devenue
+vide ou « Coming Soon » retire son ancien calque, y compris lors d'un passage
+direct d'un projet a l'autre ; ces tuiles ne fournissent jamais d'image au halo.
+
+Les cartes des clients et les fenetres (demo, visionneuse, acces protege,
+consentement statistiques) suivent legerement la souris : au maximum 2,5 degres
+pour un logo et 1,2 degre pour une fenetre. Elles reviennent a plat a la sortie
+du pointeur ou au focus ; la saisie reste stable. Cette profondeur est inactive
+au tactile et avec la reduction des mouvements. Les commandes, le consentement
+et le controle des acces gardent leur fonctionnement existant.
+
 ## Version francaise
 
 L'anglais est la source unique. Il reste ecrit en clair dans `index.html` et
