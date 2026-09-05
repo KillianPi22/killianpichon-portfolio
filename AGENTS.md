@@ -8,6 +8,7 @@ Ce fichier s'applique à l'ensemble du dépôt. Avant toute modification, lire a
 - Ne jamais supprimer, renommer, remplacer ou ignorer `CNAME`. Conserver le domaine personnalisé et vérifier que sa valeur reste intacte.
 - Maintenir la compatibilité avec GitHub Pages. Préserver notamment `CNAME` et `.nojekyll`, les chemins sensibles à la casse et le fonctionnement du site statique sans serveur applicatif.
 - Ne pas fusionner dans `main`, pousser directement sur `main` ou modifier la configuration de publication sans confirmation explicite du propriétaire.
+- Une demande explicite du propriétaire de « publier sur le site » ou « mettre en ligne » vaut autorisation de fusionner les modifications concernées dans `main`, de pousser `main` et de déclencher le déploiement habituel. Ne pas redemander confirmation pour ces étapes. Cette autorisation ne couvre pas des modifications non demandées ni un changement de configuration de publication.
 - Limiter chaque intervention au périmètre demandé et ne pas supprimer du contenu ou des médias existants sans autorisation.
 - Avant toute intervention, comparer la branche de travail à la version actuelle de `main` pour ne pas réintroduire une ancienne version du site.
 - Une modification visuelle des médias ne doit jamais modifier leur accès NDA, leur chiffrement, leurs sources vidéo ou leur mode de lecture intégré. Vérifier ces états avant et après ; ne les changer que sur demande explicite.
