@@ -9,6 +9,7 @@
   const selector = '.kp-surface,.kp-panel-depth';
   const states = new Map(), active = new Set();
   const properties = ['x', 'y', 'z', 'rx', 'ry', 'rz'];
+  const intensity = 1.5; // +50 % d'amplitude, sans changer le ressort ni la sensibilite du capteur.
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
   let floating = true, hovered = null, frameId = 0, lastFrame = 0;
   let sensorOn = false, sensorPending = false, permissionAttempt = 0, sensorTimer = 0;
@@ -233,13 +234,13 @@
         s.vx = s.vy = s.vlift = 0;
         if (!s.tlift) { reset(s); return; }
       }
-      const angle = s.sensor ? (s.image ? 1.5 : 1) : s.angle;
-      const travel = s.sensor ? 1.6 : s.travel;
+      const angle = (s.sensor ? (s.image ? 1.5 : 1) : s.angle) * intensity;
+      const travel = (s.sensor ? 1.6 : s.travel) * intensity;
       const values = {
         x: (s.x * travel).toFixed(3) + 'px', y: (s.y * travel * .7).toFixed(3) + 'px',
-        z: (s.lift * (s.sensor ? .5 : s.depth)).toFixed(3) + 'px',
+        z: (s.lift * (s.sensor ? .5 : s.depth) * intensity).toFixed(3) + 'px',
         rx: (-s.y * angle).toFixed(3) + 'deg', ry: (s.x * angle).toFixed(3) + 'deg',
-        rz: (s.sensor ? 0 : s.x * s.y * (s.image ? .7 : .4)).toFixed(3) + 'deg'
+        rz: (s.sensor ? 0 : s.x * s.y * (s.image ? .7 : .4) * intensity).toFixed(3) + 'deg'
       };
       s.el.dataset.kpOrganicActive = 'true';
       properties.forEach(p => s.el.style.setProperty('--kp-float-' + p, values[p]));

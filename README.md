@@ -155,7 +155,7 @@ et le controle des acces gardent leur fonctionnement existant.
 L'exploration `codex/organic-floating-frames` est publiee pour essai sur appareil
 reel : ouvrir [l'apercu HTTPS](https://killianpichon.art/?lang=fr&explore=2#/project/hurtubise)
 pour comparer **Version publiee** et **Flottant**. Le cadre entier suit le curseur
-avec un ressort amorti : environ 3 degres pour les images, 2 pour les fenetres,
+avec un ressort amorti : environ 4,5 degres pour les images, 3 pour les fenetres,
 et quelques pixels de translation. Le halo et la composition valides sont conserves.
 La navigation interne conserve la langue et l'apercu selectionnes.
 Le carrousel suspend son alignement automatique seulement pendant la rotation
@@ -176,8 +176,8 @@ Sur telephone et tablette, **Activer l'inclinaison** utilise `deviceorientation`
 uniquement apres un geste volontaire et l'autorisation du navigateur lorsqu'elle
 est requise. Le premier relevé definit la position de lecture ; **Recentrer** et
 un changement portrait/paysage recalibrent cette position. La rotation est limitee
-a 0,75 degre pour les images, 0,5 pour les fenetres, avec moins d'un pixel de
-translation. Seuls les cadres visibles bougent. Une zone neutre filtre le bruit.
+a 1,125 degre pour les images, 0,75 pour les fenetres, avec au maximum 1,2 px de
+translation laterale. Seuls les cadres visibles bougent. Une zone neutre filtre le bruit.
 Les donnees du capteur ne sont ni conservees ni envoyees. La desactivation, le
 passage en arriere-plan et la reduction des mouvements retirent l'ecouteur.
 Sans capteur, sans autorisation ou hors contexte securise, le tactile reste stable.
@@ -200,6 +200,25 @@ d'extension du navigateur, egalement observes hors de cette variante.
 
 References techniques : [transformations CSS 3D (MDN)](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Transforms/Using)
 et [orientation de l'appareil (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Device_orientation_events/Detecting_device_orientation).
+
+Essai d'intensite sur `codex/organic-intensity` : l'amplitude de l'apercu est
+augmentee de 50 % via `intensity` dans `assets/organic-floating.js`. A la souris,
+la rotation atteint environ 4,5 degres sur les images et 3 degres sur les fenetres.
+Avec l'inclinaison, elle atteint 1,125 degre et 0,75 degre respectivement, avec
+1,2 px de translation laterale au maximum. Le ressort, la sensibilite, le
+recentrage et les regles d'arret restent identiques. Cet ajustement rejoint `main`
+pour publication a la demande du proprietaire et reste accessible via le lien
+HTTPS avec `explore=2`.
+
+Fichiers de cet essai : `assets/organic-floating.js` pour l'amplitude,
+`index.html` pour actualiser la version du script en cache, et ce README.
+Verification locale via HTTP : largeurs 390, 768 et 1440 px sans debordement,
+survol, ouverture et fermeture de la visionneuse, ressources chargees et console
+sans erreur. Les scenarios simules du controleur passent avec les nouvelles
+limites, notamment le recentrage, la saisie, les tuiles vides et la reduction des
+mouvements. Les chemins sensibles restent refuses ; `CNAME`, `.nojekyll`, les
+donnees des projets et les protections sont inchanges. Le ressenti sur un vrai
+iPhone reste a confirmer.
 
 ## Version francaise
 
