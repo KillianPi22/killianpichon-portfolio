@@ -183,6 +183,8 @@ button{color:inherit}
 .project-media-tile:focus-visible .project-video-play,.project-media-tile:hover .project-video-play,.project-media-tile[aria-pressed="true"] .project-video-play{border-color:var(--accent);color:var(--accent)}
 .project-video-play{width:48px;height:48px;border-radius:50%;background:rgba(10,10,11,.8);border:2px solid var(--text-heading);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-heading)}
 .project-video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+/* Drive impose 300 px a son lecteur interne ; lui reserver cet espace sur mobile. */
+@media(max-width:1024px){.project-video-player{min-height:var(--project-player-min-height,202px);flex-shrink:0}}
 .project-card-lock{position:absolute;top:50%;left:50%;z-index:1;width:34px;height:25px;transform:translate(-50%,-50%);border-radius:4px;background:var(--text-faint)}
 .project-card-lock::before{content:'';position:absolute;left:50%;bottom:100%;width:20px;height:14px;transform:translateX(-50%);border:3px solid var(--text-faint);border-bottom:0;border-radius:11px 11px 0 0}
 /* Tuile sous NDA : la vignette reste visible, assombrie pour que le verrou se
@@ -3171,6 +3173,7 @@ function videoEmbed(url) {
   const gdrive = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (gdrive) return {
     src: `https://drive.google.com/file/d/${gdrive[1]}/preview`,
+    minHeight: 300,
     vertical: false
   };
   if (url.includes('facebook.com')) return {
@@ -3388,7 +3391,10 @@ function ProjectScreenContent({
       gap: 'var(--space-3)'
     }
   }, playingVideo !== null && videoEmbeds[playingVideo] && React.createElement("div", {
+    className: "project-video-player",
     style: {
+      // Ajouter les deux pixels de bordure a la hauteur utile du lecteur.
+      "--project-player-min-height": `${(videoEmbeds[playingVideo].minHeight || 200) + 2}px`,
       position: 'relative',
       // Le lecteur vit hors de la grille : une source verticale peut donc
       // prendre son format sans etirer les rangees de vignettes.

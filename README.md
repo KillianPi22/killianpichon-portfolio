@@ -55,6 +55,23 @@ vertical y faisait passer le bloc de 484 a 2 880 px. Le format suit la source :
 16/9 pleine largeur, ou 9/16 large de 320 px et centre pour un Short YouTube ou
 un reel Instagram, reconnus a leur adresse.
 
+Sur telephone et tablette (jusqu'a 1024 px), le lecteur dispose aussi d'une
+hauteur utile minimale : 300 px pour Drive, dont le sous-lecteur impose cette
+contrainte, et 200 px pour les autres lecteurs. Les deux pixels de bordure
+s'ajoutent a cette hauteur. Un cadre strictement 16/9 pouvait ne laisser que
+188 px sur telephone et couper les commandes du lecteur Drive. Cette limite
+est definie dans `index.html`, par `videoEmbed().minHeight` et
+`.project-video-player` ; les sources, le clic de lecture, les vignettes et les
+dimensions sur ordinateur restent inchanges.
+La hauteur minimale YouTube est documentee dans les
+[exigences du lecteur integre](https://developers.google.com/youtube/iframe_api_reference#Requirements).
+Verification de cette correction en HTTP : lecture de Batiscan, 1858 et La
+Memoire de l'Eau, commandes Drive visibles en entier a 390 px, redimensionnement
+portrait/paysage, formats 768 et 1440 px, arret par la vignette, absence de
+debordement et d'erreur reseau/console. `CNAME`, `.nojekyll`, les sources de medias
+et les protections restent inchanges ; les chemins sensibles du serveur local
+restent refuses. Le test physique sous iOS 26.6 reste a confirmer par le proprietaire.
+
 Un second clic sur la meme tuile arrete la video, comme la touche Echap. Une
 seule video joue a la fois.
 
