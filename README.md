@@ -96,17 +96,16 @@ donc plus de corriger la chaine de ses deux voisins.
 Les chemins de medias s'ecrivent nus, sans `window.__asset(...)` : la resolution
 se fait au chargement.
 
-<!-- Retirer les deux inclusions motion-exploration dans index.html suffit
-     a retirer les effets sans toucher au contenu. -->
-
 ## Mouvement et profondeur
 
-La version equilibree validee est active par defaut sur le site public, sans
-parametre d'URL ni panneau de reglage. Elle respecte la reduction des mouvements.
+Les apparitions et le halo equilibres, ainsi que les cadres flottants valides,
+sont actifs par defaut sur le site public, sans parametre d'URL. Sur ordinateur,
+aucun panneau de reglage n'apparait. Sur telephone et tablette, le panneau
+**Inclinaison** permet d'autoriser le capteur. La reduction des mouvements est respectee.
 Ajouter `?lang=fr&explore=1` avant le fragment d'une page permet de retrouver
-le panneau de comparaison **Actuel**, **Equilibre** et **Expressif** en bas a
-gauche. L'iteration a ete validee sur `codex/design-motion-exploration`, puis
-integree a `main` pour publication.
+le premier moteur et son panneau de comparaison **Actuel**, **Equilibre** et
+**Expressif** en bas a gauche. `explore=2` permet de comparer ce moteur aux cadres
+flottants, sans changer la version par defaut.
 
 Les scripts de donnees et les fichiers de mouvement portent un parametre de
 version dans `index.html`. Le mettre a jour quand ces fichiers changent lors
@@ -141,36 +140,32 @@ sans filet interieur, avec un debord ajuste a la perspective. Une tuile devenue
 vide ou « Coming Soon » retire son ancien calque, y compris lors d'un passage
 direct d'un projet a l'autre ; ces tuiles ne fournissent jamais d'image au halo.
 
-Les cartes des clients et les fenetres (demo, visionneuse, acces protege,
-consentement statistiques) suivent legerement la souris : au maximum 2,5 degres
-pour un logo et 1,2 degre pour une fenetre. Elles reviennent a plat a la sortie
-du pointeur ou au focus ; la saisie reste stable. Cette profondeur est inactive
-au tactile et avec la reduction des mouvements. Les commandes, le consentement
-et le controle des acces gardent leur fonctionnement existant.
+Dans le premier moteur, les cartes clients et les fenetres suivaient la souris
+sur 2,5 et 1,2 degre respectivement. Les cadres flottants ci-dessous remplacent
+desormais ce mouvement sur les URLs normales. Les commandes, le consentement
+et le controle des acces gardent leur fonctionnement existant ; la saisie reste stable.
 
-<!-- L'apercu ci-dessous n'est pas actif sur les URLs normales. -->
+### Cadres flottants valides
 
-### Apercu de cadres flottants
-
-L'exploration `codex/organic-floating-frames` est publiee pour essai sur appareil
-reel : ouvrir [l'apercu HTTPS](https://killianpichon.art/?lang=fr&explore=2#/project/hurtubise)
-pour comparer **Version publiee** et **Flottant**. Le cadre entier suit le curseur
+Les cadres flottants sont actifs sur [le site HTTPS](https://killianpichon.art/?lang=fr#/project/hurtubise).
+Ajouter `explore=2` permet de comparer **Ancien mouvement** et **Flottant**.
+Le cadre entier suit le curseur
 avec un ressort amorti : environ 4,5 degres pour les images, 3 pour les fenetres,
 et quelques pixels de translation. Le halo et la composition valides sont conserves.
 La navigation interne conserve la langue et l'apercu selectionnes.
 Le carrousel suspend son alignement automatique seulement pendant la rotation
 d'une carte, pour eviter qu'il ne se recale a chaque image de l'animation.
 
-`assets/organic-floating.js` et `assets/organic-floating.css` ajoutent cette variante
-independamment du moteur de mouvement publie. Les transformations CSS 3D conservent
+`assets/organic-floating.js` et `assets/organic-floating.css` ajoutent ce mouvement
+aux apparitions et au halo existants. Les transformations CSS 3D conservent
 les vrais boutons et champs HTML ; aucun contexte WebGL, script tiers, proxy,
 chargement de media ou acces supplementaire n'est introduit. Les sources de medias,
 le chiffrement, les verrous NDA et le consentement ne sont pas modifies.
 
 Le mouvement s'arrete apres stabilisation, hors onglet, au clavier
 et pendant la saisie. Les anciens cadres sont nettoyes lors des changements de
-page ou lorsqu'ils deviennent des tuiles vides. Cette variante s'active uniquement
-avec `explore=2` ; les URLs normales gardent la version equilibree validee.
+page ou lorsqu'ils deviennent des tuiles vides. Seul le comparateur historique
+`explore=1` conserve exclusivement le premier moteur.
 
 Sur telephone et tablette, **Activer l'inclinaison** utilise `deviceorientation`
 uniquement apres un geste volontaire et l'autorisation du navigateur lorsqu'elle
@@ -183,7 +178,7 @@ passage en arriere-plan et la reduction des mouvements retirent l'ecouteur.
 Sans capteur, sans autorisation ou hors contexte securise, le tactile reste stable.
 Un appareil reel doit acceder a une version HTTPS ; ne pas ouvrir les routes de
 l'editeur local au reseau pour cet essai.
-Sur iPhone, ouvrir le lien dans Safari, deplier **Exploration 02** en bas a gauche,
+Sur iPhone, ouvrir le lien dans Safari, deplier **Inclinaison** en bas a gauche,
 appuyer sur **Activer l'inclinaison**, puis autoriser le mouvement si Safari le
 demande. Garder sa position de lecture au demarrage et utiliser **Recentrer**
 au besoin. Aucun acces reseau a l'editeur local n'est necessaire.
@@ -260,7 +255,26 @@ navigation vers les projets, ouverture et fermeture de la visionneuse, script
 en HTTP 200 et console sans erreur. Les evenements simules verifient la reponse
 a 5 degres, les plafonds, le recentrage, le bruit, les refus, la saisie, les tuiles
 vides, la reduction des mouvements et les amplitudes souris inchangees. Le rendu
-en mouvement sur un vrai iPhone reste a valider par le proprietaire.
+en mouvement sur un vrai iPhone a ensuite ete valide par le proprietaire.
+
+Activation publique sur `codex/public-floating-default` : les fichiers etaient
+publies, mais le controleur quittait encore les URLs sans `explore=2`. Le mouvement
+valide devient celui des URLs normales, aux memes amplitudes. Le panneau public
+est limite a l'activation volontaire de l'inclinaison sur appareil tactile ; ses
+commandes et messages utilisent la langue du site. Le comparateur reste disponible
+avec `explore=2`. Fichiers : `assets/organic-floating.js`,
+`assets/organic-floating.css`, `data/fr.js`, `index.html` (versions de cache) et ce README.
+Verification locale en HTTP : formats 390, 768 et 1440 px sans debordement,
+mouvement souris sur une URL normale, commandes tactiles en francais et en anglais,
+navigation interne, visionneuse, confidentialite, verrou NDA sans vignette et
+comparateur conserves. Les trois ressources actualisees repondent en HTTP 200 ;
+aucune erreur de console ni image concernee manquante n'a ete observee. Les scenarios
+simules couvrent l'activation par defaut, les permissions, le recentrage, les limites,
+la saisie et la reduction des mouvements. Les donnees editoriales francaises hors
+libelles d'interface, les sources de medias, les protections, `CNAME` et `.nojekyll`
+restent identiques a `main`. Les chemins sensibles du serveur local restent refuses.
+L'activation sur l'URL normale a ete simulee au format tactile ; le capteur physique
+de l'iPhone n'est pas accessible depuis cet environnement.
 
 ## Version francaise
 

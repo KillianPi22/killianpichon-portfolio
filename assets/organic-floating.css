@@ -1,4 +1,4 @@
-/* Variante opt-in ?explore=2 : les dimensions, couleurs et contours restent ceux du site. */
+/* Cadres flottants valides : les dimensions, couleurs et contours restent ceux du site. */
 @media (prefers-reduced-motion:no-preference){
   [data-kp-organic="on"][data-kp-motion="on"] .kp-surface:not(.about-profile-figure)>.kp-warp-canvas{
     transform:scale(1.045);
@@ -16,4 +16,7 @@
 .kp-inclination-controls{display:flex;flex-wrap:wrap;gap:10px;width:100%;border-top:1px solid var(--line-subtle);padding-top:12px}
 .kp-inclination-controls button{min-height:44px}
 .kp-inclination-controls button:disabled{cursor:default;opacity:.55}
+.kp-inclination-panel[hidden]{display:none}
+.kp-inclination-panel summary{min-height:44px}
+.kp-inclination-panel .kp-inclination-controls{border-top:0;padding-top:0}
 @media print{[data-kp-organic-active]{transform:none!important;will-change:auto!important}}

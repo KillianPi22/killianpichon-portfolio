@@ -1,7 +1,9 @@
-/* Apercu uniquement : ?explore=2. Aucun media, acces ou consentement n'est modifie. */
+/* Cadres flottants valides ; comparaison via ?explore=2. Les acces restent intacts. */
 (() => {
   'use strict';
-  if (new URLSearchParams(location.search).get('explore') !== '2') return;
+  const exploration = new URLSearchParams(location.search).get('explore');
+  if (exploration === '1') return; // Conserver l'ancien comparateur explicite.
+  const showControls = exploration === '2';
   if (!window.IntersectionObserver) return;
   const html = document.documentElement;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -20,17 +22,18 @@
   let sensorOn = false, sensorPending = false, permissionAttempt = 0, sensorTimer = 0;
   let baseline = null, inclination = null;
   const sensorVisible = new Set();
+  const t = text => window.KP_I18N?.t ? window.KP_I18N.t(text) : text;
 
   const panel = document.createElement('details');
-  panel.className = 'kp-exploration-panel';
-  panel.innerHTML = '<summary>Exploration 02 · <span>Cadres flottants</span></summary><div class="kp-exploration-options"><button type="button" data-organic-choice="off" aria-pressed="false">Version publiée</button><button type="button" data-organic-choice="on" aria-pressed="true">Flottant</button><p class="kp-exploration-note">À la souris, le cadre suit doucement, puis revient se poser.</p><div class="kp-inclination-controls"><button type="button" data-inclination-toggle aria-pressed="false" aria-describedby="kp-inclination-status">Activer l’inclinaison</button><button type="button" data-inclination-center hidden>Recentrer</button><p id="kp-inclination-status" class="kp-exploration-note" role="status">Sur téléphone ou tablette, active l’inclinaison dans ta position de lecture. Les données restent sur l’appareil.</p></div></div>';
+  panel.className = showControls ? 'kp-exploration-panel' : 'kp-exploration-panel kp-inclination-panel';
+  panel.innerHTML = `<summary>${showControls ? 'Exploration 02 · ' : ''}<span>${t(showControls ? 'Floating frames' : 'Device tilt')}</span></summary><div class="kp-exploration-options">${showControls ? `<button type="button" data-organic-choice="off" aria-pressed="false">${t('Previous motion')}</button><button type="button" data-organic-choice="on" aria-pressed="true">${t('Floating')}</button><p class="kp-exploration-note">${t('With a mouse, the frame follows gently, then settles.')}</p>` : ''}<div class="kp-inclination-controls"><button type="button" data-inclination-toggle aria-pressed="false" aria-describedby="kp-inclination-status"></button><button type="button" data-inclination-center hidden>${t('Recenter')}</button><p id="kp-inclination-status" class="kp-exploration-note" role="status"></p></div></div>`;
   document.body.append(panel);
   const sensorButton = panel.querySelector('[data-inclination-toggle]');
   const centerButton = panel.querySelector('[data-inclination-center]');
   const sensorStatus = panel.querySelector('#kp-inclination-status');
   html.dataset.kpOrganic = 'on';
-  // Le <base> du site retire la query des ancres natives. Garder l'apercu et sa
-  // langue pendant la navigation, uniquement dans cette variante opt-in.
+  // Garder la langue, le capteur actif et le comparateur eventuel pendant la
+  // navigation interne, sans recharger via le <base> du site.
   document.addEventListener('click', event => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = event.target.closest?.('a[href^="#/"]');
@@ -41,7 +44,7 @@
     floating = button.dataset.organicChoice === 'on';
     stopSensor();
     html.dataset.kpOrganic = floating ? 'on' : 'off';
-    panel.querySelector('summary span').textContent = floating ? 'Cadres flottants' : 'Version publiée';
+    panel.querySelector('summary span').textContent = t(floating ? 'Floating frames' : 'Previous motion');
     panel.querySelectorAll('[data-organic-choice]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
     updateSensorControls();
   }));
@@ -117,19 +120,20 @@
   addEventListener('hashchange', resetAll);
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopSensor(); });
   reduced.addEventListener('change', () => { stopSensor(); updateSensorControls(); });
-  pointer.addEventListener('change', resetAll);
+  pointer.addEventListener('change', () => { resetAll(); updateSensorControls(); });
 
   function updateSensorControls(message) {
+    panel.hidden = !showControls && (pointer.matches || !window.DeviceOrientationEvent);
     sensorButton.disabled = sensorPending || !floating || reduced.matches || !window.isSecureContext || !window.DeviceOrientationEvent;
-    sensorButton.textContent = sensorOn ? 'Désactiver l’inclinaison' : sensorPending ? 'Autorisation…' : 'Activer l’inclinaison';
+    sensorButton.textContent = t(sensorOn ? 'Disable tilt' : sensorPending ? 'Permission…' : 'Enable tilt');
     sensorButton.setAttribute('aria-pressed', String(sensorOn));
     centerButton.hidden = !sensorOn;
-    if (message) sensorStatus.textContent = message;
-    else if (reduced.matches) sensorStatus.textContent = 'L’inclinaison est désactivée avec la réduction des mouvements.';
-    else if (!window.isSecureContext) sensorStatus.textContent = 'L’inclinaison nécessite une connexion HTTPS sur téléphone ou tablette.';
-    else if (!window.DeviceOrientationEvent) sensorStatus.textContent = 'L’inclinaison n’est pas disponible dans ce navigateur.';
-    else if (!floating) sensorStatus.textContent = 'Choisis Flottant pour essayer l’inclinaison.';
-    else if (!sensorOn && !sensorPending) sensorStatus.textContent = 'Sur téléphone ou tablette, active l’inclinaison dans ta position de lecture. Les données restent sur l’appareil.';
+    if (message) sensorStatus.textContent = t(message);
+    else if (reduced.matches) sensorStatus.textContent = t('Tilt is disabled while reduced motion is enabled.');
+    else if (!window.isSecureContext) sensorStatus.textContent = t('Tilt requires HTTPS on a phone or tablet.');
+    else if (!window.DeviceOrientationEvent) sensorStatus.textContent = t('Tilt is unavailable in this browser.');
+    else if (!floating) sensorStatus.textContent = t('Choose Floating to try device tilt.');
+    else if (!sensorOn && !sensorPending) sensorStatus.textContent = t('On a phone or tablet, enable tilt in your reading position. Sensor data stays on your device.');
   }
   function stopSensor(message) {
     permissionAttempt++;
@@ -144,7 +148,7 @@
   function recenter() {
     baseline = inclination = null;
     resetAll();
-    if (sensorOn) updateSensorControls('Garde ta position de lecture : le prochain mouvement recentre les cadres.');
+    if (sensorOn) updateSensorControls('Hold your reading position: the next sensor reading recenters the frames.');
   }
   centerButton.addEventListener('click', recenter);
   if (screen.orientation?.addEventListener) screen.orientation.addEventListener('change', recenter);
@@ -153,14 +157,14 @@
     if (sensorOn) { stopSensor(); return; }
     if (sensorButton.disabled) return;
     const attempt = ++permissionAttempt;
-    sensorPending = true; updateSensorControls('Autorise l’inclinaison si ton navigateur le demande.');
+    sensorPending = true; updateSensorControls('Allow motion access if your browser asks.');
     try {
       // iOS exige cet appel directement dans le geste utilisateur, avant tout autre await.
       const permission = typeof DeviceOrientationEvent.requestPermission === 'function'
         ? await DeviceOrientationEvent.requestPermission() : 'granted';
       if (attempt !== permissionAttempt) return;
       if (permission !== 'granted') {
-        stopSensor('Autorisation refusée par le navigateur. Sur iPhone, ferme complètement Safari ou Chrome, rouvre ce lien puis réessaie. Choisis « Autoriser » si une demande apparaît.');
+        stopSensor('Motion access was denied by the browser. On iPhone, fully close Safari or Chrome, reopen this page and try again. Choose “Allow” if prompted.');
         return;
       }
       sensorPending = false; sensorOn = true;
@@ -168,12 +172,12 @@
       html.dataset.kpInclination = 'on';
       registerSensorSurfaces();
       addEventListener('deviceorientation', onOrientation, { passive: true });
-      updateSensorControls('Garde ta position de lecture pendant la détection du capteur.');
+      updateSensorControls('Hold your reading position while the sensor is detected.');
       sensorTimer = setTimeout(() => {
-        if (!baseline) stopSensor('Autorisation accordée, mais aucune donnée du capteur reçue. Recharge la page puis réessaie dans Safari ou Chrome.');
+        if (!baseline) stopSensor('Permission granted, but no sensor data received. Reload the page and try again in Safari or Chrome.');
       }, 4000);
     } catch {
-      if (attempt === permissionAttempt) stopSensor('L’inclinaison est indisponible. Les cadres restent stables au toucher.');
+      if (attempt === permissionAttempt) stopSensor('Tilt is unavailable. The frames remain still.');
     }
   });
   function onOrientation(event) {
@@ -181,7 +185,7 @@
     if (!baseline) {
       baseline = { beta: event.beta, gamma: event.gamma, movementReceived: false };
       clearTimeout(sensorTimer);
-      updateSensorControls('Capteur actif. Incline doucement l’appareil ; Recentrer adapte l’effet à ta position de lecture.');
+      updateSensorControls('Sensor active. Tilt your device gently; Recenter adapts the effect to your reading position.');
     }
     const delta = (value, origin) => ((value - origin + 540) % 360) - 180;
     const angle = (screen.orientation?.angle ?? window.orientation ?? 0) * Math.PI / 180;
@@ -191,7 +195,7 @@
     inclination = { x: axis(roll * Math.cos(angle) + pitch * Math.sin(angle)), y: axis(pitch * Math.cos(angle) - roll * Math.sin(angle)) };
     if (!baseline.movementReceived && (inclination.x || inclination.y)) {
       baseline.movementReceived = true;
-      updateSensorControls('Mouvement reçu. Les cadres visibles suivent l’inclinaison ; Recentrer adapte l’effet à ta position de lecture.');
+      updateSensorControls('Motion received. Visible frames follow device tilt; Recenter adapts the effect to your reading position.');
     }
     updateSensorTargets();
   }
