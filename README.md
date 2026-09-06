@@ -90,7 +90,28 @@ Verification du complement : HTTP aux largeurs 390, 768 et 1440 px et en paysage
 lecture integree de 1858, dimensions des lecteurs Batiscan et La Memoire de l'Eau,
 retour au dimensionnement desktop, fermeture et copie du diagnostic. Les scenarios
 simules verifient aussi le redimensionnement, le retrait de l'observateur et
-l'absence de modification de source. Le resultat final sur l'iPhone reste a confirmer.
+l'absence de modification de source. Le proprietaire confirme ensuite un cadre de
+388 x 302 px et une iframe de 386 x 300 px, sans debordement de la page, mais des
+commandes Drive encore decalees sur Chrome / iPhone. Le son fonctionne. Le lecteur
+YouTube de La Memoire de l'Eau est correct sur ce meme appareil.
+
+L'essai `?lang=fr&drive-fit=stable` conserve les sources Drive et le lecteur integre.
+Il reserve le viewport avant de charger l'iframe, borne aussi ses dimensions
+minimales/maximales en pixels sur mobile et retire le defilement de son document
+via `scrolling="no"`. Le redimensionnement et la rotation ne rechargent pas la video.
+Les bornes supplementaires sont retirees sur ordinateur et pour les autres lecteurs.
+Ajouter `&video-debug=1` permet de verifier `cadrageDrive: "stable"` dans les mesures.
+Les URLs normales gardent le lecteur actuel. Ce test explore encore le dimensionnement
+de l'integration ; il ne corrige pas directement les commandes internes de Drive,
+qui sont dans un document d'une autre origine. Validation sur iPhone encore requise.
+Verification de l'essai en HTTP dans Chromium : 390, 443 (428 px utiles), 768,
+844 et 1440 px, lecture/pause et menu Drive sur 1858, lecture de Batiscan,
+navigation entre fiches, fermeture et diagnostic. Aucun debordement ni nouvelle
+erreur reseau/console observe. YouTube et Drive sans le parametre restent dans
+leur mode habituel. Un scenario simule verifie le dimensionnement avant navigation,
+l'absence de rechargement lors du redimensionnement et le nettoyage des ecouteurs.
+Les donnees de projets, sources, protections, `CNAME`, `.nojekyll` et configuration
+de publication sont inchanges ; les chemins sensibles locaux restent refuses.
 
 Un second clic sur la meme tuile arrete la video, comme la touche Echap. Une
 seule video joue a la fois.

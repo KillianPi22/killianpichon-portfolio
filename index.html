@@ -24,7 +24,7 @@
   <script defer src="assets/motion-exploration.js?v=20260905"></script>
   <link rel="stylesheet" href="assets/organic-floating.css?v=20260906">
   <script defer src="assets/organic-floating.js?v=20260906"></script>
-  <script defer src="assets/video-diagnostics.js?v=20260906"></script>
+  <script defer src="assets/video-diagnostics.js?v=20260906b"></script>
   <link rel="icon" href="assets/icons/favicon-96.png" sizes="96x96" type="image/png">
   <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="assets/icons/favicon-64.png" sizes="64x64" type="image/png">
@@ -3177,6 +3177,7 @@ function videoEmbed(url) {
   const gdrive = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (gdrive) return {
     src: `https://drive.google.com/file/d/${gdrive[1]}/preview`,
+    provider: 'drive',
     minHeight: 300,
     vertical: false
   };
@@ -3221,6 +3222,8 @@ function ProjectScreenContent({
   // videoUrls porte plusieurs videos ; trailerUrl reste la forme a une seule
   // video, celle que l'editeur ecrit et que portent les autres fiches.
   const videoEmbeds = p.trailerEmbedDisabled ? [] : (p.videoUrls && p.videoUrls.length ? p.videoUrls : p.trailerUrl ? [p.trailerUrl] : []).map(videoEmbed).filter(Boolean);
+  // Essai volontaire sur appareil reel ; aucune incidence sur les URLs normales.
+  const stableDriveFrame = videoEmbeds[playingVideo]?.provider === 'drive' && new URLSearchParams(window.location.search).get('drive-fit') === 'stable';
   const [lightbox, setLightbox] = React.useState(null);
   const modalCloseRef = React.useRef(null);
   const headingRef = React.useRef(null);
@@ -3258,6 +3261,10 @@ function ProjectScreenContent({
     if (!iframe) return;
     const compact = window.matchMedia('(max-width:1024px)');
     const fit = () => {
+      if (!stableDriveFrame || !compact.matches) {
+        iframe.style.minWidth = iframe.style.maxWidth = '';
+        iframe.style.minHeight = iframe.style.maxHeight = '';
+      }
       // Sur iOS, fixer le viewport du lecteur a la taille du cadre, sans laisser
       // le document externe agrandir l'iframe. Ne pas recharger ni changer sa source.
       if (compact.matches) {
@@ -3267,6 +3274,10 @@ function ProjectScreenContent({
         iframe.style.height = `${height}px`;
         iframe.setAttribute('width', String(width));
         iframe.setAttribute('height', String(height));
+        if (stableDriveFrame) {
+          iframe.style.minWidth = iframe.style.maxWidth = `${width}px`;
+          iframe.style.minHeight = iframe.style.maxHeight = `${height}px`;
+        }
       } else {
         iframe.style.width = iframe.style.height = '100%';
         iframe.removeAttribute('width');
@@ -3274,14 +3285,21 @@ function ProjectScreenContent({
       }
     };
     fit();
+    if (stableDriveFrame) {
+      // La navigation commence seulement apres la fixation du viewport. Conserver
+      // exactement la meme URL Drive et ne pas recharger pendant une rotation.
+      iframe.addEventListener('load', fit);
+      iframe.src = videoEmbeds[playingVideo].src;
+    }
     const observer = window.ResizeObserver ? new ResizeObserver(fit) : null;
     observer?.observe(frame);
     window.addEventListener('resize', fit);
     return () => {
       observer?.disconnect();
       window.removeEventListener('resize', fit);
+      iframe.removeEventListener('load', fit);
     };
-  }, [playingVideo, id]);
+  }, [playingVideo, id, stableDriveFrame]);
   React.useEffect(() => {
     if (!lightboxOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -3428,6 +3446,7 @@ function ProjectScreenContent({
   }, playingVideo !== null && videoEmbeds[playingVideo] && React.createElement("div", {
     ref: playerRef,
     className: "project-video-player",
+    "data-drive-fit": stableDriveFrame ? 'stable' : undefined,
     style: {
       // Ajouter les deux pixels de bordure a la hauteur utile du lecteur.
       "--project-player-min-height": `${(videoEmbeds[playingVideo].minHeight || 200) + 2}px`,
@@ -3443,7 +3462,8 @@ function ProjectScreenContent({
       background: 'var(--void-900)'
     }
   }, React.createElement("iframe", {
-    src: videoEmbeds[playingVideo].src,
+    src: stableDriveFrame ? undefined : videoEmbeds[playingVideo].src,
+    scrolling: stableDriveFrame ? 'no' : undefined,
     title: window.KP_I18N.t.f('{title} video', {
       title: p.title
     }),

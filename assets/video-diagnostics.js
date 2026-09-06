@@ -19,7 +19,8 @@
     };
     // Ni chemin de projet, ni source du media, ni donnees du document externe.
     const report = {
-      version: 'video-fit-2',
+      version: 'video-fit-3',
+      cadrageDrive: frame?.dataset.driveFit || 'standard',
       fenetre: document.documentElement.clientWidth,
       page: document.documentElement.scrollWidth,
       ecranVisible: window.visualViewport ? Math.round(window.visualViewport.width) : null,
