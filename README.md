@@ -70,7 +70,27 @@ Memoire de l'Eau, commandes Drive visibles en entier a 390 px, redimensionnement
 portrait/paysage, formats 768 et 1440 px, arret par la vignette, absence de
 debordement et d'erreur reseau/console. `CNAME`, `.nojekyll`, les sources de medias
 et les protections restent inchanges ; les chemins sensibles du serveur local
-restent refuses. Le test physique sous iOS 26.6 reste a confirmer par le proprietaire.
+restent refuses. L'essai du proprietaire sur Chrome / iPhone 13 / iOS 26.6 a
+confirme une amelioration, mais encore un debordement horizontal et des commandes decalees.
+
+Le complement `codex/ios-video-viewport-fit` borne explicitement la largeur du
+cadre a sa colonne sur mobile. L'iframe recoit la largeur et la hauteur utiles
+du cadre en pixels, actualisees uniquement au montage ou au redimensionnement,
+sans recharger ni modifier la source video. Au-dessus de 1024 px, elle retrouve
+son dimensionnement en pourcentage. L'observateur est retire a la fermeture du lecteur.
+
+Pour mesurer le rendu sur un appareil reel, ajouter `video-debug=1` a l'URL,
+ouvrir une video puis **Diagnostic video > Copier les mesures**.
+`assets/video-diagnostics.js` affiche seulement les dimensions de la page, de la
+colonne, du cadre et de l'iframe, ainsi que le zoom. Aucune URL de media, contenu
+de projet, donnee du lecteur externe ou information de compte n'est lue ou envoyee.
+Le panneau reste absent des URLs normales. Il ne connecte pas l'iPhone a l'editeur local.
+
+Verification du complement : HTTP aux largeurs 390, 768 et 1440 px et en paysage,
+lecture integree de 1858, dimensions des lecteurs Batiscan et La Memoire de l'Eau,
+retour au dimensionnement desktop, fermeture et copie du diagnostic. Les scenarios
+simules verifient aussi le redimensionnement, le retrait de l'observateur et
+l'absence de modification de source. Le resultat final sur l'iPhone reste a confirmer.
 
 Un second clic sur la meme tuile arrete la video, comme la touche Echap. Une
 seule video joue a la fois.

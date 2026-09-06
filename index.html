@@ -24,6 +24,7 @@
   <script defer src="assets/motion-exploration.js?v=20260905"></script>
   <link rel="stylesheet" href="assets/organic-floating.css?v=20260906">
   <script defer src="assets/organic-floating.js?v=20260906"></script>
+  <script defer src="assets/video-diagnostics.js?v=20260906"></script>
   <link rel="icon" href="assets/icons/favicon-96.png" sizes="96x96" type="image/png">
   <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="assets/icons/favicon-64.png" sizes="64x64" type="image/png">
@@ -184,7 +185,10 @@ button{color:inherit}
 .project-video-play{width:48px;height:48px;border-radius:50%;background:rgba(10,10,11,.8);border:2px solid var(--text-heading);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-heading)}
 .project-video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
 /* Drive impose 300 px a son lecteur interne ; lui reserver cet espace sur mobile. */
-@media(max-width:1024px){.project-video-player{min-height:var(--project-player-min-height,202px);flex-shrink:0}}
+@media(max-width:1024px){
+  .project-video-player{width:100%;min-width:0;max-width:100%;min-height:var(--project-player-min-height,202px);flex-shrink:0}
+  .project-video-player>iframe{display:block;max-width:100%;max-height:100%}
+}
 .project-card-lock{position:absolute;top:50%;left:50%;z-index:1;width:34px;height:25px;transform:translate(-50%,-50%);border-radius:4px;background:var(--text-faint)}
 .project-card-lock::before{content:'';position:absolute;left:50%;bottom:100%;width:20px;height:14px;transform:translateX(-50%);border:3px solid var(--text-faint);border-bottom:0;border-radius:11px 11px 0 0}
 /* Tuile sous NDA : la vignette reste visible, assombrie pour que le verrou se
@@ -3220,6 +3224,7 @@ function ProjectScreenContent({
   const [lightbox, setLightbox] = React.useState(null);
   const modalCloseRef = React.useRef(null);
   const headingRef = React.useRef(null);
+  const playerRef = React.useRef(null);
   const collageImages = p.galleryImages || [null, null, null, null];
   const galleryImages = collageImages.filter(Boolean);
   const galleryCount = galleryImages.length;
@@ -3247,6 +3252,36 @@ function ProjectScreenContent({
     window.scrollTo(0, 0);
     setPlayingVideo(null);
   }, [id]);
+  React.useLayoutEffect(() => {
+    const frame = playerRef.current;
+    const iframe = frame?.querySelector('iframe');
+    if (!iframe) return;
+    const compact = window.matchMedia('(max-width:1024px)');
+    const fit = () => {
+      // Sur iOS, fixer le viewport du lecteur a la taille du cadre, sans laisser
+      // le document externe agrandir l'iframe. Ne pas recharger ni changer sa source.
+      if (compact.matches) {
+        const width = frame.clientWidth, height = frame.clientHeight;
+        if (!width || !height) return;
+        iframe.style.width = `${width}px`;
+        iframe.style.height = `${height}px`;
+        iframe.setAttribute('width', String(width));
+        iframe.setAttribute('height', String(height));
+      } else {
+        iframe.style.width = iframe.style.height = '100%';
+        iframe.removeAttribute('width');
+        iframe.removeAttribute('height');
+      }
+    };
+    fit();
+    const observer = window.ResizeObserver ? new ResizeObserver(fit) : null;
+    observer?.observe(frame);
+    window.addEventListener('resize', fit);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener('resize', fit);
+    };
+  }, [playingVideo, id]);
   React.useEffect(() => {
     if (!lightboxOpen) return;
     const previousOverflow = document.body.style.overflow;
@@ -3391,6 +3426,7 @@ function ProjectScreenContent({
       gap: 'var(--space-3)'
     }
   }, playingVideo !== null && videoEmbeds[playingVideo] && React.createElement("div", {
+    ref: playerRef,
     className: "project-video-player",
     style: {
       // Ajouter les deux pixels de bordure a la hauteur utile du lecteur.
