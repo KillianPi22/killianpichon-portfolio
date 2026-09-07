@@ -163,7 +163,7 @@ window.KP_PROJECTS = {
     creditsNote: 'Courtesy and photography: XYZ Technologies',
     externalUrl: 'https://www.xyztechnologies.com/en/realisations/interactive-model-at-batiscan-river-park/',
     externalLabel: 'See more on XYZ Technologies',
-    trailerUrl: 'https://drive.google.com/file/d/1uixdKNK3wAQAihA3xj8i-67IQN4xWFAj/preview',
+    trailerUrl: 'https://youtu.be/TjUOiaEYd20',
     videoPoster: 'projects/batiscan/video-poster.jpg',
     galleryImages: ['projects/batiscan/reception-projection.avif', 'projects/batiscan/aerial-lake-winter.avif', 'projects/batiscan/model-top-labels.avif', 'projects/batiscan/model-angle-labels.avif', 'projects/batiscan/model-tablet-poi.avif'],
     placeholderTiles: 0,
@@ -188,7 +188,7 @@ window.KP_PROJECTS = {
     pipeline: ['Façade mapping preparation', 'Narrative scene development', 'Lighting and particle integration', 'Distance-readability review', 'Compositing and show integration'],
     impact: 'The finished show used large-scale projection to connect the Hôtel de Ville’s architecture with the history being narrated across its façade.',
     galleryImages: ['projects/1858-epernay/mapping-green-facade.jpg', 'projects/1858-epernay/lighting-intro.png', 'projects/1858-epernay/vfx-green-growth.png', 'projects/1858-epernay/vfx-briques-1.png', 'projects/1858-epernay/vfx-briques-2.png'],
-    trailerUrl: 'https://drive.google.com/file/d/1wrjlpzt2n4l3SEmFaD_lSg4Nd9VQQDzV/preview',
+    trailerUrl: 'https://youtu.be/ycQ9YbRTup4',
     videoPoster: 'projects/1858-epernay/video-poster.jpg',
     creditsNote: 'Employer: Graphics eMotion — Event: Habits de Lumière 2022 — Location: Épernay, France',
     relatedProjects: ['Sangue e Arena', 'Lac Batiscan']

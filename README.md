@@ -42,6 +42,24 @@ demander.
 
 ### Videos de la galerie
 
+Depuis le 7 septembre 2026, **1858 — Habits de Lumiere** et **Lac Batiscan**
+utilisent les liens YouTube non repertories fournis par le proprietaire. Ils
+remplacent leurs lecteurs Drive, dont les commandes restaient decalees sur iPhone
+malgre les essais de cadrage ci-dessous. La lecture reste integree au-dessus de
+la galerie, au clic sur la vignette, avec le lecteur YouTube deja utilise par les
+autres projets. Les affiches officielles YouTube disposent des images locales
+existantes comme repli. Le parametre `drive-fit=stable` ne s'applique plus a ces
+deux videos ; aucun lien de test particulier n'est necessaire.
+
+Fichiers concernes : `data/projects.js` pour les deux sources, `index.html`
+pour actualiser le cache des donnees, et ce README. Les autres projets, les
+protections, le design et la configuration de publication sont conserves.
+Verification en HTTP dans Chromium aux largeurs 390, 768 et 1440 px : les deux
+videos se lisent dans la page, les apercus se chargent, la navigation ferme le
+lecteur precedent et un second clic arrete la lecture. Aucun debordement ni
+nouvelle erreur de console ou de reseau observe. Le rendu sur un iPhone reel
+reste a verifier apres publication.
+
 Chaque video ajoute une tuile a la grille de medias. La tuile reste une affiche
 avec son triangle de lecture : **l'iframe n'est creee qu'au clic**. Les vignettes
 officielles YouTube sont chargees depuis `i.ytimg.com` avant la lecture, a la
