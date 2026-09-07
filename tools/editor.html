@@ -1495,11 +1495,15 @@ function renderSettings(){
         input = document.createElement('textarea');
       } else {
         input = document.createElement('input');
-        input.type = 'text';
+        input.type = s.kind === 'boolean' ? 'checkbox' : 'text';
       }
       input.value = setEdits.has(s.key) ? setEdits.get(s.key) : s.value;
+      input.id = `setting-${s.key}`;
+      lab.htmlFor = input.id;
+      if (s.kind === 'boolean') input.checked = input.value === 'true';
 
       const onInput = () => {
+        if (s.kind === 'boolean') input.value = String(input.checked);
         if (input.value === s.value){ setEdits.delete(s.key); box.classList.remove('dirty'); }
         else { setEdits.set(s.key, input.value); box.classList.add('dirty'); }
         if (s.kind === 'image') prev.style.backgroundImage = `url("${previewSrc(input.value)}")`;

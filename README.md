@@ -252,12 +252,24 @@ versionnee.
 4. Onglet **Medias** : remplacer un chemin d'image, avec vignette et
    autocompletion sur les fichiers presents dans `assets/` et `projects/`.
 5. Onglet **Reglages** : titre d'onglet, description, favicon, image de
-   partage, langue, titres des pages secondaires.
+   partage, langue, titres des pages secondaires et demo reel de l'accueil.
 6. Verifier le rendu dans l'apercu de droite. Le bouton **Pointer** de la barre
    d'apercu permet de cliquer un texte ou une image sur la page pour l'ouvrir
    directement dans le panneau de gauche.
 7. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
    le message propose, puis **Commiter**.
+
+### Demo reel de l'accueil
+
+Dans **Reglages > Accueil - Demo reel**, la case **Afficher le demo reel sur
+l'accueil** active ou masque la tuile et son lecteur, sans changer les styles
+de la page. Le lien reste conserve lorsque la case est decochee.
+
+Le champ **Lien de la video** accepte une URL HTTPS Vimeo (y compris les liens
+non repertories), YouTube ou un fichier MP4/WebM. Enregistrer actualise
+l'apercu. Le lecteur s'ouvre dans la fenetre existante, uniquement au clic ;
+un lien vide conserve le message « Coming Soon ». La lecture depend des droits
+d'integration accordes sur la plateforme video.
 
 ### Gestion des projets
 

@@ -1126,6 +1126,7 @@ function Hero({
   eyebrow = '3D Artist Generalist / Real-Time',
   onWatchReel,
   glowPattern = true,
+  showReel = false,
   reelUrl = 'https://vimeo.com/1201960449',
   reelLabel = 'Showreel · 2026'
 }) {
@@ -1175,8 +1176,26 @@ function Hero({
     raf = requestAnimationFrame(poll);
     return () => cancelAnimationFrame(raf);
   }, [reelOpen]);
-  const vimeoMatch = reelUrl.match(/vimeo\.com\/(\d+)/);
-  const vimeoId = vimeoMatch ? vimeoMatch[1] : null;
+  let reelPlayer = null;
+  try {
+    const url = new URL(reelUrl);
+    if (url.protocol !== 'https:') throw new Error('HTTPS required');
+    const host = url.hostname.replace(/^www\./, '');
+    const vimeo = /^(?:\/video)?\/(\d+)(?:\/([a-zA-Z0-9]+))?\/?$/.exec(url.pathname);
+    if (['vimeo.com', 'player.vimeo.com'].includes(host) && vimeo) {
+      const params = new URLSearchParams({ autoplay: '1' });
+      const hash = vimeo[2] || url.searchParams.get('h');
+      if (hash) params.set('h', hash);
+      reelPlayer = { src: `https://player.vimeo.com/video/${vimeo[1]}?${params}`, type: 'iframe' };
+    } else if (['youtube.com', 'youtube-nocookie.com', 'youtu.be'].includes(host)) {
+      const id = host === 'youtu.be' ? url.pathname.slice(1).replace(/\/$/, '') :
+        url.pathname === '/watch' ? url.searchParams.get('v') :
+        /^\/(?:embed|shorts)\/([^/]+)\/?$/.exec(url.pathname)?.[1];
+      if (/^[\w-]{11}$/.test(id || '')) reelPlayer = { src: `https://www.youtube-nocookie.com/embed/${id}?autoplay=1`, type: 'iframe' };
+    } else if (/\.(mp4|webm)$/i.test(url.pathname)) {
+      reelPlayer = { src: url.href, type: 'video' };
+    }
+  } catch (_) { /* The existing placeholder handles empty or invalid URLs. */ }
   React.useEffect(() => {
     const wrap = titleWrapRef.current,
       wire = wireRef.current;
@@ -1482,7 +1501,7 @@ function Hero({
       color: 'var(--text-muted)',
       marginTop: 'var(--space-4)'
     }
-  }, tools), React.createElement("button", {
+  }, tools), showReel && React.createElement("button", {
     className: "hero-reel",
     type: "button",
     "aria-label": "Open showreel",
@@ -1581,7 +1600,7 @@ function Hero({
       color: 'var(--accent)',
       fontSize: 'calc(var(--text-small) * 3)'
     }
-  }, "\u2193"))), reelOpen && React.createElement("div", {
+  }, "\u2193"))), showReel && reelOpen && React.createElement("div", {
     className: "modal-backdrop",
     role: "dialog",
     "aria-modal": "true",
@@ -1619,7 +1638,14 @@ function Hero({
       lineHeight: 1,
       cursor: 'pointer'
     }
-  }, "\xD7"), vimeoId ? React.createElement("div", {
+  }, "\xD7"), reelPlayer ? React.createElement(reelPlayer.type, {
+    src: reelPlayer.src,
+    title: reelLabel,
+    ...(reelPlayer.type === 'iframe' ? {
+      allow: 'autoplay; fullscreen; picture-in-picture', allowFullScreen: true
+    } : { controls: true, autoPlay: true, playsInline: true }),
+    style: { width: '100%', height: '100%', border: 0, borderRadius: 'var(--radius-md)', background: 'var(--void-900)' }
+  }) : !reelUrl ? React.createElement("div", {
     style: {
       width: '100%',
       height: '100%',
