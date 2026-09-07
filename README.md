@@ -568,12 +568,39 @@ versionnee.
 4. Onglet **Medias** : remplacer un chemin d'image, avec vignette et
    autocompletion sur les fichiers presents dans `assets/` et `projects/`.
 5. Onglet **Reglages** : titre d'onglet, description, favicon, image de
-   partage, langue, titres des pages secondaires.
+   partage, langue, titres des pages secondaires et demo reel de l'accueil.
 6. Verifier le rendu dans l'apercu de droite. Le bouton **Pointer** de la barre
    d'apercu permet de cliquer un texte ou une image sur la page pour l'ouvrir
    directement dans le panneau de gauche.
 7. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
    le message propose, puis **Commiter**.
+
+### Demo reel de l'accueil
+
+Dans **Reglages > Accueil - Demo reel**, la case **Afficher le demo reel sur
+l'accueil** active ou masque la tuile et son lecteur, sans changer les styles
+de la page. Le lien reste conserve lorsque la case est decochee.
+
+Le champ **Lien de la video** accepte une URL HTTPS Vimeo (y compris les liens
+non repertories), YouTube ou un fichier MP4/WebM. Enregistrer actualise
+l'apercu. Le lecteur s'ouvre dans la fenetre existante, uniquement au clic ;
+un lien vide conserve le message « Coming Soon ». La lecture depend des droits
+d'integration accordes sur la plateforme video.
+
+Le 7 septembre 2026, le choix enregistre dans l'editeur (`showReel = false`)
+est reporte sur la version courante de `main`, avec les deux reglages et leur
+prise en charge. Seul le commit du demo reel est repris depuis la branche
+d'edition ; son ancien historique ne doit pas remplacer le site actuel.
+Enregistrer dans l'outil actualise les fichiers locaux. La mise en ligne
+necessite encore de reporter ces changements sur `main` puis d'attendre la
+fin du deploiement GitHub Pages.
+
+Verification : enregistrement aller-retour du booleen et des liens supportes,
+refus des valeurs invalides, puis accueil servi en HTTP aux largeurs 390, 768
+et 1440 px. La tuile et le lecteur sont absents, aucun appel au lecteur video
+n'est effectue, la navigation accueil/profil fonctionne et aucune erreur
+reseau ou console n'est observee. Les donnees de projets, les traductions,
+les styles, les animations, `CNAME` et `.nojekyll` restent inchanges.
 
 ### Gestion des projets
 

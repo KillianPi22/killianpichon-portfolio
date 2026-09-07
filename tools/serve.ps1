@@ -1911,6 +1911,12 @@ function New-JsonLdPattern([string]$type, [string]$field) {
 }
 
 $SettingsDef = @(
+  @{ key='showReel'; group='Accueil - Demo reel'; label="Afficher le demo reel sur l'accueil"; kind='boolean'
+     help='Decochez pour masquer la tuile et son lecteur. Le lien est conserve.'
+     targets=@( '(?<pre>  showReel = )(?<v>true|false)(?<post>,)' ) }
+  @{ key='reelUrl'; group='Accueil - Demo reel'; label='Lien de la video'; kind='text'
+     help='Lien HTTPS Vimeo, YouTube ou fichier MP4/WebM. Un lien vide affiche Coming Soon.'
+     targets=@( "(?<pre>  reelUrl = ')(?<v>(?:[^'\\]|\\.)*)(?<post>')" ) }
   @{ key='title'; translate=$true; group='Identite'; label="Titre d'onglet"; kind='text'
      help="Ecrit aussi dans og:title, twitter:title, SCREEN_META.home et les donnees structurees."
      targets=@( '(?<pre><title>)(?<v>[^<]*)(?<post></title>)',
@@ -2045,6 +2051,19 @@ function Save-Settings($values) {
     $incoming = $values.PSObject.Properties[$s.key]
     if (-not $incoming) { continue }
     $new = [string]$incoming.Value
+    if ($s.kind -eq 'boolean') {
+      if ($incoming.Value -is [bool]) { $new = $new.ToLowerInvariant() }
+      if ($new -cnotmatch '^(true|false)$') { $rejected += "$($s.label) : booleen invalide"; continue }
+    }
+    if ($s.key -eq 'reelUrl') {
+      $new = $new.Trim()
+      if ($new -match '[<>\\]' -or ($new -match '^https://(?:www\.)?(?:youtube\.com|youtube-nocookie\.com)/watch\?' -and $new -notmatch '[?&]v=[\w-]{11}(?:&|$)')) {
+        $rejected += "$($s.label) : lien video invalide"; continue
+      }
+      if ($new -and $new -notmatch '^https://(?:www\.)?(?:(?:vimeo\.com|player\.vimeo\.com)/(?:video/)?[0-9]+(?:/[a-zA-Z0-9]+)?/?(?:\?[^\s]*)?|(?:youtube\.com|youtube-nocookie\.com)/(?:watch\?[^\s]+|(?:embed|shorts)/[\w-]{11}/?(?:\?[^\s]*)?)|youtu\.be/[\w-]{11}/?(?:\?[^\s]*)?|[^\s/?#]+/[^\s?#]+\.(?:mp4|webm)(?:\?[^\s]*)?)$') {
+        $rejected += "$($s.label) : utilisez un lien HTTPS Vimeo, YouTube ou MP4/WebM"; continue
+      }
+    }
 
     foreach ($p in $s.targets) {
       # rematche a chaque cible : le texte a pu bouger a l'iteration precedente
