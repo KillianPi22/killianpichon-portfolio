@@ -12,6 +12,7 @@
 #>
 
 param(
+  [ValidateRange(1, 65535)]
   [int]$Port = 8000,
   [switch]$NoBrowser,
   [int]$IdleTimeoutSeconds = 25,
@@ -2126,13 +2127,27 @@ function Start-Listener([string]$prefix) {
 
 if ($NoServe) { return }
 
-# Ecoute sur toutes les interfaces si Windows l'autorise (necessaire pour
-# l'iPhone), sinon repli sur localhost.
-$lanMode = $true
-$listener = Start-Listener "http://+:$Port/"
-if (-not $listener) {
-  $lanMode = $false
-  $listener = Start-Listener "http://localhost:$Port/"
+# Au double-clic, essayer les ports suivants si 8000 est occupe (Unreal,
+# autre serveur...). Un -Port explicite reste strictement respecte.
+$requestedPort = $Port
+$lastPort = if ($PSBoundParameters.ContainsKey('Port')) { $Port } else { 8020 }
+$listener = $null
+for ($candidatePort = $requestedPort; $candidatePort -le $lastPort; $candidatePort++) {
+  # Ecoute sur toutes les interfaces si Windows l'autorise (necessaire pour
+  # l'iPhone), sinon repli sur localhost. Aucun changement des acces /__*.
+  $lanMode = $true
+  $listener = Start-Listener "http://+:$candidatePort/"
+  if (-not $listener) {
+    $lanMode = $false
+    $listener = Start-Listener "http://localhost:$candidatePort/"
+  }
+  if ($listener) {
+    $Port = $candidatePort
+    break
+  }
+}
+if ($listener -and $Port -ne $requestedPort) {
+  Write-Host "  Port $requestedPort indisponible : utilisation du port $Port."
 }
 
 if (-not $listener) {
@@ -2155,14 +2170,14 @@ if (-not $listener) {
   else { Write-Host "  Le port est deja utilise, ou reserve par Windows." }
 
   Write-Host ""
-  Write-Host "  Le plus souvent : une fenetre de l'editeur est deja ouverte."
-  Write-Host "  Ferme-la, puis relance edit-site.cmd."
+  if ($lastPort -ne $requestedPort) {
+    Write-Host "  Aucun port disponible entre $requestedPort et $lastPort."
+  }
   Write-Host ""
   Write-Host "  Sinon, utilise un autre port :"
-  Write-Host "      edit-site.cmd -Port 8001"
+  Write-Host "      edit-site.cmd -Port <numero-de-port-libre>"
   Write-Host ""
-  Read-Host "  Appuie sur Entree pour fermer" | Out-Null
-  return
+  throw "Demarrage impossible : aucun port disponible dans la plage demandee."
 }
 
 $editorUrl = "http://localhost:$Port/__editor"

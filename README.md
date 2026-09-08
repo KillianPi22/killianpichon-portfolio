@@ -559,6 +559,10 @@ versionnee.
 
 1. Double-cliquer sur `tools/edit-site.cmd`. L'editeur s'ouvre sur
    `http://localhost:8000/__editor` et demande le mot de passe.
+   Si le port 8000 est occupe (par exemple par Unreal Editor), le lancement
+   essaie automatiquement les ports 8001 a 8020 et ouvre l'adresse retenue.
+   Un port fourni explicitement avec `edit-site.cmd -Port 8001` reste impose :
+   s'il est indisponible, le lancement signale une erreur sans changer de port.
 2. Onglet **Textes** : rechercher un texte, le corriger, cliquer sur
    **Enregistrer**. L'ecriture se fait dans `index.html` ou dans
    `data/projects.js` selon l'origine du texte ; les textes des fiches sont
@@ -574,6 +578,32 @@ versionnee.
    directement dans le panneau de gauche.
 7. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
    le message propose, puis **Commiter**.
+
+Le pointeur ouvre le champ anglais ou francais selon la langue de l'apercu,
+y compris les traductions des libelles hors balayage. Les traductions propres
+aux fiches ouvrent leur champ dans **Projets**. La recherche et le filtre de
+traduction sont remis sur **Tous** pour rendre le texte accessible ; les saisies
+en attente sont conservees. Une correspondance de texte ambigue est signalee.
+**Echap** quitte le pointage et restaure le curseur et les contours d'origine.
+Le rafraichissement, notamment apres enregistrement, conserve la page et la
+langue de l'apercu.
+
+Test de regression : lancer `tools/serve.ps1 -Port 8017 -NoBrowser`, puis
+`node tools/test-editor-pointer.cjs` avec Chrome et le module Playwright
+disponibles (`NODE_PATH` peut designer le dossier des modules). La variable
+`EDITOR_TEST_URL` permet de choisir une autre adresse locale. Les reponses API
+de l'editeur sont simulees uniquement dans le navigateur de test : aucun mot
+de passe reel ni aucune ecriture editoriale. Le test utilise le scanner reel,
+verifie le pointage anglais/francais, les filtres, les brouillons, les fiches,
+Echap, le rafraichissement, le rendu de l'apercu a 390/768/1440 px et le refus
+des chemins sensibles. L'enregistrement authentifie sur disque reste a verifier
+dans une session du proprietaire.
+
+`powershell -NoProfile -ExecutionPolicy Bypass -File tools/test-editor-port.ps1`
+verifie le repli automatique avec 8000 occupe, l'acces HTTP a l'editeur, le
+refus des chemins sensibles et l'echec explicite d'un port impose deja occupe.
+Le test n'arrete aucun serveur existant ; il nettoie seulement ses propres
+processus et sa reservation temporaire de port.
 
 ### Demo reel de l'accueil
 

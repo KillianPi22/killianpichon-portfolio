@@ -761,6 +761,7 @@ function render(filter){
         + (edits.has(k) ? ' dirty en-dirty' : '')
         + (frEdits.has(it.text) ? ' fr-dirty' : '');
       row.dataset.key = k;
+      row.dataset.text = it.text;
 
       const ln = document.createElement('div');
       ln.className = 'ln'; ln.textContent = it.line;
@@ -797,6 +798,7 @@ function render(filter){
     for (const texte of horsBalayage){
       const row = document.createElement('div');
       row.className = 'row' + (frEdits.has(texte) ? ' fr-dirty' : '');
+      row.dataset.text = texte;
       const ln = document.createElement('div');
       ln.className = 'ln'; ln.textContent = '—';
       const cellEn = document.createElement('div');
@@ -843,7 +845,11 @@ function setLan(url){
 
 function reloadPreview(){
   const f = $('#site');
-  f.src = '/?t=' + Date.now();
+  let url;
+  try { url = new URL(f.contentWindow.location.href); } catch(e){}
+  if (!url || url.origin !== location.origin) url = new URL('/', location.href);
+  url.searchParams.set('t', Date.now());
+  f.src = url.href;
 }
 
 /* --------------------------------------------- battement de coeur + veille */
@@ -968,13 +974,13 @@ $('#refresh').addEventListener('click', reloadPreview);
 let picking = false;
 let pickDoc = null;
 
-function reveal(selector){
-  const row = document.querySelector(selector);
+function reveal(selector, fieldSelector = 'textarea, input'){
+  const row = typeof selector === 'string' ? document.querySelector(selector) : selector;
   if (!row) return false;
   row.scrollIntoView({ block:'center', behavior:'smooth' });
   row.classList.add('flash');
   setTimeout(() => row.classList.remove('flash'), 1200);
-  const field = row.querySelector('textarea, input');
+  const field = row.querySelector(fieldSelector);
   if (field){ field.focus(); if (field.select) field.select(); }
   return true;
 }
@@ -990,13 +996,30 @@ function textNodeAtPoint(doc, x, y){
   return (n && n.nodeType === 3) ? n.nodeValue : null;
 }
 
+const normalizePickText = value => String(value || '').replace(/\s+/g, ' ').trim();
+
 function findTextItem(value){
   if (!value) return null;
-  const v = value.trim();
+  const v = normalizePickText(value);
   if (!v) return null;
-  let hit = items.find(it => it.text === value) || items.find(it => it.text.trim() === v);
-  if (!hit) hit = items.find(it => it.text.trim().includes(v) && v.length > 3);
-  return hit || null;
+  const french = pickDoc?.documentElement.lang.startsWith('fr');
+  const projectId = pickDoc?.location.hash.match(/^#\/project\/([^/?]+)/)?.[1];
+  const candidates = [...clesConnues()].map(text => ({
+    text, translated: french && fr.ui.get(text) || '',
+    item: items.find(it => it.text === text && it.section === 'Projet ' + projectId)
+      || items.find(it => it.text === text && it.file !== 'projects')
+      || items.find(it => it.text === text)
+  }));
+  // Une correspondance exacte prime toujours sur un fragment. Ne pas choisir
+  // arbitrairement la premiere phrase contenant un mot commun.
+  for (const partial of [false, true]){
+    if (partial && v.length <= 3) break;
+    const matches = candidates.filter(c => [c.text, c.translated].some(t =>
+      t && (partial ? normalizePickText(t).includes(v) : normalizePickText(t) === v)));
+    if (matches.length === 1) return matches[0];
+    if (matches.length > 1) return null;
+  }
+  return null;
 }
 
 function findMediaItem(src){
@@ -1004,7 +1027,7 @@ function findMediaItem(src){
   // src rendu est absolu : on le ramene au chemin du depot
   let p = src;
   try { p = new URL(src, location.href).pathname.replace(/^\//, ''); } catch(e){}
-  p = decodeURIComponent(p);
+  try { p = decodeURIComponent(p); } catch(e){ return null; }
   // l'apercu rend le chemin complet ; le champ, lui, peut ne contenir que la
   // partie qui suit un prefixe concatene
   return media.find(m => m.resolved === p) || media.find(m => m.text === p) || null;
@@ -1012,7 +1035,8 @@ function findMediaItem(src){
 
 async function handlePick(e){
   e.preventDefault();
-  e.stopPropagation();
+  e.stopImmediatePropagation();
+  try {
 
   // 1. une image ?
   let src = null;
@@ -1026,9 +1050,9 @@ async function handlePick(e){
     if (!media.length) await loadMedia();
     const hit = findMediaItem(src);
     if (hit){
-      showTab('media');
-      await sleep(60);
-      if (reveal(`.med[data-resolved="${hit.resolved}"]`)) {
+      showTab('media', false);
+      renderMedia();
+      if (reveal([...document.querySelectorAll('.med')].find(row => row.dataset.resolved === hit.resolved))) {
         status('Média trouvé dans le panneau.', 'ok');
         return;
       }
@@ -1038,38 +1062,83 @@ async function handlePick(e){
   }
 
   // 2. sinon, un texte
-  const value = textNodeAtPoint(pickDoc, e.clientX, e.clientY)
-             || (e.target.textContent || '');
-  const hit = findTextItem(value);
+  const value = textNodeAtPoint(pickDoc, e.clientX, e.clientY);
+  const projectId = pickDoc.location.hash.match(/^#\/project\/([^/?]+)/)?.[1];
+  const projectFr = pickDoc.documentElement.lang.startsWith('fr') && fr.projects.get(projectId);
+  const projectField = projectFr && [...projectFr].find(([field, text]) =>
+    (Array.isArray(text) ? text : [text]).some(t => t &&
+      [e.target.textContent, value].some(v => normalizePickText(v) === normalizePickText(t))));
+  if (projectField){
+    // Ne pas reconstruire un formulaire deja ouvert : ses saisies ne sont
+    // pas encore dans les donnees chargees depuis le serveur.
+    if (projectFormId !== projectId && $('#projects .dirty')){
+      status('Enregistre ou annule les modifications du projet ouvert avant de pointer une autre fiche.', 'warn');
+      return;
+    }
+    await showTab('projects');
+    if (projectFormId !== projectId) await openProjectForm(projectId);
+    const input = [...document.querySelectorAll('#projects textarea[data-lang="fr"]')]
+      .find(input => input.dataset.key === projectField[0]);
+    if (input && reveal(input.closest('.set'))) status('Texte français trouvé dans la fiche projet.', 'ok');
+    else status('Ce champ français ne peut pas être ouvert dans le formulaire.', 'warn');
+    return;
+  }
+  const hit = findTextItem(e.target.textContent) || findTextItem(value);
   if (!hit){
     status('Ce texte ne correspond à aucune chaîne éditable (il vient peut-être du CSS ou d\'un calcul).', 'warn');
     return;
   }
   showTab('texts');
   $('#search').value = '';
+  frFilter = 'tous';
+  for (const b of $('#frFilters').querySelectorAll('button')) b.classList.toggle('on', b.dataset.f === frFilter);
   render('');
-  await sleep(60);
-  if (!reveal(`.row[data-key="${hit.line}:${hit.start}"]`))
+  const row = [...document.querySelectorAll('#list .row')].find(row =>
+    hit.item ? row.dataset.key === key(hit.item) : row.dataset.text === hit.text);
+  const field = pickDoc.documentElement.lang.startsWith('fr') || !hit.item ? '.ta-fr' : '.ta-en';
+  if (!reveal(row, field))
     status('Texte trouvé mais introuvable dans la liste.', 'warn');
   else
-    status(`Texte trouvé — ${hit.section}, ligne ${hit.line}.`, 'ok');
+    status(hit.item ? `Texte trouvé — ${hit.item.section}, ligne ${hit.item.line}.` : 'Traduction trouvée dans le panneau.', 'ok');
+  } catch(err){
+    status('Pointage impossible : ' + err.message, 'err');
+  }
+}
+
+let pickHighlight = null;
+let pickStyle = null;
+function clearPickHighlight(){
+  if (!pickHighlight) return;
+  const { element, outline, offset } = pickHighlight;
+  for (const [name, old] of [['outline', outline], ['outline-offset', offset]]){
+    if (old.value) element.style.setProperty(name, old.value, old.priority);
+    else element.style.removeProperty(name);
+  }
+  pickHighlight = null;
 }
 
 function onPickMove(e){
   if (!picking) return;
-  if (pickDoc.__hl && pickDoc.__hl !== e.target) pickDoc.__hl.style.outline = '';
-  pickDoc.__hl = e.target;
+  if (pickHighlight?.element === e.target) return;
+  clearPickHighlight();
+  const old = name => ({ value:e.target.style.getPropertyValue(name), priority:e.target.style.getPropertyPriority(name) });
+  pickHighlight = { element:e.target, outline:old('outline'), offset:old('outline-offset') };
   e.target.style.outline = '2px solid #ff5a2a';
   e.target.style.outlineOffset = '1px';
 }
 
 function attachPicking(){
+  detachPicking();
   const doc = $('#site').contentDocument;
-  if (!doc) return;
+  if (!doc?.body) return;
   pickDoc = doc;
   doc.addEventListener('click', handlePick, true);
   doc.addEventListener('mousemove', onPickMove, true);
-  doc.body.style.cursor = 'crosshair';
+  doc.addEventListener('mouseleave', clearPickHighlight, true);
+  doc.addEventListener('keydown', onPickKey, true);
+  pickStyle = doc.createElement('style');
+  pickStyle.textContent = 'html, body, body * { cursor: crosshair !important; }';
+  doc.head.appendChild(pickStyle);
 }
 
 function detachPicking(){
@@ -1077,17 +1146,21 @@ function detachPicking(){
   try {
     pickDoc.removeEventListener('click', handlePick, true);
     pickDoc.removeEventListener('mousemove', onPickMove, true);
-    if (pickDoc.__hl) pickDoc.__hl.style.outline = '';
-    pickDoc.body.style.cursor = '';
+    pickDoc.removeEventListener('mouseleave', clearPickHighlight, true);
+    pickDoc.removeEventListener('keydown', onPickKey, true);
+    clearPickHighlight();
+    pickStyle?.remove();
+    pickStyle = null;
   } catch(e){}
   pickDoc = null;
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-$('#pick').addEventListener('click', () => {
-  picking = !picking;
+function setPicking(enabled){
+  picking = enabled;
   $('#pick').classList.toggle('on', picking);
+  $('#pick').setAttribute('aria-pressed', String(picking));
   if (picking){
     attachPicking();
     status("Mode pointage : clique un texte ou une image dans l'aperçu pour l'ouvrir dans le panneau.", 'ok');
@@ -1095,7 +1168,17 @@ $('#pick').addEventListener('click', () => {
     detachPicking();
     status('');
   }
-});
+}
+function onPickKey(e){
+  if (e.key === 'Escape' && picking){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    setPicking(false);
+  }
+}
+$('#pick').setAttribute('aria-pressed', 'false');
+$('#pick').addEventListener('click', () => setPicking(!picking));
+document.addEventListener('keydown', onPickKey, true);
 
 // le rechargement de l'apercu remplace le document : il faut se raccrocher
 $('#site').addEventListener('load', () => { if (picking) attachPicking(); });
@@ -2368,7 +2451,7 @@ async function unprotectProject(id){
   await loadChanges();
 }
 
-function showTab(which){
+function showTab(which, reload = true){
   const map = { texts:'#tabTexts', projects:'#tabProjects', media:'#tabMedia', settings:'#tabSettings', changes:'#tabChanges' };
   for (const [k, sel] of Object.entries(map)) $(sel).classList.toggle('on', k === which);
   $('#list').classList.toggle('off', which !== 'texts');
@@ -2379,10 +2462,11 @@ function showTab(which){
   $('#medbox').classList.toggle('on', which === 'media');
   $('#setbox').classList.toggle('on', which === 'settings');
   $('#commitbox').classList.toggle('on', which === 'changes');
-  if (which === 'projects') loadProjects();
-  if (which === 'media') loadMedia();
-  if (which === 'settings') loadSettings();
-  if (which === 'changes') loadChanges();
+  if (!reload) return;
+  if (which === 'projects') return loadProjects();
+  if (which === 'media') return loadMedia();
+  if (which === 'settings') return loadSettings();
+  if (which === 'changes') return loadChanges();
 }
 
 for (const el of document.querySelectorAll('input[name="pbscope"], input[name="pblisting"]')){
