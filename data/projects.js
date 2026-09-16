@@ -16,6 +16,34 @@
  * prev et next ne se saisissent plus : ils sont deduits de l'ordre.
  */
 window.KP_PROJECTS = {
+  cabotage: {
+    title: 'Cabotage',
+    category: 'Student Project · Virtual Production / ICVFX',
+    cardCategory: 'Virtual Production',
+    date: '2023-06',
+    thumb: 'projects/cabotage/hut-interior-thumb.webp',
+    heroImage: 'projects/cabotage/hut-interior.webp',
+    studio: 'NAD',
+    roleTitle: 'Student project',
+    venue: 'Studio L, MELS 3',
+    desc: 'A fisherman’s hut by the sea, built as a real-time set for a virtual production shoot at MELS.',
+    overview: 'Cabotage was my final project for the intensive Unreal Engine 5 and virtual production training at NAD. The environment was projected for filming at MELS on June 28, 2023. The brief called for a hut, fog and an ocean horizon, with a target of 60 fps on an NVIDIA RTX 2060 and a project smaller than 30 GB. The work extended beyond the digital scene: it had to come together with an actor, practical props and lighting on set.',
+    role: '3D Environment Artist — Scene Assembly, Modeling, Real-Time Controls & Compositing',
+    tools: ['Unreal Engine 5', 'Substance 3D Painter', 'Blueprints', 'Niagara', 'Fluid Flux'],
+    contribution: ['Assembled the coastal environment from Marketplace, Quixel and personal assets.', 'Modeled the modular fisherman’s hut and lighthouse, textured the lighthouse and integrated them into the scene.', 'Prepared a sequence for each camera position, activating the elements needed in that view, and Blueprint controls for camera sequences and environment parameters during filming.', 'Tested water systems and used an HLSL shader / Niagara approach on set to limit the real-time cost; animated scene elements with autoplay sequences and a Blueprint actor for the buoy.', 'Prepared an animatic as a reference for the actor and the mood, then added compositing and color correction to the final montage.'],
+    contributionNote: 'The environment combines my own work with existing assets. The shoot was a collaborative exercise with an actor, mentors, classmates and the MELS crew.',
+    technicalChallenges: ['Challenge — the hut, fog and sea had to share a limited real-time budget while remaining adjustable for the camera on set.', 'Production response — I organized scene activation around camera positions and chose a water treatment that did not require a full simulation during filming.', 'Production distinction — the published montage also contains CG renders. Fluid Flux was used for the introduction and credits, while the on-set water used HLSL / Niagara; the montage is not a raw performance capture of the real-time scene.'],
+    pipeline: ['Environment assembly and modular modeling', 'Water-system tests and scene optimization', 'Camera sequences and live scene controls', 'Actor and mood animatic', 'Virtual production shoot at MELS', 'CG renders, compositing and color correction'],
+    impact: 'The studio footage was recorded in a two-hour session. The final montage, environment breakdown and pre-shoot animatic document the project from preparation through filming.',
+    creditsNote: 'André Comiré — actor; Rémi Lapierre — Unreal mentor; Ifaz Matoub — 3D generalist advisor; Vincent Ladouceur — virtual production mentor; Simon Girard — tracking; Patrice Puiberneau — lighting designer / mentor; Alexis Sénécal — lighting assistant; Nicolas Fournier — technical director and camera operator at MELS; Jérémy B. Raymond — sound co-design; Michel De Silva — making-of. Thanks also to Pascal Lavallée, Guillaume Beauchamp, Aran Beik, Nicolas Lachance-Brais and Vivianne Proulx for their help with optimization, logistics, water tests, focus and practical assets; Élyz Bouchard for make-up; and Frederic Vicaire for advice on set.',
+    videoUrls: ['https://www.youtube.com/watch?v=ZNUBI0EBFlE', 'https://www.youtube.com/watch?v=XmW6r6ye4ZY', 'https://www.youtube.com/watch?v=EONL9Dd0IFM'],
+    videoTitles: ['Cabotage — final montage', 'Cabotage — environment breakdown', 'Cabotage — actor animatic'],
+    galleryImages: ['projects/cabotage/hut-interior.webp', 'projects/cabotage/mels-stage.webp', 'projects/cabotage/landscape-overview.webp', 'projects/cabotage/lighthouse-integration.webp', 'projects/cabotage/lighthouse-model.webp', 'projects/cabotage/modular-hut-integration.webp', 'projects/cabotage/modular-hut-model.webp', 'projects/cabotage/filming-controls.webp'],
+    galleryAlts: ['in-engine view of the fisherman’s hut interior, with a wooden staircase and a lit table lamp.', 'actor and practical set in front of the projected environment at Studio L, MELS 3.', 'overview of the coastal landscape and ocean in Unreal Engine.', 'textured lighthouse integrated into the coastal environment.', 'lighthouse model and its separate components.', 'modular fisherman’s hut assembled on the coast in Unreal Engine.', 'separate wall, roof and stair modules used to build the fisherman’s hut.', 'Blueprint controls for switching camera sequences and adjusting the scene during filming.'],
+    externalUrl: 'https://killmcclane.artstation.com/projects/n0Z8Q9',
+    externalLabel: 'See the project on ArtStation',
+    placeholderTiles: 0
+  },
   celestia: {
     date: '2026-06',
     listing: 'nda',

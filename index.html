@@ -707,12 +707,12 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 </script>
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
-  <script src="data/projects.js?v=20260907"></script>
+  <script src="data/projects.js?v=20260916"></script>
   <script src="data/video-posters.js?v=20260905"></script>
   <!-- Traduction francaise. Meme regle que les fiches : charge avant
        l'application, en script classique. Differe, l'anglais apparaitrait une
        fraction de seconde avant la bascule. -->
-  <script src="data/fr.js?v=20260906"></script>
+  <script src="data/fr.js?v=20260916"></script>
   <script>window.__asset = function (assetPath) {
   return assetPath;
 };
@@ -3264,8 +3264,9 @@ function ProjectScreenContent({
     index: n,
     poster: embed.poster || p.videoPosters?.[n] || (n === 0 ? p.videoPoster : null),
     fallbackPoster: p.videoPosters?.[n] || (n === 0 ? p.videoPoster : null) || p.heroImage || galleryImages[0] || p.thumbImage || null
-  })), ...collageImages.map(src => ({
-    src
+  })), ...collageImages.map((src, n) => ({
+    src,
+    alt: p.galleryAlts?.[n]
   })), ...(p.externalTile && p.externalUrl ? [{
     external: true,
     src: typeof p.externalTile === 'string' ? p.externalTile : null
@@ -3491,7 +3492,7 @@ function ProjectScreenContent({
     src: stableDriveFrame ? undefined : videoEmbeds[playingVideo].src,
     scrolling: stableDriveFrame ? 'no' : undefined,
     title: window.KP_I18N.t.f('{title} video', {
-      title: p.title
+      title: p.videoTitles?.[playingVideo] || p.title
     }),
     allow: "autoplay; encrypted-media; fullscreen; picture-in-picture",
     allowFullScreen: true,
@@ -3520,11 +3521,11 @@ function ProjectScreenContent({
     target: t.external ? "_blank" : undefined,
     rel: t.external ? "noopener noreferrer" : undefined,
     "aria-label": t.external ? p.externalLabel || p.studio : t.video ? window.KP_I18N.t.f('Play {title} video', {
-      title: p.title
+      title: p.videoTitles?.[t.index] || p.title
     }) : t.src ? window.KP_I18N.t.f('Open {title} image {n}', {
       title: p.title,
-      n: i + 1
-    }) : undefined,
+      n: t.alt ? galleryImages.indexOf(t.src) + 1 : i + 1
+    }) + (t.alt ? ` — ${t.alt}` : '') : undefined,
     key: i,
     onClick: t.external ? undefined : () => {
       if (t.video) setPlayingVideo(playingVideo === t.index ? null : t.index);else if (t.src) setLightbox(galleryImages.indexOf(t.src));
@@ -3948,7 +3949,7 @@ function ProjectScreenContent({
     d: "M8 4l8 8-8 8"
   })))), React.createElement("img", {
     src: galleryImages[lightbox],
-    alt: window.KP_I18N.t.f('{title} project image {n} of {total}', {
+    alt: p.galleryAlts?.[collageImages.indexOf(galleryImages[lightbox])] || window.KP_I18N.t.f('{title} project image {n} of {total}', {
       title: p.title,
       n: lightbox + 1,
       total: galleryCount

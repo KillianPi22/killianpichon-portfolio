@@ -40,6 +40,52 @@ demander.
 | `trailerUrl` | Une seule video. C'est le champ que l'editeur ecrit. |
 | `videoUrls` | Plusieurs videos, une tuile chacune. Present, il remplace `trailerUrl`. Voir Videos de la galerie. |
 
+### Cabotage — 16 septembre 2026
+
+La fiche `#/project/cabotage` presente le projet de fin de formation au NAD,
+tourne au Studio L de MELS 3 le 28 juin 2023. Les textes anglais et francais
+dans `data/projects.js` et `data/fr.js` sont adaptes de la
+[publication ArtStation de Killian](https://killmcclane.artstation.com/projects/n0Z8Q9).
+Les objectifs de 60 images/s sur RTX 2060 et de moins de 30 Go restent presentes
+comme des contraintes du brief, sans les transformer en mesures verifiees.
+La fiche distingue l'eau HLSL / Niagara du tournage et Fluid Flux pour
+l'introduction et le generique du montage final.
+
+Les huit images de la publication sont conservees dans `projects/cabotage/`,
+converties en WebP sans recadrage (1920 px maximum), avec une vignette de 960 px.
+Les trois videos YouTube publiques restent dans leur ordre : montage final,
+decomposition du decor, animatique de jeu. Le court extrait heberge par
+ArtStation reste consultable depuis le lien vers la publication d'origine.
+Le tutoriel d'ocean cite par l'auteur est celui de la
+[communaute Epic Games](https://dev.epicgames.com/community/learning/tutorials/qM1o/unreal-engine-ocean-simulation).
+
+`index.html` accepte deux listes facultatives : `videoTitles` pour distinguer
+les lecteurs et boutons au clavier / lecteur d'ecran, et `galleryAlts` pour
+decrire les images. Leurs traductions vivent dans la surcharge du projet.
+Les fiches qui ne les renseignent pas conservent leurs libelles habituels.
+Le design et le fonctionnement des lecteurs restent identiques.
+L'ajout est prepare sur `codex/cabotage-local`, puis integre a `main` pour
+publication a la demande du proprietaire.
+Le `sitemap.xml` ajoute la vignette a la liste des images et actualise
+la date de modification ; aucune route a fragment n'y est ajoutee.
+
+Verification via le serveur HTTP habituel : rendu a 390, 768 et 1440 px sans
+debordement horizontal, carte dans la liste complete des projets, navigation
+precedent/suivant, bascule anglais/francais et visionneuse au clavier.
+Les huit images et la vignette (environ 1,4 Mo au total) sont chargees ; les
+chemins ont ete controles avec leur casse exacte. Les scripts passent la
+verification de syntaxe. Aucune erreur console ou reseau au chargement de la
+fiche. Les trois boutons video ouvrent les bonnes sources, un seul lecteur
+reste monte, et Echap le ferme ; la lecture effective reste a verifier dans
+un navigateur ordinaire, car le navigateur d'apercu bloque les iframes YouTube
+avec `ERR_BLOCKED_BY_CLIENT`.
+Les donnees et traductions des projets existants sont identiques a `main`,
+y compris les sources video et les protections. `CNAME`, `.nojekyll`, le
+serveur local, le chiffrement et le consentement sont inchanges. Les chemins
+sensibles (`tools/auth.json`, sauvegardes, journal, `.git/`, `.claude/`) repondent
+toujours 404. Le diff ne contient que la nouvelle fiche, ses medias, ses libelles
+accessibles et cette documentation, avec les versions de cache et le sitemap.
+
 ### Videos de la galerie
 
 Depuis le 7 septembre 2026, **1858 — Habits de Lumiere** et **Lac Batiscan**
