@@ -47,6 +47,9 @@
     <image:image>
       <image:loc>https://killianpichon.art/projects/banquet/spectacle-thumb.webp</image:loc>
     </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/ihf-2021/counter-01-thumb.webp</image:loc>
+    </image:image>
   </url>
   <!-- Version francaise. Chaque version linguistique doit se declarer elle-meme
        et lister toutes les autres, sinon la correspondance n'est pas retenue.

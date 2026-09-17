@@ -367,6 +367,23 @@ window.KP_FR = {
      Un champ absent garde l'anglais, donc une fiche peut se traduire par
      morceaux sans jamais casser l'affichage. */
   projects: {
+    'ihf-2021': {
+      title: 'IHF 2021 — Cérémonie d’ouverture',
+      category: 'Cérémonie d’ouverture · Mapping vidéo',
+      cardCategory: 'Mapping vidéo',
+      venue: 'Le Caire, Égypte',
+      desc: 'Compte à rebours, drapeaux et effets de transition pour la cérémonie d’ouverture du Championnat du monde masculin de handball IHF 2021 au Caire.',
+      overview: 'Pour l’ouverture du 27e Championnat du monde masculin de handball IHF, Éloize Entertainment a créé un spectacle mêlant musique, danse, arts du cirque et lumière. Graphics eMotion a produit les contenus vidéo projetés. Au sein du studio, j’ai travaillé sur les animations du compte à rebours et des drapeaux, ainsi que sur plusieurs effets de transition.',
+      role: 'Artiste 3D — animation, effets visuels et compositing',
+      contribution: ['Travail sur la carte de pixels des contenus projetés.', 'Création des animations du compte à rebours et des drapeaux.', 'Réalisation de plusieurs effets visuels de transition.', 'Participation à la simulation, à l’ombrage, à l’éclairage et au compositing de ces séquences.'],
+      contributionNote: 'Ma contribution portait sur certaines séquences visuelles au sein du travail de l’équipe de Graphics eMotion pour la cérémonie.',
+      technicalChallenges: ['Le contexte de projection — le compte à rebours et les drapeaux étaient présentés sur le sol de l’arène, dans un spectacle associant images projetées, lumière et performance scénique.', 'La réponse de production — mon travail reliait la préparation de la carte de pixels à l’animation, à la simulation et au compositing du compte à rebours, des drapeaux et des effets de transition.'],
+      pipeline: ['Préparation de la carte de pixels', 'Animation du compte à rebours et des drapeaux', 'Simulation et effets de transition', 'Ombrage et éclairage', 'Compositing'],
+      impact: 'La cérémonie s’est tenue au Caire le 13 janvier 2021. L’extrait animé et les deux images montrent le compte à rebours et les drapeaux dans le dispositif final de projection ; la vidéo publique de l’IHF permet de voir la cérémonie.',
+      creditsNote: 'Création et production de l’événement : Éloize Entertainment, une division du Cirque Éloize. Contenus vidéo projetés : Graphics eMotion. Images de la cérémonie : IHF.',
+      galleryAlts: ['un extrait animé de la cérémonie montrant le compte à rebours et les drapeaux projetés sur le sol de l’arène.', 'Counter01 — vue d’ensemble de l’arène, avec le compte à rebours projeté au sol et les faisceaux lumineux au-dessus.', 'Counter02 — vue rapprochée des drapeaux nationaux animés et du compte à rebours projetés sur le sol de l’arène.'],
+      externalLabel: 'Voir la cérémonie sur la chaîne de l’IHF'
+    },
     banquet: {
       category: 'Installation immersive · Mapping vidéo',
       cardCategory: 'Installation immersive',

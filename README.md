@@ -172,6 +172,49 @@ Les fiches, leurs sources et protections, la galerie, le lecteur de l'accueil,
 le consentement, le serveur local et la configuration GitHub Pages sont verifies
 inchanges. Le serveur d'apercu refuse les chemins sensibles habituels.
 
+### IHF 2021 — 17 septembre 2026
+
+La fiche `#/project/ihf-2021` presente la contribution de Killian aux animations
+du compte a rebours, des drapeaux et a plusieurs effets de transition pour la
+ceremonie d'ouverture du Championnat du monde masculin de handball IHF 2021.
+Les responsabilites, l'employeur et les outils viennent du texte fourni par
+Killian. Les textes anglais et francais distinguent son travail de celui du
+studio et de la production du spectacle. Le contexte et les credits sont
+recoupes avec la [fiche de Graphics eMotion](https://www.graphicsemotion.com/gem/portfolio/ihf2021-opening-ceremony/).
+Le lien public pointe vers la [video officielle de l'IHF](https://www.youtube.com/watch?v=VRxXc5Ooi1c),
+publiee le 13 janvier 2021.
+
+La galerie commence par `VFX_Flags_AndCountdown.gif`, converti en WebP anime
+dans `projects/ihf-2021/flags-countdown.webp` : 1280 x 720 px, 25 images/s,
+3,24 s completes et environ 2,1 Mo au lieu de 61,6 Mo, sans recadrage.
+`Counter_01.png` et `Counter_02.png` suivent en WebP a leur taille d'origine ;
+Counter01 fournit aussi la vignette de 960 px. Les sources restent hors du depot.
+Le lien de ceremonie reste un lien sortant dans les credits de la fiche.
+
+Fichiers : `data/projects.js` et `data/fr.js` pour la fiche bilingue,
+`projects/ihf-2021/` pour les quatre medias, `index.html` pour les versions de
+cache et `sitemap.xml` pour la vignette, sans ajouter de route a fragment.
+Le design et les composants existants sont conserves.
+
+Verification en HTTP sur l'apercu limite a `127.0.0.1` : rendu a 390, 768 et
+1440 px sans debordement horizontal, animation en premier, Counter01 en
+vignette, trois medias dans la visionneuse avec navigation au clavier et
+fermeture par Echap, acces depuis la liste complete et navigation
+precedent/suivant. La bascule francais/anglais conserve la fiche. Les quatre
+medias repondent en HTTP 200, avec des chemins de casse exacte ; les 81 images
+et la duree complete de l'animation sont verifies. Aucune nouvelle erreur de
+console ou de reseau ni appel Analytics avant consentement n'est observe.
+Le lien externe correspond a la publication publique sur la chaine IHF.
+
+Les donnees et traductions des projets existants, leurs sources video et
+protections sont identiques a `main`. Le code des pages ne change que pour
+les versions de cache. `CNAME`, `.nojekyll`, `.pages.yml`, le consentement,
+le chiffrement et le serveur local restent inchanges ; l'apercu refuse les
+chemins sensibles habituels. Le serveur d'edition n'est pas relance et aucun
+essai sur iPhone physique n'est effectue. La fiche est preparee sur
+`codex/ihf-2021`. Sa publication utilise le deploiement GitHub Pages habituel
+depuis `main`, sans changement de configuration.
+
 ### Videos de la galerie
 
 Depuis le 7 septembre 2026, **1858 — Habits de Lumiere** et **Lac Batiscan**

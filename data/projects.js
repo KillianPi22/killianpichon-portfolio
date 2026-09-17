@@ -16,6 +16,31 @@
  * prev et next ne se saisissent plus : ils sont deduits de l'ordre.
  */
 window.KP_PROJECTS = {
+  'ihf-2021': {
+    title: 'IHF 2021 — Opening Ceremony',
+    category: 'Opening Ceremony · Projection Mapping',
+    cardCategory: 'Projection Mapping',
+    date: '2021-01',
+    thumb: 'projects/ihf-2021/counter-01-thumb.webp',
+    heroImage: 'projects/ihf-2021/flags-countdown.webp',
+    studio: 'Graphics eMotion',
+    venue: 'Cairo, Egypt',
+    desc: 'Countdown, flags and transition effects for the opening ceremony of the 2021 IHF Men’s World Championship in Cairo.',
+    overview: 'For the opening of the 27th IHF Men’s World Championship, Éloize Entertainment created a show combining music, dance, circus arts and light. Graphics eMotion produced the projected video content. Within the studio, I worked on the countdown and flag animations, along with several transition effects.',
+    role: '3D Artist — Animation, VFX & Compositing',
+    tools: ['Cinema 4D / XPresso', 'Octane', 'After Effects', 'Photoshop'],
+    contribution: ['Worked on the pixel map for the projected content.', 'Created animations for the countdown and flags.', 'Produced several visual effects for transitions.', 'Contributed simulation, shading, lighting and compositing to these sequences.'],
+    contributionNote: 'My contribution covered specific visual sequences within the Graphics eMotion team’s work for the ceremony.',
+    technicalChallenges: ['Projection context — the countdown and flags were presented on the arena floor, as part of a show combining projected imagery, lighting and live performance.', 'Production response — my work connected pixel-map preparation with animation, simulation and compositing for the countdown, flags and transition effects.'],
+    pipeline: ['Pixel-map preparation', 'Countdown and flag animation', 'Simulation and transition effects', 'Shading and lighting', 'Compositing'],
+    impact: 'The ceremony took place in Cairo on January 13, 2021. The animated excerpt and two stills show the countdown and flags in the final projection setup; the public IHF video documents the ceremony.',
+    creditsNote: 'Event creation and production: Éloize Entertainment, a division of Cirque Éloize. Projected video content: Graphics eMotion. Ceremony footage: IHF.',
+    galleryImages: ['projects/ihf-2021/flags-countdown.webp', 'projects/ihf-2021/counter-01.webp', 'projects/ihf-2021/counter-02.webp'],
+    galleryAlts: ['animated ceremony excerpt showing the countdown and flags projected on the arena floor.', 'Counter01 — wide view of the arena, with the countdown projected on the floor and beams of light overhead.', 'Counter02 — closer view of the animated national flags and countdown projected on the arena floor.'],
+    externalUrl: 'https://www.youtube.com/watch?v=VRxXc5Ooi1c',
+    externalLabel: 'Watch the ceremony on the IHF channel',
+    relatedProjects: ['banquet', 'epernay', 'colosseum']
+  },
   banquet: {
     title: 'Le Banquet',
     category: 'Immersive Installation · Projection Mapping',
