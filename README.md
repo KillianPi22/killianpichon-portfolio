@@ -410,6 +410,24 @@ rangees suivent l'ordre des medias, avec un visuel principal plus grand quand
 leur nombre le permet. Sur tablette le texte precede la galerie ; sur mobile
 les medias utilisent deux colonnes avec une premiere image large si necessaire.
 
+Depuis le 17 septembre 2026, la colonne `.project-summary` garde sa hauteur
+naturelle (`align-self: start`). Sans cela, elle s'etirait a la hauteur minimale
+de la galerie precedente : apres IHF, le calcul relisait cette hauteur et
+empechait les medias de retrecir sur les projets suivants. La galerie suit
+maintenant le contenu du projet courant, y compris pendant une navigation
+sans rechargement. `assets/motion-exploration.css` porte cette correction ;
+sa version de cache est actualisee dans `index.html`. La composition des
+galeries, les cadres flottants et la lecture des animations restent identiques.
+
+Verification HTTP : a 1440 px, Banquet revient de 613 a 458 px apres IHF,
+comme lors d'un chargement direct. La galerie a neuf medias de Sangue e Arena
+garde ses 682 px avec ou sans rechargement, puis le retour au Banquet retrouve
+458 px. Les allers-retours a 768 et 390 px conservent egalement les memes
+dimensions de tuiles qu'un chargement direct, sans debordement horizontal.
+Aucune nouvelle erreur console ou reseau. Les donnees, medias, protections,
+lecteurs, consentement, domaine et configuration de publication sont inchanges.
+Verification dans Chromium ; pas d'essai sur iPhone physique.
+
 Le fond reprend un media deja affiche, reduit a 128 x 80 px, floute a rayon
 constant. A la demande du proprietaire, le halo conserve 80 % de la saturation
 du media et une opacite de 23 % pour rendre ses couleurs plus presentes,

@@ -1,5 +1,7 @@
 /* Mouvement valide ; panneau de comparaison via ?explore=1. Palette et polices du site. */
 [data-kp-explore="on"] #root{position:relative;z-index:1}
+/* La mesure du texte doit rester independante de la hauteur de galerie precedente. */
+[data-kp-explore="on"] .project-summary{align-self:start}
 [data-kp-explore="on"] .project-media-grid{
   grid-template-columns:repeat(6,minmax(0,1fr))!important;
   grid-auto-rows:minmax(var(--kp-row,120px),1fr);
