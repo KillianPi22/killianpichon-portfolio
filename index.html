@@ -21,7 +21,7 @@
   <script defer src="assets/analytics-consent.js"></script>
   <script defer src="assets/protected-content.js"></script>
   <link rel="stylesheet" href="assets/motion-exploration.css?v=20260905">
-  <script defer src="assets/motion-exploration.js?v=20260905"></script>
+  <script defer src="assets/motion-exploration.js?v=20260917-animated-media"></script>
   <link rel="stylesheet" href="assets/organic-floating.css?v=20260906">
   <script defer src="assets/organic-floating.js?v=20260906"></script>
   <script defer src="assets/video-diagnostics.js?v=20260906b"></script>
@@ -707,7 +707,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 </script>
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
-  <script src="data/projects.js?v=20260917-ihf"></script>
+  <script src="data/projects.js?v=20260917-animated-media"></script>
   <script src="data/video-posters.js?v=20260905"></script>
   <!-- Traduction francaise. Meme regle que les fiches : charge avant
        l'application, en script classique. Differe, l'anglais apparaitrait une
@@ -1087,6 +1087,7 @@ function ProjectCard({
   year,
   thumbAlt = 'Project still',
   thumbImage,
+  animatedThumb = false,
   href = '#/work',
   onClick,
   locked = false
@@ -1110,6 +1111,7 @@ function ProjectCard({
       transition: 'box-shadow var(--duration-base) var(--ease-out)'
     },
     className: "thumb" + (locked && thumbImage ? ' thumb-locked' : ''),
+    "data-animated-image": animatedThumb ? "true" : undefined,
     "aria-label": thumbAlt,
     onMouseEnter: e => {
       e.currentTarget.style.boxShadow = 'inset 0 0 0 1px var(--accent), 0 0 20px var(--accent-glow)';
@@ -2400,7 +2402,8 @@ function HomeScreen({
     category: p.cardCategory || p.category,
     locked: p.locked,
     year: p.year,
-    thumbImage: p.thumbImage
+    thumbImage: p.thumbImage,
+    animatedThumb: p.animatedImages?.includes(p.thumbImage)
   })))), showAll && React.createElement("div", {
     className: "project-grid project-grid-more",
     style: {
@@ -2421,7 +2424,8 @@ function HomeScreen({
     category: p.cardCategory || p.category,
     locked: p.locked,
     year: p.year,
-    thumbImage: p.thumbImage
+    thumbImage: p.thumbImage,
+    animatedThumb: p.animatedImages?.includes(p.thumbImage)
   })))),
   // Sous 768 px, le bouton ne deplie pas une seconde grille : il bascule
   // l'apercu de quatre vers l'index complet, une ligne par projet. Six cartes
@@ -2548,6 +2552,7 @@ function prepareProject(id, p) {
   if (p.videoPoster) project.videoPoster = window.__asset(p.videoPoster);
   if (p.videoPosters) project.videoPosters = p.videoPosters.map(src => src ? window.__asset(src) : null);
   if (p.galleryImages) project.galleryImages = p.galleryImages.map(src => window.__asset(src));
+  if (p.animatedImages) project.animatedImages = p.animatedImages.map(src => window.__asset(src));
   return project;
 }
 const PROJECT_LIST = Object.entries(window.KP_PROJECTS || {}).map(([id, p]) => prepareProject(id, p)).sort((a, b) => String(b.date).localeCompare(String(a.date)));
@@ -3271,6 +3276,7 @@ function ProjectScreenContent({
     fallbackPoster: p.videoPosters?.[n] || (n === 0 ? p.videoPoster : null) || p.heroImage || galleryImages[0] || p.thumbImage || null
   })), ...collageImages.map((src, n) => ({
     src,
+    animated: p.animatedImages?.includes(src),
     alt: p.galleryAlts?.[n]
   })), ...(p.externalTile && p.externalUrl ? [{
     external: true,
@@ -3517,6 +3523,7 @@ function ProjectScreenContent({
     }
   }, tiles.map((t, i) => React.createElement(t.external ? "a" : "button", {
     className: "project-media-tile",
+    "data-animated-image": t.animated ? "true" : undefined,
     "aria-pressed": t.video ? playingVideo === t.index : undefined,
     type: t.external ? undefined : "button",
     disabled: t.external ? undefined : !t.video && !t.src,

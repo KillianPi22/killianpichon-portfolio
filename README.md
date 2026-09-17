@@ -37,6 +37,7 @@ demander.
 | `protected` | Fiche entiere chiffree. Voir la section Contenus a acces restreint. |
 | `protectedMedia` | Lien chiffre dans une fiche publique. Meme section. |
 | `externalTile` | Ajoute a la galerie une tuile qui ouvre `externalUrl` dans un nouvel onglet. `true` pour une tuile sobre, ou un chemin d'image pour la poser sur un visuel. Sans `externalUrl`, rien ne s'affiche. |
+| `animatedImages` | Liste des images animees du projet (galerie ou vignette), avec les memes chemins que leurs sources. Les declarer ici pour conserver leur lecture native sans calque Canvas fige. Les fichiers `.gif` sont aussi reconnus directement. |
 | `trailerUrl` | Une seule video. C'est le champ que l'editeur ecrit. |
 | `videoUrls` | Plusieurs videos, une tuile chacune. Present, il remplace `trailerUrl`. Voir Videos de la galerie. |
 
@@ -214,6 +215,39 @@ chemins sensibles habituels. Le serveur d'edition n'est pas relance et aucun
 essai sur iPhone physique n'est effectue. La fiche est preparee sur
 `codex/ihf-2021`. Sa publication utilise le deploiement GitHub Pages habituel
 depuis `main`, sans changement de configuration.
+
+### Lecture des images animees — 17 septembre 2026
+
+Les GIF et leurs versions WebP animees se lisent automatiquement et en boucle
+dans les galeries comme dans la visionneuse. Les trois fichiers actuellement
+publies (origamis et homards du Banquet, drapeaux et compte a rebours IHF)
+conservent un compteur de boucle a zero, c'est-a-dire infini.
+
+L'effet de courbure utilisait un calque Canvas qui pouvait recouvrir ces
+animations d'une image fixe. `assets/motion-exploration.js` garde maintenant
+leur image native visible ; les cadres flottants, le halo, le cadrage et
+les effets sur les images fixes restent en place. Aucun lecteur video,
+temporisateur de rechargement ou appel reseau supplementaire n'est ajoute.
+La visionneuse utilisait deja directement l'image animee.
+
+`data/projects.js` declare ces WebP dans `animatedImages`. `index.html`
+transmet cette information aux medias et aux vignettes, et actualise les
+versions de cache. Lors d'un ajout, declarer aussi les WebP / PNG animes
+dans cette liste et exporter le fichier avec une boucle infinie. Une URL
+finissant par `.gif`, y compris avec des parametres, est reconnue sans cette
+declaration ; son fichier doit egalement etre encode pour boucler.
+
+Verification : inventaire des fichiers par leurs blocs d'animation, trois
+WebP animes declares et tous en boucle infinie ; fichiers medias identiques
+a `main`. Essais HTTP a 390, 768 et 1440 px sans debordement, lecture native
+visible au repos, navigation Banquet / IHF dans les deux sens, agrandissement
+des trois animations et fermeture au clavier. Les images fixes gardent leur
+calque de courbure. Les scenarios controles couvrent aussi un GIF avec des
+parametres d'URL et le passage d'une source fixe a animee, puis inversement.
+Aucune nouvelle erreur console / reseau ni appel Analytics avant consentement.
+Les sources video, acces NDA, textes, fichiers de publication et serveur
+local sont inchanges ; les chemins sensibles restent refuses par l'apercu.
+Le controle est effectue dans Chromium, sans essai sur iPhone physique.
 
 ### Videos de la galerie
 

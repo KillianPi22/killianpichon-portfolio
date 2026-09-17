@@ -151,8 +151,10 @@
 
   function loadSurface(s) {
     const src = sourceFor(s.el);
-    if (s.src === src) return;
+    const animated = s.el.dataset.animatedImage === 'true' || /\.gif(?:[?#]|$)/i.test(src || '');
+    if (s.src === src && s.animated === animated) return;
     s.src = src;
+    s.animated = animated;
     s.image = null; s.canvas.dataset.ready = 'false';
     if (!src) return;
     const img = new Image();
@@ -191,6 +193,9 @@
   }
 
   function draw(s, r, strength) {
+    // Un canvas fige les GIF / WebP animes. Laisser leur image native visible :
+    // elle demarre et boucle sans clic, tout en gardant le cadre flottant.
+    if (s.animated) { s.canvas.dataset.ready = 'false'; return; }
     if (!s.image) return;
     const w = s.el.clientWidth, h = s.el.classList.contains('about-profile-figure') ? s.el.querySelector('img').clientHeight : s.el.clientHeight;
     if (s.el.classList.contains('about-profile-figure')) s.canvas.style.height = h + 'px';
@@ -303,7 +308,7 @@
   }
   new MutationObserver(records => {
     if (records.some(record => record.type !== 'childList' || [...record.addedNodes, ...record.removedNodes].some(node => node.nodeType !== 1 || !node.classList.contains('kp-warp-canvas'))) && !refreshRaf) refreshRaf = requestAnimationFrame(refresh);
-  }).observe(document.body, { childList: true, characterData: true, attributes: true, attributeFilter: ['src', 'hidden', 'disabled'], subtree: true });
+  }).observe(document.body, { childList: true, characterData: true, attributes: true, attributeFilter: ['src', 'hidden', 'disabled', 'data-animated-image'], subtree: true });
   addEventListener('scroll', () => {
     const now = performance.now();
     targetVelocity = clamp((scrollY - lastY) / Math.max(16, now - lastScrollTime) / 2, -1, 1);
