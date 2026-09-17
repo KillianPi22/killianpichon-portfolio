@@ -73,7 +73,7 @@ window.KP_PROJECTS = {
     category: 'Student Project · Virtual Production / ICVFX',
     cardCategory: 'Virtual Production',
     date: '2023-06',
-    thumb: 'projects/cabotage/hut-interior-thumb.webp',
+    thumb: 'projects/cabotage/mels-stage.webp',
     heroImage: 'projects/cabotage/hut-interior.webp',
     studio: 'NAD',
     roleTitle: 'Student project',

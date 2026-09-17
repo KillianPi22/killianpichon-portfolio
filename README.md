@@ -54,6 +54,9 @@ l'introduction et le generique du montage final.
 
 Les huit images de la publication sont conservees dans `projects/cabotage/`,
 converties en WebP sans recadrage (1920 px maximum), avec une vignette de 960 px.
+Depuis le 17 septembre 2026, la vignette du projet reutilise la photo du plateau
+`mels-stage.webp`, deja presente dans la galerie. L'ancienne vignette reste
+conservee ; l'ordre de la galerie et les videos ne changent pas.
 Les trois videos YouTube publiques restent dans leur ordre : montage final,
 decomposition du decor, animatique de jeu. Le court extrait heberge par
 ArtStation reste consultable depuis le lien vers la publication d'origine.
