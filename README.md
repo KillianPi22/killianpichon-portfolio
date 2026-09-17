@@ -86,6 +86,92 @@ sensibles (`tools/auth.json`, sauvegardes, journal, `.git/`, `.claude/`) reponde
 toujours 404. Le diff ne contient que la nouvelle fiche, ses medias, ses libelles
 accessibles et cette documentation, avec les versions de cache et le sitemap.
 
+### Le Banquet — 17 septembre 2026
+
+La fiche `#/project/banquet` presente le spectacle de Graphics eMotion a la
+Cite des sciences et de l'industrie, ouvert en novembre 2021. Les textes
+anglais et francais reprennent les responsabilites fournies par Killian
+(calculs des projecteurs, pixel map des murs, tables et rubans LED, systeme
+de previsualisation du spectacle dans Cinema 4D, rig et textures des homards,
+animation, simulations, particules, ombrage, eclairage, compositing et montage).
+Le contexte et les
+11 minutes du spectacle viennent de la
+[fiche officielle du studio](https://www.graphicsemotion.com/gem/portfolio/le-banquet-cite-des-sciences-et-de-lindustrie/).
+La page distingue le travail individuel de la production collective, sans
+attribuer a Killian la direction du spectacle, le son ou les effets olfactifs.
+
+La galerie contient les deux photos fournies, converties en WebP (1920 px
+maximum, sans recadrage), et deux animations realisees par Killian : les
+origamis de canard animes en points, montres in situ, et les homards avec leurs
+transitions de repli. Les GIF sources sont convertis en WebP animes :
+`projects/banquet/origamis-canards.webp` (480 x 852 px, 15 images/s, environ
+37 s et 14,6 Mo au lieu de 344 Mo) et `projects/banquet/homards-replis.webp`
+(960 x 540 px, 25 images/s, 3 s, 1,8 Mo au lieu de 87,5 Mo).
+Les deux sequences gardent leur duree complete
+et leur cadrage. Les originaux restent hors du depot. Une vignette WebP complete
+les quatre medias.
+
+A la demande du proprietaire, les deux videos sont retirees de cette version
+en attendant ses montages. L'essai de lecteur MP4 local est retire egalement :
+la galerie et les lecteurs des autres projets conservent leur fonctionnement.
+Les textes et descriptions accessibles francais/anglais precisent le rig,
+l'animation, les textures et les transitions de repli des homards ainsi que
+l'animation des origamis, sans attribuer a Killian l'ensemble du spectacle.
+
+La fiche est preparee sur `codex/banquet-local`, puis integree a `main` pour
+publication a la demande du proprietaire avec la rubrique Autres demos.
+`data/projects.js`, `data/fr.js`, leurs versions de cache et le sitemap sont
+actualises ; aucune route a fragment n'est ajoutee au sitemap. Le flux
+GitHub Pages et le domaine personnalise sont conserves.
+
+Verification de la reprise : apercu HTTP limite a `127.0.0.1`, rendu a 390,
+768 et 1440 px sans debordement horizontal, quatre medias charges en HTTP 200,
+visionneuse et navigation au clavier, carte dans la liste complete des projets,
+navigation precedent/suivant, lien du studio et bascule francais/anglais.
+Aucune erreur de console ou de reseau observee sur la fiche ; aucun lecteur
+video ni appel Analytics avant consentement. Les chemins et leur casse exacte
+sont verifies. Les donnees des autres projets, les lecteurs, le design,
+`CNAME`, `.nojekyll`, `.pages.yml`, le chiffrement, le consentement et
+`tools/serve.ps1` sont identiques a `main`. Les chemins sensibles sont refuses
+par le serveur d'apercu ; le serveur d'edition habituel n'a pas ete relance.
+Le controle responsive est effectue dans Chromium, sans essai sur iPhone reel.
+
+### Autres demos — 17 septembre 2026
+
+La rubrique generale `#/demos` est accessible depuis le lien discret
+Autres demos / Other demos du pied de page, y compris sur `privacy.html`.
+La navigation principale conserve ses quatre entrees. La page presente la
+demo 2019–2022 : `7IuTgMDSUew` en anglais et `wk1_5q8ZHMw` en francais,
+selon la langue du site. Le changement de langue conserve la page.
+
+Les deux vignettes officielles YouTube sont conservees en WebP dans
+`assets/demos/`. Le lecteur YouTube sans cookies n'est monte qu'au clic ;
+aucune ressource YouTube n'est chargee sur cette page avant la lecture.
+Le bouton Fermer la video retire le lecteur et rend le focus au bouton de
+lecture ; Echap le ferme lorsque le focus est dans la page. Le lien Voir sur
+YouTube ouvre la meme version linguistique. Quitter la page arrete la lecture.
+
+Fichiers : `index.html` pour la page, la route et le pied de page partage,
+`data/fr.js` pour les libelles et metadonnees, `privacy.html` pour son pied de
+page statique, `assets/demos/` pour les affiches locales et ce README.
+Cette rubrique est preparee avec la fiche Banquet, puis integree a `main`
+pour publication a la demande du proprietaire. Aucune route a fragment
+n'est ajoutee au sitemap.
+
+Verification HTTP : rendu a 390, 768 et 1440 px sans debordement horizontal,
+affiches locales chargees, pied de page depuis l'accueil et la confidentialite,
+conservation de la route et choix de la bonne source en changeant de langue,
+ouverture au clic, fermeture au bouton et par Echap, retour du focus et retrait
+du lecteur en quittant la page. Sur mobile, le lecteur garde 200 px utiles de
+hauteur. Les metadonnees officielles YouTube confirment les deux versions.
+Aucun appel YouTube ou Analytics avant lecture/consentement ni nouvelle erreur
+de la page. Le navigateur d'apercu bloque certains essais d'iframe YouTube avec
+`ERR_BLOCKED_BY_CLIENT` : la lecture complete des deux versions reste a confirmer
+dans un navigateur ordinaire. Pas d'essai sur iPhone physique.
+Les fiches, leurs sources et protections, la galerie, le lecteur de l'accueil,
+le consentement, le serveur local et la configuration GitHub Pages sont verifies
+inchanges. Le serveur d'apercu refuse les chemins sensibles habituels.
+
 ### Videos de la galerie
 
 Depuis le 7 septembre 2026, **1858 — Habits de Lumiere** et **Lac Batiscan**

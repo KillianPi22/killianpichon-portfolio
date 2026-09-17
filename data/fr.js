@@ -52,6 +52,10 @@ window.KP_FR = {
     'English': 'Anglais',
     'Privacy': 'Confidentialité',
     'Privacy choices': 'Choix de confidentialité',
+    'Other demos': 'Autres démos',
+    'Demo reel · 2019–2022': 'Démo · 2019–2022',
+    'Play demo reel 2019–2022': 'Lire la démo 2019–2022',
+    'Close video': 'Fermer la vidéo',
     /* ------------------------------------------------ cadres flottants */
     'Floating frames': 'Cadres flottants',
     'Previous motion': 'Ancien mouvement',
@@ -363,6 +367,21 @@ window.KP_FR = {
      Un champ absent garde l'anglais, donc une fiche peut se traduire par
      morceaux sans jamais casser l'affichage. */
   projects: {
+    banquet: {
+      category: 'Installation immersive · Mapping vidéo',
+      cardCategory: 'Installation immersive',
+      desc: 'Un banquet virtuel où le mapping vidéo réunit la table, les assiettes et les murs dans un même spectacle multisensoriel.',
+      overview: 'Créé par Graphics eMotion pour l’exposition Banquet à Paris, ce spectacle de 11 minutes a ouvert en novembre 2021. Images projetées, lumière, son et effets olfactifs accompagnent un menu imaginé par le chef Thierry Marx et le chercheur en cuisine moléculaire Raphaël Haumont. Au sein du studio, mon travail associait préparation de la projection et production visuelle.',
+      role: 'Artiste 3D — préparation de projection, animation et compositing',
+      contribution: ['Calculs des projecteurs et préparation du pixel map pour toutes les surfaces de projection, dont les murs et les tables, ainsi que les rubans LED.', 'Création d’un système de prévisualisation du spectacle dans Cinema 4D.', 'Rig, animation et textures des homards, avec les effets de transition de repli.', 'Animation en points des origamis de canard, montrée in situ dans l’image animée.', 'Contribution à l’animation, aux simulations et aux effets de particules.', 'Travail sur l’ombrage et l’éclairage des images projetées.', 'Participation au compositing et au montage.'],
+      contributionNote: 'Le spectacle est une production collective de Graphics eMotion. Les responsabilités décrites ici correspondent à ma contribution.',
+      technicalChallenges: ['Le dispositif de projection — le spectacle se déploie sur les murs, les tables et les objets qui y sont posés, avec des rubans LED également intégrés au pixel map. La préparation des images devait prendre en compte cet ensemble de surfaces.', 'La réponse de production — j’ai réalisé les calculs des projecteurs, préparé le pixel map de ces surfaces et des rubans LED, puis créé un système de prévisualisation du spectacle dans Cinema 4D. La mire colorée documente le repérage sur la table et ses objets.'],
+      pipeline: ['Calculs des projecteurs et pixel map : murs, tables et rubans LED', 'Prévisualisation du spectacle dans Cinema 4D', 'Animation, simulations et particules', 'Ombrage et éclairage', 'Compositing et montage'],
+      impact: 'L’installation a été présentée au public de la Cité des sciences et de l’industrie en 2021. Les photos documentent le repérage de la projection et l’exposition ; les images animées montrent mon travail sur les homards et les origamis de canard in situ.',
+      creditsNote: 'Spectacle : Graphics eMotion. Menu : Thierry Marx et Raphaël Haumont. Rig, animation, textures et transitions de repli des homards ; animation des origamis de canard : Killian Pichon.',
+      galleryAlts: ['deux vues des homards projetés sur les assiettes et des visiteurs autour de la table du banquet.', 'une mire colorée et numérotée projetée sur la table, les assiettes et les objets en relief.', 'des origamis de canard animés en points, montrés in situ — animation de Killian Pichon.', 'des homards animés avec des transitions de repli — rig, animation, textures et effets de transition de Killian Pichon.'],
+      externalLabel: 'Le projet sur Graphics eMotion'
+    },
     cabotage: {
       category: 'Projet étudiant · Production virtuelle / ICVFX',
       cardCategory: 'Production virtuelle',
@@ -554,6 +573,10 @@ window.KP_FR = {
     technical: {
       title: 'Démarche de production — Killian Pichon',
       description: 'Études de production, décisions de flux de travail et intérêts en direction technique derrière le travail immersif de Killian Pichon.'
+    },
+    demos: {
+      title: 'Autres démos — Killian Pichon',
+      description: 'Démo de Killian Pichon couvrant la période 2019 à 2022.'
     },
     contact: {
       title: 'Contact — Killian Pichon',

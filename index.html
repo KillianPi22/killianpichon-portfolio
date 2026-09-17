@@ -707,12 +707,12 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 </script>
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
-  <script src="data/projects.js?v=20260916"></script>
+  <script src="data/projects.js?v=20260917-banquet"></script>
   <script src="data/video-posters.js?v=20260905"></script>
   <!-- Traduction francaise. Meme regle que les fiches : charge avant
        l'application, en script classique. Differe, l'anglais apparaitrait une
        fraction de seconde avant la bascule. -->
-  <script src="data/fr.js?v=20260916"></script>
+  <script src="data/fr.js?v=20260917-demos"></script>
   <script>window.__asset = function (assetPath) {
   return assetPath;
 };
@@ -2070,7 +2070,12 @@ function Footer() {
       flexWrap: 'wrap',
       gap: 'var(--space-5)'
     }
-  }, React.createElement("button", {
+  }, React.createElement("a", {
+    href: "#/demos",
+    className: "kp-footer-link",
+    "aria-current": window.location.hash === '#/demos' ? 'page' : undefined,
+    style: { fontSize: 'var(--text-micro)' }
+  }, "Other demos"), React.createElement("button", {
     type: "button",
     className: "kp-footer-link",
     "data-analytics-choices": true,
@@ -4948,6 +4953,70 @@ function ContactScreen({
   })))), React.createElement(Footer, null));
 }
 window.ContactScreen = ContactScreen;
+function DemosScreen({ onNav }) {
+  const { Navbar, Footer } = window.KillianPichonDesignSystem_16387b;
+  const [playing, setPlaying] = React.useState(false);
+  const headingRef = React.useRef(null);
+  const playRef = React.useRef(null);
+  const closeRef = React.useRef(null);
+  const lang = window.KP_I18N.lang === 'fr' ? 'fr' : 'en';
+  const videoId = lang === 'fr' ? 'wk1_5q8ZHMw' : '7IuTgMDSUew';
+  const closeVideo = React.useCallback(() => {
+    setPlaying(false);
+    window.requestAnimationFrame(() => playRef.current?.focus());
+  }, []);
+  React.useEffect(() => { headingRef.current?.focus({ preventScroll: true }); }, []);
+  React.useEffect(() => {
+    if (!playing) return;
+    closeRef.current?.focus({ preventScroll: true });
+    const onKey = e => { if (e.key === 'Escape') closeVideo(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [playing, closeVideo]);
+  return React.createElement("div", null,
+    React.createElement(Navbar, { onLinkClick: onNav }),
+    React.createElement("main", {
+      style: { padding: '48px var(--container-pad) 96px', minHeight: '65vh' }
+    }, React.createElement("div", { style: { maxWidth: '960px', margin: '0 auto' } },
+      React.createElement("h1", {
+        ref: headingRef, tabIndex: -1,
+        style: { fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'var(--text-display-lg)', textTransform: 'uppercase', marginBottom: 'var(--space-6)', outline: 'none' }
+      }, "Other demos"),
+      React.createElement("h2", {
+        style: { fontSize: 'var(--text-h2)', color: 'var(--text-heading)', marginBottom: 'var(--space-5)' }
+      }, "Demo reel · 2019–2022"),
+      React.createElement("div", {
+        className: "demo-reel-player",
+        style: { position: 'relative', aspectRatio: '16 / 9', minHeight: '202px', border: '1px solid var(--line-subtle)', borderRadius: 'var(--radius-md)', background: 'var(--void-900)' }
+      }, playing ? React.createElement("iframe", {
+        src: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1`,
+        title: "Demo reel · 2019–2022",
+        allow: "autoplay; encrypted-media; fullscreen; picture-in-picture",
+        allowFullScreen: true,
+        style: { position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0, borderRadius: 'inherit' }
+      }) : React.createElement("button", {
+        ref: playRef, type: 'button', onClick: () => setPlaying(true),
+        "aria-label": "Play demo reel 2019–2022",
+        style: { position: 'absolute', inset: 0, width: '100%', height: '100%', padding: 0, border: 0, borderRadius: 'inherit', background: 'transparent', cursor: 'pointer', color: 'var(--text-heading)' }
+      }, React.createElement("img", {
+        src: window.__asset(`assets/demos/reel-2019-2022-${lang}.webp`),
+        alt: '', width: 480, height: 360,
+        style: { width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block' }
+      }), React.createElement("span", {
+        "aria-hidden": true,
+        style: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(10,10,11,.25)', borderRadius: 'inherit' }
+      }, React.createElement("span", { className: 'project-video-play' }, "\u25B6")))),
+      React.createElement("div", {
+        style: { display: 'flex', flexWrap: 'wrap', gap: 'var(--space-5)', marginTop: 'var(--space-5)', fontSize: 'var(--text-small)' }
+      }, playing && React.createElement("button", {
+        ref: closeRef, type: 'button', onClick: closeVideo, className: 'kp-footer-link',
+        style: { color: 'var(--text-muted)' }
+      }, "Close video"), React.createElement("a", {
+        href: `https://www.youtube.com/watch?v=${videoId}`, target: '_blank', rel: 'noopener noreferrer',
+        className: 'kp-footer-link', style: { color: 'var(--text-muted)' }
+      }, "Watch on YouTube")))),
+    React.createElement(Footer, null));
+}
 const SCREEN_META = {
   home: {
     title: 'Killian Pichon - 3D Artist Generalist / Real-Time',
@@ -4960,6 +5029,10 @@ const SCREEN_META = {
   technical: {
     title: 'Production Thinking — Killian Pichon',
     description: 'Production studies, workflow decisions and technical-art interests behind Killian Pichon’s immersive work.'
+  },
+  demos: {
+    title: 'Other demos — Killian Pichon',
+    description: 'Killian Pichon’s demo reel from 2019 to 2022.'
   },
   contact: {
     title: 'Contact — Killian Pichon',
@@ -4979,7 +5052,7 @@ function routeFromHash() {
   if (!path || path === 'work') return {
     screen: 'home'
   };
-  if (path === 'about' || path === 'technical' || path === 'contact') return {
+  if (path === 'about' || path === 'technical' || path === 'contact' || path === 'demos') return {
     screen: path
   };
   if (path.startsWith('project/')) {
@@ -5068,6 +5141,9 @@ function App() {
     onNav: handleNav
   });
   if (route.screen === 'contact') return React.createElement(ContactScreen, {
+    onNav: handleNav
+  });
+  if (route.screen === 'demos') return React.createElement(DemosScreen, {
     onNav: handleNav
   });
   return React.createElement(HomeScreen, {

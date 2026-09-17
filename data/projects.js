@@ -16,6 +16,31 @@
  * prev et next ne se saisissent plus : ils sont deduits de l'ordre.
  */
 window.KP_PROJECTS = {
+  banquet: {
+    title: 'Le Banquet',
+    category: 'Immersive Installation · Projection Mapping',
+    cardCategory: 'Immersive Installation',
+    date: '2021-11',
+    thumb: 'projects/banquet/spectacle-thumb.webp',
+    heroImage: 'projects/banquet/spectacle.webp',
+    studio: 'Graphics eMotion',
+    venue: 'Cité des sciences et de l’industrie, Paris',
+    desc: 'A virtual banquet where projection mapping brings the table, plates and surrounding walls into the same multisensory show.',
+    overview: 'Created by Graphics eMotion for the Banquet exhibition in Paris, this 11-minute show opened in November 2021. Projected imagery, lighting, sound and olfactory effects accompany a menu devised by chef Thierry Marx and culinary scientist Raphaël Haumont. My work within the studio covered projection preparation and visual production.',
+    role: '3D Artist — Projection Preparation, Animation & Compositing',
+    tools: ['Cinema 4D', 'Octane', 'After Effects', 'Photoshop'],
+    contribution: ['Calculated the projector setup and prepared the pixel map for all projection surfaces, including the walls and tables, as well as the LED strips.', 'Built a system to preview the show in Cinema 4D.', 'Rigged, animated and textured the lobsters, including their folding transition effects.', 'Animated origami ducks as points, shown in situ in the animated image.', 'Contributed animation, simulations and particle effects.', 'Worked on shading and lighting for the projected imagery.', 'Contributed to compositing and editing.'],
+    contributionNote: 'This was a Graphics eMotion team production. The responsibilities listed here describe my contribution to the show.',
+    technicalChallenges: ['Projection layout — the show spans walls, tables and the objects placed on them, with LED strips also included in the pixel map. Preparing the imagery meant accounting for this whole spatial arrangement.', 'Production response — I calculated the projector setup, prepared the pixel map across these surfaces and the LED strips, and built a system to preview the show in Cinema 4D. The coloured calibration image documents the mapping on the table and its objects.'],
+    pipeline: ['Projector calculations and pixel map: walls, tables and LED strips', 'Show preview in Cinema 4D', 'Animation, simulations and particles', 'Shading and lighting', 'Compositing and editing'],
+    impact: 'The finished installation was presented to visitors at the Cité des sciences et de l’industrie in 2021. The photos document the projection setup and exhibition; the animated images show my work on the lobsters and the origami ducks in situ.',
+    creditsNote: 'Show: Graphics eMotion. Menu: Thierry Marx and Raphaël Haumont. Lobster rigging, animation, texturing and folding transitions; origami duck animation: Killian Pichon.',
+    galleryImages: ['projects/banquet/spectacle.webp', 'projects/banquet/mire-mapping.webp', 'projects/banquet/origamis-canards.webp', 'projects/banquet/homards-replis.webp'],
+    galleryAlts: ['two views of projected lobsters on the plates and visitors seated around the banquet table.', 'a coloured, numbered calibration grid projected onto the table, plates and raised objects.', 'origami ducks animated as points, shown in situ — animation by Killian Pichon.', 'animated lobsters with folding transitions — rigging, animation, texturing and transition effects by Killian Pichon.'],
+    externalUrl: 'https://www.graphicsemotion.com/gem/portfolio/le-banquet-cite-des-sciences-et-de-lindustrie/',
+    externalLabel: 'Project on Graphics eMotion',
+    relatedProjects: ['epernay', 'colosseum', 'batiscan']
+  },
   cabotage: {
     title: 'Cabotage',
     category: 'Student Project · Virtual Production / ICVFX',
