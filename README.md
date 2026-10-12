@@ -1125,3 +1125,41 @@ Pour le domaine racine `killianpichon.art`, ajouter les quatre enregistrements `
 Ajouter aussi un `CNAME` pour `www` vers `KillianPi22.github.io` afin que les variantes avec et sans `www` fonctionnent ensemble.
 
 Apres l'achat, ajouter un fichier `CNAME` a la racine du depot contenant uniquement `killianpichon.art` afin de conserver le domaine personnalise lors des publications.
+
+
+### Précision des contributions — 12 octobre 2026
+
+À partir du retour de Valeria et des précisions de Killian, les fiches anglaises
+et françaises de Volcano, Hurtubise et Melanie Martinez sont révisées dans
+`data/projects.js` et `data/fr.js`. Volcano distingue le nettoyage photographique
+et la méthode Photoshop / BodyPaint pour les textures 16K de l’intégration finale.
+Melanie Martinez distingue les itérations de production des visuels précalculés
+diffusés pendant la tournée. Hurtubise indique la SAT comme lieu de présentation.
+Les crédits fournis sont ajoutés à ces trois fiches.
+
+La surcharge française de Celestia distingue l’adaptation des animations, le
+traitement Fresnel et la préparation des passes du compositing effectué par une
+autre personne. Aucun crédit nominatif n’est ajouté pendant l’embargo. La fiche
+anglaise est également corrigée dans sa charge chiffrée, avec un nouveau sel et
+un nouveau nonce générés dans le navigateur. Les médias et les métadonnées
+protégées sont conservés, ainsi que PBKDF2-SHA256 à 600 000 itérations et AES-GCM.
+La rubrique R&D de `index.html` et sa traduction sont harmonisées ; les versions
+de cache des deux fichiers de données et la date principale du sitemap changent.
+
+Vérifications : syntaxe JavaScript et diff sans erreur ; trois fiches publiques
+servies par HTTP avec le serveur habituel, en français et en anglais à 390, 768
+et 1440 px, sans débordement horizontal ni image cassée ; aucune erreur de page
+ou requête échouée relevée pendant ces contrôles ; navigation interne testée.
+Les chemins sensibles sont toujours refusés par le serveur habituel. Les liens
+externes et la lecture effective des vidéos n’ont pas été retestés : leurs
+adresses et leur fonctionnement n’ont pas été modifiés. Les sources des médias,
+les autres charges chiffrées, les projets hors périmètre, CNAME et .nojekyll sont vérifiés
+inchangés. La base locale correspond à main distant. Publication autorisée par le propriétaire après validation.
+Les modifications préexistantes de l’éditeur local sont conservées.
+
+Complément Celestia : déverrouillage et rendu vérifiés en français et en anglais
+à 390, 768 et 1440 px, sans débordement, image cassée ni erreur de page ou de
+réseau. Le nouveau contenu a été déchiffré après rechiffrement pour vérifier
+son intégrité. Une comparaison en mémoire confirme que seuls les champs
+éditoriaux prévus ont changé ; les médias et métadonnées protégées sont intacts.
+Aucun code d’accès n’a été enregistré dans les fichiers du projet.
