@@ -1163,3 +1163,8 @@ réseau. Le nouveau contenu a été déchiffré après rechiffrement pour vérif
 son intégrité. Une comparaison en mémoire confirme que seuls les champs
 éditoriaux prévus ont changé ; les médias et métadonnées protégées sont intacts.
 Aucun code d’accès n’a été enregistré dans les fichiers du projet.
+
+
+Correction complémentaire du 12 octobre 2026 : retrait de la mention de Mari
+et de la contrainte de licence dans les défis de Volcano, en français et en
+anglais, à la demande du propriétaire. Médias et protections inchangés.
