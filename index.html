@@ -6,7 +6,7 @@
   <base href="./">
   <meta name="theme-color" content="#0a0a0b">
   <meta name="author" content="Killian Pichon">
-  <meta name="description" content="Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.">
+  <meta name="description" content="Killian Pichon, 3D artist in Montréal. Portfolio of 3D animation, real-time graphics, fulldome films and projection mapping for immersive experiences.">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="canonical" href="https://killianpichon.art/">
   <!-- Versions linguistiques. x-default designe l'adresse servie a qui n'a
@@ -32,8 +32,8 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Killian Pichon">
   <meta property="og:locale" content="en_CA">
-  <meta property="og:title" content="Killian Pichon - 3D Artist Generalist / Real-Time">
-  <meta property="og:description" content="Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.">
+  <meta property="og:title" content="Killian Pichon — 3D Artist in Montréal | Portfolio">
+  <meta property="og:description" content="Killian Pichon, 3D artist in Montréal. Portfolio of 3D animation, real-time graphics, fulldome films and projection mapping for immersive experiences.">
   <meta property="og:url" content="https://killianpichon.art/">
   <meta property="og:image" content="https://killianpichon.art/assets/og-image.jpg">
   <meta property="og:image:type" content="image/jpeg">
@@ -41,8 +41,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Killian Pichon — 3D artist generalist, real-time graphics, technical art, immersive.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Killian Pichon - 3D Artist Generalist / Real-Time">
-  <meta name="twitter:description" content="Portfolio and more.">
+  <meta name="twitter:title" content="Killian Pichon — 3D Artist in Montréal | Portfolio">
+  <meta name="twitter:description" content="Killian Pichon, 3D artist in Montréal. Portfolio of 3D animation, real-time graphics, fulldome films and projection mapping for immersive experiences.">
   <meta name="twitter:image" content="https://killianpichon.art/assets/og-image.jpg">
   <meta name="twitter:image:alt" content="Killian Pichon — 3D artist generalist, real-time graphics, technical art, immersive.">
   <script type="application/ld+json">
@@ -54,7 +54,7 @@
         "@id": "https://killianpichon.art/#website",
         "url": "https://killianpichon.art/",
         "name": "Killian Pichon",
-        "description": "Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.",
+        "description": "Killian Pichon, 3D artist in Montréal. Portfolio of 3D animation, real-time graphics, fulldome films and projection mapping for immersive experiences.",
         "inLanguage": "en-CA"
       },
       {
@@ -63,6 +63,7 @@
         "name": "Killian Pichon",
         "url": "https://killianpichon.art/",
         "jobTitle": "3D Artist Generalist / Real-Time",
+        "knowsAbout": ["3D animation", "Real-time graphics", "Projection mapping", "Fulldome films"],
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Montréal",
@@ -77,8 +78,8 @@
         "@type": "WebPage",
         "@id": "https://killianpichon.art/#webpage",
         "url": "https://killianpichon.art/",
-        "name": "Killian Pichon - 3D Artist Generalist / Real-Time",
-        "description": "Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.",
+        "name": "Killian Pichon — 3D Artist in Montréal | Portfolio",
+        "description": "Killian Pichon, 3D artist in Montréal. Portfolio of 3D animation, real-time graphics, fulldome films and projection mapping for immersive experiences.",
         "isPartOf": { "@id": "https://killianpichon.art/#website" },
         "about": { "@id": "https://killianpichon.art/#person" },
         "author": { "@id": "https://killianpichon.art/#person" },
@@ -93,7 +94,7 @@
     ]
   }
   </script>
-  <title>Killian Pichon - 3D Artist Generalist / Real-Time</title>
+  <title>Killian Pichon — 3D Artist in Montréal | Portfolio</title>
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 :root{--font-display:'Archivo',system-ui,sans-serif;--font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',monospace}
@@ -1091,7 +1092,7 @@ function ProjectCard({
   title,
   category,
   year,
-  thumbAlt = 'Project still',
+  thumbAlt,
   thumbImage,
   animatedThumb = false,
   href = '#/work',
@@ -1125,7 +1126,13 @@ function ProjectCard({
     onMouseLeave: e => {
       e.currentTarget.style.boxShadow = 'none';
     }
-  }, locked && React.createElement("span", {
+  }, !locked && thumbImage && React.createElement("img", {
+    src: thumbImage,
+    alt: thumbAlt || `${title} — ${category}`,
+    loading: "lazy",
+    decoding: "async",
+    style: {position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none'}
+  }), locked && React.createElement("span", {
     className: "project-card-lock",
     "aria-hidden": "true"
   })), React.createElement("div", {
@@ -3587,7 +3594,13 @@ function ProjectScreenContent({
       background: t.src ? `url(${t.src}) center/cover` : t.video ? t.fallbackPoster ? `url(${t.fallbackPoster}) center/cover` : 'linear-gradient(150deg,#2a2723,#151417 40%,#3a1c10)' : 'linear-gradient(150deg,rgba(28,29,34,.55),rgba(17,17,20,.4) 55%,rgba(36,22,16,.35))',
       transition: 'box-shadow var(--duration-base) var(--ease-out)'
     }
-  }, t.video && t.poster && React.createElement("img", {
+  }, t.src && !t.video && !t.external && !window.KP_PROJECTS[p.id]?.protected && React.createElement("img", {
+    src: t.src,
+    alt: t.alt ? `${p.title} — ${t.alt}` : p.title,
+    loading: "lazy",
+    decoding: "async",
+    style: {position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none'}
+  }), t.video && t.poster && React.createElement("img", {
     key: t.poster,
     className: "project-video-poster",
     src: t.poster,
@@ -5061,8 +5074,8 @@ function DemosScreen({ onNav }) {
 }
 const SCREEN_META = {
   home: {
-    title: 'Killian Pichon - 3D Artist Generalist / Real-Time',
-    description: 'Killian Pichon is a Montréal-based immersive artist working in real-time graphics, technical art and visual storytelling, for fulldome films, projection mapping and location-based experiences.'
+    title: 'Killian Pichon — 3D Artist in Montréal | Portfolio',
+    description: 'Killian Pichon, 3D artist in Montréal. Portfolio of 3D animation, real-time graphics, fulldome films and projection mapping for immersive experiences.'
   },
   about: {
     title: 'About — Killian Pichon',

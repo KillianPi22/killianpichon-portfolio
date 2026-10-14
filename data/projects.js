@@ -111,6 +111,7 @@ window.KP_PROJECTS = {
     }
   },
   hurtubise: {
+    galleryAlts: ["Amber rectangular light patterns projected above a seated dome audience.", "Blue angular light patterns across the dome, with audience silhouettes.", "Golden checkerboard patterns filling the dome above the audience.", "Multicoloured painterly patterns surrounding the audience under the dome."],
     title: 'Hurtubise : Saisir le Chaos',
     category: 'Immersive Film · Fulldome',
     date: '2025-08',
@@ -132,6 +133,7 @@ window.KP_PROJECTS = {
     creditsNote: "Production: Normal Studio, Hippie Hourrah, SAT. Multimedia Director: Tommy Caron. Lead Motion Designer: Pierre Prieur.",
   },
   volcano: {
+    galleryAlts: ["Layered coastal cliffs with yellow and red rock bands and people at their base.", "Visitors facing a large curved projection of a rocky canyon."],
     title: 'Into the Volcano',
     category: 'Immersive Installation · 270°',
     date: '2025-06',
@@ -155,6 +157,7 @@ window.KP_PROJECTS = {
     externalLabel: 'See more on Normal Studio'
   },
   melanie: {
+    galleryAlts: ["A performer suspended by strings in a purple and red puppet theatre stage scene.", "Pastel school playground with pink heart-shaped seesaws, above a concert audience.", "Female figures in a red room projected on the concert stage.", "Pink carousel framed by an illuminated arch above the concert audience.", "Oversized puppet figures framed by pink stage curtains.", "Palace façade framed by an arch of green foliage."],
     title: 'Melanie Martinez',
     category: 'Tour Visuals',
     date: '2024-09',
@@ -173,6 +176,7 @@ window.KP_PROJECTS = {
     creditsNote: "Art Director: Éliane Achcar. Multimedia Director: Tommy Caron. Lead Motion Designers: Daniella Tran Van, Michel Greco. Production: Normal Studio.",
   },
   traveler: {
+    galleryAlts: ["Pink crystalline formation in a swirling blue and white environment.", "Golden curved strands surrounding a floating rocky globe against a green background.", "Circular view of red and white crystalline spirals.", "Rocky sphere and golden curved strands within a dark circular dome frame.", "White and gold sphere surrounded by curved golden strands against black."],
     title: "Traveler's Introspection",
     category: 'Immersive Film · Dome',
     date: '2026-03',
@@ -207,6 +211,7 @@ window.KP_PROJECTS = {
     galleryImages: ['projects/traveler/planet-strands.png', 'projects/traveler/asteroid-field.png', 'projects/traveler/cave-crystals.webp', 'projects/traveler/tunnel-vortex.webp', 'projects/traveler/golden-strands-2.webp']
   },
   paralleles: {
+    galleryAlts: ["Visitors walking through illuminated X-shaped portals beside a projected building façade at night.", "Outdoor metal portals with coloured diagonal bars in daylight.", "Unreal Engine viewport showing purple illuminated portals in a public square."],
     title: 'PARALLÈLES',
     category: 'Interactive Installation · Real-Time',
     date: '2023-06',
@@ -223,6 +228,7 @@ window.KP_PROJECTS = {
     galleryImages: ['projects/paralleles/installation-neon-x.jpg', 'projects/paralleles/installation-day.webp', 'projects/paralleles/unreal-viewport.png']
   },
   batiscan: {
+    galleryAlts: ["Projected terrain model on a table inside a room with large windows.", "Overhead view of a snowy terrain model with blue waterways.", "Green terrain projection with white place labels and a winding river.", "Angled view of a snowy terrain model with blue water.", "Tablet information panel in front of a green projected terrain model."],
     title: 'Lac Batiscan',
     category: 'Interactive Scale Model · Projection Mapping Design',
     date: '2024-05',
@@ -252,6 +258,7 @@ window.KP_PROJECTS = {
     relatedProjects: ['1858 – Habits de Lumière', 'Sangue e Arena']
   },
   epernay: {
+    galleryAlts: ["Yellow and green geometric projection mapping on a façade above an audience.", "White architectural outlines projected on a building at night.", "Green vertical patterns projected across the façade above the crowd.", "Grey stone fragments projected across the lower part of the façade.", "Bright fragmented blocks projected at the base of the building."],
     title: '1858 – Habits de Lumière',
     category: 'Projection Mapping · Architectural',
     date: '2022-12',
@@ -276,6 +283,7 @@ window.KP_PROJECTS = {
     relatedProjects: ['Sangue e Arena', 'Lac Batiscan']
   },
   colosseum: {
+    galleryAlts: ["Wide view of the Colosseum lit blue with ship imagery projected across it.", "Ships on water projected across the blue-lit Colosseum.", "Ship projections with orange flames across the blue-lit Colosseum.", "Wide view of a row of projected figures across the red-lit Colosseum.", "Two fighting figures projected at large scale on the Colosseum.", "A line of white gladiator figures projected beneath red architectural lighting.", "Illustrated Priscus and Verus banner projected across the Colosseum.", "Luminous sculpted bust projected against the dark Colosseum façade.", "White architectural linework projected across the Colosseum façade."],
     title: 'Sangue e Arena',
     category: 'Projection Mapping · Architectural',
     date: '2018-06',
@@ -298,6 +306,7 @@ window.KP_PROJECTS = {
     placeholderTiles: 0
   },
   luminart: {
+    galleryAlts: ["Segmented circular blue glass emblem against a dark background.", "Glowing blue textured sphere surrounded by thin concentric rings.", "Translucent blue column surrounded by glowing blue and violet rings."],
     title: 'Lumin-ART Productions',
     category: 'Animated Logo · Motion Design',
     cardCategory: 'Animated Logo',
@@ -322,6 +331,7 @@ window.KP_PROJECTS = {
     externalLabel: 'See Lumin-ART Productions'
   },
   'memoire-eau': {
+    galleryAlts: ["Flowing pale patterns projected across pointed arches and stonework on a church façade at night."],
     title: "La Mémoire de l'Eau",
     category: 'Projection Mapping · Architectural',
     cardCategory: 'Projection Mapping',

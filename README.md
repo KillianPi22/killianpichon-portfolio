@@ -1285,3 +1285,18 @@ et README.md. Médias, chiffrement, domaine et configuration Pages inchangés.
 Publication autorisée le 13 octobre 2026 : la page Technique est masquée
 par défaut sur le site public. Sa réactivation reste disponible dans les
 réglages de l’éditeur local, suivie d’une nouvelle publication.
+
+### Référencement des images publiques — 14 octobre 2026
+
+Les titres et descriptions de l’accueil précisent l’activité d’artiste 3D à
+Montréal en français et en anglais, sans changer le texte visible ni les URL.
+Les vignettes publiques et les images de galerie utilisent des éléments `img`
+avec textes alternatifs ; les fonds CSS sont conservés pour l’effet visuel existant.
+Les descriptions de galerie vivent dans `galleryAlts`, dans le même ordre que
+`galleryImages`, avec leurs traductions dans `data/fr.js`.
+
+La génération du sitemap par l’éditeur inclut les vignettes, images principales
+et galeries locales publiques. Les fiches chiffrées ou masquées, les liens vidéo
+et les contenus chiffrés restent exclus. Aucun bloc de mots-clés caché n’est ajouté.
+Les routes `#/project/...` restent inchangées ; leur indexation individuelle
+et le suivi dans Search Console restent à traiter séparément.

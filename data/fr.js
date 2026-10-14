@@ -430,6 +430,7 @@ window.KP_FR = {
     },
 
     hurtubise: {
+      galleryAlts: ["Motifs lumineux rectangulaires ambrés projetés au-dessus du public assis sous le dôme.", "Motifs lumineux angulaires bleus sur le dôme, avec les silhouettes du public.", "Motifs en damier dorés couvrant le dôme au-dessus du public.", "Motifs picturaux multicolores enveloppant le public sous le dôme."],
       category: 'Film immersif · Fulldôme',
       venue: "SAT, Montréal",
       desc: 'Une production fulldôme qui traduit les tableaux de Jacques Hurtubise en lumière, mouvement et composition spatiale synchronisés.',
@@ -444,6 +445,7 @@ window.KP_FR = {
     },
 
     volcano: {
+      galleryAlts: ["Falaises côtières aux strates jaunes et rouges, avec des personnes à leur pied.", "Visiteurs face à une grande projection incurvée de canyon rocheux."],
       category: 'Installation immersive · 270°',
       cardCategory: 'Installation immersive',
       venue: 'Musée Perlan, Reykjavík',
@@ -460,6 +462,7 @@ window.KP_FR = {
     },
 
     melanie: {
+      galleryAlts: ["Une interprète suspendue par des fils dans un décor de théâtre de marionnettes violet et rouge.", "Cour d’école pastel avec des balançoires à bascule roses en forme de cœur, au-dessus du public du concert.", "Figures féminines dans une pièce rouge projetée sur la scène du concert.", "Carrousel rose encadré par une arche lumineuse au-dessus du public du concert.", "Grandes figures de marionnettes encadrées par des rideaux de scène roses.", "Façade de palais encadrée par une arche de feuillage vert."],
       category: 'Visuels de tournée',
       venue: 'The Trilogy Tour — univers K-12 et Portals',
       desc: 'Des visuels de tournée qui traduisent les univers de livre d’images de Melanie Martinez en scènes conçues pour une lecture répétable en grande salle.',
@@ -473,6 +476,7 @@ window.KP_FR = {
     },
 
     traveler: {
+      galleryAlts: ["Formation cristalline rose dans un environnement tourbillonnant bleu et blanc.", "Filaments dorés courbes autour d’un globe rocheux flottant sur fond vert.", "Vue circulaire de spirales cristallines rouges et blanches.", "Sphère rocheuse et filaments dorés courbes dans un cadrage circulaire sombre pour le dôme.", "Sphère blanche et dorée entourée de filaments dorés courbes sur fond noir."],
       category: 'Film immersif · Dôme',
       cardCategory: 'Film immersif',
       roleTitle: 'Cofondateur',
@@ -489,6 +493,7 @@ window.KP_FR = {
     },
 
     paralleles: {
+      galleryAlts: ["Visiteurs traversant des portiques lumineux en X près d’une façade projetée, de nuit.", "Portiques métalliques extérieurs à barres diagonales colorées, de jour.", "Vue de travail dans Unreal Engine montrant des portiques éclairés en violet sur une place."],
       category: 'Installation interactive · Temps réel',
       desc: 'Une installation interactive bâtie sur une chaîne caméra-présentation synchronisée, qui relie des séquences cinématographiques à des visuels procéduraux. Réalisée en 28 heures.',
       overview: 'Développé avec Transversal, PARALLÈLES demandait que deux systèmes visuels se comportent comme une seule ligne de temps de production. Les séquences de caméra cinématographique menaient la présentation, des messages OSC déclenchaient les événements procéduraux dans TouchDesigner, et les images obtenues revenaient dans la scène temps réel pour la capture et la revue.',
@@ -500,6 +505,7 @@ window.KP_FR = {
     },
 
     batiscan: {
+      galleryAlts: ["Maquette de terrain projetée sur une table dans une salle aux grandes fenêtres.", "Vue de dessus d’une maquette enneigée aux cours d’eau bleus.", "Projection de terrain vert avec des noms de lieux blancs et une rivière sinueuse.", "Vue oblique d’une maquette de terrain enneigée aux eaux bleues.", "Panneau d’information sur tablette devant une maquette de terrain projetée en vert."],
       category: 'Maquette interactive · Conception de mapping vidéo',
       cardCategory: 'Maquette interactive',
       roleTitle: 'À mon compte',
@@ -517,6 +523,7 @@ window.KP_FR = {
     },
 
     epernay: {
+      galleryAlts: ["Mapping géométrique jaune et vert sur une façade devant le public.", "Contours architecturaux blancs projetés sur un bâtiment de nuit.", "Motifs verticaux verts projetés sur la façade au-dessus de la foule.", "Fragments de pierre gris projetés sur la partie basse de la façade.", "Blocs lumineux fragmentés projetés à la base du bâtiment."],
       category: 'Mapping vidéo · Architectural',
       client: 'Ville d’Épernay',
       venue: 'Épernay, France',
@@ -533,6 +540,7 @@ window.KP_FR = {
     },
 
     colosseum: {
+      galleryAlts: ["Vue large du Colisée éclairé en bleu avec des images de navires projetées.", "Navires sur l’eau projetés sur le Colisée éclairé en bleu.", "Projections de navires et de flammes orangées sur le Colisée éclairé en bleu.", "Vue large d’une rangée de personnages projetés sur le Colisée éclairé en rouge.", "Deux combattants projetés à grande échelle sur le Colisée.", "Alignement de gladiateurs blancs projetés sous un éclairage architectural rouge.", "Bannière illustrée de Priscus et Verus projetée sur le Colisée.", "Buste sculpté lumineux projeté sur la façade sombre du Colisée.", "Tracé architectural blanc projeté sur la façade du Colisée."],
       category: 'Mapping vidéo · Architectural',
       venue: 'Colisée de Rome',
       desc: 'L’une de mes premières productions internationales de grande échelle, mêlant captation, animation et projection architecturale au Colisée de Rome.',
@@ -548,6 +556,7 @@ window.KP_FR = {
     },
 
     luminart: {
+      galleryAlts: ["Emblème circulaire segmenté en verre bleu sur fond sombre.", "Sphère bleue texturée lumineuse entourée de fins anneaux concentriques.", "Colonne bleue translucide entourée d’anneaux lumineux bleus et violets."],
       category: 'Logo animé · Motion design',
       cardCategory: 'Logo animé',
       roleTitle: 'À mon compte',
@@ -564,6 +573,7 @@ window.KP_FR = {
     },
 
     'memoire-eau': {
+      galleryAlts: ["Motifs fluides clairs projetés sur les arcs gothiques et la pierre d’une façade d’église de nuit."],
       category: 'Mapping vidéo · Architectural',
       cardCategory: 'Mapping vidéo',
       roleTitle: 'À mon compte',
@@ -583,8 +593,8 @@ window.KP_FR = {
 
   head: {
     home: {
-      title: 'Killian Pichon — Généraliste 3D / Temps réel',
-      description: 'Killian Pichon est un artiste immersif basé à Montréal, actif en graphisme temps réel, en direction technique et en narration visuelle, pour le cinéma fulldôme, le mapping vidéo et les expériences sur site.'
+      title: 'Killian Pichon — Artiste 3D à Montréal | Portfolio',
+      description: 'Killian Pichon, artiste 3D à Montréal. Portfolio d’animation 3D, de création temps réel, de films fulldôme et de mapping vidéo pour des expériences immersives.'
     },
     about: {
       title: 'Profil — Killian Pichon',

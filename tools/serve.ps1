@@ -1561,11 +1561,18 @@ function Update-Sitemap {
     $f = $r.fields
     if ($f.Contains('protected')) { continue }
     if ($f.Contains('listing') -and [string]$f['listing'] -eq 'hidden') { continue }
-    if (-not $f.Contains('thumb')) { continue }
-    $images += "https://killianpichon.art/" + ([string]$f['thumb']).TrimStart('/')
+    # Index only public local images, never encrypted media or external links.
+    $candidates = @($f['thumb']) + @($f['heroImage']) + @($f['galleryImages'])
+    foreach ($candidate in $candidates) {
+      $rel = [string]$candidate
+      $mediaPath = Resolve-PublicMedia $rel
+      if ($mediaPath -and $rel -match '(?i)\.(avif|webp|jpe?g|png|gif|svg)$' -and (Test-Path -LiteralPath $mediaPath -PathType Leaf)) {
+        $images += "https://killianpichon.art/" + $rel
+      }
+    }
   }
 
-  $block = ($images | Select-Object -Unique | ForEach-Object { "    <image:image>`r`n      <image:loc>$_</image:loc>`r`n    </image:image>" }) -join "`r`n"
+  $block = ($images | Select-Object -Unique | ForEach-Object { $_ = [System.Security.SecurityElement]::Escape($_); "    <image:image>`r`n      <image:loc>$_</image:loc>`r`n    </image:image>" }) -join "`r`n"
   $updated = [regex]::Replace($text, '(?s)(\r?\n)\s*<image:image>.*?</image:image>\s*(\r?\n  </url>)', "`r`n$block`$2")
   $updated = [regex]::Replace($updated, '<lastmod>[^<]*</lastmod>', "<lastmod>$(Get-Date -Format 'yyyy-MM-dd')</lastmod>")
   if ($updated -ne $text) { [System.IO.File]::WriteAllText($path, $updated, $enc) }

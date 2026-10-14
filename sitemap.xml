@@ -4,7 +4,7 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://killianpichon.art/</loc>
-    <lastmod>2026-10-13</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/?lang=fr"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/"/>
@@ -12,43 +12,190 @@
       <image:loc>https://killianpichon.art/assets/og-image.jpg</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/hurtubise/dome-neon-blue-1.jpg</image:loc>
+      <image:loc>https://killianpichon.art/projects/ihf-2021/counter-01-thumb.webp</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/volcano/installation-view-thumb.webp</image:loc>
+      <image:loc>https://killianpichon.art/projects/ihf-2021/flags-countdown.webp</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/melanie-martinez/mansion-arch.avif</image:loc>
+      <image:loc>https://killianpichon.art/projects/ihf-2021/counter-01.webp</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/traveler/asteroid-field-thumb.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://killianpichon.art/projects/paralleles/installation-neon-x.jpg</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://killianpichon.art/projects/batiscan/model-tablet-poi.avif</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://killianpichon.art/projects/1858-epernay/mapping-green-facade.jpg</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://killianpichon.art/projects/colosseum/naumachia-night-wide.jpg</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://killianpichon.art/projects/luminart/logo-panels.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://killianpichon.art/projects/memoire-eau/mapping-eglise.webp</image:loc>
-    </image:image>
-    <image:image>
-      <image:loc>https://killianpichon.art/projects/cabotage/mels-stage.webp</image:loc>
+      <image:loc>https://killianpichon.art/projects/ihf-2021/counter-02.webp</image:loc>
     </image:image>
     <image:image>
       <image:loc>https://killianpichon.art/projects/banquet/spectacle-thumb.webp</image:loc>
     </image:image>
     <image:image>
-      <image:loc>https://killianpichon.art/projects/ihf-2021/counter-01-thumb.webp</image:loc>
+      <image:loc>https://killianpichon.art/projects/banquet/spectacle.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/banquet/mire-mapping.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/banquet/origamis-canards.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/banquet/homards-replis.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/cabotage/mels-stage.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/cabotage/hut-interior.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/cabotage/landscape-overview.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/cabotage/lighthouse-integration.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/cabotage/lighthouse-model.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/cabotage/modular-hut-integration.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/cabotage/modular-hut-model.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/cabotage/filming-controls.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/hurtubise/dome-neon-blue-1.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/hurtubise/dome-neon-blue-2.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/hurtubise/dome-neon-amber.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/hurtubise/dome-paint-animation.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/volcano/installation-view-thumb.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/volcano/iceland-cliffs.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/volcano/installation-view.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/melanie-martinez/mansion-arch.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/melanie-martinez/k12-seesaw.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/melanie-martinez/carousel-bunny.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/melanie-martinez/carousel-arch.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/melanie-martinez/red-room-dancers.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/melanie-martinez/puppet-theater.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/traveler/asteroid-field-thumb.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/traveler/planet-strands.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/traveler/asteroid-field.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/traveler/cave-crystals.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/traveler/tunnel-vortex.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/traveler/golden-strands-2.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/paralleles/installation-neon-x.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/paralleles/installation-day.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/paralleles/unreal-viewport.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/batiscan/model-tablet-poi.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/batiscan/reception-projection.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/batiscan/aerial-lake-winter.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/batiscan/model-top-labels.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/batiscan/model-angle-labels.avif</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/1858-epernay/mapping-green-facade.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/1858-epernay/lighting-intro.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/1858-epernay/vfx-green-growth.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/1858-epernay/vfx-briques-1.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/1858-epernay/vfx-briques-2.png</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/naumachia-night-wide.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/naumachia-ships-blue.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/naumachia-ships-fire.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/gladiators-wide.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/gladiator-duel.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/gladiators-lineup.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/priscus-verus-banner.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/emperor-bust-projection.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/colosseum/wireframe-architecture.jpg</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/luminart/logo-panels.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/luminart/fresnel-core.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/luminart/glass-column-rings.webp</image:loc>
+    </image:image>
+    <image:image>
+      <image:loc>https://killianpichon.art/projects/memoire-eau/mapping-eglise.webp</image:loc>
     </image:image>
   </url>
   <!-- Version francaise. Chaque version linguistique doit se declarer elle-meme
@@ -56,7 +203,7 @@
        Les images sont les memes : elles ne sont pas dupliquees ici. -->
   <url>
     <loc>https://killianpichon.art/?lang=fr</loc>
-    <lastmod>2026-09-17</lastmod>
+    <lastmod>2026-10-14</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/?lang=fr"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/"/>
