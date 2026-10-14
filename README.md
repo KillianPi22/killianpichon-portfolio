@@ -1257,3 +1257,31 @@ La Mémoire de l’Eau, harmonisation des projets liés, correction des halos
 et fondu du carrousel sur ordinateur et tablette. Ce lot remplace les mentions
 de préparation locale ci-dessus. Les changements de l’éditeur local restent
 hors publication. Les contrôles de chaque modification sont décrits ci-dessus.
+
+
+### Visibilité de la page Technique — 13 octobre 2026
+
+Dans l’éditeur local, Réglages > Pages > Afficher la page Technique est une
+case à cocher, désactivée par défaut. Enregistrer puis recharger l’aperçu pour
+voir le changement. Le booléen window.KP_SHOW_TECHNICAL dans index.html pilote
+à la fois le lien de navigation et la route, en français et en anglais.
+Désactivée, la page redirige #/technical vers #/work en conservant la langue.
+Réactivée, elle retrouve son contenu et son lien. Aucun contenu n’est supprimé ;
+ce masquage éditorial n’est pas une protection de confidentialité. Le réglage
+réutilise la sauvegarde authentifiée existante et exige une publication pour
+modifier le site public. Préparation locale, sans publication.
+
+Vérification reproductible : node tools/test-technical-visibility.cjs (Node,
+Playwright et Edge). Le test utilise une copie temporaire et des identifiants
+jetables ; aucun fichier d’authentification réel n’est lu ou copié. Contrôles :
+case à cocher dans l’éditeur, sauvegarde authentifiée, rejet d’une valeur non
+booléenne, cycle désactivé/activé/désactivé sans altération du contenu, route
+directe et navigation en français/anglais à 390, 768 et 1440 px, absence
+d’erreurs de navigateur et refus des chemins sensibles. Test réussi avec
+l’éditeur publié et avec la version locale en cours de développement.
+Fichiers : index.html, tools/serve.ps1, tools/test-technical-visibility.cjs
+et README.md. Médias, chiffrement, domaine et configuration Pages inchangés.
+
+Publication autorisée le 13 octobre 2026 : la page Technique est masquée
+par défaut sur le site public. Sa réactivation reste disponible dans les
+réglages de l’éditeur local, suivie d’une nouvelle publication.

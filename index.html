@@ -710,6 +710,7 @@ var d=null!=c&&c.hydratedSources||null,e=!1,f="",g=aj;null!==c&&void 0!==c&&(!0=
 function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmountComponentAtNode=function(a){if(!Vd(a))throw Error(m(40));return a._reactRootContainer?(yb(function(){Wd(null,null,a,!1,function(){a._reactRootContainer=null;a[Ja]=null})}),!0):!1};Q.unstable_batchedUpdates=Tf;Q.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!Vd(c))throw Error(m(200));if(null==a||void 0===a._reactInternals)throw Error(m(38));return Wd(a,b,c,!1,d)};Q.version="18.3.1-next-f1338f8080-20240426"});
 })();
 </script>
+  <script>window.KP_SHOW_TECHNICAL = false;</script>
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
   <script src="data/projects.js?v=20261013-memoire-eau"></script>
@@ -1066,7 +1067,7 @@ function Navbar({
       gap: '32px',
       marginLeft: 'auto'
     }
-  }, links.map(l => React.createElement("a", {
+  }, links.filter(l => l !== 'Technical' || window.KP_SHOW_TECHNICAL === true).map(l => React.createElement("a", {
     className: "site-nav-link",
     key: l,
     href: hrefs[l] || '#/work',
@@ -5093,6 +5094,10 @@ function routeFromHash() {
   if (!path || path === 'work') return {
     screen: 'home'
   };
+  if (path === 'technical' && window.KP_SHOW_TECHNICAL !== true) {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search + '#/work');
+    return { screen: 'home' };
+  }
   if (path === 'about' || path === 'technical' || path === 'contact' || path === 'demos') return {
     screen: path
   };

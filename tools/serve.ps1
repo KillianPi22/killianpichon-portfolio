@@ -1911,6 +1911,10 @@ function New-JsonLdPattern([string]$type, [string]$field) {
 }
 
 $SettingsDef = @(
+  @{ key='showTechnical'; group='Pages'; label='Afficher la page Technique'; kind='boolean'
+     help='Decochez pour masquer le lien et rediriger son adresse vers les projets. Le contenu est conserve. La publication reste necessaire pour modifier le site en ligne.'
+     targets=@( '(?<pre>window\.KP_SHOW_TECHNICAL = )(?<v>true|false)(?<post>;)' ) }
+
   @{ key='showReel'; group='Accueil - Demo reel'; label="Afficher le demo reel sur l'accueil"; kind='boolean'
      help='Decochez pour masquer la tuile et son lecteur. Le lien est conserve.'
      targets=@( '(?<pre>  showReel = )(?<v>true|false)(?<post>,)' ) }
