@@ -1168,3 +1168,92 @@ Aucun code d’accès n’a été enregistré dans les fichiers du projet.
 Correction complémentaire du 12 octobre 2026 : retrait de la mention de Mari
 et de la contrainte de licence dans les défis de Volcano, en français et en
 anglais, à la demande du propriétaire. Médias et protections inchangés.
+
+
+### La Mémoire de l’Eau — 13 octobre 2026
+
+Les textes français et anglais mettent en avant la fluidité et les mouvements
+singuliers du mapping. L’œuvre suit son propre rythme, indépendamment de la
+musique programmée, tout en étant pensée pour son ambiance. Un remerciement
+à Dominique Arcand souligne sa confiance et son soutien à Killian en tant
+qu’artiste émergent ; la formule « une œuvre signée Killian Pichon » lui est
+attribuée selon les précisions du propriétaire. Médias et protections conservés.
+
+Vérification locale par HTTP en français et en anglais à 390, 768 et 1440 px :
+aucun débordement horizontal, image cassée ou erreur de navigateur relevé ;
+navigation interne vérifiée. Comparaison des données : autres projets, sources
+vidéo, liens et protections inchangés. Liens externes et lecture effective de
+la vidéo non retestés. Cette révision reste locale, sans publication.
+
+
+### Projets liés — 13 octobre 2026
+
+Toutes les fiches ouvertes proposent trois projets liés avec le composant et
+le style existants. Les choix de relatedProjects restent prioritaires ; une
+table de suggestions par identifiant dans index.html complète les listes selon
+les formats et démarches. Les nouveaux projets disposent d’un repli sur les
+projets visibles, classés par date. Les doublons, renvois vers soi, références
+invalides, fiches masquées et destinations verrouillées sont exclus. Les titres
+suivent la langue du site. Une fiche protégée conserve sa barrière d’accès et
+affiche ses suggestions seulement une fois déverrouillée. Aucun contenu chiffré
+ni média n’est modifié. Préparation locale, sans publication.
+
+Contrôles Projets liés : 13 fiches publiques, deux langues et trois largeurs
+(390, 768 et 1440 px), trois boutons par fiche, sans débordement ni erreur
+de page ou de réseau. Chaque destination est testée dans les deux langues.
+Le sélecteur est vérifié pour toutes les fiches, y compris les exclusions de
+doublons, de la fiche courante et des références invalides, masquées ou
+verrouillées. La barrière de Celestia reste présente ; son affichage après
+déverrouillage n’a pas été retesté pour cette modification. Les vidéos et liens
+externes inchangés ne sont pas retestés. CNAME et .nojekyll sont inchangés.
+
+
+### Halo des flèches du carrousel — 13 octobre 2026
+
+Le conteneur clients-carousel autorise le débordement visuel afin de ne plus
+couper le halo des deux flèches. La piste clients-track conserve son défilement
+et son découpage. Dimensions, espacements, couleurs, grille mobile et logique
+de navigation inchangés. Correction locale, sans publication.
+
+Contrôles du halo : aperçu HTTP à 390, 768, 1440 et 1920 px, survol des deux
+flèches, défilement dans les deux sens et focus clavier vérifiés ; grille mobile
+conservée, logos chargés, sans débordement horizontal ni erreur de navigateur.
+Capture du survol contrôlée visuellement. Fichiers concernés : index.html et
+README.md ; aucune modification des médias, protections ou fichiers Pages.
+
+
+### Fondu du carrousel sur ordinateur — 13 octobre 2026
+
+Un masque d’opacité de 28 px adoucit les deux bords de clients-track uniquement
+au-delà de 1024 px avec un pointeur précis et le survol disponible. Les flèches
+restent hors masque, avec leur halo visible. Dimensions, espacement, défilement
+et snap existants conservés. Aucun changement en mode tablette ou iPhone.
+Fichiers concernés : index.html et README.md. Préparation locale non publiée.
+
+Contrôles HTTP : 390, 768, 1024, 1025, 1440, 1792 et 1920 px ; activation du
+masque uniquement sur ordinateur, absence sur tablette tactile simulée à
+1366 px, grille iPhone conservée, défilement des deux flèches fonctionnel et
+halos hors masque. Aucun débordement horizontal ni erreur de page/requête
+relevé. Capture contrôlée visuellement. Pas de test sur appareil physique.
+
+
+### Extension du fondu aux tablettes — 13 octobre 2026
+
+Le fondu de 28 px s’applique désormais à toute piste clients-track, y compris
+sur tablette tactile, en portrait et paysage. La grille téléphone n’utilise
+pas cette classe et reste inchangée. Cette extension remplace la restriction
+ordinateur décrite ci-dessus. Les flèches restent hors masque ; dimensions,
+défilement et snap sont conservés. Modification locale non publiée.
+
+Vérifications HTTP en émulation tactile : 768 × 1024, 1024 × 768, 820 × 1180,
+1180 × 820 et 1366 × 1024 ; rotation/redimensionnement, boutons tactiles et
+balayage fonctionnels. Grille sans masque contrôlée à 390 et 767 px, retour
+au carrousel à 768 px. Aucun débordement horizontal ni erreur de page/requête.
+Capture tablette contrôlée visuellement ; pas de test sur iPad physique.
+
+
+Publication du 13 octobre 2026 autorisée par le propriétaire : révision de
+La Mémoire de l’Eau, harmonisation des projets liés, correction des halos
+et fondu du carrousel sur ordinateur et tablette. Ce lot remplace les mentions
+de préparation locale ci-dessus. Les changements de l’éditeur local restent
+hors publication. Les contrôles de chaque modification sont décrits ci-dessus.

@@ -331,19 +331,20 @@ window.KP_PROJECTS = {
     roleTitle: 'Freelance',
     venue: "St. Mark's Church, Vieux-Longueuil",
     desc: 'A projection mapping with a brief of its own: stand beside a music stage for a whole festival night, and give people somewhere to slow down.',
-    overview: "Created for Lumifest Longueuil 2023 and projected on the outside wall of St. Mark's Church, the piece is a tribute to the water molecule — part of every living body and of the ecosystems around it. Its place in the programme shaped it as much as its subject. The wall stood next to a music stage, so the work could not answer noise with noise: it had to hold a calm the crowd could step into.",
+    overview: "Created for Lumifest Longueuil 2023 and projected on the outside wall of St. Mark's Church, this work pays tribute to water and its presence in living bodies and ecosystems. I developed it as a personal piece, shaping fluid movements around the façade. It followed its own rhythm, independently of the programmed music, while being conceived to fit the atmosphere of the evening.",
     role: 'Freelance 3D Artist — Concept, Simulation, Look Development, Animation, Compositing & Pixel Mapping',
     tools: ['Cinema 4D', 'Unreal Engine', 'Fluid Flux', 'After Effects'],
-    contribution: ['Wrote the piece and carried it alone, from the first images to the pixel map delivered for projection.', 'Built the water — simulation in Fluid Flux, then shading, lighting and compositing — so it would read as water from across the street, not only up close.', "Composed with the church's gothic openings and reliefs rather than projecting over them.", 'Paced the piece against the tempo of the music stage beside it.'],
-    designIntent: "Water runs through every body and every ecosystem, and the piece was built as a tribute to that. Next to a music stage, it also had a practical job: being the quiet part of the evening. The slowness of the fluid, the restraint of the palette and the long movements all come from there — somewhere to stop and take a breath, the way water lets you.",
-    technicalChallenges: ['Challenge — the wall is not a screen. Gothic arches, stone relief and dark openings deform the image and swallow light, and the water carrying the piece had to stay recognizable at a distance, at night, on stone.', 'Production response — the architecture became part of the composition instead of an obstacle to cover, and the fluid was tuned for viewing distance rather than close-up realism: larger movement, stronger contrast, slower travel.', 'Production impact — the imagery held together on an irregular surface and kept the calm the piece was there to provide, a few metres from a stage playing all evening.'],
-    pipeline: ['Concept and reference work', 'Fluid simulation in Fluid Flux', 'Shading and lighting', 'Animation and pacing against the site', 'Compositing', 'Pixel map preparation for the façade'],
-    impact: "The piece ran at Lumifest Longueuil 2023 on the wall of St. Mark's Church, as the slow point of an evening built around a music stage.",
+    contribution: ["Conceived and produced the piece independently, from the first images to the pixel map delivered for projection.","Developed the fluidity and distinctive movements of the water through simulation and animation.","Composed the mapping around those movements, working with the church’s gothic openings and reliefs.","Created a visual rhythm independent of the programmed music, while keeping the mood of the evening in mind."],
+    designIntent: "The piece explores water through its fluidity and distinctive movements. I wanted those movements to interact with the architecture and offer a contemplative presence beside the music stage. The work was conceived to fit the mood of the programming, without being synchronized to the tracks being played.",
+    technicalChallenges: ["Challenge — preserve the continuity and fluidity of the movement across a façade interrupted by gothic arches, stone reliefs and dark openings.","Production response — I shaped the mapping around the water’s movements and the features of the architecture, working on how the image flowed across the surface.","Result — the façade became part of the movement in a work that followed its own rhythm alongside the music programme."],
+    pipeline: ["Concept and references","Fluid simulation","Fluidity and movement studies","Animation and architectural mapping","Compositing","Pixel map preparation for the façade"],
+    impact: "Presented at Lumifest Longueuil 2023 on the wall of St. Mark’s Church, the piece expressed my own artistic approach — as Dominique Arcand put it, “a work signed Killian Pichon.”",
     trailerUrl: 'https://youtu.be/1c6VhRPaIDM',
     galleryImages: ['projects/memoire-eau/mapping-eglise.webp'],
     placeholderTiles: 0,
     externalUrl: 'https://lumifest.ca/',
     externalLabel: 'See Lumifest Longueuil',
-    relatedProjects: ['epernay', 'colosseum']
+    relatedProjects: ['epernay', 'colosseum'],
+    creditsNote: "Thank you to Dominique Arcand for his trust and for helping me take an important step forward as an emerging artist."
   }
 };

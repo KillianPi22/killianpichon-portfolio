@@ -184,6 +184,11 @@ button{color:inherit}
 .project-media-tile:focus-visible .project-video-play,.project-media-tile:hover .project-video-play,.project-media-tile[aria-pressed="true"] .project-video-play{border-color:var(--accent);color:var(--accent)}
 .project-video-play{width:48px;height:48px;border-radius:50%;background:rgba(10,10,11,.8);border:2px solid var(--text-heading);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-heading)}
 .project-video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+/* Fondu du carrousel ordinateur et tablette ; la grille telephone reste sans masque. */
+.clients-track{
+    -webkit-mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 28px),transparent);
+    mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 28px),transparent);
+}
 /* Drive impose 300 px a son lecteur interne ; lui reserver cet espace sur mobile. */
 @media(max-width:1024px){
   .project-video-player{width:100%;min-width:0;max-width:100%;min-height:var(--project-player-min-height,202px);flex-shrink:0}
@@ -707,12 +712,12 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
 </script>
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
-  <script src="data/projects.js?v=20261012-editorial-volcano"></script>
+  <script src="data/projects.js?v=20261013-memoire-eau"></script>
   <script src="data/video-posters.js?v=20260905"></script>
   <!-- Traduction francaise. Meme regle que les fiches : charge avant
        l'application, en script classique. Differe, l'anglais apparaitrait une
        fraction de seconde avant la bascule. -->
-  <script src="data/fr.js?v=20261012-editorial-volcano"></script>
+  <script src="data/fr.js?v=20261013-memoire-eau"></script>
   <script>window.__asset = function (assetPath) {
   return assetPath;
 };
@@ -1991,7 +1996,7 @@ function Clients({
       alignItems: 'center',
       gap: 'var(--space-4)',
       width: '100%',
-      overflow: 'hidden'
+      overflow: 'visible'
     }
   }, React.createElement("style", null, `.${scoped.current}::-webkit-scrollbar{display:none}`), React.createElement("button", {
     "aria-label": "Previous clients",
@@ -2601,6 +2606,35 @@ const PROJECT_DATA = Object.fromEntries(PROJECT_LIST.map(p => [p.id, p]));
 // identiques et la table ne change pas ; en francais, un renvoi ecrit avec le
 // titre anglais continue de trouver sa fiche.
 const TITLE_TO_ID = Object.fromEntries(Object.values(PROJECT_DATA).flatMap(v => [v.title, v.sourceTitle].filter(Boolean).map(nom => [nom, v.id])));
+// Suggestions editoriales communes aux deux langues, referencees par identifiant.
+const RELATED_PROJECT_DEFAULTS = {
+  'ihf-2021': ['banquet', 'epernay', 'colosseum'],
+  banquet: ['epernay', 'colosseum', 'batiscan'],
+  cabotage: ['paralleles', 'traveler', 'melanie'],
+  celestia: ['hurtubise', 'volcano', 'melanie'],
+  hurtubise: ['traveler', 'volcano', 'memoire-eau'],
+  volcano: ['hurtubise', 'traveler', 'batiscan'],
+  melanie: ['ihf-2021', 'banquet', 'luminart'],
+  traveler: ['hurtubise', 'volcano', 'cabotage'],
+  paralleles: ['batiscan', 'cabotage', 'banquet'],
+  batiscan: ['epernay', 'colosseum', 'paralleles'],
+  epernay: ['colosseum', 'batiscan', 'memoire-eau'],
+  colosseum: ['epernay', 'batiscan', 'memoire-eau'],
+  luminart: ['melanie', 'ihf-2021', 'banquet'],
+  'memoire-eau': ['epernay', 'colosseum', 'banquet']
+};
+function getRelatedProjectIds(project) {
+  // Les choix de la fiche restent prioritaires. Completer jusqu'a trois liens
+  // publics, distincts et valides, sans renvoi vers soi ni projet masque.
+  const candidates = [
+    ...(project.relatedProjects || []),
+    ...(RELATED_PROJECT_DEFAULTS[project.id] || []),
+    ...VISIBLE_PROJECTS.map(candidate => candidate.id)
+  ];
+  return [...new Set(candidates.map(value => PROJECT_DATA[value] ? value : TITLE_TO_ID[value]))]
+    .filter(id => id && id !== project.id && PROJECT_DATA[id].listing !== 'hidden' && !PROJECT_DATA[id].locked)
+    .slice(0, 3);
+}
 function ProtectedAccess({
   resource
 }) {
@@ -3250,7 +3284,7 @@ function ProjectScreenContent({
   // aval, la rubrique s'affichait quand meme, vide sous son intitule.
   // Identifiant ou titre : l'editeur ecrit des identifiants, les fiches ecrites
   // avant lui portent des titres.
-  const relatedIds = (p.relatedProjects || []).map(t => PROJECT_DATA[t] ? t : TITLE_TO_ID[t]).filter(Boolean);
+  const relatedIds = getRelatedProjectIds(p);
   // Lecteur en place : la tuile de la galerie reste une affiche tant qu'on ne
   // clique pas. Seule la vignette officielle YouTube peut charger avant le clic.
   // Ce composant n'est monte qu'apres deverrouillage des fiches protegees.
