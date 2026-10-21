@@ -321,6 +321,7 @@ window.KP_FR = {
 
     /* --------------------------------------------------- contenu protege */
     'Protected project': 'Projet protégé',
+    'Project under a confidentiality agreement': 'Projet sous accord de confidentialité',
     'Access code required': 'Code d’accès requis',
     'Access code': 'Code d’accès',
     'This project is covered by a confidentiality agreement. Enter the access code to open it.':

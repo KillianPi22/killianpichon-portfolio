@@ -99,7 +99,7 @@ window.KP_PROJECTS = {
   celestia: {
     date: '2026-06',
     listing: 'nda',
-    lockedTitle: 'Projet sous accord de confidentialité',
+    lockedTitle: 'Project under a confidentiality agreement',
     thumb: 'projects/celestia/cathedral-nave.jpg',
     protected: {
       id: 'celestia',

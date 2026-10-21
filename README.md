@@ -1,5 +1,20 @@
 # Portfolio de Killian Pichon
 
+### Intitulé des projets sous accord — 21 octobre 2026
+
+Le libellé de la fiche protégée affiche « Project under a confidentiality agreement »
+en anglais et conserve « Projet sous accord de confidentialité » en français.
+La source est dans `data/projects.js`, sa traduction dans `data/fr.js` ;
+les versions de cache sont actualisées dans `index.html`. Les accès, les
+données chiffrées, les médias et la présentation restent inchangés.
+
+Vérifications HTTP dans Chrome à 390, 768 et 1440 px, en français et en anglais :
+intitulé de la carte et de la fiche, titre de page, navigation et absence de
+débordement horizontal. Aucune erreur console ou ressource manquante relevée.
+`CNAME`, `.nojekyll` et les données protégées sont conservés ; les chemins sensibles
+sont refusés par le serveur de prévisualisation. Le serveur d’édition est inchangé.
+
+
 Site statique du portfolio de Killian Pichon, pret pour GitHub Pages puis pour un futur domaine personnalise.
 
 ## Fiches des projets
