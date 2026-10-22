@@ -1,5 +1,24 @@
 # Portfolio de Killian Pichon
 
+### Captures de l’outil localisées — 22 octobre 2026
+
+La capture française de Select Similar – Angle remplace le nom de l’objet
+par « Objet ». Une variante anglaise reprend les libellés exacts du script
+anglais et affiche « Object ». Chaque fiche utilise l’image de sa langue ;
+la légende anglaise précise qu’elle est traduite depuis la capture d’origine.
+Ces retouches utilisent ImageGen intégré. Les boutons, le curseur à 11°, la
+case décochée et la disposition sont conservés. Les scripts Python ne changent pas.
+
+Les fichiers `assets/tools/select-similar-angle-interface.{webp,png}` sont
+remplacés et `assets/tools/select-similar-angle-interface-en.{webp,png}` sont
+ajoutés. Les images sont ramenées aux dimensions de la nouvelle capture fournie,
+416 × 272, et encodées en WebP sans perte (environ 82 Ko) avec repli PNG
+(environ 99 Ko). `data/technical.js` définit les images, textes alternatifs et
+légendes ; la révision `20261022-tools-v4` renouvelle les caches. Les pages
+statiques sont régénérées. Le test HTTP vérifie la variante attendue par langue,
+ses dimensions et son repli PNG. Les prompts complets restent dans le dossier
+local d’artefacts de la tâche, hors du dépôt public.
+
 ### Scripts français et anglais — 22 octobre 2026
 
 Select Similar – Angle propose deux scripts autonomes : le fichier français
@@ -14,8 +33,8 @@ Chaque fiche présente d’abord le script correspondant à sa langue, puis un
 volet dépliable pour l’autre version. Chaque code possède son bouton de copie
 et son téléchargement, avec un nom de fichier distinct. Le volet fonctionne
 aussi sans JavaScript. Le mode d’emploi utilise les libellés de la version
-présentée en premier. La capture existante reste identifiée comme l’interface
-française ; elle n’est pas présentée comme une capture de la traduction anglaise.
+présentée en premier. Chaque langue possède maintenant son aperçu d’interface ;
+la variante anglaise est identifiée comme une traduction de la capture d’origine.
 
 Les sources concernées sont `data/technical.js`, le rendu et le style
 `assets/technical-library.*`, le générateur `tools/build-technical.cjs` et le

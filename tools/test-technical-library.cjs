@@ -83,16 +83,16 @@ async function main() {
           const preview = page.locator('.tool-interface img');
           await preview.scrollIntoViewIfNeeded();
           await preview.evaluate(image => image.decode());
-          assert.equal(await preview.evaluate(image => image.naturalWidth), 425);
-          assert.equal(await preview.evaluate(image => image.naturalHeight), 275);
-          assert((await preview.evaluate(image => image.currentSrc)).endsWith('.webp'));
+          assert.equal(await preview.evaluate(image => image.naturalWidth), tool.preview.width);
+          assert.equal(await preview.evaluate(image => image.naturalHeight), tool.preview.height);
+          assert.equal(await preview.evaluate(image => image.currentSrc), origin + '/' + tool.preview.src);
           // Simulate an unsupported WebP source, then restore the real page before navigation.
           await page.locator('.tool-interface source').evaluate(source => { source.type = 'image/x-unsupported'; });
-          await page.waitForFunction(() => document.querySelector('.tool-interface img').currentSrc.endsWith('.png'));
+          await page.waitForFunction(() => new URL(document.querySelector('.tool-interface img').currentSrc, location.href).pathname.endsWith('.png'));
           await preview.evaluate(image => image.decode());
-          assert.equal(await preview.evaluate(image => image.naturalWidth), 425);
+          assert.equal(await preview.evaluate(image => image.naturalWidth), tool.preview.width);
           await page.locator('.tool-interface source').evaluate(source => { source.type = 'image/webp'; });
-          await page.waitForFunction(() => document.querySelector('.tool-interface img').currentSrc.endsWith('.webp'));
+          await page.waitForFunction(() => new URL(document.querySelector('.tool-interface img').currentSrc, location.href).pathname.endsWith('.webp'));
           await preview.evaluate(image => image.decode());
           for (const [variant, id] of [[tool, 'tool-source'], [tool.alternate, 'tool-source-alternate']]) {
             if (!variant) continue;
