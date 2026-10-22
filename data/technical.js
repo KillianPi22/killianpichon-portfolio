@@ -2,7 +2,7 @@
 (function (root) {
   const content = {
     updated: '2026-10-22',
-    revision: '20261022-tools-v4',
+    revision: '20261022-tools-v5',
     en: {
       title: 'Tools & workflows',
       meta: 'Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -13,9 +13,9 @@
         { id: 'just-for-fun', title: 'Just for fun', subtitle: 'Hardware mappings, hobbies & utilities', text: 'Experiments that become useful: adapting hardware, connecting software and making everyday tasks simpler.' }
       ],
       reuseTitle: 'Build once, reuse',
-      reuse: 'With or without AI during development, I want these tools to remain useful beyond the first task. Once written, a local script can repeat that task without generating a new answer for every use. Select Similar – Angle runs in Cinema 4D without an AI service or a network request.',
+      reuse: 'With or without AI during development, I want these tools to remain useful beyond the first task. Once written, a local script can repeat that task without generating a new answer for every use. Select Similar – Angle runs in Cinema 4D.',
       versioning: 'Version control keeps a history of the code and makes changes easier to review. Branches let us test an idea separately, review it together before integrating it and return to an earlier version if needed. This helps an initially personal tool evolve with more confidence and remain easy to fix, adapt and develop collaboratively.',
-      ecology: 'Avoiding repeated generations is a way to limit unnecessary computation. It may reduce electricity use and its associated environmental impact, but I have not measured that saving here. Development, local execution, hardware and the electricity supply all matter to the comparison.',
+      ecology: 'Avoiding repeated generations is a way to limit unnecessary computation. It may reduce electricity use and its associated environmental impact. Development, local execution, hardware and the electricity supply all matter to the comparison.',
       ecologySource: 'Context: IEA, Energy and AI',
       tools: [
         {
@@ -64,9 +64,9 @@
         { id: 'just-for-fun', title: 'Just for fun', subtitle: 'Mapping matériel, hobbies & utilitaires', text: 'Des expérimentations qui deviennent utiles : adapter du matériel, relier des logiciels et simplifier les tâches du quotidien.' }
       ],
       reuseTitle: 'Créer une fois, réutiliser',
-      reuse: 'Avec ou sans IA pendant le développement, je cherche à faire durer l’utilité de ces outils. Une fois écrit, un script local peut répéter la tâche sans générer une nouvelle réponse à chaque utilisation. Select Similar – Angle fonctionne dans Cinema 4D sans service d’IA ni requête réseau.',
+      reuse: 'Avec ou sans IA pendant le développement, je cherche à faire durer l’utilité de ces outils. Une fois écrit, un script local peut répéter la tâche sans générer une nouvelle réponse à chaque utilisation. Select Similar – Angle fonctionne dans Cinema 4D.',
       versioning: 'Le versionnement conserve l’historique du code et facilite la relecture des changements. Des branches permettent de tester une idée à part, de la relire à plusieurs avant de l’intégrer et de revenir à une version précédente au besoin. Un outil d’abord personnel peut ainsi évoluer avec plus de sécurité, rester facile à corriger ou à adapter, et se développer de manière collaborative.',
-      ecology: 'Éviter les générations répétées est une façon de limiter les calculs inutiles. Cela peut réduire la consommation d’électricité et l’impact environnemental associé, mais je n’ai pas mesuré ce gain ici. Le développement, l’exécution locale, le matériel et la source d’électricité comptent tous dans la comparaison.',
+      ecology: 'Éviter les générations répétées est une façon de limiter les calculs inutiles. Cela peut réduire la consommation d’électricité et l’impact environnemental associé. Le développement, l’exécution locale, le matériel et la source d’électricité comptent tous dans la comparaison.',
       ecologySource: 'Pour situer le sujet : AIE, Energy and AI',
       tools: [
         {

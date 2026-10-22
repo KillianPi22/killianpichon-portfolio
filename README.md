@@ -1,5 +1,15 @@
 # Portfolio de Killian Pichon
 
+### Allègement du texte de réutilisation — 22 octobre 2026
+
+Les versions française et anglaise retirent les deux précisions demandées
+sur la mesure du gain et sur l’absence de service IA ou de requête réseau.
+Les textes restent dans `data/technical.js` ; les pages statiques sont
+régénérées et les références de cache passent à `20261022-tools-v5`.
+Contrôles HTTP des six pages réussis en français et en anglais à 320, 390,
+768 et 1440 px : navigation, ressources, copie, téléchargements, console,
+réseau, consentement et chemins sensibles.
+
 ### Captures de l’outil localisées — 22 octobre 2026
 
 La capture française de Select Similar – Angle remplace le nom de l’objet
