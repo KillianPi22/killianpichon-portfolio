@@ -19,7 +19,9 @@ async function main() {
   for (const name of ['serve.ps1', 'editor.html', 'editor.js', 'editor.css', 'visual-editor.js', 'visual-editor.ps1', 'local-network.ps1', 'launch-editor.html']) {
     if (fs.existsSync(path.join(root, 'tools', name))) fs.copyFileSync(path.join(root, 'tools', name), path.join(fixture, 'tools', name));
   }
-  const original = fs.readFileSync(path.join(fixture, 'index.html'), 'utf8');
+  // Test the full off/on/off cycle independently of the owner's published setting.
+  const original = fs.readFileSync(path.join(fixture, 'index.html'), 'utf8').replace('window.KP_SHOW_TECHNICAL = true;', 'window.KP_SHOW_TECHNICAL = false;');
+  fs.writeFileSync(path.join(fixture, 'index.html'), original);
   const password = crypto.randomBytes(32).toString('base64url');
   const salt = crypto.randomBytes(16);
   fs.writeFileSync(path.join(fixture, 'tools/auth.json'), JSON.stringify({ iter: 310000, salt: salt.toString('base64'), hash: crypto.pbkdf2Sync(password, salt, 310000, 32, 'sha256').toString('base64') }));
@@ -44,7 +46,7 @@ async function main() {
     assert.equal(setting.problem, null);
     assert((await save({ showTechnical: 'invalid' })).rejected.length);
     assert.equal(fs.readFileSync(path.join(fixture, 'index.html'), 'utf8'), original);
-    browser = await chromium.launch({ headless: true, channel: 'msedge' });
+    browser = await chromium.launch({ headless: true, channel: process.env.KP_TEST_BROWSER || 'msedge' });
     const page = await browser.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
@@ -58,9 +60,9 @@ async function main() {
         await page.locator('.site-nav-link').first().waitFor();
         await page.waitForFunction(hash => location.hash === hash, enabled ? '#/technical' : '#/work');
         assert.equal(new URL(page.url()).hash, enabled ? '#/technical' : '#/work');
-        assert.equal(await page.locator('.site-nav-link[href="#/technical"]').count(), enabled ? 1 : 0);
+        assert.equal(await page.locator('.site-nav-link[href^="technical/"]').count(), enabled ? 1 : 0);
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
-        assert.equal((await page.locator('body').innerText()).toLowerCase().includes('three production cases'), enabled && lang === 'en');
+        assert.equal((await page.locator('body').innerText()).toLowerCase().includes('tools & workflows'), enabled && lang === 'en');
       }
     }
     assert.equal(fs.readFileSync(path.join(fixture, 'index.html'), 'utf8'), original, 'toggle roundtrip must preserve all content');

@@ -208,4 +208,48 @@
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/?lang=fr"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/"/>
   </url>
+<!-- technical-library:start -->
+  <url>
+    <loc>https://killianpichon.art/technical/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/"/>
+  </url>
+  <url>
+    <loc>https://killianpichon.art/technical/select-similar-angle/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/select-similar-angle/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/select-similar-angle/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/select-similar-angle/"/>
+  </url>
+  <url>
+    <loc>https://killianpichon.art/technical/denon-sc2000-traktor/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/denon-sc2000-traktor/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/denon-sc2000-traktor/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/denon-sc2000-traktor/"/>
+  </url>
+  <url>
+    <loc>https://killianpichon.art/technical/fr/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/"/>
+  </url>
+  <url>
+    <loc>https://killianpichon.art/technical/select-similar-angle/fr/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/select-similar-angle/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/select-similar-angle/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/select-similar-angle/"/>
+  </url>
+  <url>
+    <loc>https://killianpichon.art/technical/denon-sc2000-traktor/fr/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/denon-sc2000-traktor/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/denon-sc2000-traktor/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/denon-sc2000-traktor/"/>
+  </url>
+<!-- technical-library:end -->
 </urlset>

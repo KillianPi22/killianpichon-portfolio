@@ -18,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="assets/analytics-consent.css">
   <link rel="stylesheet" href="assets/protected-content.css">
+  <link rel="stylesheet" href="assets/technical-library.css?v=20261022-tools-v2">
   <script defer src="assets/analytics-consent.js"></script>
   <script defer src="assets/protected-content.js"></script>
   <link rel="stylesheet" href="assets/motion-exploration.css?v=20260917-gallery-height">
@@ -711,7 +712,9 @@ var d=null!=c&&c.hydratedSources||null,e=!1,f="",g=aj;null!==c&&void 0!==c&&(!0=
 function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmountComponentAtNode=function(a){if(!Vd(a))throw Error(m(40));return a._reactRootContainer?(yb(function(){Wd(null,null,a,!1,function(){a._reactRootContainer=null;a[Ja]=null})}),!0):!1};Q.unstable_batchedUpdates=Tf;Q.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!Vd(c))throw Error(m(200));if(null==a||void 0===a._reactInternals)throw Error(m(38));return Wd(a,b,c,!1,d)};Q.version="18.3.1-next-f1338f8080-20240426"});
 })();
 </script>
-  <script>window.KP_SHOW_TECHNICAL = false;</script>
+  <script>window.KP_SHOW_TECHNICAL = true;</script>
+  <script src="data/technical.js?v=20261022-tools-v2"></script>
+  <script src="assets/technical-library.js?v=20261022-tools-v2"></script>
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
   <script src="data/projects.js?v=20261021-nda-title"></script>
@@ -719,7 +722,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <!-- Traduction francaise. Meme regle que les fiches : charge avant
        l'application, en script classique. Differe, l'anglais apparaitrait une
        fraction de seconde avant la bascule. -->
-  <script src="data/fr.js?v=20261021-nda-title"></script>
+  <script src="data/fr.js?v=20261022-tools"></script>
   <script>window.__asset = function (assetPath) {
   return assetPath;
 };
@@ -1027,7 +1030,7 @@ function Navbar({
   const hrefs = {
     Work: '#/work',
     About: '#/about',
-    Technical: '#/technical',
+    Technical: window.KPTechnicalLibrary.route(window.KP_I18N.lang),
     Contact: '#/contact'
   };
   return React.createElement("nav", {
@@ -1073,7 +1076,7 @@ function Navbar({
     key: l,
     href: hrefs[l] || '#/work',
     onClick: e => {
-      if (onLinkClick) {
+      if (onLinkClick && l !== 'Technical') {
         e.preventDefault();
         onLinkClick(l);
       }
@@ -4563,143 +4566,20 @@ function AboutScreen({
   }, "Download CV"))), React.createElement(Footer, null));
 }
 window.AboutScreen = AboutScreen;
-function TechSection({
-  eyebrow,
-  title,
-  children
-}) {
-  return React.createElement("div", {
-    style: {
-      marginTop: 'var(--space-9)',
-      paddingTop: 'var(--space-6)',
-      borderTop: '1px solid var(--line-subtle)'
-    }
-  }, React.createElement("div", {
-    style: {
-      fontFamily: 'var(--font-mono)',
-      fontSize: 'var(--text-micro)',
-      color: 'var(--text-faint)',
-      textTransform: 'uppercase',
-      letterSpacing: 'var(--tracking-widest)'
-    }
-  }, eyebrow), React.createElement("h2", {
-    style: {
-      fontFamily: 'var(--font-display)',
-      fontWeight: 700,
-      fontSize: 'var(--text-h1)',
-      color: 'var(--text-heading)',
-      textTransform: 'uppercase',
-      marginTop: '8px',
-      marginBottom: 'var(--space-5)'
-    }
-  }, title), children);
-}
-function TechnicalScreen({
-  onNav
-}) {
-  const {
-    Navbar,
-    Tag,
-    Footer
-  } = window.KillianPichonDesignSystem_16387b;
-  return React.createElement("div", null, React.createElement(Navbar, {
-    activeLink: "Technical",
-    onLinkClick: onNav
-  }), React.createElement("section", {
-    style: {
-      padding: '48px var(--container-pad) 96px'
-    }
-  }, React.createElement("div", {
-    style: {
-      fontSize: 'var(--text-small)',
-      color: 'var(--text-muted)',
-      textTransform: 'uppercase',
-      letterSpacing: 'var(--tracking-wide)'
-    }
-  }, "Technical"), React.createElement("h1", {
-    style: {
-      fontFamily: 'var(--font-display)',
-      fontWeight: 800,
-      fontSize: 'var(--text-display-lg)',
-      textTransform: 'uppercase',
-      marginTop: '12px'
-    }
-  }, "Production Thinking"), React.createElement("p", {
-    style: {
-      fontSize: 'var(--color-text-body-lg)',
-      color: 'var(--color-text-body)',
-      marginTop: '20px',
-      lineHeight: 'var(--leading-relaxed)',
-      maxWidth: '720px'
-    }
-  }, "I enjoy understanding how productions are built as much as creating the visuals themselves. My technical work focuses on reducing iteration time, improving creative handoffs and helping teams review immersive experiences earlier during production."), React.createElement(TechSection, {
-    eyebrow: "01 \u2014 Areas of Interest",
-    title: "Immersive Production Systems"
-  }, React.createElement("p", {
-    style: {
-      fontSize: 'var(--font-size-body)',
-      color: 'var(--color-text-body)',
-      lineHeight: 'var(--leading-relaxed)',
-      maxWidth: '720px',
-      marginBottom: 'var(--space-5)'
-    }
-  }, "My areas of interest sit where visual decisions meet production constraints: pipeline development, real-time rendering, production optimization, immersive projection, virtual production and R&D. Unreal Engine, Niagara and compositing tools are useful when they shorten feedback loops, clarify spatial decisions or make a workflow more dependable \u2014 never as outcomes by themselves."), React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: '8px',
-      flexWrap: 'wrap'
-    }
-  }, React.createElement(Tag, null, "Pipeline Development"), React.createElement(Tag, null, "Realtime Rendering"), React.createElement(Tag, null, "Production Optimization"), React.createElement(Tag, null, "Immersive Projection"), React.createElement(Tag, null, "Virtual Production"), React.createElement(Tag, null, "R&D"))), React.createElement(TechSection, {
-    eyebrow: "02 \u2014 Production Studies",
-    title: "Three Production Cases"
-  }, React.createElement("p", {
-    style: {
-      fontSize: 'var(--font-size-body)',
-      color: 'var(--color-text-body)',
-      lineHeight: 'var(--leading-relaxed)',
-      maxWidth: '720px'
-    }
-  }, "Each study addresses a specific production task. On Celestia, real-time constraints applied to previsualization, while the show used pre-rendered content; the Lead Tech Artist subsequently optimized the VR application and merged it with the existing PC visualization system. On Into the Volcano, I established a Photoshop and BodyPaint workflow to clean 16K photographic textures on a high-resolution mesh. On the Melanie Martinez tour, I worked on gravity-based object dynamics so motion could be adjusted during production, before final rendering."), React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: '8px',
-      flexWrap: 'wrap',
-      marginTop: 'var(--space-4)'
-    }
-  }, React.createElement(Tag, null, "Iteration Time"), React.createElement(Tag, null, "Previsualization"), React.createElement(Tag, null, "Camera & Timing"), React.createElement(Tag, null, "Cross-System Synchronization"), React.createElement(Tag, null, "Compositing Strategy")), React.createElement("div", {
-    style: {
-      marginTop: 'var(--space-6)'
-    }
-  }, React.createElement("div", {
-    "aria-hidden": "true",
-    style: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-      gap: '12px',
-      maxWidth: '720px'
-    }
-  }, [0, 1, 2].map(i => React.createElement("div", {
-    key: i,
-    style: {
-      aspectRatio: '16 / 9',
-      borderRadius: 'var(--radius-sm)',
-      border: '1px solid var(--line-subtle)',
-      position: 'relative',
-      background: 'linear-gradient(150deg,rgba(28,29,34,.55),rgba(17,17,20,.4) 55%,rgba(36,22,16,.35))'
-    }
-  }, React.createElement("span", {
-    className: "project-card-lock",
-    "aria-hidden": "true"
-  })))), React.createElement("p", {
-    style: {
-      fontFamily: 'var(--font-mono)',
-      fontSize: 'var(--text-micro)',
-      letterSpacing: 'var(--tracking-wide)',
-      color: 'var(--text-faint)',
-      marginTop: 'var(--space-4)',
-      maxWidth: '720px'
-    }
-  }, "Detailed case studies can be presented on request, subject to the applicable confidentiality agreements.")))), React.createElement(Footer, null));
+function TechnicalScreen({ onNav }) {
+  const library = window.KPTechnicalLibrary;
+  const language = window.KP_I18N.lang;
+  const catalogue = window.KP_TECHNICAL[language];
+  const { Navbar, Footer } = window.KillianPichonDesignSystem_16387b;
+  return React.createElement("div", null,
+    React.createElement(Navbar, { activeLink: "Technical", onLinkClick: onNav }),
+    React.createElement("main", {
+      className: "tool-main",
+      dangerouslySetInnerHTML: {
+        __html: library.intro(catalogue) + library.catalogue(catalogue, language, library.route(language))
+      }
+    }),
+    React.createElement(Footer, null));
 }
 window.TechnicalScreen = TechnicalScreen;
 const SUBJECTS = ['General Inquiry', 'Hiring Opportunity', 'Studio Collaboration Proposal'];
@@ -5082,8 +4962,8 @@ const SCREEN_META = {
     description: 'Production experience, specializations and working approach of Montréal-based immersive artist Killian Pichon.'
   },
   technical: {
-    title: 'Production Thinking — Killian Pichon',
-    description: 'Production studies, workflow decisions and technical-art interests behind Killian Pichon’s immersive work.'
+    title: 'Tools & workflows — Killian Pichon',
+    description: 'Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.'
   },
   demos: {
     title: 'Other demos — Killian Pichon',
@@ -5160,12 +5040,20 @@ function App() {
     // francaise. La canonique pointe la racine, pas la route en diese : les
     // fragments ne sont pas des adresses distinctes pour un moteur.
     const enFrancais = window.KP_I18N.lang === 'fr';
+    const pageURL = route.screen === 'technical'
+      ? 'https://killianpichon.art/' + window.KPTechnicalLibrary.route(window.KP_I18N.lang)
+      : 'https://killianpichon.art/' + (enFrancais ? '?lang=fr' : '');
     const ogLocale = document.querySelector('meta[property="og:locale"]');
     if (ogLocale) ogLocale.setAttribute('content', enFrancais ? 'fr_CA' : 'en_CA');
     const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) canonical.setAttribute('href', 'https://killianpichon.art/' + (enFrancais ? '?lang=fr' : ''));
+    if (canonical) canonical.setAttribute('href', pageURL);
     const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) ogUrl.setAttribute('content', 'https://killianpichon.art/' + (enFrancais ? '?lang=fr' : ''));
+    if (ogUrl) ogUrl.setAttribute('content', pageURL);
+    document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(link => {
+      const language = link.hreflang === 'fr-CA' ? 'fr' : 'en';
+      link.href = 'https://killianpichon.art/' + (route.screen === 'technical'
+        ? window.KPTechnicalLibrary.route(language) : language === 'fr' ? '?lang=fr' : '');
+    });
   }, [route.screen, route.projectId]);
   React.useEffect(() => {
     const fallback = document.getElementById('offline-fallback');

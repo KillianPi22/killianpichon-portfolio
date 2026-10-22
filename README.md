@@ -1,5 +1,115 @@
 # Portfolio de Killian Pichon
 
+### Catalogue d’outils — 22 octobre 2026
+
+La page Technique est activée et mène à un catalogue statique :
+`technical/` en anglais et `technical/fr/` en français. Les trois rubriques
+sont **Projets professionnels**, **Outils personnels** et **Just for fun**.
+Les anciennes sections « Systèmes de production immersive » et « Trois cas de
+production » sont retirées à la demande du propriétaire. La page présente sa
+démarche à travers les besoins et les outils concrets. Les détails de production
+à autorisation restent annoncés comme tels, sans nouveau contenu sensible ni
+changement des accès existants.
+
+Deux premières fiches, chacune disponible en anglais et en français :
+
+- `technical/select-similar-angle/` : script Python pour sélectionner les
+  polygones de normales similaires dans Cinema 4D, même sans continuité entre
+  les faces. Le récit décrit le besoin de sélection, l’aide de l’IA et le choix
+  de rester dans Cinema 4D. Le propriétaire confirme ses essais dans C4D 2026.
+  Commandes, mode d’emploi, périmètre et limites accompagnent le code complet,
+  un bouton de copie et le téléchargement de `downloads/Select_Similar_Angle.py`.
+  Ce fichier reste identique octet pour octet à la source fournie. La copie
+  préserve le code et l’indentation ; en cas de refus du presse-papiers,
+  le champ se sélectionne et indique le raccourci de copie manuelle.
+  La capture fournie de l’interface apparaît sous l’introduction, avec texte
+  alternatif et légende dans les deux langues. Ses pixels et ses dimensions
+  de 425 × 275 sont préservés : WebP sans perte (43 Ko), avec repli PNG (78 Ko),
+  sans agrandissement à l’affichage. Les fichiers vivent dans `assets/tools/`.
+  La phrase « Je n’ai pas mesuré le temps gagné » est retirée des deux langues.
+- `technical/denon-sc2000-traktor/` : mapping Denon DN-SC2000 / Traktor Pro 4,
+  dans Just for fun. Le propriétaire confirme la validation de la version 5.1.0
+  avec les deux contrôleurs. La fiche distingue cette confirmation de l’ancienne
+  mention de version candidate encore présente sur
+  [DJ TechTools](https://maps.djtechtools.com/mappings/22961). Le guide et le
+  téléchargement restent sur cette plateforme, avec les crédits bascurtiz / Stewe.
+
+Ajouter `fr/` à chacune de ces deux adresses ouvre sa version française.
+Les pages ont leur propre HTML lisible sans JavaScript, titre, description,
+canonique, variantes linguistiques, données structurées et entrée dans le sitemap.
+La navigation du portfolio pointe vers ces URLs ; les anciennes adresses
+`#/technical` fonctionnent toujours et déclarent la nouvelle canonique.
+Le référencement effectif reste soumis à publication puis exploration des moteurs.
+Les autres routes du portfolio restent à fragments. Référence :
+[Google, structure des URLs](https://developers.google.com/search/docs/crawling-indexing/url-structure).
+
+Le texte « Créer une fois, réutiliser » explique l’intérêt de réutiliser un
+script local au lieu de répéter une génération IA. L’économie d’électricité
+et l’impact environnemental sont présentés comme une possibilité à mesurer,
+sans chiffre ni garantie. Le contexte général est lié au rapport
+[Energy and AI de l’AIE](https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai).
+Une note sur le versionnement explique l’historique du code, les essais sur
+des branches, la relecture collaborative avant intégration et la possibilité
+de revenir à une version précédente. Elle décrit une manière de faire évoluer
+les outils avec plus de sécurité et de les garder modifiables, sans promettre
+qu’un outil versionné serait exempt de défauts.
+
+**Maintenance.** Les nouveaux textes bilingues vivent dans `data/technical.js`.
+Pour ajouter un outil, ajouter une entrée avec le même `id` et la même
+`category` dans les deux langues (`professional`, `personal`, `just-for-fun`).
+Une fiche locale peut référencer un fichier public dans `downloads/` ; un outil
+hébergé ailleurs peut avoir un lien `external`. Ne jamais y ajouter de contenu
+confidentiel. Le rendu commun est dans `assets/technical-library.js` et ses
+styles dans `assets/technical-library.css`. Le code n’est jamais exécuté dans
+le navigateur du visiteur : il est affiché comme texte échappé.
+
+Après une modification des textes, du script, des captures ou du style principal
+du portfolio, lancer `node tools/build-technical.cjs`.
+Ce générateur sans dépendance ni réseau produit les six pages et
+`assets/technical-base.css` depuis les styles existants d’`index.html`, puis
+actualise uniquement son bloc du sitemap. Les deux anciens blocs et leur
+extraction sont supprimés du composant `TechnicalScreen` et du générateur.
+Ne pas modifier directement les fichiers générés. Actualiser `updated` dans le
+catalogue pour une modification éditoriale, ainsi que `revision` et les versions
+de cache des nouveaux assets dans `index.html` lorsque leur contenu change.
+Le champ facultatif `preview` d’un outil décrit sa capture, son repli, ses
+dimensions intrinsèques, son texte alternatif et sa légende.
+
+Les nouveaux textes du catalogue se modifient actuellement dans ce fichier
+de données, pas dans les formulaires de l’éditeur local. Son bouton Commiter
+ne couvre pas les nouveaux dossiers : lors d’une livraison, inclure également
+les fichiers `technical/`, `downloads/`, `data/technical.js`,
+`assets/technical-*`, `assets/tools/` et les scripts de génération/test concernés.
+Le réglage Afficher la page Technique conserve le contrôle du lien principal
+et de l’ancienne route ; les pages statiques ont leurs propres adresses publiques.
+Ce réglage de visibilité n’est toujours pas une protection d’accès.
+
+**Vérifications.** `node tools/test-technical-library.cjs`, après lancement du
+serveur habituel, requiert Node et Playwright ; Chrome est le navigateur par
+défaut (`KP_TEST_BROWSER` permet un autre canal). `KP_TEST_ORIGIN` choisit le
+serveur et `KP_TEST_ARTIFACTS` un dossier existant pour trois captures.
+Les contrôles HTTP passent en anglais et français à 320, 390, 768 et 1440 px :
+navigation, ancres, bascule de langue, compatibilité des anciens liens,
+copie réelle, copie refusée, téléchargement, fonctionnement sans JavaScript,
+métadonnées, casse des chemins, ressources et absence d’erreurs console/réseau.
+Le contrôle de la fiche de sélection vérifie aussi le chargement effectif du
+WebP et du repli PNG. L’absence des anciennes sections est vérifiée sur les
+pages statiques et sur l’ancienne route. Les captures sont contrôlées visuellement.
+Aucune requête Analytics avant consentement. Les chemins sensibles sont refusés
+par le serveur habituel et `/__settings` reste authentifié. Le test de visibilité
+existant est adapté au nouveau lien et fonctionne indépendamment de la valeur
+initiale de l’interrupteur, sur sa seule copie temporaire.
+
+La syntaxe Python est vérifiée, mais le script n’est pas exécuté dans Cinema 4D
+par cet environnement ; la compatibilité et la validation matérielle du mapping
+reposent sur les essais confirmés par le propriétaire. Pas d’essai sur téléphone
+physique ni de téléchargement authentifié DJ TechTools. Les projets, médias,
+chiffrement, consentement, `CNAME`, `.nojekyll` et configuration de publication
+sont conservés. Comparaison effectuée avec `origin/main`, dont le SHA a été
+confirmé par GitHub (`6efb29a`). Publication autorisée par le propriétaire le 22 octobre 2026.
+Le lot publié est préparé sur une branche issue de ce main : les changements
+de l’éditeur en cours dans la branche locale restent hors publication.
+
 ### Intitulé des projets sous accord — 21 octobre 2026
 
 Le libellé de la fiche protégée affiche « Project under a confidentiality agreement »

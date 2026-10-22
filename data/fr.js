@@ -602,8 +602,8 @@ window.KP_FR = {
       description: 'Expérience de production, spécialisations et façon de travailler de Killian Pichon, artiste immersif basé à Montréal.'
     },
     technical: {
-      title: 'Démarche de production — Killian Pichon',
-      description: 'Études de production, décisions de flux de travail et intérêts en direction technique derrière le travail immersif de Killian Pichon.'
+      title: 'Outils & méthodes — Killian Pichon',
+      description: 'Scripts Python pour Cinema 4D, outils de production et mappings MIDI DJ de Killian Pichon. Projets professionnels, outils personnels et expérimentations à réutiliser.'
     },
     demos: {
       title: 'Autres démos — Killian Pichon',
