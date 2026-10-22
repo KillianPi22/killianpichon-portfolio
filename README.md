@@ -1,5 +1,30 @@
 # Portfolio de Killian Pichon
 
+### Scripts français et anglais — 22 octobre 2026
+
+Select Similar – Angle propose deux scripts autonomes : le fichier français
+`downloads/Select_Similar_Angle.py`, conservé octet pour octet, et sa traduction
+`downloads/Select_Similar_Angle_EN.py`. Cette dernière traduit les commandes,
+les messages d’état et d’erreur ainsi que les commentaires. La logique de
+sélection reste identique. La structure Python, hors textes, est comparée et
+les deux fichiers passent la compilation syntaxique ; la traduction anglaise
+n’a pas été exécutée dans Cinema 4D par cet environnement.
+
+Chaque fiche présente d’abord le script correspondant à sa langue, puis un
+volet dépliable pour l’autre version. Chaque code possède son bouton de copie
+et son téléchargement, avec un nom de fichier distinct. Le volet fonctionne
+aussi sans JavaScript. Le mode d’emploi utilise les libellés de la version
+présentée en premier. La capture existante reste identifiée comme l’interface
+française ; elle n’est pas présentée comme une capture de la traduction anglaise.
+
+Les sources concernées sont `data/technical.js`, le rendu et le style
+`assets/technical-library.*`, le générateur `tools/build-technical.cjs` et le
+test `tools/test-technical-library.cjs`, avec les pages statiques régénérées.
+La révision de cache passe à `20261022-tools-v3`. Le test vérifie la copie,
+le repli manuel et le téléchargement de chaque langue, le volet déplié sur
+mobile et son fonctionnement sans JavaScript. Publication demandée par le
+propriétaire après l’ajout des deux versions.
+
 ### Catalogue d’outils — 22 octobre 2026
 
 La page Technique est activée et mène à un catalogue statique :

@@ -42,6 +42,9 @@
 .tool-button-primary:hover{background:var(--accent-hover);color:var(--void-950)}
 .tool-source{display:block;width:100%;min-width:0;max-width:100%;padding:20px;background:var(--surface-1);color:var(--color-text-body);border:1px solid var(--line-default);border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:13px;line-height:1.65;resize:vertical;tab-size:4;white-space:pre;overflow:auto}
 .tool-copy-status{min-height:1.7em;font-size:var(--text-small);color:var(--text-muted)}
+.tool-code-alternate{margin-top:var(--space-5);border-top:1px solid var(--line-subtle)}
+.tool-code-alternate>summary{padding:var(--space-5) 0;cursor:pointer;font-weight:600}
+.tool-code-alternate>.tool-section{margin-top:0}
 .tool-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .tool-static-nav{display:flex;align-items:center;justify-content:flex-start;padding:28px var(--container-pad);font-family:var(--font-body)}
 .tool-static-nav .site-mark{font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:-.02em}

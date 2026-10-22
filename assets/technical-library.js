@@ -23,7 +23,14 @@
       ).join('') + '</section>'
     ).join('') + '<aside class="tool-reuse"><h2>' + escape(data.reuseTitle) + '</h2>' + paragraph(data.reuse) + paragraph(data.versioning) + paragraph(data.ecology) + '<a class="tool-text-link tool-note" href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai">' + escape(data.ecologySource) + ' ↗</a></aside>';
   }
-  function detail(data, lang, tool, code) {
+  function codeSection(labels, file, language, code, alternate = false) {
+    const id = alternate ? 'tool-source-alternate' : 'tool-source';
+    const headingId = alternate ? 'source-heading-alternate' : 'source-heading';
+    const title = labels.code + (language ? ' — ' + language : '');
+    const filename = file.split('/').pop();
+    return '<section class="tool-section tool-code" aria-labelledby="' + headingId + '"><div class="tool-code-header"><h2 id="' + headingId + '">' + escape(title) + '</h2><div class="tool-actions"><button class="tool-button tool-button-primary" type="button" data-copy-code data-copied="' + escape(labels.copied) + '" data-fallback="' + escape(labels.fallback) + '">' + escape(labels.copy) + '</button><a class="tool-button" href="' + escape(file) + '" download="' + escape(filename) + '">' + escape(labels.download) + '</a></div></div>' + paragraph(labels.codeHint) + '<label class="tool-sr-only" for="' + id + '">' + escape(labels.source + ' — ' + language) + '</label><textarea id="' + id + '" class="tool-source" readonly spellcheck="false" wrap="off" rows="18">' + escape(code) + '</textarea><p class="tool-copy-status" role="status" aria-live="polite"></p></section>';
+  }
+  function detail(data, lang, tool, code, alternateCode = '') {
     const labels = data.labels;
     const category = data.categories.find(item => item.id === tool.category);
     let body = '<a class="tool-text-link" href="' + route(lang) + '#' + tool.category + '">← ' + escape(labels.back) + '</a><header class="tool-intro"><p class="tool-eyebrow">' + escape(category.title) + '</p><h1>' + escape(tool.title) + '</h1>' + paragraph(tool.summary) + tags(tool.tags) + '</header>';
@@ -36,7 +43,10 @@
     body += '<section class="tool-section"><h2>' + escape(labels.workflow) + '</h2>' + list(tool.workflow, true) + '</section>';
     if (tool.limits) body += heading(labels.limits, tool.limits);
     body += '<p class="tool-note">' + escape(tool.compatibility) + '</p>';
-    if (tool.file) body += '<section class="tool-section tool-code" aria-labelledby="source-heading"><div class="tool-code-header"><h2 id="source-heading">' + escape(labels.code) + '</h2><div class="tool-actions"><button class="tool-button tool-button-primary" type="button" data-copy-code data-copied="' + escape(labels.copied) + '" data-fallback="' + escape(labels.fallback) + '">' + escape(labels.copy) + '</button><a class="tool-button" href="' + escape(tool.file) + '" download="Select_Similar_Angle.py">' + escape(labels.download) + '</a></div></div>' + paragraph(labels.codeHint) + '<label class="tool-sr-only" for="tool-source">' + escape(labels.source) + '</label><textarea id="tool-source" class="tool-source" readonly spellcheck="false" wrap="off" rows="18">' + escape(code) + '</textarea><p class="tool-copy-status" role="status" aria-live="polite"></p></section>';
+    if (tool.file) {
+      body += codeSection(labels, tool.file, tool.scriptLanguage, code);
+      if (tool.alternate) body += '<details class="tool-code-alternate"><summary>' + escape(tool.alternate.summary) + '</summary>' + codeSection(labels, tool.alternate.file, tool.alternate.language, alternateCode, true) + '</details>';
+    }
     if (tool.external) body += '<section class="tool-section"><a class="tool-button tool-button-primary" href="' + escape(tool.external) + '">' + escape(tool.externalLabel) + ' ↗</a><p class="tool-note">' + escape(tool.externalNote) + '</p><h2>' + escape(labels.credit) + '</h2>' + paragraph(tool.credits) + '</section>';
     return body;
   }

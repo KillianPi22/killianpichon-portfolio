@@ -2,7 +2,7 @@
 (function (root) {
   const content = {
     updated: '2026-10-22',
-    revision: '20261022-tools-v2',
+    revision: '20261022-tools-v3',
     en: {
       title: 'Tools & workflows',
       meta: 'Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -27,12 +27,14 @@
           need: 'Selecting faces one by one was slowing down my modelling. I wanted the principle of Blender’s Select Similar → Normal directly in Cinema 4D, without switching applications.',
           response: 'I developed this Python script with AI assistance, specifying the controls I actually needed: a reference selection, an angle tolerance and a way to restore the starting point. The floating window stays open while I work in the viewport.',
           result: 'Tested in Cinema 4D 2026 in my own workflow. It lets me repeat the selection and try different tolerances without returning to Blender.',
-          preview: { src: 'assets/tools/select-similar-angle-interface.webp', fallback: 'assets/tools/select-similar-angle-interface.png', width: 425, height: 275, alt: 'Select Similar – Angle interface with angle slider, opposite normals option, and capture, apply and restore buttons.', caption: 'The floating tool window in Cinema 4D. The script interface is in French.' },
+          preview: { src: 'assets/tools/select-similar-angle-interface.webp', fallback: 'assets/tools/select-similar-angle-interface.png', width: 425, height: 275, alt: 'French Select Similar – Angle interface with angle slider, opposite normals option, and capture, apply and restore buttons.', caption: 'French version of the floating tool window in Cinema 4D. English and French scripts are available below.' },
           features: ['Angle slider from 0 to 180°.', 'Capture the selection to keep a set of reference faces.', 'Apply different tolerances against those references.', 'Restore the original visible selection.', 'Optionally include opposite normals.'],
-          workflow: ['Open the script in Cinema 4D’s Script Manager and run it.', 'Choose an editable polygon object, switch to Polygon mode and select reference faces.', 'Click “Memoriser la selection de reference”.', 'Set the angle, optionally include opposite normals, then click “Appliquer la selection”.', 'Adjust and apply again, or use “Restaurer la selection de reference” to return to the starting faces.'],
+          workflow: ['Choose the English or French script below, open it in Cinema 4D’s Script Manager and run it.', 'Choose an editable polygon object, switch to Polygon mode and select reference faces.', 'In the English version, click “Capture reference selection”.', 'Set the angle, optionally include opposite normals, then click “Apply selection”.', 'Adjust and apply again, or use “Restore reference selection” to return to the starting faces.'],
           limits: 'Works on the active polygon object, using geometric normals in object-local space. Hidden faces keep their selection state. Phong normals and deformations are not evaluated; n-gons use Cinema 4D’s internal triangles and quads. After a topology change, capture the references again. Ctrl+Z undoes the selection.',
-          compatibility: 'Tested by the author: Cinema 4D 2026. Other versions have not been verified. Script interface in French.',
-          file: 'downloads/Select_Similar_Angle.py'
+          compatibility: 'Original French version tested by the author in Cinema 4D 2026. The English version translates the interface and messages, with the same selection logic. Other Cinema 4D versions have not been verified.',
+          scriptLanguage: 'English',
+          file: 'downloads/Select_Similar_Angle_EN.py',
+          alternate: { language: 'Français', file: 'downloads/Select_Similar_Angle.py', summary: 'French version — code and download' }
         },
         {
           id: 'denon-sc2000-traktor', category: 'just-for-fun', title: 'Denon DN-SC2000 · Traktor Pro 4',
@@ -76,12 +78,14 @@
           need: 'Sélectionner les faces une par une ralentissait ma modélisation. Je voulais retrouver le principe de Select Similar → Normal de Blender directement dans Cinema 4D, sans changer de logiciel.',
           response: 'J’ai développé ce script Python avec l’aide de l’IA, en précisant les paramètres dont j’avais besoin : une sélection de référence, une tolérance d’angle et la possibilité de revenir au point de départ. La fenêtre reste ouverte pendant que je travaille dans la vue.',
           result: 'Testé dans Cinema 4D 2026 dans mon propre workflow. Il me permet de répéter la sélection et d’essayer différentes tolérances sans revenir dans Blender.',
-          preview: { src: 'assets/tools/select-similar-angle-interface.webp', fallback: 'assets/tools/select-similar-angle-interface.png', width: 425, height: 275, alt: 'Interface de Select Similar – Angle avec curseur d’angle, option de normales opposées et boutons Mémoriser, Appliquer et Restaurer.', caption: 'La fenêtre flottante de l’outil dans Cinema 4D.' },
+          preview: { src: 'assets/tools/select-similar-angle-interface.webp', fallback: 'assets/tools/select-similar-angle-interface.png', width: 425, height: 275, alt: 'Interface française de Select Similar – Angle avec curseur d’angle, option de normales opposées et boutons Mémoriser, Appliquer et Restaurer.', caption: 'La fenêtre flottante de l’outil dans Cinema 4D, en français. Les scripts français et anglais sont disponibles ci-dessous.' },
           features: ['Un curseur d’angle de 0 à 180°.', 'Mémoriser la sélection pour fixer les faces de référence.', 'Appliquer différentes tolérances à partir de ces références.', 'Restaurer la sélection visible de départ.', 'Une option pour inclure les normales opposées.'],
-          workflow: ['Ouvrir le script dans le Script Manager de Cinema 4D et le lancer.', 'Choisir un objet polygonal éditable, passer en mode Polygones et sélectionner les faces de référence.', 'Cliquer sur « Memoriser la selection de reference ».', 'Régler l’angle, inclure les normales opposées si nécessaire, puis cliquer sur « Appliquer la selection ».', 'Ajuster et appliquer à nouveau, ou utiliser « Restaurer la selection de reference » pour retrouver les faces de départ.'],
+          workflow: ['Choisir le script français ou anglais ci-dessous, l’ouvrir dans le Script Manager de Cinema 4D et le lancer.', 'Choisir un objet polygonal éditable, passer en mode Polygones et sélectionner les faces de référence.', 'Dans la version française, cliquer sur « Memoriser la selection de reference ».', 'Régler l’angle, inclure les normales opposées si nécessaire, puis cliquer sur « Appliquer la selection ».', 'Ajuster et appliquer à nouveau, ou utiliser « Restaurer la selection de reference » pour retrouver les faces de départ.'],
           limits: 'Le script agit sur l’objet polygonal actif et compare les normales géométriques dans l’espace local de l’objet. Les faces masquées conservent leur état de sélection. Les normales Phong et les déformations ne sont pas évaluées ; les n-gones utilisent les triangles et quadrangles internes de Cinema 4D. Après un changement de topologie, mémoriser à nouveau les références. Ctrl+Z annule la sélection.',
-          compatibility: 'Testé par l’auteur : Cinema 4D 2026. Les autres versions n’ont pas été vérifiées. Interface du script en français.',
-          file: 'downloads/Select_Similar_Angle.py'
+          compatibility: 'Version française d’origine testée par l’auteur dans Cinema 4D 2026. La version anglaise traduit l’interface et les messages, avec la même logique de sélection. Les autres versions de Cinema 4D n’ont pas été vérifiées.',
+          scriptLanguage: 'Français',
+          file: 'downloads/Select_Similar_Angle.py',
+          alternate: { language: 'English', file: 'downloads/Select_Similar_Angle_EN.py', summary: 'Version anglaise — code et téléchargement' }
         },
         {
           id: 'denon-sc2000-traktor', category: 'just-for-fun', title: 'Denon DN-SC2000 · Traktor Pro 4',

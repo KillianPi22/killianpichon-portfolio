@@ -11,7 +11,7 @@ const content = require('../data/technical.js');
 const { route } = require('../assets/technical-library.js');
 const artifacts = process.env.KP_TEST_ARTIFACTS;
 const http = url => fetch(url, { signal: AbortSignal.timeout(8000) });
-const source = fs.readFileSync(path.join(root, 'downloads/Select_Similar_Angle.py'), 'utf8').replace(/\r\n/g, '\n');
+const readScript = file => fs.readFileSync(path.join(root, file), 'utf8').replace(/\r\n/g, '\n');
 async function main() {
   await (await http(origin + '/__ping')).text();
   const files = ['index.html', 'data/fr.js', 'data/technical.js', 'assets/technical-library.js'];
@@ -94,17 +94,30 @@ async function main() {
           await page.locator('.tool-interface source').evaluate(source => { source.type = 'image/webp'; });
           await page.waitForFunction(() => document.querySelector('.tool-interface img').currentSrc.endsWith('.webp'));
           await preview.evaluate(image => image.decode());
-          assert.equal(await page.locator('#tool-source').inputValue(), source);
-          await page.getByRole('button', { name: content[lang].labels.copy, exact: true }).click();
-          await page.waitForFunction(() => document.querySelector('[role="status"]').textContent.length > 0);
-          assert.equal((await page.evaluate(() => Promise.race([navigator.clipboard.readText(), new Promise((_, reject) => setTimeout(() => reject(new Error('Clipboard read timeout')), 8000))]))).replace(/\r\n/g, '\n'), source);
-          const downloaded = await (await http(origin + '/' + tool.file)).text();
-          assert.equal(downloaded.replace(/\r\n/g, '\n'), source);
-          await page.evaluate(() => Object.defineProperty(navigator.clipboard, 'writeText', { configurable: true, value: async () => { throw new Error('Denied'); } }));
-          await page.locator('[data-copy-code]').click();
-          await page.waitForFunction(() => document.activeElement.id === 'tool-source');
-          assert.equal(await page.locator('#tool-source').evaluate(el => el.selectionEnd - el.selectionStart), source.length);
-          await page.evaluate(() => delete navigator.clipboard.writeText);
+          for (const [variant, id] of [[tool, 'tool-source'], [tool.alternate, 'tool-source-alternate']]) {
+            if (!variant) continue;
+            if (variant === tool.alternate) {
+              await page.locator('.tool-code-alternate summary').click();
+              await page.setViewportSize({ width: 390, height: 1000 });
+              assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Expanded alternative script fits mobile');
+              await page.setViewportSize({ width: 1440, height: 1000 });
+            }
+            const source = readScript(variant.file);
+            const textarea = page.locator('#' + id);
+            const section = textarea.locator('..');
+            assert.equal(await textarea.inputValue(), source);
+            await section.getByRole('button', { name: content[lang].labels.copy, exact: true }).click();
+            await page.waitForFunction(id => document.getElementById(id).closest('.tool-code').querySelector('[role="status"]').textContent.length > 0, id);
+            assert.equal((await page.evaluate(() => Promise.race([navigator.clipboard.readText(), new Promise((_, reject) => setTimeout(() => reject(new Error('Clipboard read timeout')), 8000))]))).replace(/\r\n/g, '\n'), source);
+            assert.equal(await section.locator('a[download]').getAttribute('download'), variant.file.split('/').pop());
+            const downloaded = await (await http(origin + '/' + variant.file)).text();
+            assert.equal(downloaded.replace(/\r\n/g, '\n'), source);
+            await page.evaluate(() => Object.defineProperty(navigator.clipboard, 'writeText', { configurable: true, value: async () => { throw new Error('Denied'); } }));
+            await section.locator('[data-copy-code]').click();
+            await page.waitForFunction(id => document.activeElement.id === id, id);
+            assert.equal(await textarea.evaluate(el => el.selectionEnd - el.selectionStart), source.length);
+            await page.evaluate(() => delete navigator.clipboard.writeText);
+          }
         }
         const other = lang === 'fr' ? 'en' : 'fr';
         await page.locator('.site-lang-link[hreflang="' + other + '"]').click();
@@ -129,8 +142,11 @@ async function main() {
     console.log('Checking no-JS and HTTP links');
     const plain = await noJS.newPage();
     await plain.goto(origin + '/' + route('fr', 'select-similar-angle'));
-    assert.equal(await plain.locator('#tool-source').inputValue(), source);
+    assert.equal(await plain.locator('#tool-source').inputValue(), readScript(content.fr.tools[0].file));
     assert(await plain.getByRole('link', { name: content.fr.labels.download }).isVisible());
+    await plain.locator('.tool-code-alternate summary').click();
+    assert.equal(await plain.locator('#tool-source-alternate').inputValue(), readScript(content.fr.tools[0].alternate.file));
+    assert(await plain.locator('.tool-code-alternate a[download]').isVisible());
     await noJS.close();
     // All local links resolve, including case-sensitive filenames and section anchors.
     for (const href of localLinks) {

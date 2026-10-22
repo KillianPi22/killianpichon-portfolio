@@ -47,7 +47,8 @@ for (const lang of ['en', 'fr']) {
     const title = tool ? tool.pageTitle || tool.title + ' — Killian Pichon' : data.title + ' — Killian Pichon';
     const description = tool ? tool.meta : data.meta;
     const code = tool?.file ? read(tool.file).replace(/\r\n/g, '\n') : '';
-    const body = tool ? view.detail(data, lang, tool, code) : view.intro(data) + view.catalogue(data, lang, pathname);
+    const alternateCode = tool?.alternate ? read(tool.alternate.file).replace(/\r\n/g, '\n') : '';
+    const body = tool ? view.detail(data, lang, tool, code, alternateCode) : view.intro(data) + view.catalogue(data, lang, pathname);
     const graph = [
       { '@type': tool ? 'WebPage' : 'CollectionPage', '@id': canonical + '#page', url: canonical, name: title, description, inLanguage: lang === 'fr' ? 'fr-CA' : 'en-CA', author: { '@type': 'Person', name: 'Killian Pichon', url: origin }, isPartOf: { '@id': origin + '#website' } },
       { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Portfolio', item: origin }, { '@type': 'ListItem', position: 2, name: data.title, item: origin + route(lang) }, ...(tool ? [{ '@type': 'ListItem', position: 3, name: tool.title, item: canonical }] : [])] }

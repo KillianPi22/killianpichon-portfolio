@@ -26,19 +26,221 @@
   <meta name="twitter:description" content="Select similar polygon normals in Cinema 4D 2026. Python script with angle tolerance, reference selection and opposite normals. Copy the code or download it.">
   <meta name="twitter:image" content="https://killianpichon.art/assets/og-image.jpg">
   <link rel="icon" href="assets/icons/favicon-96.png" sizes="96x96" type="image/png">
-  <link rel="stylesheet" href="assets/technical-base.css?v=20261022-tools-v2">
-  <link rel="stylesheet" href="assets/technical-library.css?v=20261022-tools-v2">
+  <link rel="stylesheet" href="assets/technical-base.css?v=20261022-tools-v3">
+  <link rel="stylesheet" href="assets/technical-library.css?v=20261022-tools-v3">
   <link rel="stylesheet" href="assets/analytics-consent.css">
   <link rel="stylesheet" href="assets/motion-exploration.css?v=20260917-gallery-height">
   <link rel="stylesheet" href="assets/organic-floating.css?v=20260906">
   <script>window.KP_I18N={lang:"en",t:function(s){return {}[s]||s;}};</script>
-  <script defer src="assets/technical-library.js?v=20261022-tools-v2"></script>
+  <script defer src="assets/technical-library.js?v=20261022-tools-v3"></script>
   <script defer src="assets/analytics-consent.js"></script>
   <script defer src="assets/motion-exploration.js?v=20260917-animated-media"></script>
   <script defer src="assets/organic-floating.js?v=20260906"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://killianpichon.art/technical/select-similar-angle/#page","url":"https://killianpichon.art/technical/select-similar-angle/","name":"Select Similar – Angle for Cinema 4D 2026 — Killian Pichon","description":"Select similar polygon normals in Cinema 4D 2026. Python script with angle tolerance, reference selection and opposite normals. Copy the code or download it.","inLanguage":"en-CA","author":{"@type":"Person","name":"Killian Pichon","url":"https://killianpichon.art/"},"isPartOf":{"@id":"https://killianpichon.art/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Portfolio","item":"https://killianpichon.art/"},{"@type":"ListItem","position":2,"name":"Tools & workflows","item":"https://killianpichon.art/technical/"},{"@type":"ListItem","position":3,"name":"Select Similar – Angle","item":"https://killianpichon.art/technical/select-similar-angle/"}]},{"@type":"SoftwareSourceCode","name":"Select Similar – Angle","description":"Select faces with a similar orientation, even across disconnected parts of an architectural or geometric mesh.","programmingLanguage":"Python","runtimePlatform":"Cinema 4D 2026","codeSampleType":"full","url":"https://killianpichon.art/technical/select-similar-angle/","contentUrl":"https://killianpichon.art/downloads/Select_Similar_Angle.py","author":{"@type":"Person","name":"Killian Pichon","url":"https://killianpichon.art/"}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://killianpichon.art/technical/select-similar-angle/#page","url":"https://killianpichon.art/technical/select-similar-angle/","name":"Select Similar – Angle for Cinema 4D 2026 — Killian Pichon","description":"Select similar polygon normals in Cinema 4D 2026. Python script with angle tolerance, reference selection and opposite normals. Copy the code or download it.","inLanguage":"en-CA","author":{"@type":"Person","name":"Killian Pichon","url":"https://killianpichon.art/"},"isPartOf":{"@id":"https://killianpichon.art/#website"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Portfolio","item":"https://killianpichon.art/"},{"@type":"ListItem","position":2,"name":"Tools & workflows","item":"https://killianpichon.art/technical/"},{"@type":"ListItem","position":3,"name":"Select Similar – Angle","item":"https://killianpichon.art/technical/select-similar-angle/"}]},{"@type":"SoftwareSourceCode","name":"Select Similar – Angle","description":"Select faces with a similar orientation, even across disconnected parts of an architectural or geometric mesh.","programmingLanguage":"Python","runtimePlatform":"Cinema 4D 2026","codeSampleType":"full","url":"https://killianpichon.art/technical/select-similar-angle/","contentUrl":"https://killianpichon.art/downloads/Select_Similar_Angle_EN.py","author":{"@type":"Person","name":"Killian Pichon","url":"https://killianpichon.art/"}}]}</script>
 </head>
-<body><div id="root"><nav class="site-nav tool-static-nav" aria-label="Primary navigation"><a class="site-mark" href="?lang=en#/work" aria-label="Killian Pichon">KP</a><div class="site-nav-links"><a class="site-nav-link" href="?lang=en#/work">Work</a><a class="site-nav-link" href="?lang=en#/about">About</a><a class="site-nav-link" href="technical/" aria-current="page">Technical</a><a class="site-nav-link" href="?lang=en#/contact">Contact</a></div><div class="site-lang" role="group" aria-label="Language"><a class="site-lang-link" href="technical/select-similar-angle/" hreflang="en" lang="en" aria-label="English" aria-current="true">EN</a><span class="site-lang-sep" aria-hidden="true">/</span><a class="site-lang-link" href="technical/select-similar-angle/fr/" hreflang="fr" lang="fr" aria-label="Français">FR</a></div></nav><main class="tool-main"><a class="tool-text-link" href="technical/#personal">← All tools &amp; workflows</a><header class="tool-intro"><p class="tool-eyebrow">Personal tools</p><h1>Select Similar – Angle</h1><p>Select faces with a similar orientation, even across disconnected parts of an architectural or geometric mesh.</p><div class="tool-tags"><span>Cinema 4D 2026</span><span>Python</span><span>Polygon selection</span></div></header><figure class="tool-interface"><picture><source srcset="assets/tools/select-similar-angle-interface.webp" type="image/webp"><img src="assets/tools/select-similar-angle-interface.png" width="425" height="275" alt="Select Similar – Angle interface with angle slider, opposite normals option, and capture, apply and restore buttons." decoding="async"></picture><figcaption class="tool-note">The floating tool window in Cinema 4D. The script interface is in French.</figcaption></figure><div class="tool-story"><section class="tool-section"><h2>The task</h2><p>Selecting faces one by one was slowing down my modelling. I wanted the principle of Blender’s Select Similar → Normal directly in Cinema 4D, without switching applications.</p></section><section class="tool-section"><h2>The approach</h2><p>I developed this Python script with AI assistance, specifying the controls I actually needed: a reference selection, an angle tolerance and a way to restore the starting point. The floating window stays open while I work in the viewport.</p></section><section class="tool-section"><h2>In use</h2><p>Tested in Cinema 4D 2026 in my own workflow. It lets me repeat the selection and try different tolerances without returning to Blender.</p></section></div><section class="tool-section"><h2>Controls</h2><ul><li>Angle slider from 0 to 180°.</li><li>Capture the selection to keep a set of reference faces.</li><li>Apply different tolerances against those references.</li><li>Restore the original visible selection.</li><li>Optionally include opposite normals.</li></ul></section><section class="tool-section"><h2>Workflow</h2><ol><li>Open the script in Cinema 4D’s Script Manager and run it.</li><li>Choose an editable polygon object, switch to Polygon mode and select reference faces.</li><li>Click “Memoriser la selection de reference”.</li><li>Set the angle, optionally include opposite normals, then click “Appliquer la selection”.</li><li>Adjust and apply again, or use “Restaurer la selection de reference” to return to the starting faces.</li></ol></section><section class="tool-section"><h2>Scope &amp; limitations</h2><p>Works on the active polygon object, using geometric normals in object-local space. Hidden faces keep their selection state. Phong normals and deformations are not evaluated; n-gons use Cinema 4D’s internal triangles and quads. After a topology change, capture the references again. Ctrl+Z undoes the selection.</p></section><p class="tool-note">Tested by the author: Cinema 4D 2026. Other versions have not been verified. Script interface in French.</p><section class="tool-section tool-code" aria-labelledby="source-heading"><div class="tool-code-header"><h2 id="source-heading">Python source</h2><div class="tool-actions"><button class="tool-button tool-button-primary" type="button" data-copy-code data-copied="Code copied." data-fallback="Automatic copy unavailable. Code selected: use Ctrl+C or ⌘C.">Copy code</button><a class="tool-button" href="downloads/Select_Similar_Angle.py" download="Select_Similar_Angle.py">Download .py</a></div></div><p>The complete script below is identical to the downloadable .py file.</p><label class="tool-sr-only" for="tool-source">Code to paste into the Cinema 4D Script Manager</label><textarea id="tool-source" class="tool-source" readonly spellcheck="false" wrap="off" rows="18"># -*- coding: utf-8 -*-
+<body><div id="root"><nav class="site-nav tool-static-nav" aria-label="Primary navigation"><a class="site-mark" href="?lang=en#/work" aria-label="Killian Pichon">KP</a><div class="site-nav-links"><a class="site-nav-link" href="?lang=en#/work">Work</a><a class="site-nav-link" href="?lang=en#/about">About</a><a class="site-nav-link" href="technical/" aria-current="page">Technical</a><a class="site-nav-link" href="?lang=en#/contact">Contact</a></div><div class="site-lang" role="group" aria-label="Language"><a class="site-lang-link" href="technical/select-similar-angle/" hreflang="en" lang="en" aria-label="English" aria-current="true">EN</a><span class="site-lang-sep" aria-hidden="true">/</span><a class="site-lang-link" href="technical/select-similar-angle/fr/" hreflang="fr" lang="fr" aria-label="Français">FR</a></div></nav><main class="tool-main"><a class="tool-text-link" href="technical/#personal">← All tools &amp; workflows</a><header class="tool-intro"><p class="tool-eyebrow">Personal tools</p><h1>Select Similar – Angle</h1><p>Select faces with a similar orientation, even across disconnected parts of an architectural or geometric mesh.</p><div class="tool-tags"><span>Cinema 4D 2026</span><span>Python</span><span>Polygon selection</span></div></header><figure class="tool-interface"><picture><source srcset="assets/tools/select-similar-angle-interface.webp" type="image/webp"><img src="assets/tools/select-similar-angle-interface.png" width="425" height="275" alt="French Select Similar – Angle interface with angle slider, opposite normals option, and capture, apply and restore buttons." decoding="async"></picture><figcaption class="tool-note">French version of the floating tool window in Cinema 4D. English and French scripts are available below.</figcaption></figure><div class="tool-story"><section class="tool-section"><h2>The task</h2><p>Selecting faces one by one was slowing down my modelling. I wanted the principle of Blender’s Select Similar → Normal directly in Cinema 4D, without switching applications.</p></section><section class="tool-section"><h2>The approach</h2><p>I developed this Python script with AI assistance, specifying the controls I actually needed: a reference selection, an angle tolerance and a way to restore the starting point. The floating window stays open while I work in the viewport.</p></section><section class="tool-section"><h2>In use</h2><p>Tested in Cinema 4D 2026 in my own workflow. It lets me repeat the selection and try different tolerances without returning to Blender.</p></section></div><section class="tool-section"><h2>Controls</h2><ul><li>Angle slider from 0 to 180°.</li><li>Capture the selection to keep a set of reference faces.</li><li>Apply different tolerances against those references.</li><li>Restore the original visible selection.</li><li>Optionally include opposite normals.</li></ul></section><section class="tool-section"><h2>Workflow</h2><ol><li>Choose the English or French script below, open it in Cinema 4D’s Script Manager and run it.</li><li>Choose an editable polygon object, switch to Polygon mode and select reference faces.</li><li>In the English version, click “Capture reference selection”.</li><li>Set the angle, optionally include opposite normals, then click “Apply selection”.</li><li>Adjust and apply again, or use “Restore reference selection” to return to the starting faces.</li></ol></section><section class="tool-section"><h2>Scope &amp; limitations</h2><p>Works on the active polygon object, using geometric normals in object-local space. Hidden faces keep their selection state. Phong normals and deformations are not evaluated; n-gons use Cinema 4D’s internal triangles and quads. After a topology change, capture the references again. Ctrl+Z undoes the selection.</p></section><p class="tool-note">Original French version tested by the author in Cinema 4D 2026. The English version translates the interface and messages, with the same selection logic. Other Cinema 4D versions have not been verified.</p><section class="tool-section tool-code" aria-labelledby="source-heading"><div class="tool-code-header"><h2 id="source-heading">Python source — English</h2><div class="tool-actions"><button class="tool-button tool-button-primary" type="button" data-copy-code data-copied="Code copied." data-fallback="Automatic copy unavailable. Code selected: use Ctrl+C or ⌘C.">Copy code</button><a class="tool-button" href="downloads/Select_Similar_Angle_EN.py" download="Select_Similar_Angle_EN.py">Download .py</a></div></div><p>The complete script below is identical to the downloadable .py file.</p><label class="tool-sr-only" for="tool-source">Code to paste into the Cinema 4D Script Manager — English</label><textarea id="tool-source" class="tool-source" readonly spellcheck="false" wrap="off" rows="18"># -*- coding: utf-8 -*-
+&quot;&quot;&quot;Cinema 4D Script Manager: select similar geometric polygon normals.
+
+Usage: select one or more faces on an editable polygon object in Polygon mode,
+then run the script. Capture the reference faces, set the tolerance, and apply.
+The non-modal floating window stays open; Restore retrieves the captured selection.
+After changing topology, capture the references again.
+Each face is compared with EVERY initially selected reference face (no propagation).
+Hidden faces are ignored. Ctrl+Z undoes the selection.
+Normals are calculated in object-local space, without Phong normals or deformations.
+N-gons use Cinema 4D&#39;s internal triangles and quads.
+Designed for Cinema 4D Python 3; this English UI translation has not been run in C4D.
+&quot;&quot;&quot;
+
+import math
+import c4d
+from c4d import gui
+
+DEFAULT_ANGLE = 5.0
+IGNORE_OPPOSITE_NORMALS = False  # True: accept parallel faces pointing in the opposite direction.
+
+
+def face_normal(points, polygon):
+    &quot;&quot;&quot;Unit normal (sum of both triangles for a quad).&quot;&quot;&quot;
+    a, b, c, d = (points[i] for i in
+                  (polygon.a, polygon.b, polygon.c, polygon.d))
+    ab = (b.x - a.x, b.y - a.y, b.z - a.z)
+    ac = (c.x - a.x, c.y - a.y, c.z - a.z)
+    ad = (d.x - a.x, d.y - a.y, d.z - a.z)
+    n = (ab[1]*ac[2] - ab[2]*ac[1] + ac[1]*ad[2] - ac[2]*ad[1],
+         ab[2]*ac[0] - ab[0]*ac[2] + ac[2]*ad[0] - ac[0]*ad[2],
+         ab[0]*ac[1] - ab[1]*ac[0] + ac[0]*ad[1] - ac[1]*ad[0])
+    length = math.sqrt(sum(v*v for v in n))
+    return tuple(v / length for v in n) if length &gt; 0.0 else None
+
+
+def matches(normal, references, angle, ignore_opposite=False):
+    if normal is None:
+        return False
+    threshold = math.cos(math.radians(angle))
+    for reference in references:
+        dot = sum(a*b for a, b in zip(normal, reference))
+        if ignore_opposite:
+            dot = abs(dot)
+        if dot &gt;= threshold - 1e-12:
+            return True
+    return False
+
+
+class SimilarDialog(gui.GeDialog):
+    ANGLE, OPPOSITE, CAPTURE, APPLY, RESTORE, STATUS = range(1001, 1007)
+
+    def __init__(self):
+        super().__init__()
+        self.obj = None
+        self.source_doc = None
+        self.seeds = set()
+        self.topology = None
+
+    def CreateLayout(self):
+        self.SetTitle(&quot;Select Similar - Angle&quot;)
+        self.GroupBegin(2000, c4d.BFH_SCALEFIT, 1, 0)
+        self.GroupBorderSpace(12, 12, 12, 12)
+        self.AddStaticText(2001, c4d.BFH_LEFT,
+                           name=&quot;1. Select reference faces in the viewport.&quot;)
+        self.AddButton(self.CAPTURE, c4d.BFH_SCALEFIT,
+                       name=&quot;Capture reference selection&quot;)
+        self.AddStaticText(2002, c4d.BFH_LEFT,
+                           name=&quot;2. Angle tolerance in degrees (0 to 180)&quot;)
+        self.AddEditSlider(self.ANGLE, c4d.BFH_SCALEFIT)
+        self.AddCheckbox(self.OPPOSITE, c4d.BFH_LEFT, 0, 0,
+                         &quot;Include opposite normals&quot;)
+        self.AddButton(self.APPLY, c4d.BFH_SCALEFIT, name=&quot;Apply selection&quot;)
+        self.AddButton(self.RESTORE, c4d.BFH_SCALEFIT,
+                       name=&quot;Restore reference selection&quot;)
+        self.AddStaticText(self.STATUS, c4d.BFH_SCALEFIT,
+                           name=&quot;No reference selection captured.&quot;)
+        self.AddStaticText(2003, c4d.BFH_LEFT,
+                           name=&quot;Ctrl+Z: undo. After extruding: capture again.&quot;)
+        self.GroupEnd()
+        return True
+
+    def InitValues(self):
+        self.SetFloat(self.ANGLE, DEFAULT_ANGLE, min=0.0, max=180.0, step=0.1)
+        self.SetBool(self.OPPOSITE, False)
+        return True
+
+    def status(self, text):
+        self.SetString(self.STATUS, text)
+
+    @staticmethod
+    def signature(obj):
+        return (obj.GetPointCount(), tuple((p.a, p.b, p.c, p.d)
+                                          for p in obj.GetAllPolygons()))
+
+    def capture(self):
+        doc = c4d.documents.GetActiveDocument()
+        obj = doc.GetActiveObject()
+        if obj is None or not obj.CheckType(c4d.Opolygon):
+            self.status(&quot;Choose an editable polygon object.&quot;)
+            return
+        if doc.GetMode() != c4d.Mpolygons:
+            self.status(&quot;Switch to Polygon mode.&quot;)
+            return
+        sel, hidden = obj.GetPolygonS(), obj.GetPolygonH()
+        seeds = {i for i in range(obj.GetPolygonCount())
+                 if sel.IsSelected(i) and not hidden.IsSelected(i)}
+        if not seeds:
+            self.status(&quot;Select at least one visible face.&quot;)
+            return
+        self.obj, self.source_doc, self.seeds = obj, doc, seeds
+        self.topology = self.signature(obj)
+        self.status(&quot;{}: {} reference face(s).&quot;.format(obj.GetName(), len(seeds)))
+
+    def validated_target(self):
+        doc = c4d.documents.GetActiveDocument()
+        try:
+            if (self.obj is None or not self.obj.IsAlive()
+                    or doc != self.source_doc or self.obj.GetDocument() != doc
+                    or doc.GetActiveObject() != self.obj):
+                self.status(&quot;Object/document changed: capture the references.&quot;)
+                return None
+            if doc.GetMode() != c4d.Mpolygons:
+                self.status(&quot;Switch to Polygon mode.&quot;)
+                return None
+            if self.signature(self.obj) != self.topology:
+                self.status(&quot;Topology changed: capture the references.&quot;)
+                return None
+        except ReferenceError:
+            self.status(&quot;Object deleted: capture the references.&quot;)
+            return None
+        return doc, self.obj
+
+    def apply_selection(self, restore=False):
+        target = self.validated_target()
+        if target is None:
+            return
+        doc, obj = target
+        hidden, sel = obj.GetPolygonH(), obj.GetPolygonS()
+        count = obj.GetPolygonCount()
+        # Preserve the CURRENT selection state of hidden polygons.
+        result = {i for i in range(count)
+                  if hidden.IsSelected(i) and sel.IsSelected(i)}
+        visible_seeds = {i for i in self.seeds if not hidden.IsSelected(i)}
+        result.update(visible_seeds)
+        if not restore:
+            angle = self.GetFloat(self.ANGLE)
+            if not math.isfinite(angle) or not 0 &lt;= angle &lt;= 180:
+                self.status(&quot;Invalid angle: use 0 to 180 degrees.&quot;)
+                return
+            if not visible_seeds:
+                self.status(&quot;References hidden: capture visible faces.&quot;)
+                return
+            points = obj.GetAllPoints()
+            normals = [face_normal(points, p) for p in obj.GetAllPolygons()]
+            refs = list(dict.fromkeys(normals[i] for i in visible_seeds
+                                     if normals[i] is not None))
+            if not refs:
+                self.status(&quot;Zero-area references: choose other faces.&quot;)
+                return
+            result.update(i for i, n in enumerate(normals)
+                          if not hidden.IsSelected(i)
+                          and matches(n, refs, angle, self.GetBool(self.OPPOSITE)))
+        current = {i for i in range(count) if sel.IsSelected(i)}
+        if current != result:
+            c4d.StopAllThreads()
+            doc.StartUndo()
+            try:
+                doc.AddUndo(c4d.UNDOTYPE_CHANGE_SELECTION, obj)
+                sel.DeselectAll()
+                for i in result:
+                    sel.Select(i)
+                obj.Message(c4d.MSG_UPDATE)
+            finally:
+                doc.EndUndo()
+            c4d.EventAdd()
+        self.status(&quot;{} visible face(s) selected.&quot;.format(
+            sum(not hidden.IsSelected(i) for i in result)))
+
+    def Command(self, control_id, msg):
+        if control_id == self.CAPTURE:
+            self.capture()
+        elif control_id == self.APPLY:
+            self.apply_selection()
+        elif control_id == self.RESTORE:
+            self.apply_selection(restore=True)
+        return True
+
+
+# A global reference keeps the asynchronous window alive in Script Manager.
+_dialog = None
+
+
+def main():
+    global _dialog
+    if _dialog is None:
+        _dialog = SimilarDialog()
+    _dialog.Open(c4d.DLG_TYPE_ASYNC, defaultw=440, defaulth=280)
+
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</textarea><p class="tool-copy-status" role="status" aria-live="polite"></p></section><details class="tool-code-alternate"><summary>French version — code and download</summary><section class="tool-section tool-code" aria-labelledby="source-heading-alternate"><div class="tool-code-header"><h2 id="source-heading-alternate">Python source — Français</h2><div class="tool-actions"><button class="tool-button tool-button-primary" type="button" data-copy-code data-copied="Code copied." data-fallback="Automatic copy unavailable. Code selected: use Ctrl+C or ⌘C.">Copy code</button><a class="tool-button" href="downloads/Select_Similar_Angle.py" download="Select_Similar_Angle.py">Download .py</a></div></div><p>The complete script below is identical to the downloadable .py file.</p><label class="tool-sr-only" for="tool-source-alternate">Code to paste into the Cinema 4D Script Manager — Français</label><textarea id="tool-source-alternate" class="tool-source" readonly spellcheck="false" wrap="off" rows="18"># -*- coding: utf-8 -*-
 &quot;&quot;&quot;Cinema 4D Script Manager: selection similaire par normales geometriques.
 
 Utilisation : objet polygonal editable, mode Polygones, selectionner une
@@ -240,5 +442,5 @@ def main():
 
 if __name__ == &quot;__main__&quot;:
     main()
-</textarea><p class="tool-copy-status" role="status" aria-live="polite"></p></section></main><footer class="tool-footer"><a class="kp-footer-link" href="?lang=en#/demos">Other demos</a><button class="kp-footer-link" type="button" data-analytics-choices>Privacy choices</button><a class="kp-footer-link" href="privacy.html?lang=en">Privacy</a><span>© 2026 · All rights reserved</span></footer></div></body>
+</textarea><p class="tool-copy-status" role="status" aria-live="polite"></p></section></details></main><footer class="tool-footer"><a class="kp-footer-link" href="?lang=en#/demos">Other demos</a><button class="kp-footer-link" type="button" data-analytics-choices>Privacy choices</button><a class="kp-footer-link" href="privacy.html?lang=en">Privacy</a><span>© 2026 · All rights reserved</span></footer></div></body>
 </html>
