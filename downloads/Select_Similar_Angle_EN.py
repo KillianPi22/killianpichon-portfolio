@@ -9,7 +9,7 @@ Each face is compared with EVERY initially selected reference face (no propagati
 Hidden faces are ignored. Ctrl+Z undoes the selection.
 Normals are calculated in object-local space, without Phong normals or deformations.
 N-gons use Cinema 4D's internal triangles and quads.
-Designed for Cinema 4D Python 3; this English UI translation has not been run in C4D.
+Designed for Cinema 4D Python 3; tested locally by the author in Cinema 4D 2026.
 """
 
 import math

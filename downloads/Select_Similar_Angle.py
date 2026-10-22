@@ -9,7 +9,7 @@ Les faces sont comparees a CHAQUE face initialement selectionnee (pas de
 propagation). Les faces cachees sont ignorees. Ctrl+Z annule la selection.
 Calcul dans l'espace local de l'objet, sans normales Phong ni deformations.
 Les n-gones sont traites via leurs triangles/quadrangles internes C4D.
-Concu pour le Python 3 de Cinema 4D ; execution dans C4D a verifier.
+Concu pour le Python 3 de Cinema 4D ; teste localement par l'auteur dans Cinema 4D 2026.
 """
 
 import math

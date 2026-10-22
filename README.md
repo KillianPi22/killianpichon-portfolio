@@ -1,5 +1,32 @@
 # Portfolio de Killian Pichon
 
+### Validation locale des fichiers publiés — 22 octobre 2026
+
+Le propriétaire confirme qu'il vérifie localement tous les fichiers qu'il
+publie. Cette règle est conservée dans `AGENTS.md` pour les prochaines sessions.
+L'absence d'exécution dans l'environnement de Codex ne doit pas devenir une
+mention publique « à vérifier » ni remettre en cause les essais du propriétaire.
+Cette validation concerne les versions publiées et les configurations indiquées.
+
+Les en-têtes des scripts français et anglais `downloads/Select_Similar_Angle*.py`
+indiquent maintenant les essais locaux dans Cinema 4D 2026. Seule leur
+documentation change ; leur logique reste identique. `data/technical.js`
+confirme les deux langues et la validation du mapping 5.1.0 avec les deux
+Denon DN-SC2000 sous Windows / Traktor Pro 4. Le rappel d'un ancien statut de
+version candidate est retiré des fiches du portfolio. Les références de cache
+dans `index.html` et les six pages régénérées passent à `20261022-tools-v6`.
+
+Vérifications : syntaxe Python et comparaison des arbres syntaxiques hors
+documentation ; contrôles HTTP des six pages en français et en anglais à
+320, 390, 768 et 1440 px, navigation et ancres, ressources, copie et
+téléchargements, repli sans JavaScript, console, réseau, consentement et refus
+des chemins sensibles. Captures mobile, tablette et ordinateur contrôlées.
+La validation fonctionnelle dans C4D et sur les contrôleurs est celle du
+propriétaire ; ces applications et appareils ne sont pas réessayés par Codex.
+`CNAME`, `.nojekyll`, les médias, protections et réglages de publication sont
+conservés. Correction préparée depuis `main` distant `b0a0478`, sans reprendre
+les autres travaux locaux de l'éditeur.
+
 ### Allègement du texte de réutilisation — 22 octobre 2026
 
 Les versions française et anglaise retirent les deux précisions demandées

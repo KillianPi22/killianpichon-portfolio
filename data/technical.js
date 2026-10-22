@@ -2,7 +2,7 @@
 (function (root) {
   const content = {
     updated: '2026-10-22',
-    revision: '20261022-tools-v5',
+    revision: '20261022-tools-v6',
     en: {
       title: 'Tools & workflows',
       meta: 'Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -31,7 +31,7 @@
           features: ['Angle slider from 0 to 180°.', 'Capture the selection to keep a set of reference faces.', 'Apply different tolerances against those references.', 'Restore the original visible selection.', 'Optionally include opposite normals.'],
           workflow: ['Choose the English or French script below, open it in Cinema 4D’s Script Manager and run it.', 'Choose an editable polygon object, switch to Polygon mode and select reference faces.', 'In the English version, click “Capture reference selection”.', 'Set the angle, optionally include opposite normals, then click “Apply selection”.', 'Adjust and apply again, or use “Restore reference selection” to return to the starting faces.'],
           limits: 'Works on the active polygon object, using geometric normals in object-local space. Hidden faces keep their selection state. Phong normals and deformations are not evaluated; n-gons use Cinema 4D’s internal triangles and quads. After a topology change, capture the references again. Ctrl+Z undoes the selection.',
-          compatibility: 'Original French version tested by the author in Cinema 4D 2026. The English version translates the interface and messages, with the same selection logic. Other Cinema 4D versions have not been verified.',
+          compatibility: 'French and English versions tested locally in Cinema 4D 2026. Both versions use the same selection logic.',
           scriptLanguage: 'English',
           file: 'downloads/Select_Similar_Angle_EN.py',
           alternate: { language: 'Français', file: 'downloads/Select_Similar_Angle.py', summary: 'French version — code and download' }
@@ -43,9 +43,9 @@
           summary: 'A mapping and setup workflow for my two Denon controllers.',
           need: 'Make my two-controller DJ setup dependable and repeatable.',
           response: 'One TSI combines Deck A/B, FX and LED feedback. Loop length and Beatjump size remain independent.',
-          result: 'Version 5.1.0 validated by me with both Denons. The DJ TechTools listing still carries its earlier release-candidate note.',
+          result: 'Version 5.1.0 tested and validated locally with my two Denon DN-SC2000 controllers.',
           workflow: ['Identify each controller and its MIDI channel with Monitor.', 'Assign verified input/output ports; disable duplicate mappings.', 'Keep USB connections consistent and check again after moving them.'],
-          compatibility: 'My Windows / Traktor Pro 4 setup. Other configurations unverified.',
+          compatibility: 'My setup: Windows, Traktor Pro 4 and two Denon DN-SC2000 controllers.',
           credits: 'Based on bascurtiz’s mapping; original InstaPadFX work credited to Stewe.',
           external: 'https://maps.djtechtools.com/mappings/22961',
           externalLabel: 'Mapping & complete guide on DJ TechTools',
@@ -82,7 +82,7 @@
           features: ['Un curseur d’angle de 0 à 180°.', 'Mémoriser la sélection pour fixer les faces de référence.', 'Appliquer différentes tolérances à partir de ces références.', 'Restaurer la sélection visible de départ.', 'Une option pour inclure les normales opposées.'],
           workflow: ['Choisir le script français ou anglais ci-dessous, l’ouvrir dans le Script Manager de Cinema 4D et le lancer.', 'Choisir un objet polygonal éditable, passer en mode Polygones et sélectionner les faces de référence.', 'Dans la version française, cliquer sur « Memoriser la selection de reference ».', 'Régler l’angle, inclure les normales opposées si nécessaire, puis cliquer sur « Appliquer la selection ».', 'Ajuster et appliquer à nouveau, ou utiliser « Restaurer la selection de reference » pour retrouver les faces de départ.'],
           limits: 'Le script agit sur l’objet polygonal actif et compare les normales géométriques dans l’espace local de l’objet. Les faces masquées conservent leur état de sélection. Les normales Phong et les déformations ne sont pas évaluées ; les n-gones utilisent les triangles et quadrangles internes de Cinema 4D. Après un changement de topologie, mémoriser à nouveau les références. Ctrl+Z annule la sélection.',
-          compatibility: 'Version française d’origine testée par l’auteur dans Cinema 4D 2026. La version anglaise traduit l’interface et les messages, avec la même logique de sélection. Les autres versions de Cinema 4D n’ont pas été vérifiées.',
+          compatibility: 'Versions française et anglaise testées localement dans Cinema 4D 2026. Les deux versions utilisent la même logique de sélection.',
           scriptLanguage: 'Français',
           file: 'downloads/Select_Similar_Angle.py',
           alternate: { language: 'English', file: 'downloads/Select_Similar_Angle_EN.py', summary: 'Version anglaise — code et téléchargement' }
@@ -94,9 +94,9 @@
           summary: 'Un mapping et une méthode de configuration pour mes deux contrôleurs Denon.',
           need: 'Rendre mon installation DJ à deux contrôleurs fiable et reproductible.',
           response: 'Un TSI réunit Deck A/B, effets et retours LED. La longueur des boucles et la taille du Beatjump restent indépendantes.',
-          result: 'Version 5.1.0 validée par mes soins avec les deux Denon. La fiche DJ TechTools porte encore son ancienne mention de version candidate.',
+          result: 'Version 5.1.0 testée et validée localement avec mes deux contrôleurs Denon DN-SC2000.',
           workflow: ['Identifier chaque contrôleur et son canal MIDI avec Monitor.', 'Attribuer les ports d’entrée/sortie vérifiés ; désactiver les mappings en double.', 'Conserver les branchements USB et revérifier après un déplacement.'],
-          compatibility: 'Mon installation Windows / Traktor Pro 4. Autres configurations non vérifiées.',
+          compatibility: 'Ma configuration : Windows, Traktor Pro 4 et deux contrôleurs Denon DN-SC2000.',
           credits: 'Adapté du mapping de bascurtiz ; travail InstaPadFX original crédité à Stewe.',
           external: 'https://maps.djtechtools.com/mappings/22961',
           externalLabel: 'Mapping et guide complet sur DJ TechTools',
