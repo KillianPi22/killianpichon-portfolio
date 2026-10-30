@@ -314,7 +314,9 @@
     targetVelocity = clamp((scrollY - lastY) / Math.max(16, now - lastScrollTime) / 2, -1, 1);
     lastY = scrollY; lastScrollTime = now; schedule();
   }, { passive: true });
-  addEventListener('hashchange', () => { hover = null; backdropSource = null; atmosphere.dataset.visible = 'false'; lastY = scrollY; velocity = targetVelocity = 0; if (!refreshRaf) refreshRaf = requestAnimationFrame(refresh); });
+  function resetPageMotion() { hover = null; backdropSource = null; atmosphere.dataset.visible = 'false'; lastY = scrollY; velocity = targetVelocity = 0; if (!refreshRaf) refreshRaf = requestAnimationFrame(refresh); }
+  addEventListener('hashchange', resetPageMotion);
+  addEventListener('kp:pagechange', resetPageMotion);
   document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; panels.forEach(resetPanel); } else schedule(); });
   document.addEventListener('focusin', event => event.target.closest('.kp-reveal-pending')?.classList.remove('kp-reveal-pending'));
   applyMode(); refresh();

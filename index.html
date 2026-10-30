@@ -19,12 +19,12 @@
   <link rel="stylesheet" href="assets/analytics-consent.css">
   <link rel="stylesheet" href="assets/protected-content.css">
   <link rel="stylesheet" href="assets/technical-library.css?v=20261022-tools-v6">
-  <script defer src="assets/analytics-consent.js"></script>
+  <script defer src="assets/analytics-consent.js?v=20261030-projects"></script>
   <script defer src="assets/protected-content.js"></script>
   <link rel="stylesheet" href="assets/motion-exploration.css?v=20260917-gallery-height">
-  <script defer src="assets/motion-exploration.js?v=20260917-animated-media"></script>
+  <script defer src="assets/motion-exploration.js?v=20261030-projects"></script>
   <link rel="stylesheet" href="assets/organic-floating.css?v=20260906">
-  <script defer src="assets/organic-floating.js?v=20260906"></script>
+  <script defer src="assets/organic-floating.js?v=20261030-projects"></script>
   <script defer src="assets/video-diagnostics.js?v=20260906b"></script>
   <link rel="icon" href="assets/icons/favicon-96.png" sizes="96x96" type="image/png">
   <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
@@ -717,15 +717,18 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <script src="assets/technical-library.js?v=20261022-tools-v6"></script>
   <!-- Fiches des projets. Chargement classique, sans defer : l'application
        ci-dessous les lit pendant son evaluation. -->
+  <script src="assets/project-pages.js?v=20261030-projects"></script>
   <script src="data/projects.js?v=20261021-nda-title"></script>
   <script src="data/video-posters.js?v=20260905"></script>
   <!-- Traduction francaise. Meme regle que les fiches : charge avant
        l'application, en script classique. Differe, l'anglais apparaitrait une
        fraction de seconde avant la bascule. -->
   <script src="data/fr.js?v=20261022-tools"></script>
-  <script>window.__asset = function (assetPath) {
-  return assetPath;
-};
+  <script>window.__asset = function (assetPath) { return assetPath; };
+const SITE_ROOT = new URL('./', document.baseURI).pathname;
+// Freeze the base before pushState changes the document URL (also works below a repository prefix).
+document.querySelector('base').setAttribute('href', SITE_ROOT);
+const HOME_SCHEMA = window.KP_HOME_SCHEMA || JSON.parse(document.querySelector('script[type="application/ld+json"]')?.textContent || '{}');
 
 /* ==================================================================== i18n ==
    L'anglais est la source unique et reste ecrit en clair dans les composants.
@@ -751,6 +754,8 @@ window.KP_I18N = (function () {
   // s'ouvrir dans la langue de celui qui l'a envoye ; puis le choix deja fait
   // sur cet appareil ; puis la langue du navigateur ; puis l'anglais.
   function resolve() {
+    const page = window.KPProjectPages.parse(window.location.pathname, SITE_ROOT);
+    if (page) return { lang: page.lang, explicit: true };
     var param = null;
     try {
       param = new URLSearchParams(window.location.search).get('lang');
@@ -827,7 +832,11 @@ window.KP_I18N = (function () {
   function set(next) {
     if (next !== 'fr' && next !== 'en') return;
     try { window.localStorage.setItem(STORAGE_KEY, next); } catch (e) { /* stockage refuse */ }
-    var url = new URL(window.location.href);
+    var url = new URL(languageHref(next), window.location.href);
+    if (window.KPProjectPages.parse(url.pathname, SITE_ROOT)) {
+      window.location.href = url.toString();
+      return;
+    }
     if (next === 'fr') url.searchParams.set('lang', 'fr');
     else url.searchParams.delete('lang');
     // Rechargement volontaire : voir l'entete de ce bloc.
@@ -836,6 +845,34 @@ window.KP_I18N = (function () {
 
   return { lang: lang, t: t, project: project, head: head, set: set };
 })();
+
+function projectHref(id, lang = window.KP_I18N.lang) {
+  return window.KPProjectPages.isPublic(window.KP_PROJECTS[id])
+    ? SITE_ROOT + window.KPProjectPages.path(id, lang)
+    : SITE_ROOT + '?lang=' + lang + '#/project/' + encodeURIComponent(id);
+}
+function screenHref(screen, lang = window.KP_I18N.lang) {
+  return SITE_ROOT + '?lang=' + lang + '#/' + screen;
+}
+function languageHref(lang) {
+  const route = routeFromHash();
+  const url = new URL(window.location.href);
+  if (route.screen === 'project') {
+    const target = new URL(projectHref(route.projectId, lang), url);
+    url.pathname = target.pathname;
+    url.hash = target.hash;
+    if (window.KPProjectPages.isPublic(window.KP_PROJECTS[route.projectId])) url.searchParams.delete('lang');
+    else url.searchParams.set('lang', lang);
+  } else {
+    url.searchParams.set('lang', lang);
+  }
+  return url.pathname + url.search + url.hash;
+}
+function followInternal(event, action) {
+  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  action();
+}
 
 /* Le point d'accroche. Seuls les elements HTML sont traites : un texte confie
    a un composant finit toujours par atterrir dans l'un d'eux, donc le prendre
@@ -994,7 +1031,6 @@ function LanguageSwitch() {
     label: 'FR',
     full: 'Français'
   }];
-  const hash = typeof window !== 'undefined' ? window.location.hash : '';
   return React.createElement("div", {
     className: "site-lang",
     role: "group",
@@ -1006,14 +1042,13 @@ function LanguageSwitch() {
     "aria-hidden": "true"
   }, "/"), React.createElement("a", {
     className: "site-lang-link",
-    href: (l.code === 'fr' ? '?lang=fr' : './') + hash,
+    href: languageHref(l.code),
     hrefLang: l.code,
     lang: l.code,
     "aria-current": current === l.code ? 'true' : undefined,
     "aria-label": l.full,
     onClick: e => {
-      e.preventDefault();
-      window.KP_I18N.set(l.code);
+      followInternal(e, () => window.KP_I18N.set(l.code));
     },
     style: {
       color: current === l.code ? 'var(--text-heading)' : 'var(--text-muted)',
@@ -1028,10 +1063,10 @@ function Navbar({
   onLinkClick
 }) {
   const hrefs = {
-    Work: '#/work',
-    About: '#/about',
+    Work: screenHref('work'),
+    About: screenHref('about'),
     Technical: window.KPTechnicalLibrary.route(window.KP_I18N.lang),
-    Contact: '#/contact'
+    Contact: screenHref('contact')
   };
   return React.createElement("nav", {
     className: "site-nav",
@@ -1049,12 +1084,11 @@ function Navbar({
     }
   }, React.createElement("a", {
     className: "site-mark",
-    href: "#/work",
+    href: screenHref('work'),
     "aria-label": "Killian Pichon \u2014 Work",
     onClick: e => {
       if (onLinkClick) {
-        e.preventDefault();
-        onLinkClick('Work');
+        followInternal(e, () => onLinkClick('Work'));
       }
     },
     style: {
@@ -1077,8 +1111,7 @@ function Navbar({
     href: hrefs[l] || '#/work',
     onClick: e => {
       if (onLinkClick && l !== 'Technical') {
-        e.preventDefault();
-        onLinkClick(l);
+        followInternal(e, () => onLinkClick(l));
       }
     },
     style: {
@@ -2089,7 +2122,7 @@ function Footer() {
       gap: 'var(--space-5)'
     }
   }, React.createElement("a", {
-    href: "#/demos",
+    href: screenHref('demos'),
     className: "kp-footer-link",
     "aria-current": window.location.hash === '#/demos' ? 'page' : undefined,
     style: { fontSize: 'var(--text-micro)' }
@@ -2409,10 +2442,9 @@ function HomeScreen({
   }, PROJECTS.map(p => React.createElement("div", {
     key: p.id
   }, React.createElement(ProjectCard, {
-    href: `#/project/${p.id}`,
+    href: projectHref(p.id),
     onClick: e => {
-      e.preventDefault();
-      onOpenProject(p.id);
+      followInternal(e, () => onOpenProject(p.id));
     },
     title: p.title,
     category: p.cardCategory || p.category,
@@ -2431,10 +2463,9 @@ function HomeScreen({
   }, MORE_PROJECTS.map(p => React.createElement("div", {
     key: p.id
   }, React.createElement(ProjectCard, {
-    href: `#/project/${p.id}`,
+    href: projectHref(p.id),
     onClick: e => {
-      e.preventDefault();
-      onOpenProject(p.id);
+      followInternal(e, () => onOpenProject(p.id));
     },
     title: p.title,
     category: p.cardCategory || p.category,
@@ -2453,10 +2484,9 @@ function HomeScreen({
   }, VISIBLE_PROJECTS.map(p => React.createElement("a", {
     key: p.id,
     className: "project-index-row",
-    href: `#/project/${p.id}`,
+    href: projectHref(p.id),
     onClick: e => {
-      e.preventDefault();
-      onOpenProject(p.id);
+      followInternal(e, () => onOpenProject(p.id));
     }
   }, React.createElement("span", {
     className: "project-index-thumb" + (p.locked ? ' thumb-locked' : ''),
@@ -2922,9 +2952,11 @@ function ProjectNavEdges({
   nextTitle,
   onOpenProject
 }) {
-  return React.createElement(React.Fragment, null, prevId && React.createElement("div", {
+  return React.createElement(React.Fragment, null, prevId && React.createElement("a", {
     className: "project-nav-edge project-nav-edge-prev",
-    onClick: () => onOpenProject(prevId),
+    href: projectHref(prevId),
+    "aria-label": "Previous project",
+    onClick: e => followInternal(e, () => onOpenProject(prevId)),
     onMouseEnter: e => {
       e.currentTarget.querySelector('.pn-label').style.opacity = '1';
       e.currentTarget.querySelector('.pn-label').style.transform = 'translateX(0)';
@@ -2944,7 +2976,7 @@ function ProjectNavEdges({
       gap: '14px',
       cursor: 'pointer'
     }
-  }, React.createElement("button", {
+  }, React.createElement("span", {
     className: "project-nav-button",
     "aria-label": "Previous project",
     style: {
@@ -3011,9 +3043,11 @@ function ProjectNavEdges({
       color: 'var(--text-heading)',
       marginTop: '2px'
     }
-  }, prevTitle))), nextId && React.createElement("div", {
+  }, prevTitle))), nextId && React.createElement("a", {
     className: "project-nav-edge project-nav-edge-next",
-    onClick: () => onOpenProject(nextId),
+    href: projectHref(nextId),
+    "aria-label": "Next project",
+    onClick: e => followInternal(e, () => onOpenProject(nextId)),
     onMouseEnter: e => {
       e.currentTarget.querySelector('.pn-label').style.opacity = '1';
       e.currentTarget.querySelector('.pn-label').style.transform = 'translateX(0)';
@@ -3034,7 +3068,7 @@ function ProjectNavEdges({
       cursor: 'pointer',
       flexDirection: 'row-reverse'
     }
-  }, React.createElement("button", {
+  }, React.createElement("span", {
     className: "project-nav-button",
     "aria-label": "Next project",
     style: {
@@ -3428,11 +3462,12 @@ function ProjectScreenContent({
     style: {
       padding: '0 88px'
     }
-  }, React.createElement("button", {
+  }, React.createElement("a", {
     className: "project-back",
-    type: "button",
-    onClick: onBack,
+    href: screenHref('work'),
+    onClick: e => followInternal(e, onBack),
     style: {
+      display: 'inline-block',
       fontSize: 'var(--text-small)',
       color: 'var(--text-muted)',
       cursor: 'pointer'
@@ -3902,11 +3937,11 @@ function ProjectScreenContent({
       gap: '12px',
       flexWrap: 'wrap'
     }
-  }, relatedIds.map(relatedId => React.createElement("button", {
+  }, relatedIds.map(relatedId => React.createElement("a", {
     className: "related-project-button",
-    type: "button",
+    href: projectHref(relatedId),
     key: relatedId,
-    onClick: () => onOpenProject(relatedId),
+    onClick: e => followInternal(e, () => onOpenProject(relatedId)),
     style: {
       display: 'inline-flex',
       alignItems: 'center',
@@ -4984,6 +5019,10 @@ Object.keys(SCREEN_META).forEach(screen => {
 });
 function routeFromHash() {
   const path = window.location.hash.replace(/^#\/?/, '').replace(/\/$/, '');
+  const page = window.KPProjectPages.parse(window.location.pathname, SITE_ROOT);
+  if (!window.location.hash.startsWith('#/') && page && window.KPProjectPages.isPublic(window.KP_PROJECTS[page.id])) {
+    return { screen: 'project', projectId: page.id };
+  }
   if (!path || path === 'work') return {
     screen: 'home'
   };
@@ -4995,7 +5034,8 @@ function routeFromHash() {
     screen: path
   };
   if (path.startsWith('project/')) {
-    const projectId = decodeURIComponent(path.slice('project/'.length));
+    let projectId;
+    try { projectId = decodeURIComponent(path.slice('project/'.length)); } catch (_) { return { screen: 'home' }; }
     if (PROJECT_DATA[projectId]) return {
       screen: 'project',
       projectId
@@ -5008,19 +5048,32 @@ function routeFromHash() {
 function App() {
   const [route, setRoute] = React.useState(routeFromHash);
   React.useEffect(() => {
-    if (!window.location.hash) window.location.hash = '#/work';
     function onHashChange() {
-      setRoute(routeFromHash());
+      const next = routeFromHash();
+      if (next.screen === 'project' && window.KPProjectPages.isPublic(window.KP_PROJECTS[next.projectId])) {
+        const url = new URL(window.location.href);
+        url.pathname = projectHref(next.projectId);
+        url.searchParams.delete('lang');
+        if (url.hash.startsWith('#/')) url.hash = '';
+        window.history.replaceState(null, '', url);
+      }
+      setRoute(next);
     }
+    onHashChange();
     window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    window.addEventListener('popstate', onHashChange);
+    return () => {
+      window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('popstate', onHashChange);
+    };
   }, []);
   React.useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [route.screen, route.projectId]);
   React.useEffect(() => {
     const project = route.screen === 'project' ? PROJECT_DATA[route.projectId] : null;
-    const meta = project ? {
+    const publicProject = project && window.KPProjectPages.isPublic(window.KP_PROJECTS[project.id]);
+    const meta = publicProject ? window.KPProjectPages.meta(project.id, project, window.KP_I18N.lang) : project ? {
       title: `${project.title} — Killian Pichon`,
       description: project.desc
     } : SCREEN_META[route.screen] || SCREEN_META.home;
@@ -5035,12 +5088,9 @@ function App() {
     const twitterDescription = document.querySelector('meta[name="twitter:description"]');
     if (twitterTitle) twitterTitle.setAttribute('content', meta.title);
     if (twitterDescription) twitterDescription.setAttribute('content', meta.description);
-    // La langue declaree et l'adresse canonique doivent dire la meme chose que
-    // la page affichee, sinon un moteur indexe l'anglais sous l'adresse
-    // francaise. La canonique pointe la racine, pas la route en diese : les
-    // fragments ne sont pas des adresses distinctes pour un moteur.
+    // Public projects have their own static URL in each language.
     const enFrancais = window.KP_I18N.lang === 'fr';
-    const pageURL = route.screen === 'technical'
+    const pageURL = publicProject ? window.KPProjectPages.origin + window.KPProjectPages.path(project.id, window.KP_I18N.lang) : route.screen === 'technical'
       ? 'https://killianpichon.art/' + window.KPTechnicalLibrary.route(window.KP_I18N.lang)
       : 'https://killianpichon.art/' + (enFrancais ? '?lang=fr' : '');
     const ogLocale = document.querySelector('meta[property="og:locale"]');
@@ -5051,17 +5101,39 @@ function App() {
     if (ogUrl) ogUrl.setAttribute('content', pageURL);
     document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(link => {
       const language = link.hreflang === 'fr-CA' ? 'fr' : 'en';
-      link.href = 'https://killianpichon.art/' + (route.screen === 'technical'
+      link.href = 'https://killianpichon.art/' + (publicProject ? window.KPProjectPages.path(project.id, language) : route.screen === 'technical'
         ? window.KPTechnicalLibrary.route(language) : language === 'fr' ? '?lang=fr' : '');
     });
+    const robots = document.querySelector('meta[name="robots"]');
+    if (robots) robots.content = project && !publicProject ? 'noindex,follow' : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
+    for (const selector of ['meta[property="og:image"]', 'meta[name="twitter:image"]']) {
+      const tag = document.querySelector(selector);
+      if (tag) tag.content = meta.image || 'https://killianpichon.art/assets/og-image.jpg';
+    }
+    for (const selector of ['meta[property="og:image:alt"]', 'meta[name="twitter:image:alt"]']) {
+      const tag = document.querySelector(selector);
+      if (tag) tag.content = meta.imageAlt || meta.title;
+    }
+    // Dimensions/type from the homepage artwork do not describe every project image.
+    document.querySelectorAll('meta[property="og:image:width"],meta[property="og:image:height"],meta[property="og:image:type"]').forEach(tag => tag.remove());
+    const schema = document.querySelector('script[type="application/ld+json"]');
+    if (schema) schema.textContent = JSON.stringify(publicProject
+      ? window.KPProjectPages.graph(project.id, project, window.KP_I18N.lang)
+      : { ...HOME_SCHEMA, '@graph': (HOME_SCHEMA['@graph'] || []).map(item => item['@type'] === 'WebPage'
+        ? { ...item, url: pageURL, name: meta.title, description: meta.description, inLanguage: enFrancais ? 'fr-CA' : 'en-CA' } : item) });
+    window.dispatchEvent(new Event('kp:pagechange'));
   }, [route.screen, route.projectId]);
   React.useEffect(() => {
     const fallback = document.getElementById('offline-fallback');
     if (fallback) fallback.remove();
   }, []);
   const navigate = React.useCallback(path => {
-    const nextHash = `#/${path}`;
-    if (window.location.hash === nextHash) setRoute(routeFromHash());else window.location.hash = nextHash;
+    const id = path.startsWith('project/') ? decodeURIComponent(path.slice(8)) : null;
+    const target = new URL(id ? projectHref(id) : screenHref(path), window.location.href);
+    const current = new URL(window.location.href);
+    for (const [key, value] of current.searchParams) if (key !== 'lang') target.searchParams.set(key, value);
+    if (target.href !== window.location.href) window.history.pushState(null, '', target);
+    setRoute(routeFromHash());
   }, []);
   const handleNav = React.useCallback(link => {
     const routes = {

@@ -118,6 +118,7 @@
   addEventListener('resize', resetAll, { passive: true });
   addEventListener('blur', resetAll);
   addEventListener('hashchange', resetAll);
+  addEventListener('kp:pagechange', resetAll);
   document.addEventListener('visibilitychange', () => { if (document.hidden) stopSensor(); });
   reduced.addEventListener('change', () => { stopSensor(); updateSensorControls(); });
   pointer.addEventListener('change', () => { resetAll(); updateSensorControls(); });

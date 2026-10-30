@@ -433,7 +433,7 @@ function Invoke-Git([string[]]$gitArgs) {
 # de la sortie de git abimerait les accents.
 # Ce que l'editeur a le droit de commiter. La pathspec finale garantit
 # qu'aucun autre fichier modifie ne sera embarque, quel que soit l'index git.
-$CommitPaths = @("index.html", "data/projects.js", "projects", "sitemap.xml")
+$CommitPaths = @("index.html", "data/projects.js", "data/fr.js", "projects", "sitemap.xml", "data/project-pages-manifest.json", "assets/project-base.css", "assets/portfolio-app.js", "assets/portfolio-vendor.js")
 
 # Branche de travail de l'editeur. main est la branche de publication : y
 # ecrire depuis l'outil mettrait le site en ligne sans relecture.
@@ -721,6 +721,7 @@ function Save-Strings($edits) {
   # anglais a reellement change sur le disque.
   $reportees = 0
   if ($applied -gt 0) { $reportees = Move-FrTranslations $renames }
+  if ($applied -gt 0) { Update-Sitemap }
 
   return @{ ok = ($applied -gt 0); applied = $applied; rejected = $rejected; carried = $reportees; stamp = (Get-FileStamp) }
 }
@@ -1550,7 +1551,25 @@ function Remove-Project([string]$id) {
 # ajout, retrait ou mise sous protection, sinon il pointerait vers des images
 # disparues, ou pire : il publierait le chemin d'un media protege, que tout
 # le chiffrement vise justement a garder hors de portee.
+function Invoke-ProjectBuild([switch]$VerifyDependencies) {
+  $builder = Join-Path $ScriptDir "build-projects.cjs"
+  if (-not (Test-Path -LiteralPath $builder)) { return }
+  $node = Get-Command node.exe -ErrorAction SilentlyContinue
+  if (-not $node) { throw "Node.js est requis pour les pages publiques. Installer Node et lancer pnpm install avant de modifier le site." }
+  $arguments = @($builder)
+  if ($VerifyDependencies) { $arguments += '--verify-dependencies' }
+  $buildOutput = & $node.Source @arguments 2>&1
+  if ($LASTEXITCODE -ne 0) { throw "Generation des pages publiques impossible. Lancer pnpm install puis node tools/build-projects.cjs avant de continuer. Aucun commit ne doit omettre cette generation." }
+}
+
 function Update-Sitemap {
+  # The shared builder owns public URLs and images, including removal of stale
+  # generated HTML when a project becomes hidden/protected. Never use the old
+  # image replacement against multiple project entries.
+  if (Test-Path -LiteralPath (Join-Path $ScriptDir "build-projects.cjs")) {
+    Invoke-ProjectBuild
+    return
+  }
   $path = Join-Path $Root "sitemap.xml"
   if (-not (Test-Path $path)) { return }
   $enc = [System.Text.UTF8Encoding]::new($false)
@@ -1821,6 +1840,7 @@ function Update-ProjectPreserved([string]$id, $preserved) {
   $lines.InsertRange($target.start, [string[]]$block)
   Repair-BlockCommas $lines
   Write-ProjectFileLines $lines
+  Update-Sitemap
   return @{ ok = $true; id = $id; stamp = (Get-FileStamp) }
 }
 
@@ -2093,6 +2113,7 @@ function Save-Settings($values) {
     $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
     [System.IO.File]::Copy($TargetFile, (Join-Path $BackupDir "index.$stamp.html"), $true)
     [System.IO.File]::WriteAllText($TargetFile, $text, $enc)
+    Update-Sitemap
   }
   return @{ ok = ($applied -gt 0); applied = $applied; rejected = $rejected; stamp = (Get-FileStamp) }
 }
@@ -2365,6 +2386,12 @@ try {
         $res.Close(); continue
       }
 
+      # Check the offline build dependencies before any editorial write.
+      # Authentication and local-only routing above this point remain mandatory.
+      if ($req.HttpMethod -eq "POST" -and $rel -in @('/__save','/__media','/__fr','/__settings','/__project','/__project-delete','/__project-protect','/__project-unprotect','/__project-link')) {
+        Invoke-ProjectBuild -VerifyDependencies
+      }
+
       if ($rel -eq "/__save" -and $req.HttpMethod -eq "POST") {
         $lastPing = Get-Date; $everPinged = $true
         $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
@@ -2405,6 +2432,7 @@ try {
         try {
           $data = ConvertFrom-FrPayload (($body | ConvertFrom-Json))
           Write-FrDictionary $data (Get-FrSectionMap)
+          Update-Sitemap
           Send-Json $res @{ ok = $true; entries = $data.ui.Count; stamp = (Get-FileStamp) }
         } catch {
           Send-Json $res @{ ok = $false; error = $_.Exception.Message }
@@ -2520,6 +2548,10 @@ try {
           Send-Json $res @{ ok = $false; reason = "Message de commit vide." }
           $res.Close(); continue
         }
+
+        # Rebuild before switching/staging, so stale or newly protected pages
+        # can never be included by the content-only commit.
+        Invoke-ProjectBuild
 
         # La branche de publication ne s'ecrit jamais depuis l'editeur : le
         # depot l'interdit, et un contenu en cours de redaction n'a rien a

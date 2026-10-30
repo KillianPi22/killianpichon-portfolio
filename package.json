@@ -1,0 +1,13 @@
+{
+  "name": "killian-pichon-portfolio",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build-projects.cjs && node tools/build-technical.cjs",
+    "test:build": "node tools/test-project-build.cjs",
+    "test:projects": "node tools/test-project-pages.cjs"
+  },
+  "devDependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}

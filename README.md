@@ -1,5 +1,87 @@
 # Portfolio de Killian Pichon
 
+### Pages publiques indexables — 30 octobre 2026
+
+Les 13 projets publics ont chacun deux pages HTML : `projects/<id>/` en anglais
+et `projects/<id>/fr/` en français. Leur texte, leurs images publiques et leurs
+liens sont présents dans la réponse HTTP, y compris sans JavaScript. Chaque
+version possède son titre, sa description, sa canonique, ses variantes de langue,
+son aperçu de partage, des données structurées et une entrée dans le sitemap.
+Traveler relie explicitement le film, Fantastik Obsolete et la contribution de
+Killian dans ses métadonnées. Les récits publiés ne sont pas réécrits.
+
+La navigation utilise ces adresses, y compris les cartes, les projets liés et
+les flèches précédent/suivant. Les anciens liens `#/project/<id>` restent valides
+et adoptent l'adresse publique correspondante avec `replaceState` ; il ne s'agit
+pas d'une redirection HTTP 301, car le serveur ne reçoit pas les fragments.
+Les paramètres d'aperçu sont conservés, ainsi que le retour du navigateur et
+le rechargement direct. La langue d'une page projet est déterminée par son chemin.
+
+Les fiches entièrement chiffrées et les fiches masquées ne sont pas générées.
+Le film protégé de Traveler conserve son bouton et sa demande de code. Aucune
+source vidéo, charge chiffrée, règle de consentement ou configuration Pages
+n'est changée. Les animations et le suivi consenti écoutent aussi le changement
+de page sans fragment ; aucun appel Analytics n'est ajouté avant consentement.
+
+**Maintenance.** `index.html` reste la source des composants et du style ;
+`data/projects.js` et `data/fr.js` restent les sources éditoriales. Les règles
+d'URL et de métadonnées sont partagées dans `assets/project-pages.js`.
+Installer Node.js et pnpm, puis lancer `pnpm install --frozen-lockfile` une fois.
+Les deux dépendances React 18.3.1 servent uniquement à la génération locale :
+aucun nouveau script tiers n'est chargé sur le site. La version React du site
+reste celle déjà embarquée.
+
+Après une modification des sources, lancer `pnpm build` (ou successivement
+`node tools/build-projects.cjs` et `node tools/build-technical.cjs`). Le premier
+générateur réutilise le rendu React existant, sans navigateur ni réseau. Il
+produit les pages, `assets/project-base.css`, `assets/portfolio-app.js` et
+`assets/portfolio-vendor.js`. Ne pas éditer ces fichiers générés directement.
+Le manifeste `data/project-pages-manifest.json` conserve les empreintes et dates
+des pages : une génération identique ne change pas leur `lastmod`.
+Lors d'un changement des scripts ou styles partagés, actualiser aussi leurs
+versions de cache dans les sources et les générateurs, selon la convention du site.
+
+L'éditeur vérifie les dépendances avant une écriture éditoriale, régénère les
+pages après sauvegarde et avant commit. Il inclut les traductions et les fichiers
+générés dans son commit sur `content`, jamais sur `main`. Une génération en échec
+doit être corrigée avant de commiter. Quand un projet devient masqué, chiffré ou
+retiré, le générateur retire uniquement ses propres fichiers `index.html` et
+ses entrées de sitemap ; les médias restent sur disque. Il refuse d'écraser une
+page écrite à la main. Aucun fichier d'authentification n'est lu par le générateur.
+
+**Contrôles.** `node tools/build-projects.cjs --check` détecte les fichiers
+générés périmés. `node tools/test-project-build.cjs` vérifie sur une copie
+temporaire sans authentification les générations identiques, l'échappement des
+textes, le retrait des pages masquées/chiffrées, la conservation des médias et
+l'appel depuis l'éditeur. `node tools/test-project-pages.cjs` vérifie les pages
+via le serveur habituel ; Playwright et Chrome sont requis. `KP_TEST_ORIGIN`
+choisit l'adresse (défaut `http://localhost:8158`), `KP_TEST_BROWSER` le navigateur,
+`KP_TEST_ARTIFACTS` un dossier existant pour les captures et `NODE_PATH` peut
+désigner une installation partagée de Playwright.
+
+Vérification locale HTTP réussie sur les 26 pages, en français et en anglais,
+à 390, 768 et 1440 px : métadonnées, texte sans JavaScript, ressources, casse,
+liens internes, anciennes adresses, historique, rechargement, changement de
+langue, galerie et barrières d'accès. Aucune nouvelle erreur de console/réseau
+ni requête Analytics avant consentement. Les chemins sensibles et les routes
+authentifiées du serveur restent refusés. Les données des projets, les médias,
+le chiffrement, `CNAME`, `.nojekyll` et la configuration de publication sont
+identiques à `main` distant `2bee212`, base de cette révision isolée.
+
+Le catalogue Technique passe aussi ses contrôles sur six pages et quatre
+largeurs. Une comparaison des dimensions, typographies et couleurs de Traveler,
+Banquet et Cabotage avec la version publiée, aux trois largeurs, ne relève pas
+d'écart après chargement des images. Les captures sont relues visuellement.
+Six liens externes publics répondent en HTTP 200 ; ArtStation et Graphics eMotion
+renvoient 403 au contrôle automatisé, ce qui ne permet pas de valider leur accès
+par cette méthode. Leurs adresses existantes restent inchangées.
+
+La lecture complète des vidéos et les capteurs sur un téléphone physique ne
+sont pas réessayés pour cette révision de navigation. La vérification de
+l'indexation effective exige une publication puis l'inspection des nouvelles
+URLs dans Google Search Console et la soumission du sitemap. Cette révision
+est préparée localement sur `codex/project-indexing` ; elle n'est pas publiée.
+
 ### Validation locale des fichiers publiés — 22 octobre 2026
 
 Le propriétaire confirme qu'il vérifie localement tous les fichiers qu'il
@@ -214,9 +296,11 @@ Les projets vivent dans `data/projects.js`, charge par `index.html` juste avant
 l'application. C'est un script classique, pas un `fetch` : rien a attendre au
 chargement, rien qui depende d'un serveur applicatif.
 
-Le fichier est un objet indexe par identifiant de projet. Cet identifiant est
-aussi l'adresse de la fiche, `#/project/<id>`, et le nom du dossier de medias
-`projects/<id>/`.
+Le fichier est un objet indexe par identifiant de projet. Une fiche publique
+utilise `projects/<id>/` et `projects/<id>/fr/`. Son ancien lien
+`#/project/<id>` reste valide ; les fiches protégées gardent ce mode d'accès.
+Les chemins des médias déjà présents sont conservés, même si leur dossier
+porte un nom différent de l'identifiant.
 
 ### Ce qui decide de l'ordre
 
@@ -1114,8 +1198,9 @@ au besoin, puis commite et pousse cette branche. `main` reste la branche de
 publication : l'editeur n'y ecrit jamais, et c'est la fusion vers `main`,
 decidee a la main, qui met a jour killianpichon.art.
 
-Le commit porte sur `index.html`, `data/projects.js`, `projects/` et
-`sitemap.xml`. Les medias ajoutes sont indexes explicitement, sinon un projet
+Le commit porte sur `index.html`, `data/projects.js`, `data/fr.js`, `projects/`,
+`sitemap.xml`, le manifeste des pages et leurs trois fichiers partagés générés.
+Les medias ajoutes sont indexes explicitement, sinon un projet
 partirait sans ses images.
 
 ### Medias
@@ -1171,10 +1256,9 @@ dans le portfolio. Le fichier `sitemap.xml` reference l'URL canonique ainsi que
 les images representatives des projets, qui sont autrement chargees par
 JavaScript.
 
-Le site utilise actuellement des routes avec fragment (`#/about`,
-`#/project/celestia`, etc.). Ces vues ne sont pas des URLs indexables distinctes
-et ne doivent donc pas etre ajoutees au sitemap. Pour indexer chaque projet
-separement, il faudra d'abord leur donner de vraies pages et des URLs sans `#`.
+Les projets publics utilisent des pages HTML distinctes sans fragment, en
+français et en anglais, référencées dans le sitemap. Les autres vues à fragment
+(`#/about`, les fiches protégées, etc.) ne sont pas ajoutées comme URLs distinctes.
 
 La valeur `lastmod` du sitemap doit etre mise a jour uniquement lors d'un
 changement significatif du contenu, des liens ou des donnees structurees de la
@@ -1197,8 +1281,8 @@ est fixee a deux mois. Le suivi automatique des changements d'historique est
 desactive dans le flux Web, car le site envoie lui-meme les vues des routes a
 fragment.
 
-Les vues des routes avec fragment (`#/about`, `#/project/...`) sont envoyees
-manuellement avec leur URL complete. La vue automatique initiale est desactivee
+Les vues des routes avec fragment et des nouvelles pages projets sont envoyées
+manuellement avec leur URL complète, uniquement après consentement. La vue automatique initiale est desactivee
 dans le code pour eviter les doublons. Si l'identifiant de mesure change, mettre
 a jour uniquement la constante `MEASUREMENT_ID` dans
 `assets/analytics-consent.js`.
@@ -1208,8 +1292,8 @@ a jour uniquement la constante `MEASUREMENT_ID` dans
 L'onglet **Modifications** compare le fichier de travail au dernier commit et
 affiche chaque texte modifie, avec sa section et sa ligne.
 
-- Le commit porte sur `index.html`, `data/projects.js`, `projects/` et
-  `sitemap.xml`. Aucun autre fichier modifie n'est embarque, quel que soit
+- Le commit porte sur les sources éditoriales, les médias et les pages générées
+  listés dans la section Commit et publication. Aucun autre fichier modifie n'est embarque, quel que soit
   l'etat de l'index git.
 - Le commit se fait toujours sur la branche `content`, jamais sur `main`.
   L'editeur y bascule seul, puis pousse cette branche.

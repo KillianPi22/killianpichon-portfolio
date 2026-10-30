@@ -199,6 +199,7 @@
       openChoices();
     });
     window.addEventListener('hashchange', schedulePageView);
+    window.addEventListener('kp:pagechange', schedulePageView);
 
     if (readConsent() === GRANTED) loadGoogleAnalytics();
     setBannerVisibility(false);
