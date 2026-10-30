@@ -79,8 +79,9 @@ par cette méthode. Leurs adresses existantes restent inchangées.
 La lecture complète des vidéos et les capteurs sur un téléphone physique ne
 sont pas réessayés pour cette révision de navigation. La vérification de
 l'indexation effective exige une publication puis l'inspection des nouvelles
-URLs dans Google Search Console et la soumission du sitemap. Cette révision
-est préparée localement sur `codex/project-indexing` ; elle n'est pas publiée.
+URLs dans Google Search Console et la soumission du sitemap. Publication
+autorisée par le propriétaire le 30 octobre 2026 : la révision préparée sur
+`codex/project-indexing` rejoint `main` et le déploiement GitHub Pages habituel.
 
 ### Validation locale des fichiers publiés — 22 octobre 2026
 
