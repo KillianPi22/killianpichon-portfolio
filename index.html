@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="assets/motion-exploration.css?v=20260917-gallery-height">
   <script defer src="assets/motion-exploration.js?v=20261030-projects"></script>
   <link rel="stylesheet" href="assets/organic-floating.css?v=20260906">
-  <script defer src="assets/organic-floating.js?v=20261030-projects"></script>
+  <script defer src="assets/organic-floating.js?v=20261030-avatar"></script>
   <script defer src="assets/video-diagnostics.js?v=20260906b"></script>
   <link rel="icon" href="assets/icons/favicon-96.png" sizes="96x96" type="image/png">
   <link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
@@ -169,6 +169,14 @@ button{color:inherit}
 .about-profile-figure{width:100%;max-width:360px;margin:0;justify-self:end}
 .about-profile-image{display:block;width:100%;height:auto;border:1px solid var(--line-subtle);border-radius:var(--radius-sm);background:var(--surface-2)}
 .about-profile-caption{margin-top:10px;font-family:var(--font-mono);font-size:var(--text-micro);line-height:var(--leading-normal);color:var(--text-faint);letter-spacing:var(--tracking-wide);text-transform:uppercase}
+.about-avatar-stage{position:relative;aspect-ratio:820/1093;overflow:hidden}
+.about-avatar-stage img,.about-avatar-stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
+.about-avatar-stage[data-avatar-state="ready"] img{visibility:hidden}
+.about-avatar-stage:not([data-avatar-state="ready"]) canvas{visibility:hidden}
+.about-avatar-caption{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;min-height:32px}
+.about-avatar-caption button{font:inherit;color:var(--text-muted);letter-spacing:inherit;text-transform:inherit;background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.about-avatar-caption button:focus-visible{outline:2px solid var(--text-heading);outline-offset:4px}
+.about-avatar-hint{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .view-all-button,.project-back,.related-project-button{appearance:none;background:none;border:0;padding:0}
 .view-all-button{display:inline-flex;align-items:center;gap:10px;font-size:var(--text-small);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--tracking-wide);cursor:pointer}
 .view-all-button:hover{color:var(--text-heading)}
@@ -723,7 +731,7 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
   <!-- Traduction francaise. Meme regle que les fiches : charge avant
        l'application, en script classique. Differe, l'anglais apparaitrait une
        fraction de seconde avant la bascule. -->
-  <script src="data/fr.js?v=20261022-tools"></script>
+  <script src="data/fr.js?v=20261030-avatar"></script>
   <script>window.__asset = function (assetPath) { return assetPath; };
 const SITE_ROOT = new URL('./', document.baseURI).pathname;
 // Freeze the base before pushState changes the document URL (also works below a repository prefix).
@@ -4441,6 +4449,52 @@ function ExperienceTimeline({
     key: p
   }, p)))))));
 }
+function AboutAvatar() {
+  const stage = React.useRef(null);
+  const viewer = React.useRef(null);
+  const [state, setState] = React.useState({ ready: false, paused: false, reduced: false });
+  React.useEffect(() => {
+    const controller = new AbortController();
+    let observer;
+    const start = async () => {
+      observer?.disconnect();
+      try {
+        const module = await import(new URL(window.__asset('assets/avatar-viewer.js?v=20261030-avatar'), document.baseURI).href);
+        if (controller.signal.aborted) return;
+        viewer.current = await module.mountAvatar(stage.current, {
+          modelURL: window.__asset('assets/profile/killian-avatar.glb?v=20261030-avatar'),
+          signal: controller.signal,
+          onState: next => { if (!controller.signal.aborted) setState(next); }
+        });
+        if (!viewer.current && !controller.signal.aborted && stage.current) stage.current.dataset.avatarState = 'fallback';
+      } catch {
+        // A static portrait remains readable if loading or WebGL is unavailable.
+        if (!controller.signal.aborted && stage.current) stage.current.dataset.avatarState = 'fallback';
+      }
+    };
+    if (window.IntersectionObserver) {
+      observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) start();
+      }, { rootMargin: '180px' });
+      observer.observe(stage.current);
+    } else start();
+    return () => { observer?.disconnect(); controller.abort(); viewer.current = null; };
+  }, []);
+  return React.createElement('figure', { className: 'about-profile-figure', 'data-animated-image': 'true' },
+    React.createElement('div', { ref: stage, className: 'about-profile-image about-avatar-stage', role: 'img', 'aria-label': 'Full-body 3D scan of Killian Pichon.', 'aria-describedby': 'about-avatar-hint' },
+      React.createElement('img', {
+        src: window.__asset('assets/profile/killian-avatar.webp'),
+        alt: 'Full-body 3D scan of Killian Pichon.', width: 720, height: 960, decoding: 'async', loading: 'lazy'
+      })),
+    React.createElement('figcaption', { className: 'about-profile-caption about-avatar-caption' },
+      React.createElement('span', null, 'My digital double'),
+      state.ready && !state.reduced && React.createElement('button', {
+        type: 'button', onClick: () => viewer.current?.togglePaused(),
+        'aria-pressed': state.paused
+      }, state.paused ? 'Resume avatar' : 'Pause avatar')),
+    React.createElement('span', { id: 'about-avatar-hint', className: 'about-avatar-hint' },
+      'Walking in place. The head follows your mouse, then looks ahead at rest. On a phone, use the tilt controls to enable motion.'));
+}
 function AboutScreen({
   onNav
 }) {
@@ -4483,18 +4537,7 @@ function AboutScreen({
       marginTop: '20px',
       lineHeight: 'var(--leading-relaxed)'
     }
-  }, "I build 3D assets and environments for real-time productions and follow them through to engine integration: modeling, sculpting, texturing, optimization and scene assembly in Unreal. The work moves across disciplines — interactive scenography, pre-rendered film, and interactive tools built inside the engine — where the image often has to hold at architectural scale. Based in Montréal, I shape both the visuals and the workflow that carries them, and I look for the answer inside the constraints a production sets as readily as outside them when the usual path doesn't hold.")), React.createElement("figure", {
-    className: "about-profile-figure"
-  }, React.createElement("img", {
-    className: "about-profile-image",
-    src: window.__asset('assets/profile/normal-studio-can.webp'),
-    alt: "A pink Normal Studio can featuring an illustrated portrait of Killian Pichon, held in front of a desk.",
-    width: 820,
-    height: 1093,
-    decoding: "async"
-  }), React.createElement("figcaption", {
-    className: "about-profile-caption"
-  }, "Design courtesy of Eliane Ashcar at Normal Studio.")))), React.createElement("section", {
+  }, "I build 3D assets and environments for real-time productions and follow them through to engine integration: modeling, sculpting, texturing, optimization and scene assembly in Unreal. The work moves across disciplines — interactive scenography, pre-rendered film, and interactive tools built inside the engine — where the image often has to hold at architectural scale. Based in Montréal, I shape both the visuals and the workflow that carries them, and I look for the answer inside the constraints a production sets as readily as outside them when the usual path doesn't hold.")), React.createElement(AboutAvatar))), React.createElement("section", {
     style: {
       padding: '0 var(--container-pad) 96px'
     }

@@ -86,7 +86,7 @@ for (const lang of ['en', 'fr']) {
   <meta name="twitter:description" content="${esc(description)}">
   <meta name="twitter:image" content="${origin}assets/og-image.jpg">
   <link rel="icon" href="assets/icons/favicon-96.png" sizes="96x96" type="image/png">
-  <link rel="stylesheet" href="assets/technical-base.css?v=${assetVersion}">
+  <link rel="stylesheet" href="assets/technical-base.css?v=20261030-avatar">
   <link rel="stylesheet" href="assets/technical-library.css?v=${assetVersion}">
   <link rel="stylesheet" href="assets/analytics-consent.css">
   <link rel="stylesheet" href="assets/motion-exploration.css?v=20260917-gallery-height">
@@ -95,7 +95,7 @@ for (const lang of ['en', 'fr']) {
   <script defer src="assets/technical-library.js?v=${assetVersion}"></script>
   <script defer src="assets/analytics-consent.js?v=20261030-projects"></script>
   <script defer src="assets/motion-exploration.js?v=20261030-projects"></script>
-  <script defer src="assets/organic-floating.js?v=20261030-projects"></script>
+  <script defer src="assets/organic-floating.js?v=20261030-avatar"></script>
   <script type="application/ld+json">${safeJSON({ '@context': 'https://schema.org', '@graph': graph })}</script>
 </head>
 <body><div id="root">${nav(data, lang, id)}<main class="tool-main">${body}</main>${footer(data, lang)}</div></body>

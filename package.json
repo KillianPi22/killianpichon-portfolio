@@ -2,12 +2,15 @@
   "name": "killian-pichon-portfolio",
   "private": true,
   "scripts": {
-    "build": "node tools/build-projects.cjs && node tools/build-technical.cjs",
+    "build": "node tools/build-avatar.cjs && node tools/build-projects.cjs && node tools/build-technical.cjs",
     "test:build": "node tools/test-project-build.cjs",
+    "test:avatar": "node tools/test-avatar.cjs",
     "test:projects": "node tools/test-project-pages.cjs"
   },
   "devDependencies": {
+    "esbuild": "0.25.12",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "three": "0.180.0"
   }
 }

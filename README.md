@@ -1,5 +1,76 @@
 # Portfolio de Killian Pichon
 
+### Prototype du double numérique — 30 octobre 2026
+
+La page Profil remplace la photo de la canette par le scan 3D en pied choisi
+par le propriétaire. Le cadre, son ratio 820/1093, la grille et les espacements
+existants sont conservés. La photo et son ancienne traduction restent dans le
+dépôt. Ce prototype est préparé sur `codex/interactive-avatar`, depuis `main`
+distant `6019530`, sans publication ni modification des travaux locaux de l’éditeur.
+
+Le squelette et le maillage proviennent de `SKM_Killian_Pichon`, avec la texture
+photographique `M_Killian_Pichon_Tpose_diffuse`. L’export Unreal est réalisé sur
+une copie des ressources ; le projet d’origine n’est pas modifié. La marche
+sur place est une animation procédurale créée pour ce prototype, pas une
+animation de marche retrouvée dans le projet. Les deux pistes du GLB décrivent
+le cycle du corps et un léger transfert de poids, sur 1,6 seconde, sans
+déplacement vers l’avant. Le cou et la tête suivent doucement la souris, avec
+des angles limités, puis reviennent devant après 2,4 secondes d’inactivité.
+
+Sur téléphone, la commande **Inclinaison** déjà présente active le capteur avec
+les mêmes règles d’autorisation et de recentrage. Le contrôleur existant émet
+seulement un événement local `kp:inclination` vers l’avatar ; les données ne sont
+ni enregistrées ni transmises. La pause, la réduction des mouvements, le passage
+hors écran et l’onglet masqué arrêtent le rendu continu. Quitter Profil libère
+les ressources graphiques. Un portrait WebP reste visible pendant le chargement,
+en cas d’échec ou lorsque WebGL 2 est indisponible. Le cadre déclare un média
+animé pour éviter que l’ancien effet de courbure ne superpose une image figée.
+
+**Fichiers et maintenance.** `index.html` contient `AboutAvatar` et les styles
+du cadre ; `data/fr.js` fournit les traductions. Le lecteur vit dans
+`assets/avatar-viewer.source.js`, compilé vers `assets/avatar-viewer.js` par
+`tools/build-avatar.cjs`. Three.js 0.180.0 et esbuild 0.25.12 sont verrouillés
+dans les dépendances de développement ; le bundle et la licence Three.js sont
+servis localement. Aucun CDN ou nouveau service externe n’est utilisé.
+Le lecteur est chargé à l’approche de l’avatar, uniquement dans Profil.
+Le GLB autonome de `assets/profile/` pèse environ 2,48 Mo, avec 53 502 triangles
+et une texture de 2 048 px ; son portrait de 720 × 960 px pèse environ 16 Ko.
+Le lecteur compilé pèse environ 586 Ko avant compression HTTP.
+
+`pnpm build` compile le lecteur puis régénère les pages projet et technique.
+Ne pas modifier directement leurs copies générées. Les versions de cache des
+scripts/styles concernés sont actualisées dans les sources et les générateurs.
+`pnpm test:avatar` vérifie le rig, la continuité des boucles, l’absence de dérive,
+les poids de peau, les ressources embarquées et le poids du modèle. Avec
+`KP_TEST_ORIGIN` défini, il vérifie également les fichiers HTTP, leur casse,
+la conservation de la photo et le refus des chemins sensibles.
+
+Pour refaire la préparation depuis un FBX et sa texture exportés, utiliser
+Blender 5.2 avec `tools/prepare-avatar.py` :
+`blender -b --python tools/prepare-avatar.py -- --mesh <scan.fbx> --texture <diffuse.png> --output <dossier-de-preparation>`.
+Ce dossier doit rester hors du dépôt public. Le script produit le GLB, une
+texture JPEG intermédiaire et un portrait PNG ; convertir ce portrait en WebP,
+puis ne copier que le GLB et le WebP dans `assets/profile/`. Le squelette attendu
+est celui de ce scan ; une autre structure demande une adaptation explicite.
+
+**Contrôles du prototype.** Génération des pages et tests de génération réussis,
+ainsi que les contrôles du GLB et des ressources HTTP. Essais dans le navigateur
+à 390, 768 et 1440 px, en français et en anglais : cadrage sans débordement,
+navigation depuis une fiche projet, changement de langue, pause/reprise, regard
+gauche/droite, réduction des mouvements, arrêt hors écran et onglet masqué simulé.
+Les événements de capteur simulés vérifient mouvement, recentrage et arrêt.
+Le repli sans WebGL et après perte de contexte simulée fonctionne. Aucun nouvel
+échec réseau ou message de console n’est relevé dans le parcours normal ; aucun
+appel Analytics n’est effectué avant consentement. Les pages projet ne chargent
+pas le lecteur ni le modèle. Le capteur et son autorisation sur un téléphone
+physique ne sont pas testés ici ; aucun accès réseau à l’éditeur n’est ajouté.
+Les liens externes et lecteurs vidéo existants ne sont pas modifiés ni réessayés.
+Les données des projets, les protections, le serveur local, `CNAME`, `.nojekyll`
+et la configuration de publication restent identiques à la base.
+
+Références : [export Unreal](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/GLTFExporter?application_version=5.1)
+et [chargement et libération des ressources glTF](https://threejs.org/docs/pages/GLTFLoader.html).
+
 ### Pages publiques indexables — 30 octobre 2026
 
 Les 13 projets publics ont chacun deux pages HTML : `projects/<id>/` en anglais

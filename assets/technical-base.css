@@ -72,6 +72,14 @@ button{color:inherit}
 .about-profile-figure{width:100%;max-width:360px;margin:0;justify-self:end}
 .about-profile-image{display:block;width:100%;height:auto;border:1px solid var(--line-subtle);border-radius:var(--radius-sm);background:var(--surface-2)}
 .about-profile-caption{margin-top:10px;font-family:var(--font-mono);font-size:var(--text-micro);line-height:var(--leading-normal);color:var(--text-faint);letter-spacing:var(--tracking-wide);text-transform:uppercase}
+.about-avatar-stage{position:relative;aspect-ratio:820/1093;overflow:hidden}
+.about-avatar-stage img,.about-avatar-stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
+.about-avatar-stage[data-avatar-state="ready"] img{visibility:hidden}
+.about-avatar-stage:not([data-avatar-state="ready"]) canvas{visibility:hidden}
+.about-avatar-caption{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;min-height:32px}
+.about-avatar-caption button{font:inherit;color:var(--text-muted);letter-spacing:inherit;text-transform:inherit;background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.about-avatar-caption button:focus-visible{outline:2px solid var(--text-heading);outline-offset:4px}
+.about-avatar-hint{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 .view-all-button,.project-back,.related-project-button{appearance:none;background:none;border:0;padding:0}
 .view-all-button{display:inline-flex;align-items:center;gap:10px;font-size:var(--text-small);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--tracking-wide);cursor:pointer}
 .view-all-button:hover{color:var(--text-heading)}

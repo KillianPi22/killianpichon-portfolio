@@ -3716,6 +3716,52 @@ function ExperienceTimeline({
     key: p
   }, p)))))));
 }
+function AboutAvatar() {
+  const stage = React.useRef(null);
+  const viewer = React.useRef(null);
+  const [state, setState] = React.useState({ ready: false, paused: false, reduced: false });
+  React.useEffect(() => {
+    const controller = new AbortController();
+    let observer;
+    const start = async () => {
+      observer?.disconnect();
+      try {
+        const module = await import(new URL(window.__asset('assets/avatar-viewer.js?v=20261030-avatar'), document.baseURI).href);
+        if (controller.signal.aborted) return;
+        viewer.current = await module.mountAvatar(stage.current, {
+          modelURL: window.__asset('assets/profile/killian-avatar.glb?v=20261030-avatar'),
+          signal: controller.signal,
+          onState: next => { if (!controller.signal.aborted) setState(next); }
+        });
+        if (!viewer.current && !controller.signal.aborted && stage.current) stage.current.dataset.avatarState = 'fallback';
+      } catch {
+        // A static portrait remains readable if loading or WebGL is unavailable.
+        if (!controller.signal.aborted && stage.current) stage.current.dataset.avatarState = 'fallback';
+      }
+    };
+    if (window.IntersectionObserver) {
+      observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) start();
+      }, { rootMargin: '180px' });
+      observer.observe(stage.current);
+    } else start();
+    return () => { observer?.disconnect(); controller.abort(); viewer.current = null; };
+  }, []);
+  return React.createElement('figure', { className: 'about-profile-figure', 'data-animated-image': 'true' },
+    React.createElement('div', { ref: stage, className: 'about-profile-image about-avatar-stage', role: 'img', 'aria-label': 'Full-body 3D scan of Killian Pichon.', 'aria-describedby': 'about-avatar-hint' },
+      React.createElement('img', {
+        src: window.__asset('assets/profile/killian-avatar.webp'),
+        alt: 'Full-body 3D scan of Killian Pichon.', width: 720, height: 960, decoding: 'async', loading: 'lazy'
+      })),
+    React.createElement('figcaption', { className: 'about-profile-caption about-avatar-caption' },
+      React.createElement('span', null, 'My digital double'),
+      state.ready && !state.reduced && React.createElement('button', {
+        type: 'button', onClick: () => viewer.current?.togglePaused(),
+        'aria-pressed': state.paused
+      }, state.paused ? 'Resume avatar' : 'Pause avatar')),
+    React.createElement('span', { id: 'about-avatar-hint', className: 'about-avatar-hint' },
+      'Walking in place. The head follows your mouse, then looks ahead at rest. On a phone, use the tilt controls to enable motion.'));
+}
 function AboutScreen({
   onNav
 }) {
@@ -3758,18 +3804,7 @@ function AboutScreen({
       marginTop: '20px',
       lineHeight: 'var(--leading-relaxed)'
     }
-  }, "I build 3D assets and environments for real-time productions and follow them through to engine integration: modeling, sculpting, texturing, optimization and scene assembly in Unreal. The work moves across disciplines — interactive scenography, pre-rendered film, and interactive tools built inside the engine — where the image often has to hold at architectural scale. Based in Montréal, I shape both the visuals and the workflow that carries them, and I look for the answer inside the constraints a production sets as readily as outside them when the usual path doesn't hold.")), React.createElement("figure", {
-    className: "about-profile-figure"
-  }, React.createElement("img", {
-    className: "about-profile-image",
-    src: window.__asset('assets/profile/normal-studio-can.webp'),
-    alt: "A pink Normal Studio can featuring an illustrated portrait of Killian Pichon, held in front of a desk.",
-    width: 820,
-    height: 1093,
-    decoding: "async"
-  }), React.createElement("figcaption", {
-    className: "about-profile-caption"
-  }, "Design courtesy of Eliane Ashcar at Normal Studio.")))), React.createElement("section", {
+  }, "I build 3D assets and environments for real-time productions and follow them through to engine integration: modeling, sculpting, texturing, optimization and scene assembly in Unreal. The work moves across disciplines — interactive scenography, pre-rendered film, and interactive tools built inside the engine — where the image often has to hold at architectural scale. Based in Montréal, I shape both the visuals and the workflow that carries them, and I look for the answer inside the constraints a production sets as readily as outside them when the usual path doesn't hold.")), React.createElement(AboutAvatar))), React.createElement("section", {
     style: {
       padding: '0 var(--container-pad) 96px'
     }

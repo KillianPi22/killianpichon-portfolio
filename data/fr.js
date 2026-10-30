@@ -130,6 +130,12 @@ window.KP_FR = {
     'Work Experience': 'Expérience',
     'Education': 'Formation',
     'Download CV': 'Télécharger le CV',
+    'Full-body 3D scan of Killian Pichon.': 'Scan 3D de Killian Pichon en pied.',
+    'My digital double': 'Mon double numérique',
+    'Pause avatar': 'Mettre en pause',
+    'Resume avatar': 'Reprendre',
+    'Walking in place. The head follows your mouse, then looks ahead at rest. On a phone, use the tilt controls to enable motion.':
+      'Marche sur place. La tête suit la souris, puis regarde devant au repos. Sur téléphone, utilisez les commandes d’inclinaison pour activer le mouvement.',
     'A pink Normal Studio can featuring an illustrated portrait of Killian Pichon, held in front of a desk.':
       'Canette rose de Normal Studio avec un portrait illustré de Killian Pichon, tenue devant un bureau.',
     'Design courtesy of Eliane Ashcar at Normal Studio.':

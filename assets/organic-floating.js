@@ -143,11 +143,13 @@
     removeEventListener('deviceorientation', onOrientation);
     sensorObserver.disconnect(); sensorVisible.clear();
     baseline = inclination = null;
+    window.dispatchEvent(new CustomEvent('kp:inclination', { detail: { active: false, x: 0, y: 0 } }));
     delete html.dataset.kpInclination;
     resetAll(); updateSensorControls(message);
   }
   function recenter() {
     baseline = inclination = null;
+    window.dispatchEvent(new CustomEvent('kp:inclination', { detail: { active: sensorOn, x: 0, y: 0 } }));
     resetAll();
     if (sensorOn) updateSensorControls('Hold your reading position: the next sensor reading recenters the frames.');
   }
@@ -194,6 +196,7 @@
     // Zone neutre et quantification : le bruit du capteur ne maintient pas une animation au repos.
     const axis = value => Math.round(clamp(Math.sign(value) * Math.max(0, Math.abs(value) - .8) / sensorResponse, -.5, .5) * 100) / 100;
     inclination = { x: axis(roll * Math.cos(angle) + pitch * Math.sin(angle)), y: axis(pitch * Math.cos(angle) - roll * Math.sin(angle)) };
+    window.dispatchEvent(new CustomEvent('kp:inclination', { detail: { active: true, ...inclination } }));
     if (!baseline.movementReceived && (inclination.x || inclination.y)) {
       baseline.movementReceived = true;
       updateSensorControls('Motion received. Visible frames follow device tilt; Recenter adapts the effect to your reading position.');
