@@ -1,5 +1,33 @@
 # Portfolio de Killian Pichon
 
+### Retouches des bras, des mains et des cheveux — 31 octobre 2026
+
+Le volume des manches autour des coudes et la transition de leurs poids sont
+adoucis dans `tools/metahuman_garments.py` pour retirer la pincée visible quand
+les bras descendent. `tools/prepare-native-metahuman.py` écarte légèrement les
+bras et les avant-bras pendant la marche. Il resserre aussi les cartes de cheveux
+près de la raie, avec un fondu vers les longueurs, et adoucit leurs reflets.
+Le visage A, les lunettes, le col, le motif du chandail et la mise en page restent
+inchangés. Le GLB et son portrait WebP sont régénérés ; `index.html`,
+`tools/build-projects.cjs` et les pages produites actualisent les versions de cache.
+
+Un contrôle dans la préparation mesure les mains déformées face au pantalon
+sur les 49 poses de la boucle : il exige un espace minimal de 8 mm et aucune
+pénétration de sommet. Le rapport `hand-clearance.json` reste dans le dossier
+de préparation, hors dépôt. Les retouches restent sur la branche locale,
+comparée à `origin/main` (`6019530`) avant modification, sans publication.
+
+**Contrôles de cette retouche.** Les 49 poses donnent un écart minimal de
+8,57 mm, sans sommet de main à l'intérieur du pantalon. Les manches ont été
+contrôlées de face, de trois-quarts et à plusieurs phases ; aucune inversion
+des 7 961 triangles de manche examinés sur le cycle. Compilation, contrôle des
+pages générées, `pnpm test:build` et `pnpm test:avatar` avec HTTP local réussis.
+Les nouveaux médias se chargent en HTTP 200. Affichages 390, 768 et 1440 px
+sans débordement, pause/reprise et français/anglais contrôlés dans le navigateur,
+sans nouvelle erreur console ou réseau. Les liens externes, lecteurs vidéo
+et capteurs d'un téléphone physique ne sont pas réessayés pour cette retouche.
+`CNAME`, `.nojekyll`, NDA, consentement et protections du serveur restent intacts.
+
 ### Corps MetaHuman et vêtements recréés — 31 octobre 2026
 
 Le propriétaire a choisi le visage **A**, `MHI_Killian_Pichon_FaceMesh`, après

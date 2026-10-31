@@ -3,9 +3,10 @@
 Blender 5.2. Source FBX files and preparation output stay outside the public repo.
 No scanned geometry, scanned texture or scanned skeleton is loaded here.
 """
-import argparse, os, sys, math
+import argparse, os, sys, math, json
 import bpy, bmesh, numpy as np
 from mathutils import Vector, Matrix, Quaternion
+from mathutils.bvhtree import BVHTree
 
 sys.dont_write_bytecode=True
 sys.path.insert(0, os.path.dirname(__file__))
@@ -129,9 +130,20 @@ for obj in face_objects:
     if obj!=face:bpy.data.objects.remove(obj,do_unlink=True)
 assembled=[body,face]+outfit
 
+def soften_hair_part(obj):
+    """Bring existing root cards closer, with a smooth falloff into the lengths."""
+    for vertex in obj.data.vertices:
+        p=vertex.co
+        t=max(0,min(1,(p.z-1.56)/.055))
+        blend=t*t*(3-2*t)*math.exp(-((p.y+.015)/.16)**6)
+        distance=p.x-.001
+        p.x-=.0034*math.tanh(distance/.004)*math.exp(-(distance/.026)**2)*blend
+        p.z+=.0015*math.exp(-(distance/.018)**2)*blend
+
 for label,prefix,color,size in [('Hair','Hair_M_BobStraight',(.13,.075,.037),1024),('Beard','Beard_S_Full',(.28,.12,.035),512),('Moustache','Mustache_S_Full',(.28,.12,.035),512),('Eyebrows','Eyebrows_M_FlatThick',(.11,.05,.023),512)]:
     objects=import_fbx('metahuman',prefix+'_CardsMesh_Group0_LOD1');obj=next(o for o in objects if o.type=='MESH')
     bind(obj,'MetaHuman_'+label)
+    if label=='Hair':soften_hair_part(obj)
     while len(obj.data.uv_layers)>1:obj.data.uv_layers.remove(obj.data.uv_layers[-1])
     for attr in list(obj.data.color_attributes):obj.data.color_attributes.remove(attr)
     atlas=bpy.data.images.load(os.path.join(source,'metahuman',prefix+'_CardsAtlas_Attribute.png'),check_existing=False)
@@ -141,7 +153,7 @@ for label,prefix,color,size in [('Hair','Hair_M_BobStraight',(.13,.075,.037),102
     for channel in range(3):px[:,channel]=color[channel]*(.72+.55*seed)
     px[:,3]=coverage;atlas.pixels.foreach_set(px.reshape(-1))
     atlas.filepath_raw=os.path.join(output,label.lower()+'.png');atlas.file_format='PNG';atlas.save()
-    mat,bs=material('MetaHuman_'+label,color,.72);mat.surface_render_method='DITHERED';mat.use_backface_culling=False
+    mat,bs=material('MetaHuman_'+label,color,.83 if label=='Hair' else .72);mat.surface_render_method='DITHERED';mat.use_backface_culling=False
     tx=mat.node_tree.nodes.new('ShaderNodeTexImage');tx.image=atlas
     mat.node_tree.links.new(tx.outputs['Color'],bs.inputs['Base Color']);mat.node_tree.links.new(tx.outputs['Alpha'],bs.inputs['Alpha'])
     obj.data.materials.clear();obj.data.materials.append(mat)
@@ -177,8 +189,8 @@ def aim(bone,child,target):
     world=(rig.matrix_world@pb.matrix).to_quaternion()
     pb.rotation_quaternion @= world.inverted()@direction.rotation_difference(Vector(target).normalized())@world
 for side,sign in [('l',1),('r',-1)]:
-    aim('upperarm_'+side,'lowerarm_'+side,(sign*.15,0,-1))
-    aim('lowerarm_'+side,'hand_'+side,(sign*.055,-.075,-1))
+    aim('upperarm_'+side,'lowerarm_'+side,(sign*.24,0,-1))
+    aim('lowerarm_'+side,'hand_'+side,(sign*.10,-.10,-1))
 bpy.context.view_layer.update()
 base={p.name:p.rotation_quaternion.copy() for p in rig.pose.bones}
 scene.render.fps=30;scene.render.fps_base=1;scene.frame_start=1;scene.frame_end=49
@@ -195,6 +207,31 @@ for frame in range(1,50):
             pb.rotation_quaternion=local_delta(pb,(1,0,0),angle)@base[pb.name];pb.keyframe_insert('rotation_quaternion',frame=frame,group=pb.name)
     root.location.z=.007*math.cos(phase*2);root.keyframe_insert('location',frame=frame)
 rig.animation_data.action.name='Native_Walk_In_Place';root.animation_data.action.name='Native_Walk_In_Place'
+
+def check_hand_clearance(scene, hands, trousers):
+    """Check the actual deformed surfaces throughout the exported walk loop."""
+    measurements=[]
+    for frame in range(scene.frame_start,scene.frame_end+1):
+        scene.frame_set(frame)
+        graph=bpy.context.evaluated_depsgraph_get()
+        skin=hands.evaluated_get(graph);cloth=trousers.evaluated_get(graph)
+        bvh=BVHTree.FromPolygons([cloth.matrix_world@v.co for v in cloth.data.vertices],
+                                 [list(p.vertices) for p in cloth.data.polygons])
+        clearance=float('inf');penetrations=0
+        for vertex in skin.data.vertices:
+            point=skin.matrix_world@vertex.co
+            nearest,normal,_,distance=bvh.find_nearest(point)
+            clearance=min(clearance,distance)
+            if distance<.04 and (point-nearest).dot(normal)<-.00001:penetrations+=1
+        measurements.append({'frame':frame,'clearance_m':clearance,'penetrating_vertices':penetrations})
+    minimum=min(row['clearance_m'] for row in measurements)
+    assert minimum>=.008, 'Hands must stay at least 8 mm clear of the trousers'
+    assert not any(row['penetrating_vertices'] for row in measurements), 'Hand/trouser intersection'
+    return {'minimum_clearance_m':minimum,'frames':measurements}
+
+clearance=check_hand_clearance(scene,body,bpy.data.objects['Native_Trousers'])
+with open(os.path.join(output,'hand-clearance.json'),'w') as report:json.dump(clearance,report,indent=2)
+print('MINIMUM_HAND_CLEARANCE_MM',round(clearance['minimum_clearance_m']*1000,2))
 scene.frame_set(7);bpy.context.view_layer.update()
 rig['source']='Original m_srt_nrw_body skeleton and unscaled MHI_Killian_Pichon_FaceMesh (A).'
 rig['outfit']='Reconstructed garments; no scanned mesh or scan skeleton.'

@@ -157,6 +157,92 @@ def _bone_point(rig, name):
     return rig.matrix_world @ rig.data.bones[name].head_local
 
 
+def _web_sleeve_weights(obj, rig):
+    """Use a broad elbow blend with autonomous native arm bones for Web."""
+    primary = {name for side in ('l', 'r')
+               for name in ('upperarm_'+side, 'lowerarm_'+side, 'hand_'+side)}
+    mapping = {}
+    for group in obj.vertex_groups:
+        name = group.name
+        bone = rig.data.bones.get(name)
+        if name.startswith(('upperarm_', 'lowerarm_', 'wrist_')):
+            while bone and bone.name not in primary: bone = bone.parent
+            if bone: name = bone.name
+        mapping[group.index] = name
+    targets = {}
+    for side in ('l', 'r'):
+        shoulder = _bone_point(rig, 'upperarm_'+side)
+        elbow = _bone_point(rig, 'lowerarm_'+side)
+        wrist = _bone_point(rig, 'hand_'+side)
+        bisector = ((elbow-shoulder).normalized()+(wrist-elbow).normalized()).normalized()
+        targets[side] = (elbow, bisector)
+    weights = []
+    for vertex in obj.data.vertices:
+        merged = {}
+        for group in vertex.groups:
+            name = mapping[group.group]
+            merged[name] = merged.get(name, 0) + group.weight
+        p = obj.matrix_world @ vertex.co
+        for side in ('l', 'r'):
+            upper, lower = 'upperarm_'+side, 'lowerarm_'+side
+            mass = merged.get(upper, 0) + merged.get(lower, 0)
+            if mass < .001: continue
+            elbow, bisector = targets[side]
+            t = max(0, min(1, ((p-elbow).dot(bisector)+.085)/.17))
+            lower_weight = t*t*(3-2*t)
+            merged[upper] = mass*(1-lower_weight)
+            merged[lower] = mass*lower_weight
+        weights.append(merged)
+    obj.vertex_groups.clear()
+    groups = {}
+    for vertex, merged in zip(obj.data.vertices, weights):
+        for name, weight in merged.items():
+            if weight <= .00001: continue
+            if name not in groups: groups[name] = obj.vertex_groups.new(name=name)
+            groups[name].add([vertex.index], weight, 'REPLACE')
+
+
+def _smooth_elbow_cloth(obj, rig):
+    """Give fabric a continuous sleeve section across the anatomical elbow."""
+    world, inverse = obj.matrix_world.copy(), obj.matrix_world.inverted()
+    paths = {}
+    for side in ('l', 'r'):
+        shoulder = _bone_point(rig, 'upperarm_'+side)
+        elbow = _bone_point(rig, 'lowerarm_'+side)
+        wrist = _bone_point(rig, 'hand_'+side)
+        upper, lower = (elbow-shoulder).normalized(), (wrist-elbow).normalized()
+        upper_length, lower_length = (elbow-shoulder).length, (wrist-elbow).length
+        a, b = elbow-upper*.075, elbow+lower*.075
+        samples = []
+        for j in range(41):
+            t = j/40
+            samples.append((shoulder.lerp(a,t), upper, (upper_length-.075)*t))
+        for j in range(1,61):
+            t = j/60
+            point = (1-t)**2*a+2*(1-t)*t*elbow+t*t*b
+            tangent = ((elbow-a)*(1-t)+(b-elbow)*t).normalized()
+            samples.append((point,tangent,upper_length-.075+.15*t))
+        for j in range(1,41):
+            t = j/40
+            samples.append((b.lerp(wrist,t),lower,upper_length+.075+(lower_length-.075)*t))
+        paths[side] = (samples,upper_length,upper_length+lower_length)
+    for vertex in obj.data.vertices:
+        p = world @ vertex.co
+        if abs(p.x)<.225: continue
+        side = 'l' if p.x>0 else 'r'
+        samples,elbow_s,total = paths[side]
+        center,tangent,s = min(samples,key=lambda item:(p-item[0]).length_squared)
+        radial = p-center
+        radial -= tangent*radial.dot(tangent)
+        if radial.length<.015 or radial.length>.09: continue
+        # The upper yoke and final 6 cm at the cuffs remain unchanged.
+        blend = .9*math.exp(-((s-elbow_s)/.135)**4)
+        blend *= max(0,min(1,(s-.09)/.065))*max(0,min(1,(total-s-.06)/.035))
+        radius = .054 - .042*(s-elbow_s)
+        target = center + radial.normalized()*radius
+        vertex.co = inverse @ p.lerp(target,blend)
+
+
 def _skin(obj, rig, nearest=None, bone=None):
     # Geometry supplied in world space, with identity transform.
     obj.parent = rig
@@ -362,6 +448,8 @@ def create_outfit(body, rig, output_dir=None):
                             dist=.00003 / max(abs(sweater.matrix_world.to_scale().x), .00001))
     bm.to_mesh(sweater.data); bm.free()
     _relax(sweater, 3)
+    _smooth_elbow_cloth(sweater, rig)
+    _web_sleeve_weights(sweater, rig)
     _finish_shell(sweater)
     outfit.append(sweater)
 
@@ -397,7 +485,9 @@ def create_outfit(body, rig, output_dir=None):
     for side in ('l', 'r'):
         elbow, wrist = _bone_point(rig, 'lowerarm_' + side), _bone_point(rig, 'hand_' + side)
         axis = (wrist - elbow).normalized()
-        outfit.append(_ring('Sweatshirt_Cuff_' + side, wrist - axis * .03, axis, .031, .038, rib_mat, rig, nearest, .86))
+        cuff = _ring('Sweatshirt_Cuff_' + side, wrist - axis * .03, axis, .031, .038, rib_mat, rig, nearest, .86)
+        _web_sleeve_weights(cuff, rig)
+        outfit.append(cuff)
 
     # Project the graphic onto the recreated chest; the scan supplies no mesh.
     coords = [sweater.matrix_world @ v.co for v in sweater.data.vertices]

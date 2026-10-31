@@ -80,7 +80,7 @@ for (const id of ids) {
       .replace(/<body>[\s\S]*?(?=<script>\/\*\*)/, () => '<body>\n  <div id="root">' + render(id, lang) + '</div>\n  ')
       .replace(reactScript[0], '<script src="assets/portfolio-vendor.js?v=20261030-projects"></script>')
       .replace(domScript[0], '')
-      .replace(appScript[0], () => '<script>window.KP_HOME_SCHEMA=' + json(homeSchema) + ';</script>\n<script src="assets/portfolio-app.js?v=20261031-native"></script>')
+      .replace(appScript[0], () => '<script>window.KP_HOME_SCHEMA=' + json(homeSchema) + ';</script>\n<script src="assets/portfolio-app.js?v=20261031-native-fit"></script>')
       .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, () => '<script type="application/ld+json">' + json(pages.graph(id, project, lang)) + '</script>')
       .replace(/\s*<meta property="og:image:(?:width|height|type)"[^>]*>/g, '');
     for (const [selector, value] of [
