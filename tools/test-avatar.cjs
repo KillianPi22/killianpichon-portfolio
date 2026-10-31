@@ -81,7 +81,7 @@ validateAvatar('killian-native-metahuman.glb', 12 * 1024 * 1024, [
 
 if (process.env.KP_TEST_ORIGIN) (async () => {
   const origin = process.env.KP_TEST_ORIGIN;
-  for (const file of ['assets/avatar-viewer.js', 'assets/profile/killian-native-metahuman.glb', 'assets/profile/killian-native-metahuman.webp', 'assets/profile/killian-metahuman.glb', 'assets/profile/killian-metahuman.webp', 'assets/profile/killian-avatar.glb', 'assets/profile/killian-avatar.webp', 'assets/profile/normal-studio-can.webp']) {
+  for (const file of ['assets/avatar-viewer.js', 'assets/profile/killian-native-metahuman.glb', 'assets/profile/killian-native-metahuman-web-poster.webp', 'assets/profile/killian-native-metahuman.webp', 'assets/profile/killian-metahuman.glb', 'assets/profile/killian-metahuman.webp', 'assets/profile/killian-avatar.glb', 'assets/profile/killian-avatar.webp', 'assets/profile/normal-studio-can.webp']) {
     let directory = root;
     for (const segment of file.split('/')) { assert(fs.readdirSync(directory).includes(segment)); directory = path.join(directory, segment); }
     const response = await fetch(origin + '/' + file);

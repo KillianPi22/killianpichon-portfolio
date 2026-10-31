@@ -1,5 +1,27 @@
 # Portfolio de Killian Pichon
 
+### Portrait pendant le chargement 3D — 31 octobre 2026
+
+L'image affichée avant la 3D provenait d'un rendu Blender dont les matériaux
+et l'éclairage différaient du personnage validé dans le navigateur.
+`assets/profile/killian-native-metahuman-web-poster.webp` remplace ce portrait
+dans `index.html` : capture transparente du rendu Web, à la pose initiale
+de 0,2 seconde, avec les mêmes matériaux, lumières et caméra, en 720 × 960 px
+(18,6 Ko). Le nouveau nom évite de réutiliser l'ancienne image en cache.
+`tools/build-projects.cjs` renouvelle aussi la version de l'application partagée ;
+le fichier compilé, les pages de projets et leur manifeste sont régénérés.
+L'ancien portrait est conservé. Le modèle, le lecteur 3D et le design ne changent pas.
+
+Contrôles : attente du modèle maintenue artificiellement pour voir le portrait,
+puis passage à la 3D ; portrait de secours après perte simulée du contexte WebGL ;
+affichages 390, 768 et 1440 px sans débordement. Le chargement normal du portrait,
+du lecteur et du modèle répond en HTTP 200, sans nouvelle erreur réseau ou script.
+Compilation, contrôle des pages générées, `pnpm test:build` et `pnpm test:avatar`
+avec HTTP local réussis ; ce dernier couvre aussi le nouveau portrait et les
+chemins sensibles. `CNAME`, `.nojekyll`, NDA, vidéos, consentement et serveur
+restent inchangés. Les capteurs physiques et les liens externes non modifiés
+ne sont pas réessayés pour cette correction de l'image d'attente.
+
 ### Publication autorisée du personnage interactif — 31 octobre 2026
 
 Le propriétaire a validé le rendu de `9605a86` dans l'aperçu local et demandé

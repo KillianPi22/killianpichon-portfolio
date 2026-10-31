@@ -3750,7 +3750,7 @@ function AboutAvatar() {
   return React.createElement('figure', { className: 'about-profile-figure', 'data-animated-image': 'true' },
     React.createElement('div', { ref: stage, className: 'about-profile-image about-avatar-stage', role: 'img', 'aria-label': 'MetaHuman of Killian Pichon with recreated clothes and glasses.', 'aria-describedby': 'about-avatar-hint' },
       React.createElement('img', {
-        src: window.__asset('assets/profile/killian-native-metahuman.webp?v=20261031-native-fit'),
+        src: window.__asset('assets/profile/killian-native-metahuman-web-poster.webp?v=20261031-web-poster'),
         alt: 'MetaHuman of Killian Pichon with recreated clothes and glasses.', width: 720, height: 960, decoding: 'async', loading: 'lazy'
       })),
     React.createElement('figcaption', { className: 'about-profile-caption about-avatar-caption' },
