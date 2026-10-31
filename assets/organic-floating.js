@@ -8,6 +8,7 @@
   const html = document.documentElement;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const pointer = matchMedia('(hover: hover) and (pointer: fine)');
+  const touch = matchMedia('(any-pointer: coarse)');
   const selector = '.kp-surface,.kp-panel-depth';
   const states = new Map(), active = new Set();
   const properties = ['x', 'y', 'z', 'rx', 'ry', 'rz'];
@@ -20,6 +21,7 @@
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
   let floating = true, hovered = null, frameId = 0, lastFrame = 0;
   let sensorOn = false, sensorPending = false, permissionAttempt = 0, sensorTimer = 0;
+  let sensorWanted = true, sensorAuthorized = false, awaitingGesture = false, sensorUnavailable = false;
   let baseline = null, inclination = null;
   const sensorVisible = new Set();
   const t = text => window.KP_I18N?.t ? window.KP_I18N.t(text) : text;
@@ -47,6 +49,7 @@
     panel.querySelector('summary span').textContent = t(floating ? 'Floating frames' : 'Previous motion');
     panel.querySelectorAll('[data-organic-choice]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
     updateSensorControls();
+    startAutomaticSensor();
   }));
 
   function enabled() { return floating && (pointer.matches || sensorOn) && !reduced.matches && !document.hidden; }
@@ -112,19 +115,21 @@
     if (s) { if (hovered === s) hovered = null; reset(s); }
   });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Tab') stopSensor();
+    if (event.key === 'Tab') { sensorWanted = false; stopSensor(); }
     else if (event.key === 'Escape') resetAll();
   });
   addEventListener('resize', resetAll, { passive: true });
   addEventListener('blur', resetAll);
   addEventListener('hashchange', resetAll);
   addEventListener('kp:pagechange', resetAll);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) stopSensor(); });
-  reduced.addEventListener('change', () => { stopSensor(); updateSensorControls(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopSensor(); else startAutomaticSensor(); });
+  reduced.addEventListener('change', () => { stopSensor(); startAutomaticSensor(); });
   pointer.addEventListener('change', () => { resetAll(); updateSensorControls(); });
+  touch.addEventListener('change', () => { if (!touch.matches) stopSensor(); else startAutomaticSensor(); updateSensorControls(); });
 
   function updateSensorControls(message) {
-    panel.hidden = !showControls && (pointer.matches || !window.DeviceOrientationEvent);
+    panel.hidden = !showControls && (!touch.matches || !window.DeviceOrientationEvent);
+    if (!showControls) panel.querySelector('summary span').textContent = t(awaitingGesture ? 'Enable tilt' : 'Device tilt');
     sensorButton.disabled = sensorPending || !floating || reduced.matches || !window.isSecureContext || !window.DeviceOrientationEvent;
     sensorButton.textContent = t(sensorOn ? 'Disable tilt' : sensorPending ? 'Permission…' : 'Enable tilt');
     sensorButton.setAttribute('aria-pressed', String(sensorOn));
@@ -134,11 +139,13 @@
     else if (!window.isSecureContext) sensorStatus.textContent = t('Tilt requires HTTPS on a phone or tablet.');
     else if (!window.DeviceOrientationEvent) sensorStatus.textContent = t('Tilt is unavailable in this browser.');
     else if (!floating) sensorStatus.textContent = t('Choose Floating to try device tilt.');
+    else if (awaitingGesture) sensorStatus.textContent = t('Tap Enable tilt and allow motion access. Sensor data stays on your device.');
     else if (!sensorOn && !sensorPending) sensorStatus.textContent = t('On a phone or tablet, enable tilt in your reading position. Sensor data stays on your device.');
   }
   function stopSensor(message) {
     permissionAttempt++;
     sensorOn = sensorPending = false;
+    awaitingGesture = false;
     clearTimeout(sensorTimer);
     removeEventListener('deviceorientation', onOrientation);
     sensorObserver.disconnect(); sensorVisible.clear();
@@ -156,20 +163,29 @@
   centerButton.addEventListener('click', recenter);
   if (screen.orientation?.addEventListener) screen.orientation.addEventListener('change', recenter);
   else addEventListener('orientationchange', recenter);
-  sensorButton.addEventListener('click', async () => {
-    if (sensorOn) { stopSensor(); return; }
-    if (sensorButton.disabled) return;
+  function canStartSensor() {
+    return floating && !reduced.matches && !document.hidden && window.isSecureContext && !!window.DeviceOrientationEvent;
+  }
+  function startAutomaticSensor() {
+    if (sensorWanted && touch.matches && !sensorUnavailable) void startSensor(true);
+  }
+  async function startSensor(automatic = false) {
+    if (sensorOn || sensorPending || !canStartSensor()) return;
     const attempt = ++permissionAttempt;
-    sensorPending = true; updateSensorControls('Allow motion access if your browser asks.');
+    sensorPending = true; awaitingGesture = false; updateSensorControls('Allow motion access if your browser asks.');
     try {
-      // iOS exige cet appel directement dans le geste utilisateur, avant tout autre await.
-      const permission = typeof DeviceOrientationEvent.requestPermission === 'function'
+      // Une autorisation deja accordee peut etre reprise automatiquement. Si iOS
+      // exige un geste, le resume du panneau propose un acces direct au bouton.
+      const permission = !sensorAuthorized && typeof DeviceOrientationEvent.requestPermission === 'function'
         ? await DeviceOrientationEvent.requestPermission() : 'granted';
       if (attempt !== permissionAttempt) return;
       if (permission !== 'granted') {
+        sensorWanted = false;
         stopSensor('Motion access was denied by the browser. On iPhone, fully close Safari or Chrome, reopen this page and try again. Choose “Allow” if prompted.');
         return;
       }
+      sensorAuthorized = true;
+      if (!canStartSensor()) { stopSensor(); return; }
       sensorPending = false; sensorOn = true;
       resetAll(); baseline = inclination = null;
       html.dataset.kpInclination = 'on';
@@ -177,11 +193,28 @@
       addEventListener('deviceorientation', onOrientation, { passive: true });
       updateSensorControls('Hold your reading position while the sensor is detected.');
       sensorTimer = setTimeout(() => {
-        if (!baseline) stopSensor('Permission granted, but no sensor data received. Reload the page and try again in Safari or Chrome.');
+        if (!baseline) {
+          sensorUnavailable = true;
+          stopSensor('Permission granted, but no sensor data received. Reload the page and try again in Safari or Chrome.');
+        }
       }, 4000);
-    } catch {
-      if (attempt === permissionAttempt) stopSensor('Tilt is unavailable. The frames remain still.');
+    } catch (error) {
+      if (attempt !== permissionAttempt) return;
+      if (automatic && error.name === 'NotAllowedError') {
+        stopSensor(); awaitingGesture = true; updateSensorControls();
+      } else {
+        sensorUnavailable = true;
+        stopSensor('Tilt is unavailable. The frames remain still.');
+      }
     }
+  }
+  sensorButton.addEventListener('click', () => {
+    if (sensorOn) { sensorWanted = false; stopSensor(); return; }
+    if (sensorButton.disabled) return;
+    sensorWanted = true; sensorUnavailable = false; void startSensor();
+  });
+  panel.querySelector('summary').addEventListener('click', () => {
+    if (awaitingGesture) { sensorWanted = true; void startSensor(); }
   });
   function onOrientation(event) {
     if (!sensorOn || !enabled() || !Number.isFinite(event.beta) || !Number.isFinite(event.gamma)) return;
@@ -231,6 +264,7 @@
     schedule();
   }
   updateSensorControls();
+  startAutomaticSensor();
 
   function frame(now) {
     frameId = 0;

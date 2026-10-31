@@ -3412,8 +3412,12 @@ const EDUCATION = [{
 }];
 function AboutSection({
   title,
-  children
+  children,
+  collapsible = false
 }) {
+  if (collapsible) return React.createElement('details', { className: 'about-disclosure' },
+    React.createElement('summary', null, title),
+    React.createElement('div', { className: 'about-disclosure-content' }, children));
   return React.createElement("div", {
     style: {
       marginTop: 'var(--space-8)',
@@ -3760,7 +3764,7 @@ function AboutAvatar() {
         'aria-pressed': state.paused
       }, state.paused ? 'Resume avatar' : 'Pause avatar')),
     React.createElement('span', { id: 'about-avatar-hint', className: 'about-avatar-hint' },
-      'Walking in place. The head follows your mouse, then looks ahead at rest. On a phone, use the tilt controls to enable motion.'));
+      'Walking in place. The head follows your mouse, then looks ahead at rest. Tilt starts automatically on compatible phones and tablets; allow motion access when prompted.'));
 }
 function AboutScreen({
   onNav
@@ -3809,7 +3813,7 @@ function AboutScreen({
       padding: '0 var(--container-pad) 96px'
     }
   }, React.createElement(AboutSection, {
-    title: "Core Expertise"
+    title: "Core Expertise", collapsible: true
   }, React.createElement("div", {
     style: {
       display: 'flex',
@@ -3819,7 +3823,7 @@ function AboutScreen({
   }, CORE_EXPERTISE.map(t => React.createElement(Tag, {
     key: t
   }, t)))), React.createElement(AboutSection, {
-    title: "Specializations"
+    title: "Specializations", collapsible: true
   }, React.createElement("div", {
     style: {
       display: 'flex',
@@ -3875,7 +3879,7 @@ function AboutScreen({
       lineHeight: 'var(--leading-relaxed)'
     }
   }, e.desc)))))), React.createElement(AboutSection, {
-    title: "Technical Toolkit"
+    title: "Technical Toolkit", collapsible: true
   }, React.createElement("div", {
     style: {
       display: 'grid',

@@ -66,6 +66,7 @@ window.KP_FR = {
     'Disable tilt': 'Désactiver l’inclinaison',
     'Recenter': 'Recentrer',
     'Permission…': 'Autorisation…',
+    'Tap Enable tilt and allow motion access. Sensor data stays on your device.': 'Touche Activer l’inclinaison, puis autorise le mouvement. Les données restent sur l’appareil.',
     'On a phone or tablet, enable tilt in your reading position. Sensor data stays on your device.': 'Sur téléphone ou tablette, active l’inclinaison dans ta position de lecture. Les données restent sur l’appareil.',
     'Tilt is disabled while reduced motion is enabled.': 'L’inclinaison est désactivée avec la réduction des mouvements.',
     'Tilt requires HTTPS on a phone or tablet.': 'L’inclinaison nécessite une connexion HTTPS sur téléphone ou tablette.',
@@ -135,8 +136,8 @@ window.KP_FR = {
     'My digital double': 'Mon double numérique',
     'Pause avatar': 'Mettre en pause',
     'Resume avatar': 'Reprendre',
-    'Walking in place. The head follows your mouse, then looks ahead at rest. On a phone, use the tilt controls to enable motion.':
-      'Marche sur place. La tête suit la souris, puis regarde devant au repos. Sur téléphone, utilisez les commandes d’inclinaison pour activer le mouvement.',
+    'Walking in place. The head follows your mouse, then looks ahead at rest. Tilt starts automatically on compatible phones and tablets; allow motion access when prompted.':
+      'Marche sur place. La tête suit la souris, puis regarde devant au repos. L’inclinaison démarre automatiquement sur les téléphones et tablettes compatibles ; autorise le mouvement si demandé.',
     'A pink Normal Studio can featuring an illustrated portrait of Killian Pichon, held in front of a desk.':
       'Canette rose de Normal Studio avec un portrait illustré de Killian Pichon, tenue devant un bureau.',
     'Design courtesy of Eliane Ashcar at Normal Studio.':

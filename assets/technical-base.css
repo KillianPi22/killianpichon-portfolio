@@ -80,6 +80,14 @@ button{color:inherit}
 .about-avatar-caption button{font:inherit;color:var(--text-muted);letter-spacing:inherit;text-transform:inherit;background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .about-avatar-caption button:focus-visible{outline:2px solid var(--text-heading);outline-offset:4px}
 .about-avatar-hint{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.about-disclosure{margin-top:var(--space-8);border-top:1px solid var(--line-subtle)}
+.about-disclosure+.about-disclosure{margin-top:0}
+.about-disclosure>summary{display:flex;align-items:center;justify-content:space-between;gap:var(--space-5);min-height:48px;padding:var(--space-5) 0;font-family:var(--font-mono);font-size:var(--text-micro);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--tracking-widest);list-style:none;cursor:pointer}
+.about-disclosure>summary::-webkit-details-marker{display:none}
+.about-disclosure>summary::after{content:'';flex:none;width:7px;height:7px;margin-right:3px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg)}
+.about-disclosure[open]>summary::after{transform:rotate(225deg)}
+.about-disclosure>summary:focus-visible{outline:2px solid var(--text-heading);outline-offset:4px}
+.about-disclosure-content{padding-bottom:var(--space-5)}
 .view-all-button,.project-back,.related-project-button{appearance:none;background:none;border:0;padding:0}
 .view-all-button{display:inline-flex;align-items:center;gap:10px;font-size:var(--text-small);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--tracking-wide);cursor:pointer}
 .view-all-button:hover{color:var(--text-heading)}

@@ -1,5 +1,45 @@
 # Portfolio de Killian Pichon
 
+### Inclinaison par défaut et rubriques repliables — 31 octobre 2026
+
+À la demande du propriétaire, Compétences principales, Spécialisations et Outils
+sont des rubriques `details`/`summary`, fermées au départ sur tous les formats.
+`index.html` réutilise le contenu, les polices et les couleurs existants, avec des
+chevrons et un focus clavier ; Expérience et Formation restent ouvertes.
+
+`assets/organic-floating.js` démarre le capteur sur les appareils tactiles
+compatibles en contexte sécurisé. Une permission déjà accordée est réutilisée.
+Si le navigateur exige un geste, le panneau affiche directement « Activer
+l’inclinaison » : toucher son titre lance la demande d'autorisation. Aucun
+contournement des permissions ; un refus n'entraîne pas de demandes répétées.
+L'effet se suspend en arrière-plan et reprend au retour, sauf désactivation
+manuelle, navigation au clavier, capteur indisponible ou réduction des mouvements.
+La désactivation est conservée pendant la vie de la page. Les amplitudes et le
+recentrage validés restent identiques ; les mesures ne sont ni stockées ni envoyées.
+
+`data/fr.js` traduit l'aide ; `tools/build-projects.cjs` et
+`tools/build-technical.cjs` actualisent les versions des ressources, puis les pages,
+styles et applications générés. Les pages Technique embarquent aussi les libellés
+français des commandes d'inclinaison. `tools/test-inclination.cjs` couvre le démarrage
+automatique, la permission avec ou sans geste, le refus, les réponses tardives,
+l'absence de données, la suspension/reprise, la désactivation, le clavier,
+HTTPS et la réduction des mouvements avec des événements simulés.
+
+Contrôles : ouverture/fermeture des trois rubriques, clavier, français/anglais,
+retour au Profil depuis une fiche projet, affichages 390, 768 et 1440 px sans
+débordement. Le démarrage tactile automatique et la réception de mouvement sont
+aussi simulés dans le navigateur. Les capteurs physiques et la nouvelle demande
+d'autorisation sur un véritable iPhone/Android ne sont pas testés par Codex ;
+la validation antérieure du mouvement par le propriétaire reste acquise.
+Compilation, tests de construction, d'inclinaison et de l'avatar avec HTTP local
+réussis. Le test automatisé de la bibliothèque Technique ne démarre pas, car
+Playwright n'est pas installé ; le parcours concerné est contrôlé dans le navigateur.
+`CNAME`, `.nojekyll`, modèle 3D,
+NDA, vidéos, consentement et protections de l'éditeur restent inchangés.
+
+La nécessité d'un geste pour une nouvelle permission est documentée par
+[MDN](https://developer.mozilla.org/en-US/docs/Web/API/DeviceOrientationEvent/requestPermission_static).
+
 ### Portrait pendant le chargement 3D — 31 octobre 2026
 
 L'image affichée avant la 3D provenait d'un rendu Blender dont les matériaux
@@ -1024,19 +1064,21 @@ et pendant la saisie. Les anciens cadres sont nettoyes lors des changements de
 page ou lorsqu'ils deviennent des tuiles vides. Seul le comparateur historique
 `explore=1` conserve exclusivement le premier moteur.
 
-Sur telephone et tablette, **Activer l'inclinaison** utilise `deviceorientation`
-uniquement apres un geste volontaire et l'autorisation du navigateur lorsqu'elle
-est requise. Le premier relevé definit la position de lecture ; **Recentrer** et
+Sur telephone et tablette, l'inclinaison utilise `deviceorientation`
+automatiquement lorsque le navigateur l'autorise. Si une permission exige un geste,
+**Activer l'inclinaison** permet de la demander en touchant le titre du panneau.
+Le premier relevé definit la position de lecture ; **Recentrer** et
 un changement portrait/paysage recalibrent cette position. La rotation est limitee
 a 6 degres pour les images, 3 pour les fenetres, avec au maximum 8 px et 4 px de
 translation laterale respectivement. Seuls les cadres visibles bougent. Une zone neutre filtre le bruit.
 Les donnees du capteur ne sont ni conservees ni envoyees. La desactivation, le
 passage en arriere-plan et la reduction des mouvements retirent l'ecouteur.
+Le capteur reprend au retour dans l'onglet si l'inclinaison n'a pas ete desactivee.
 Sans capteur, sans autorisation ou hors contexte securise, le tactile reste stable.
 Un appareil reel doit acceder a une version HTTPS ; ne pas ouvrir les routes de
 l'editeur local au reseau pour cet essai.
-Sur iPhone, ouvrir le lien dans Safari, deplier **Inclinaison** en bas a gauche,
-appuyer sur **Activer l'inclinaison**, puis autoriser le mouvement si Safari le
+Sur iPhone, ouvrir le lien dans Safari. Si le titre **Activer l'inclinaison**
+apparait en bas a gauche, le toucher puis autoriser le mouvement si Safari le
 demande. Garder sa position de lecture au demarrage et utiliser **Recentrer**
 au besoin. Aucun acces reseau a l'editeur local n'est necessaire.
 

@@ -76,11 +76,11 @@ for (const id of ids) {
       .replace('<html lang="en">', '<html lang="' + (lang === 'fr' ? 'fr-CA' : 'en') + '">')
       .replace('<base href="./">', '<base href="' + '../'.repeat(route.split('/').filter(Boolean).length) + '">')
       .replace(/<title>[\s\S]*?<\/title>/, () => '<title>' + escape(meta.title) + '</title>')
-      .replace(style[0], '<link rel="stylesheet" href="assets/project-base.css?v=20261030-avatar">')
+      .replace(style[0], '<link rel="stylesheet" href="assets/project-base.css?v=20261031-profile">')
       .replace(/<body>[\s\S]*?(?=<script>\/\*\*)/, () => '<body>\n  <div id="root">' + render(id, lang) + '</div>\n  ')
       .replace(reactScript[0], '<script src="assets/portfolio-vendor.js?v=20261030-projects"></script>')
       .replace(domScript[0], '')
-      .replace(appScript[0], () => '<script>window.KP_HOME_SCHEMA=' + json(homeSchema) + ';</script>\n<script src="assets/portfolio-app.js?v=20261031-web-poster"></script>')
+      .replace(appScript[0], () => '<script>window.KP_HOME_SCHEMA=' + json(homeSchema) + ';</script>\n<script src="assets/portfolio-app.js?v=20261031-profile"></script>')
       .replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, () => '<script type="application/ld+json">' + json(pages.graph(id, project, lang)) + '</script>')
       .replace(/\s*<meta property="og:image:(?:width|height|type)"[^>]*>/g, '');
     for (const [selector, value] of [
