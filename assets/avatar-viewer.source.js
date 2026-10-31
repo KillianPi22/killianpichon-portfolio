@@ -73,8 +73,8 @@ export async function mountAvatar(stage, { modelURL, signal, onState }) {
   camera.position.set(center.x, center.y + 0.07, 3.4);
   camera.lookAt(center.x, center.y, 0);
   const height = Math.max(1.95, (bounds.max.y - bounds.min.y) * 1.23);
-  const head = model.getObjectByName('BD_Head_jnt');
-  const neck = model.getObjectByName('BD_Neck_jnt');
+  const head = model.getObjectByName('head') || model.getObjectByName('BD_Head_jnt');
+  const neck = model.getObjectByName('neck_02') || model.getObjectByName('BD_Neck_jnt');
   const gazeBones = [neck, head].filter(Boolean).map((bone, i) => ({
     bone, weight: i === 0 ? 0.25 : 0.75, base: bone.quaternion.clone()
   }));

@@ -3726,10 +3726,10 @@ function AboutAvatar() {
     const start = async () => {
       observer?.disconnect();
       try {
-        const module = await import(new URL(window.__asset('assets/avatar-viewer.js?v=20261031-metahuman'), document.baseURI).href);
+        const module = await import(new URL(window.__asset('assets/avatar-viewer.js?v=20261031-native'), document.baseURI).href);
         if (controller.signal.aborted) return;
         viewer.current = await module.mountAvatar(stage.current, {
-          modelURL: window.__asset('assets/profile/killian-metahuman.glb?v=20261031-metahuman'),
+          modelURL: window.__asset('assets/profile/killian-native-metahuman.glb?v=20261031-native'),
           signal: controller.signal,
           onState: next => { if (!controller.signal.aborted) setState(next); }
         });
@@ -3748,10 +3748,10 @@ function AboutAvatar() {
     return () => { observer?.disconnect(); controller.abort(); viewer.current = null; };
   }, []);
   return React.createElement('figure', { className: 'about-profile-figure', 'data-animated-image': 'true' },
-    React.createElement('div', { ref: stage, className: 'about-profile-image about-avatar-stage', role: 'img', 'aria-label': 'MetaHuman of Killian Pichon, with scanned clothes and glasses.', 'aria-describedby': 'about-avatar-hint' },
+    React.createElement('div', { ref: stage, className: 'about-profile-image about-avatar-stage', role: 'img', 'aria-label': 'MetaHuman of Killian Pichon with recreated clothes and glasses.', 'aria-describedby': 'about-avatar-hint' },
       React.createElement('img', {
-        src: window.__asset('assets/profile/killian-metahuman.webp'),
-        alt: 'MetaHuman of Killian Pichon, with scanned clothes and glasses.', width: 720, height: 960, decoding: 'async', loading: 'lazy'
+        src: window.__asset('assets/profile/killian-native-metahuman.webp'),
+        alt: 'MetaHuman of Killian Pichon with recreated clothes and glasses.', width: 720, height: 960, decoding: 'async', loading: 'lazy'
       })),
     React.createElement('figcaption', { className: 'about-profile-caption about-avatar-caption' },
       React.createElement('span', null, 'My digital double'),

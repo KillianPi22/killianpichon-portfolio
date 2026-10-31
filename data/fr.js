@@ -131,7 +131,7 @@ window.KP_FR = {
     'Education': 'Formation',
     'Download CV': 'Télécharger le CV',
     'Full-body 3D scan of Killian Pichon.': 'Scan 3D de Killian Pichon en pied.',
-    'MetaHuman of Killian Pichon, with scanned clothes and glasses.': 'MetaHuman de Killian Pichon, avec les vêtements du scan et des lunettes.',
+    'MetaHuman of Killian Pichon with recreated clothes and glasses.': 'MetaHuman de Killian Pichon avec des vêtements recréés et des lunettes.',
     'My digital double': 'Mon double numérique',
     'Pause avatar': 'Mettre en pause',
     'Resume avatar': 'Reprendre',

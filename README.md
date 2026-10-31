@@ -1,5 +1,66 @@
 # Portfolio de Killian Pichon
 
+### Corps MetaHuman et vêtements recréés — 31 octobre 2026
+
+Le propriétaire a choisi le visage **A**, `MHI_Killian_Pichon_FaceMesh`, après
+comparaison des variantes présentes dans son projet. Cette version utilise
+le corps `m_srt_nrw_body` et ses 341 articulations d'origine. Le visage conserve
+son échelle et ses proportions ; aucune géométrie ni texture du scan n'entre
+dans ce nouvel assemblage. Le chandail sombre à inscription claire et bandes
+bleues, le pantalon et les baskets grises, rouges et crème sont reconstruits
+sur le corps MetaHuman. Leur coupe et leur motif sont des approximations de
+la tenue du scan. Les lunettes suivent la référence photographique précédente.
+
+Le modèle Web simplifie les commandes faciales en conservant les influences
+du cou et de la tête. Il utilise une marche procédurale sur place de 1,6 seconde,
+avec les mêmes commandes de regard, pause et inclinaison. Les cheveux et la
+pilosité viennent des cartes du MetaHuman. Il ne reproduit pas tous les
+matériaux, les expressions ou la simulation de vêtements d'Unreal. Le projet
+Unreal d'origine reste intact : les exports proviennent d'une copie de travail.
+
+**Fichiers.** `assets/profile/killian-native-metahuman.glb` (environ 10,9 Mo)
+et son portrait WebP de 720 × 960 px (environ 20 Ko) remplacent la variante
+précédente dans `index.html`. Les textures sont embarquées : visage 2 048 px,
+cheveux et mains 1 024 px, normales et pilosité 512 px.
+`assets/avatar-viewer.source.js` reconnaît les articulations MetaHuman natives
+et conserve la compatibilité avec le scan. `data/fr.js` traduit la description.
+Les pages générées et leurs versions de ressources sont actualisées. Les
+anciens modèles restent disponibles. Aucun changement de mise en page,
+de dépendance, de service externe ou de configuration de publication.
+
+**Préparation.** Exécuter avec Blender 5.2 :
+`blender -b --python tools/prepare-native-metahuman.py -- --source <exports> --output <preparation>`.
+Les deux dossiers restent hors du dépôt. Les exports comprennent
+`native-metahuman/m_srt_nrw_body.fbx`, `native-metahuman/BodyBaseColor.png`,
+et les fichiers du sous-dossier `metahuman/` décrits dans la variante précédente.
+`tools/metahuman_garments.py` construit les vêtements, les rattache au squelette
+et masque la peau couverte. Le script principal assemble le visage A sans
+redimensionnement, les cheveux et les lunettes, puis produit le GLB, deux PNG
+et un fichier Blender. Convertir le rendu en pied en WebP pour le secours.
+
+**Contrôles.** La compilation, `pnpm test:build`, le contrôle des pages générées
+et `pnpm test:avatar` passent. Ce dernier vérifie aussi les pièces et les
+articulations natives, l'absence du squelette et de la texture du scan dans
+la nouvelle variante, les poids, la continuité de marche, l'absence de dérive,
+les textures embarquées et le budget de 12 Mio. Avec `KP_TEST_ORIGIN`, les
+ressources sont comparées au serveur HTTP local, la casse est contrôlée et
+les chemins sensibles ainsi que l'éditeur restent protégés.
+
+Essais dans le navigateur à 390, 768 et 1440 px : aucun débordement, marche,
+suivi de souris, retour du regard, pause et réduction des mouvements vérifiés.
+Navigation français/anglais, Contact et retour depuis une fiche projet vérifiés.
+Le portrait de secours apparaît lors d'une perte simulée du contexte WebGL.
+Les ressources de l'avatar répondent en HTTP 200, sans nouvelle erreur réseau
+ou console dans le parcours normal. Aucune mesure d'audience n'est chargée
+avant consentement ; les polices distantes déjà présentes restent inchangées.
+L'inclinaison est simulée ; aucun téléphone physique n'a été testé.
+`pnpm test:projects` ne démarre pas, car sa dépendance Playwright n'est pas
+installée ; les parcours concernés sont contrôlés dans le navigateur intégré.
+Les lecteurs vidéo et liens externes non modifiés ne sont pas réessayés.
+Les fichiers NDA, vidéo, consentement, serveur, `CNAME`, `.nojekyll` et
+publication sont inchangés par rapport à `origin/main` (`6019530`).
+Tout reste local sur `codex/interactive-avatar`, sans publication.
+
 ### Variante MetaHuman avec lunettes — 31 octobre 2026
 
 À la demande du propriétaire, le prototype local de Profil affiche maintenant

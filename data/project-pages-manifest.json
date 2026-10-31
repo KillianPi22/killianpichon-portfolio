@@ -2,107 +2,107 @@
   "version": 1,
   "pages": {
     "projects/ihf-2021/index.html": {
-      "digest": "6a21d24eed47ee99cca61be9e5a7bee82038f54c7086e4f80e489c55b781c5c5",
+      "digest": "9d62434f0b005abadd4c1f2c2a72852361343f05972c9e2a89a3b869c13d1e8f",
       "lastmod": "2026-10-31"
     },
     "projects/ihf-2021/fr/index.html": {
-      "digest": "8bde44c7f90079e279a8d22d363b7a90da51d1143f171bfb794f59c4f68dbc61",
+      "digest": "473a78ccadebdf306ecd68a72236a1ea0a267f68fcf1f6d161d3a5d138b79f3b",
       "lastmod": "2026-10-31"
     },
     "projects/banquet/index.html": {
-      "digest": "1288e51a2fb8c7cdca77129b84a93b9904871438ffe13162bc0411e512cb3f40",
+      "digest": "36f6e6dee91238b77989006fa85fa2e8fdf63600f4250d7ab6a721041259d898",
       "lastmod": "2026-10-31"
     },
     "projects/banquet/fr/index.html": {
-      "digest": "d4ef35022aec6cb80474f9f125633afb809dfe1bc1ab3f9f2c2fb52936011129",
+      "digest": "a4868f1fcba1082410308f27a4c6e402c7864231c348e4afc9a321ccf04d17eb",
       "lastmod": "2026-10-31"
     },
     "projects/cabotage/index.html": {
-      "digest": "9448d174dbb8f487a9964f23f985acf27d1e84d44c979b78459e8f003c7795c2",
+      "digest": "ae533807be9e83a4e307a34ec910838c9bd8224472699e3ca31c369fa41c093f",
       "lastmod": "2026-10-31"
     },
     "projects/cabotage/fr/index.html": {
-      "digest": "735a364dcaafebcc884913e237a779f04a888158d1ead09fd5e7257f8a1aa2fb",
+      "digest": "1ea1b7c8f921cf699070b1c148f62aa570900a110b4abf7e1e9828e7e46ef107",
       "lastmod": "2026-10-31"
     },
     "projects/hurtubise/index.html": {
-      "digest": "e3467593d3a297bcd1ec4e2dbe7fd01c0c61a2f680080d5c03e3165055e52304",
+      "digest": "3af2c8ca0b814d31690670f8d09abe7837dbd3452a0882be9bd494813fb715e2",
       "lastmod": "2026-10-31"
     },
     "projects/hurtubise/fr/index.html": {
-      "digest": "a46124592e479328ac0eab729e3b0c6e1e656626a667e255c6cd4d74eed01c92",
+      "digest": "fcbee64a85e800a9a573001149837c2fd25e4ccbffd061991298cfaab8024b4d",
       "lastmod": "2026-10-31"
     },
     "projects/volcano/index.html": {
-      "digest": "0f453d31c2bd20aba73b851ee4a20d7df55c78ffda6312055783baabb7604a5b",
+      "digest": "40c713c0a4612ee535e6a157cd73eee60926fcf38cfacbf166f31d95fe67257b",
       "lastmod": "2026-10-31"
     },
     "projects/volcano/fr/index.html": {
-      "digest": "9e91f8a15ff98ba6bc42126459eb18925b3ef8480fee4a4996ce703cb37a1271",
+      "digest": "4660bf095b46703f825e7114576507b19a96121e2aca58032656b159227a17d2",
       "lastmod": "2026-10-31"
     },
     "projects/melanie/index.html": {
-      "digest": "abe0910da900d7d5a5729e3cbcb9bb5399471781db8ee921109ddb051639010f",
+      "digest": "dd490fb8b6006fb04a74144d5ab4807d93f8fc202c14e543f11cede2cc95161c",
       "lastmod": "2026-10-31"
     },
     "projects/melanie/fr/index.html": {
-      "digest": "14f9245798f56d6d9f422f4ec97877733efa88e76f9777a7d41a66674c346370",
+      "digest": "d22d50b4f13e0f0528160cab10eec1e59dde94a4f3682ed63392b3fccd0dbeab",
       "lastmod": "2026-10-31"
     },
     "projects/traveler/index.html": {
-      "digest": "c17962063c2805c6f942f284c5b5c99028e9964f16d5237d1d3e050a4b33b262",
+      "digest": "c1551d57fb8f63ead292a68ea4e80bd591359c3636e57d1c7f78940d47530d17",
       "lastmod": "2026-10-31"
     },
     "projects/traveler/fr/index.html": {
-      "digest": "fd488d93309276e3cab389b2a724b8d61733881d02e50a8ee70760dfe343b178",
+      "digest": "ccaacd1f4b3e7a9c6d44edeb182326d5885b3da822779d594c8e00c23374594b",
       "lastmod": "2026-10-31"
     },
     "projects/paralleles/index.html": {
-      "digest": "f12df56e5c1fd1808851909c402c98c0257116ddd6438f94dc6daf8c14f55b1c",
+      "digest": "f855891fa47a91c449c149ddc3f7239289f59dd5d03f406c102dcbdcc48d10f4",
       "lastmod": "2026-10-31"
     },
     "projects/paralleles/fr/index.html": {
-      "digest": "fc7177ae2a4399b1773e3e3af9f73d968995bcff0086c73c8f8cb2777637c2b3",
+      "digest": "e55f7621c603aa171faf28eedd43146f8216a9f084fdb942deb716906bb879c8",
       "lastmod": "2026-10-31"
     },
     "projects/batiscan/index.html": {
-      "digest": "19d456004ccabcb30c7c791fc7150afb1af8b52b8de4d0803d1cd927d6355ef6",
+      "digest": "6a5d72e9fb5f439a8f6656ff87539fce1fcde7db8b7e7e1615f9d004db29184e",
       "lastmod": "2026-10-31"
     },
     "projects/batiscan/fr/index.html": {
-      "digest": "16c31afe365fbdd8e0eb9607d2376da09c48a08427cb0b37ce780023a2083e3e",
+      "digest": "ea431e35e83624419c780fd3ccd597c657aede90ffc0e6397777460d117b31c4",
       "lastmod": "2026-10-31"
     },
     "projects/epernay/index.html": {
-      "digest": "ccb58d0d3672719e70612f243fc7bebecda61f13cde7394238b5c92907ab0cfc",
+      "digest": "cb88a51879c0da5f7b9c952786a9be4adf0a7ca5af66754cf22b35a73fa698e7",
       "lastmod": "2026-10-31"
     },
     "projects/epernay/fr/index.html": {
-      "digest": "94a2469cbf8f45a56a0afcd0d323b68d68f0f5a9d46b34b8956ddf6099fed758",
+      "digest": "4130ab5a70ffbebda8969a3d6847f8b48891d6d3198533e5e4d892664f6ce04f",
       "lastmod": "2026-10-31"
     },
     "projects/colosseum/index.html": {
-      "digest": "175b14cc86d1b2a3d62689aa21659f77cc52910641d54e39f6685e8a9888438c",
+      "digest": "c9235fe0e42b4ae3179b05cdcd7fe837b25ca5157bc865e3b2d01a3769613588",
       "lastmod": "2026-10-31"
     },
     "projects/colosseum/fr/index.html": {
-      "digest": "eab73f45dce9084df2a480cd8b2bd5f517b97cd354d45af74c21a4736494743b",
+      "digest": "82dd4af8caafaa80a7b54fa1a1f0d128ce18453ed1ca8911cfac646006bd037a",
       "lastmod": "2026-10-31"
     },
     "projects/luminart/index.html": {
-      "digest": "69e098af9c3df2c02e20fdf2725507c7486f244930c0049e1efff27cd38f245c",
+      "digest": "f034b121dc9bf3f8ee9d1a6bdba91d9b1e5a66c62380ca237753c5da0bccabb1",
       "lastmod": "2026-10-31"
     },
     "projects/luminart/fr/index.html": {
-      "digest": "8776c20741535ba6af707ca78d7f472c8c6b830f2dd05e548706927cf38b06a5",
+      "digest": "00673c334e7891b1b0363d694e7231030fcc862cebe2b6a9bf50903b6ab47a02",
       "lastmod": "2026-10-31"
     },
     "projects/memoire-eau/index.html": {
-      "digest": "5fdab6b7289c024eca2304c279e307114bafbda34a04d208525f6be798daee5e",
+      "digest": "c993b1a1fe5026549c47d6f66e6dbb47f9c26b80aea364b7e2fec09af91809d4",
       "lastmod": "2026-10-31"
     },
     "projects/memoire-eau/fr/index.html": {
-      "digest": "f030f12daf0f532597b7ab08ead5e4bb0ff9b518b8734efa37baf31b3df74b61",
+      "digest": "3e444ae91bc1039e7f00f39a4c3ba33456f59e3f021b34428fc1015d32da8ef3",
       "lastmod": "2026-10-31"
     }
   }

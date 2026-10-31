@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
-function validateAvatar(filename, maxBytes, expectedParts = []) {
+function validateAvatar(filename, maxBytes, expectedParts = [], native = false) {
   const bytes = fs.readFileSync(path.join(root, 'assets/profile', filename));
   assert.equal(bytes.toString('ascii', 0, 4), 'glTF');
   assert.equal(bytes.readUInt32LE(4), 2);
@@ -30,8 +30,13 @@ function validateAvatar(filename, maxBytes, expectedParts = []) {
     return { result, width };
   }
   assert.equal(gltf.skins.length, 1);
-  for (const name of ['BD_Head_jnt', 'BD_Neck_jnt', 'L_BD_NB_Hip_jnt', 'R_BD_NB_Hip_jnt']) {
+  const joints = native ? ['head', 'neck_02', 'thigh_l', 'thigh_r', 'hand_l', 'hand_r'] : ['BD_Head_jnt', 'BD_Neck_jnt', 'L_BD_NB_Hip_jnt', 'R_BD_NB_Hip_jnt'];
+  for (const name of joints) {
     assert(gltf.nodes.some(node => node.name === name), 'Missing joint: ' + name);
+  }
+  if (native) {
+    assert(!gltf.nodes.some(node => /BD_.*jnt|Scanned_Outfit|Killian_Rig/.test(node.name)), 'Native variant must not contain the scan rig or body');
+    assert(!gltf.materials.some(material => material.name === 'Killian_Scan'), 'Native clothes must not use the scanned skin texture');
   }
   assert(gltf.animations.length > 0);
   let hipsMove = 0;
@@ -42,10 +47,10 @@ function validateAvatar(filename, maxBytes, expectedParts = []) {
     const { result, width } = values(sampler.output);
     for (let i = 0; i < width; i++) assert(Math.abs(result[i] - result[result.length - width + i]) < 0.001, 'Discontinuous loop');
     const node = gltf.nodes[channel.target.node];
-    if (/Hip_jnt$/.test(node.name) && channel.target.path === 'rotation') {
+    if ((native ? /^thigh_[lr]$/ : /Hip_jnt$/).test(node.name) && channel.target.path === 'rotation') {
       assert(result.some((v, i) => Math.abs(v - result[i % width]) > 0.05), 'The legs must move'); hipsMove++;
     }
-    if (node.name === 'SKM_Killian_Pichon' && channel.target.path === 'translation') {
+    if (node.name === (native ? 'Native_MetaHuman_Root' : 'SKM_Killian_Pichon') && channel.target.path === 'translation') {
       for (let i = 0; i < result.length; i += 3) {
         assert(Math.abs(result[i] - result[0]) < 0.0001);
         assert(Math.abs(result[i + 2] - result[2]) < 0.0001, 'Root must not walk out of frame');
@@ -68,10 +73,15 @@ validateAvatar('killian-metahuman.glb', 10 * 1024 * 1024, [
   'MetaHuman_Eyebrows', 'Scanned_Outfit', 'Sweater_Collar',
   'Glasses_Rim_1', 'Glasses_Rim_-1', 'Glasses_Temple_1', 'Glasses_Temple_-1', 'Glasses_Bridge'
 ]);
+validateAvatar('killian-native-metahuman.glb', 12 * 1024 * 1024, [
+  'Native_MetaHuman_Face', 'Native_MetaHuman_Hands', 'Native_Sweater', 'Native_Trousers',
+  'MetaHuman_Hair', 'MetaHuman_Eyebrows', 'Glasses_Rim_1', 'Glasses_Rim_-1',
+  'Sneaker_Upper_l', 'Sneaker_Upper_r'
+], true);
 
 if (process.env.KP_TEST_ORIGIN) (async () => {
   const origin = process.env.KP_TEST_ORIGIN;
-  for (const file of ['assets/avatar-viewer.js', 'assets/profile/killian-metahuman.glb', 'assets/profile/killian-metahuman.webp', 'assets/profile/killian-avatar.glb', 'assets/profile/killian-avatar.webp', 'assets/profile/normal-studio-can.webp']) {
+  for (const file of ['assets/avatar-viewer.js', 'assets/profile/killian-native-metahuman.glb', 'assets/profile/killian-native-metahuman.webp', 'assets/profile/killian-metahuman.glb', 'assets/profile/killian-metahuman.webp', 'assets/profile/killian-avatar.glb', 'assets/profile/killian-avatar.webp', 'assets/profile/normal-studio-can.webp']) {
     let directory = root;
     for (const segment of file.split('/')) { assert(fs.readdirSync(directory).includes(segment)); directory = path.join(directory, segment); }
     const response = await fetch(origin + '/' + file);
