@@ -1,5 +1,67 @@
 # Portfolio de Killian Pichon
 
+### Variante MetaHuman avec lunettes — 31 octobre 2026
+
+À la demande du propriétaire, le prototype local de Profil affiche maintenant
+le visage de `MHI_Killian_Pichon`, ses cheveux et sa pilosité, assemblés au corps
+habillé du scan. Le squelette et la marche restent ceux du prototype précédent.
+Il s'agit donc d'un assemblage pour le Web : le rig facial complet et les
+matériaux complexes d'Unreal ne sont pas embarqués. Les lunettes à monture
+foncée, coins arrondis et verres clairs sont construites d'après la photo fournie.
+La photo de référence reste hors du dépôt. Le col est raccordé pour masquer
+la jonction entre les deux modèles. Le projet Unreal d'origine est intact.
+
+L'éclairage distingue les matières du visage, des cheveux, du tissu et des
+lunettes. Le voile émissif uniforme du premier essai est retiré ; les vêtements
+gardent leur texture avec une exposition adaptée. Les cheveux utilisent leurs
+cartes exportées avec transparence, sans seuil qui efface les mèches fines.
+Le cadre, les proportions, la grille, les textes du profil et les commandes
+de marche, pause et inclinaison sont conservés.
+
+**Fichiers.** `assets/profile/killian-metahuman.glb` (8,70 Mo, 117 789 triangles)
+et `killian-metahuman.webp` (720 × 960 px, environ 22 Ko) sont les nouveaux médias.
+Le GLB inclut toutes ses textures : visage et vêtements à 2 048 px, cheveux à
+1 024 px, détails et normales à 512 px. Les fichiers du premier scan et la photo
+initiale restent disponibles. `assets/avatar-viewer.source.js` règle le rendu ;
+`index.html` sélectionne la variante ; `data/fr.js` traduit sa description.
+Le générateur de projets actualise les versions des ressources, les pages produites,
+le manifeste et leurs dates de sitemap. Aucune dépendance ni requête externe
+n'est ajoutée. La branche est toujours `codex/interactive-avatar`, comparée à
+`origin/main` (`6019530`) avant cette intervention. Aucune publication.
+
+**Préparation.** `tools/prepare-metahuman.py` s'exécute avec Blender 5.2 :
+`blender -b --python tools/prepare-metahuman.py -- --source <exports> --output <preparation>`.
+Les deux dossiers doivent rester hors du dépôt public. Le dossier d'exports
+contient `output/killian.fbx` et `output/M_Killian_Pichon_Tpose_diffuse.png`,
+ainsi qu'un sous-dossier `metahuman/` avec le FBX `MHI_Killian_Pichon_FaceMesh`,
+les quatre FBX `*_CardsMesh_Group0_LOD1` (Hair_M_BobStraight, Beard_S_Full,
+Mustache_S_Full, Eyebrows_M_FlatThick), leurs PNG `*_CardsAtlas_Attribute`,
+et les PNG `FaceColor_MAIN` et `FaceNormal_MAIN`. L'export se fait depuis une
+copie Unreal 5.4 avec RigLogic et HairStrands activés. Le script réutilise la
+préparation du scan, rétablit 30 images/s après import, assemble les pièces
+sur son squelette et produit le GLB, deux rendus PNG et un fichier Blender.
+Convertir le portrait en WebP ; seuls le GLB et le WebP entrent dans le site.
+
+**Contrôles.** `pnpm build`, le contrôle des pages générées et les tests de
+génération passent. `pnpm test:avatar` vérifie les deux modèles : squelette,
+présence et attache des accessoires, poids normalisés, marche continue de
+1,6 seconde sans dérive, textures embarquées et budgets de taille (5 Mo pour
+le scan, 10 Mo pour cette variante). Avec `KP_TEST_ORIGIN`, il contrôle les
+médias servis, leur casse, le refus des chemins sensibles et l'authentification
+de l'éditeur. Les états NDA, vidéos, consentement, serveur local, `CNAME`,
+`.nojekyll` et publication sont inchangés.
+
+Essais navigateur à 390, 768 et 1440 px sans débordement : français/anglais,
+retour depuis une fiche projet, marche, regard, pause et réduction des mouvements.
+La pause et la réduction des mouvements arrêtent bien les appels de rendu.
+L'inclinaison est simulée ; aucun téléphone physique n'est testé. Le portrait
+de secours se charge lorsque WebGL est indisponible. Les nouvelles ressources
+répondent en HTTP 200, sans nouvelle erreur de console dans le parcours normal.
+Les liens externes et lecteurs vidéo non modifiés ne sont pas réessayés.
+
+Références de conversion : [export FBX Unreal](https://dev.epicgames.com/documentation/en-us/unreal-engine/fbx-skeletal-mesh-pipeline-in-unreal-engine)
+et [cartes de cheveux](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-cards-and-meshes-for-grooms-in-unreal-engine).
+
 ### Prototype du double numérique — 30 octobre 2026
 
 La page Profil remplace la photo de la canette par le scan 3D en pied choisi

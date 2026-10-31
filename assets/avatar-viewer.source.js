@@ -1,6 +1,6 @@
 /* Bundled locally by tools/build-avatar.cjs. No CDN, account or remote service. */
 import {
-  AgXToneMapping, AnimationMixer, Box3, DirectionalLight, HemisphereLight,
+  ACESFilmicToneMapping, AnimationMixer, Box3, DirectionalLight, HemisphereLight,
   OrthographicCamera, Quaternion, Scene, SRGBColorSpace, Vector3, WebGLRenderer
 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -35,25 +35,32 @@ export async function mountAvatar(stage, { modelURL, signal, onState }) {
   const renderer = new WebGLRenderer({ canvas, context, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = SRGBColorSpace;
-  renderer.toneMapping = AgXToneMapping;
-  renderer.toneMappingExposure = 1.6;
+  renderer.toneMapping = ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
   renderer.setClearColor(0, 0);
   canvas.setAttribute('aria-hidden', 'true');
   const scene = new Scene();
   scene.add(model);
-  scene.add(new HemisphereLight(0xf4f1ff, 0x77717a, 3.4));
-  const key = new DirectionalLight(0xfff4ea, 3.1);
+  scene.add(new HemisphereLight(0xf2f4ff, 0x45352c, 1.45));
+  const key = new DirectionalLight(0xfff2e5, 2.1);
   key.position.set(-2, 3, 4); scene.add(key);
-  const fill = new DirectionalLight(0xe7eaff, 1.4);
+  const fill = new DirectionalLight(0xe7eeff, 0.65);
   fill.position.set(2, 1, 2); scene.add(fill);
-  // A broad studio fill keeps the dark clothing legible at this small scale.
+  const rim = new DirectionalLight(0xffd7b0, 1.2);
+  rim.position.set(1, 2, -2); scene.add(rim);
+  // Keep each exported material: skin, cloth, hair and lenses need different finishes.
   model.traverse(object => {
-    if (!object.isSkinnedMesh) return;
-    object.frustumCulled = false;
-    object.material.roughness = 1;
-    if ('specularIntensity' in object.material) object.material.specularIntensity = 0.1;
-    object.material.emissive.setRGB(0.025, 0.025, 0.025);
-    object.material.emissiveIntensity = 0.8;
+    if (object.isSkinnedMesh) object.frustumCulled = false;
+    for (const material of [object.material].flat().filter(Boolean)) {
+      if (/MetaHuman_(Hair|Beard|Moustache|Eyebrows)/.test(material.name)) {
+        material.transparent = true;
+        material.alphaTest = 0.01;
+        material.depthWrite = false;
+        material.color.multiplyScalar(material.name === 'MetaHuman_Hair' ? 1.7 : 1.3);
+      }
+      if (material.name === 'Clear_Lenses') material.depthWrite = false;
+      if (material.name === 'Killian_Scan') material.color.multiplyScalar(2.2);
+    }
   });
 
   const mixer = new AnimationMixer(model);
