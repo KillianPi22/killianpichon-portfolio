@@ -1,5 +1,21 @@
 # Portfolio de Killian Pichon
 
+### Publication autorisée du personnage interactif — 31 octobre 2026
+
+Le propriétaire a validé le rendu de `9605a86` dans l'aperçu local et demandé
+sa publication. Cette autorisation couvre l'intégration du personnage dans
+Profil, le visage A sur le corps MetaHuman, les vêtements recréés, les lunettes,
+la marche, le regard interactif et les dernières retouches des bras et cheveux.
+Les contrôles effectués par Codex et leurs limites sont détaillés ci-dessous ;
+la validation visuelle du propriétaire s'y ajoute.
+
+La branche de travail descend directement de `origin/main` (`6019530`),
+vérifié à nouveau avant publication. La mise en ligne utilise la publication
+GitHub Pages habituelle depuis `main`, sans changer sa configuration,
+`CNAME`, `.nojekyll`, les accès NDA, les vidéos, le consentement ou l'éditeur.
+Les mentions « sans publication » des étapes précédentes décrivent leur état
+au moment de ces essais ; cette demande autorise maintenant leur intégration.
+
 ### Retouches des bras, des mains et des cheveux — 31 octobre 2026
 
 Le volume des manches autour des coudes et la transition de leurs poids sont
