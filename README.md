@@ -1,5 +1,52 @@
 # Portfolio de Killian Pichon
 
+### Compteur de téléchargements C4D — 5 novembre 2026
+
+Les deux fiches Select Similar – Angle téléchargent les scripts FR/EN depuis
+la release GitHub `select-similar-angle-v1`. Les scripts validés ne changent pas.
+Sous chaque bouton, le même total additionne les deux langues et les versions
+publiques dont le tag commence par `select-similar-angle-`. Les préversions,
+brouillons et autres fichiers sont exclus. Les téléchargements antérieurs, copies
+du code et liens locaux de secours ne sont pas comptabilisés. Les téléchargements
+de vérification réels font partie du total. GitHub peut actualiser ses statistiques
+avec un délai ; le compteur ne simule jamais une augmentation au clic.
+
+`assets/download-counter.js` consulte l’API publique, sans cookie, identifiant,
+stockage, clé ni adresse de provenance. Pagination, doublons, erreurs et délai
+maximal de huit secondes sont gérés. Le retour sur la fenêtre peut actualiser
+le total, au maximum une fois par minute. En cas d’échec, un message explicite
+remplace le nombre ; le lien local de secours et le code restent disponibles.
+Le script du compteur est chargé seulement sur les deux fiches C4D.
+`privacy.html` décrit cet appel à GitHub en français et en anglais.
+
+Sources : `data/technical.js`, `assets/technical-library.js` et sa feuille de
+style, `tools/build-technical.cjs`. Les pages Technique, versions de cache dans
+`index.html`, copies générées des pages projets, manifeste et sitemap sont
+actualisés. L’avatar, les autres composants, médias, sources vidéo et accès NDA
+restent identiques. Pour une prochaine version, créer une nouvelle release
+publique avec le préfixe ci-dessus et les fichiers `Select_Similar_Angle.py` et
+`Select_Similar_Angle_EN.py`, puis actualiser `downloadRelease` dans les deux
+langues et régénérer les pages. Conserver les anciennes releases et leurs fichiers
+pour préserver l’historique ; ne pas remplacer leurs assets.
+Référence : [API des releases GitHub](https://docs.github.com/en/rest/releases/releases).
+
+Contrôles Codex : six tests Node du compteur réussis (total bilingue, historique,
+pagination, doublons, zéro, erreurs, liens statiques et actualisation), tests de
+génération et vérification des 26 pages projets. HTTP via le serveur habituel :
+sept pages, vingt ressources, neuf liens/ancres et leur casse, refus de sept chemins
+sensibles et authentification de l’éditeur. Essais navigateur FR/EN à 390, 768 et
+1440 px : pas de débordement, volet bilingue, copie, téléchargement français,
+code et liens sans JavaScript, console et réseau. Téléchargement anglais vérifié
+par HTTP ; les deux fichiers reçus correspondent aux fichiers locaux. Aucun
+appel Analytics dans le parcours sans consentement. Le test Playwright complet
+n’est pas exécuté (module absent) ; le parcours navigateur est contrôlé via CUA.
+Aucun nouvel essai dans C4D ou sur téléphone physique ; la validation existante
+du propriétaire reste acquise. `CNAME`, `.nojekyll`, serveur, chiffrement et
+configuration Pages sont inchangés. Publication demandée par le propriétaire,
+depuis `main` `5ce4a98`, sur `codex/c4d-download-counter`, sans reprendre
+les travaux de l’ancien éditeur.
+
+
 ### Inclinaison par défaut et rubriques repliables — 31 octobre 2026
 
 À la demande du propriétaire, Compétences principales, Spécialisations et Outils

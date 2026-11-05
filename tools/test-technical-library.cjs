@@ -109,7 +109,7 @@ async function main() {
             await section.getByRole('button', { name: content[lang].labels.copy, exact: true }).click();
             await page.waitForFunction(id => document.getElementById(id).closest('.tool-code').querySelector('[role="status"]').textContent.length > 0, id);
             assert.equal((await page.evaluate(() => Promise.race([navigator.clipboard.readText(), new Promise((_, reject) => setTimeout(() => reject(new Error('Clipboard read timeout')), 8000))]))).replace(/\r\n/g, '\n'), source);
-            assert.equal(await section.locator('a[download]').getAttribute('download'), variant.file.split('/').pop());
+            assert.equal(await section.locator('.tool-button[download]').getAttribute('download'), variant.file.split('/').pop());
             const downloaded = await (await http(origin + '/' + variant.file)).text();
             assert.equal(downloaded.replace(/\r\n/g, '\n'), source);
             await page.evaluate(() => Object.defineProperty(navigator.clipboard, 'writeText', { configurable: true, value: async () => { throw new Error('Denied'); } }));
@@ -146,7 +146,7 @@ async function main() {
     assert(await plain.getByRole('link', { name: content.fr.labels.download }).isVisible());
     await plain.locator('.tool-code-alternate summary').click();
     assert.equal(await plain.locator('#tool-source-alternate').inputValue(), readScript(content.fr.tools[0].alternate.file));
-    assert(await plain.locator('.tool-code-alternate a[download]').isVisible());
+    assert(await plain.locator('.tool-code-alternate .tool-button[download]').isVisible());
     await noJS.close();
     // All local links resolve, including case-sensitive filenames and section anchors.
     for (const href of localLinks) {

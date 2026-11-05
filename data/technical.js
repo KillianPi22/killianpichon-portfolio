@@ -1,8 +1,8 @@
 /* Public tool catalogue. Keep EN/FR together; rebuild with node tools/build-technical.cjs. */
 (function (root) {
   const content = {
-    updated: '2026-10-22',
-    revision: '20261022-tools-v6',
+    updated: '2026-11-05',
+    revision: '20261105-downloads',
     en: {
       title: 'Tools & workflows',
       meta: 'Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -19,6 +19,7 @@
       ecologySource: 'Context: IEA, Energy and AI',
       tools: [
         {
+          downloadRelease: 'select-similar-angle-v1',
           id: 'select-similar-angle', category: 'personal', title: 'Select Similar – Angle',
           pageTitle: 'Select Similar – Angle for Cinema 4D 2026 — Killian Pichon',
           meta: 'Select similar polygon normals in Cinema 4D 2026. Python script with angle tolerance, reference selection and opposite normals. Copy the code or download it.',
@@ -52,7 +53,7 @@
           externalNote: 'DJ TechTools sign-in required to download.'
         }
       ],
-      labels: { technical: 'Technical', open: 'View tool', back: 'All tools & workflows', need: 'The task', response: 'The approach', result: 'In use', features: 'Controls', workflow: 'Workflow', limits: 'Scope & limitations', compatibility: 'Compatibility', code: 'Python source', copy: 'Copy code', download: 'Download .py', copied: 'Code copied.', fallback: 'Automatic copy unavailable. Code selected: use Ctrl+C or ⌘C.', source: 'Code to paste into the Cinema 4D Script Manager', codeHint: 'The complete script below is identical to the downloadable .py file.', credit: 'Credits', nav: 'Tool categories', notes: 'Production notes', privacy: 'Privacy', privacyChoices: 'Privacy choices', demos: 'Other demos', rights: '© 2026 · All rights reserved', work: 'Work', about: 'About', contact: 'Contact' }
+      labels: { technical: 'Technical', open: 'View tool', back: 'All tools & workflows', need: 'The task', response: 'The approach', result: 'In use', features: 'Controls', workflow: 'Workflow', limits: 'Scope & limitations', compatibility: 'Compatibility', code: 'Python source', copy: 'Copy code', download: 'Download .py', downloadTotal: 'downloads via GitHub (FR + EN)', downloadUnavailable: 'Download count unavailable', downloadFallback: 'Backup download', downloadNote: 'Total for both languages and all releases. Code copies and backup downloads are excluded.', copied: 'Code copied.', fallback: 'Automatic copy unavailable. Code selected: use Ctrl+C or ⌘C.', source: 'Code to paste into the Cinema 4D Script Manager', codeHint: 'The complete script below is identical to the downloadable .py file.', credit: 'Credits', nav: 'Tool categories', notes: 'Production notes', privacy: 'Privacy', privacyChoices: 'Privacy choices', demos: 'Other demos', rights: '© 2026 · All rights reserved', work: 'Work', about: 'About', contact: 'Contact' }
     },
     fr: {
       title: 'Outils & méthodes',
@@ -70,6 +71,7 @@
       ecologySource: 'Pour situer le sujet : AIE, Energy and AI',
       tools: [
         {
+          downloadRelease: 'select-similar-angle-v1',
           id: 'select-similar-angle', category: 'personal', title: 'Select Similar – Angle',
           pageTitle: 'Select Similar – Angle pour Cinema 4D 2026 — Killian Pichon',
           meta: 'Sélection de polygones par normales similaires dans Cinema 4D 2026 : script Python avec tolérance d’angle, références et normales opposées. Code à copier ou télécharger.',
@@ -103,7 +105,7 @@
           externalNote: 'Connexion à DJ TechTools nécessaire pour télécharger.'
         }
       ],
-      labels: { technical: 'Technique', open: 'Voir l’outil', back: 'Tous les outils et méthodes', need: 'Le besoin', response: 'La réponse', result: 'À l’usage', features: 'Commandes', workflow: 'Mode d’emploi', limits: 'Périmètre et limites', compatibility: 'Compatibilité', code: 'Code source Python', copy: 'Copier le code', download: 'Télécharger le .py', copied: 'Code copié.', fallback: 'Copie automatique indisponible. Code sélectionné : utiliser Ctrl+C ou ⌘C.', source: 'Code à coller dans le Script Manager de Cinema 4D', codeHint: 'Le script complet ci-dessous est identique au fichier .py téléchargeable.', credit: 'Crédits', nav: 'Catégories d’outils', notes: 'Notes de production', privacy: 'Confidentialité', privacyChoices: 'Choix de confidentialité', demos: 'Autres démos', rights: '© 2026 · Tous droits réservés', work: 'Projets', about: 'Profil', contact: 'Contact' }
+      labels: { technical: 'Technique', open: 'Voir l’outil', back: 'Tous les outils et méthodes', need: 'Le besoin', response: 'La réponse', result: 'À l’usage', features: 'Commandes', workflow: 'Mode d’emploi', limits: 'Périmètre et limites', compatibility: 'Compatibilité', code: 'Code source Python', copy: 'Copier le code', download: 'Télécharger le .py', downloadTotal: 'téléchargements via GitHub (FR + EN)', downloadUnavailable: 'Compteur indisponible', downloadFallback: 'Téléchargement de secours', downloadNote: 'Total des deux langues et de toutes les versions. Copies du code et téléchargements de secours exclus.', copied: 'Code copié.', fallback: 'Copie automatique indisponible. Code sélectionné : utiliser Ctrl+C ou ⌘C.', source: 'Code à coller dans le Script Manager de Cinema 4D', codeHint: 'Le script complet ci-dessous est identique au fichier .py téléchargeable.', credit: 'Crédits', nav: 'Catégories d’outils', notes: 'Notes de production', privacy: 'Confidentialité', privacyChoices: 'Choix de confidentialité', demos: 'Autres démos', rights: '© 2026 · Tous droits réservés', work: 'Projets', about: 'Profil', contact: 'Contact' }
     }
   };
   if (typeof module === 'object' && module.exports) module.exports = content;

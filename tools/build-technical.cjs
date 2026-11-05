@@ -95,7 +95,7 @@ for (const lang of ['en', 'fr']) {
   <link rel="stylesheet" href="assets/organic-floating.css?v=20260906">
   <script>window.KP_I18N={lang:${safeJSON(lang)},t:function(s){return ${safeJSON(dict)}[s]||s;}};</script>
   <script defer src="assets/technical-library.js?v=${assetVersion}"></script>
-  <script defer src="assets/analytics-consent.js?v=20261030-projects"></script>
+${tool?.downloadRelease ? '  <script defer src="assets/download-counter.js?v=' + assetVersion + '"></script>\n' : ''}  <script defer src="assets/analytics-consent.js?v=20261030-projects"></script>
   <script defer src="assets/motion-exploration.js?v=20261030-projects"></script>
   <script defer src="assets/organic-floating.js?v=20261031-auto-tilt"></script>
   <script type="application/ld+json">${safeJSON({ '@context': 'https://schema.org', '@graph': graph })}</script>

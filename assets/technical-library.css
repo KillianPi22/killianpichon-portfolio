@@ -58,3 +58,8 @@
 @media(max-width:900px){.tool-categories{grid-template-columns:1fr}.tool-categories a{padding:20px 0}.tool-categories a+a{border-left:0;border-top:1px solid var(--line-subtle)}.tool-story{grid-template-columns:1fr;gap:0}}
 @media(max-width:767px){.tool-main{padding-top:32px}.tool-card{padding:24px 20px}.tool-source{font-size:12px;padding:16px}.tool-section{margin-top:48px}.tool-reuse{padding-left:20px}}
 @media(prefers-reduced-motion:reduce){.tool-main{scroll-behavior:auto}}
+
+.tool-download{display:flex;flex-direction:column;align-items:flex-start;gap:8px;max-width:100%}
+.tool-main .tool-download-total{margin:0;max-width:290px;line-height:1.5}
+
+.tool-code-header .tool-actions{align-items:flex-start}
