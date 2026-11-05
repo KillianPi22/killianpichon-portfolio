@@ -254,8 +254,8 @@ window.KP_FR = {
       'Comprendre comment une production se construit m’intéresse autant que fabriquer les images. Mon travail technique cherche à réduire le temps d’itération, à améliorer les transferts entre les équipes et à permettre de juger une expérience immersive plus tôt en production.',
     'My areas of interest sit where visual decisions meet production constraints: pipeline development, real-time rendering, production optimization, immersive projection, virtual production and R&D. Unreal Engine, Niagara and compositing tools are useful when they shorten feedback loops, clarify spatial decisions or make a workflow more dependable — never as outcomes by themselves.':
       'Mes centres d’intérêt se situent là où les décisions visuelles rencontrent les contraintes de production : développement de pipeline, rendu temps réel, optimisation, projection immersive, production virtuelle et R-D. Unreal Engine, Niagara et les outils de compositing sont utiles quand ils raccourcissent les boucles de retour, clarifient une décision spatiale ou rendent un flux plus fiable — jamais comme une fin en soi.',
-    'Each study starts from a production question, and the answer has to stay proportional to the production. On Celestia, a first-person VR build let artists, production and the client walk the scenes before installation, which moved staging and scale decisions earlier; a second technical artist then optimized it and merged it with the existing PC visualization system. On Into the Volcano, 16K geological textures were split into deliberate repair and validation stages, so only the areas visible at installation scale received intensive work. On the Melanie Martinez tour, repeated object-throw simulations were replaced with reusable in-scene logic, so motion changes could be reviewed live instead of going through another external simulation pass.':
-      'Chaque étude part d’une question de production, et la réponse doit rester proportionnée à la production. Sur Celestia, une version VR à la première personne a permis aux artistes, à la production et au client de parcourir les scènes avant l’installation, ce qui a avancé les décisions de mise en scène et d’échelle ; un second technical artist l’a ensuite optimisée et fusionnée avec le système de visualisation PC existant. Sur Into the Volcano, les textures géologiques 16K ont été découpées en étapes délibérées de réparation et de validation, pour que seules les zones visibles à l’échelle de l’installation reçoivent un travail intensif. Sur la tournée de Melanie Martinez, les simulations répétées de lancer d’objets ont été remplacées par une logique réutilisable dans la scène, si bien que les changements de mouvement se jugeaient en direct plutôt qu’au prix d’une nouvelle passe de simulation externe.',
+    'Each study addresses a specific production task. On Celestia, real-time constraints applied to previsualization, while the show used pre-rendered content; the Lead Tech Artist subsequently optimized the VR application and merged it with the existing PC visualization system. On Into the Volcano, I established a Photoshop and BodyPaint workflow to clean 16K photographic textures on a high-resolution mesh. On the Melanie Martinez tour, I worked on gravity-based object dynamics so motion could be adjusted during production, before final rendering.':
+      'Chaque étude répond à une tâche précise de production. Sur Celestia, les contraintes du temps réel concernaient la prévisualisation, tandis que le spectacle était précalculé ; le Lead Tech Artist a ensuite optimisé l’application VR et l’a fusionnée avec le système de visualisation PC existant. Sur Into the Volcano, j’ai mis en place une méthode associant Photoshop et BodyPaint pour nettoyer des textures photographiques 16K sur un maillage haute résolution. Sur la tournée de Melanie Martinez, j’ai travaillé sur une dynamique d’objets soumise à la gravité pour ajuster les mouvements pendant la production, avant le rendu final.',
     'Detailed case studies can be presented on request, subject to the applicable confidentiality agreements.':
       'Des études de cas détaillées peuvent être présentées sur demande, dans le respect des ententes de confidentialité.',
     'Immersive Production Systems': 'Systèmes de production immersive',
@@ -321,6 +321,7 @@ window.KP_FR = {
 
     /* --------------------------------------------------- contenu protege */
     'Protected project': 'Projet protégé',
+    'Project under a confidentiality agreement': 'Projet sous accord de confidentialité',
     'Access code required': 'Code d’accès requis',
     'Access code': 'Code d’accès',
     'This project is covered by a confidentiality agreement. Enter the access code to open it.':
@@ -419,58 +420,64 @@ window.KP_FR = {
     celestia: {
       category: 'Expérience immersive sur site',
       venue: 'Denver et Chicago',
-      desc: 'Une production immersive itinérante construite autour d’une question concrète : comment un spectacle monumental peut-il rester dirigeable artistiquement dans deux salles, sans reconstruire son flux de travail ?',
-      overview: 'Produite chez Normal Studio, Celestia a été créée à Denver avant d’être remontée à Chicago. La production demandait de grandes nuées capables de se lire clairement sur une surface de projection monumentale, formant un langage visuel féerique qui tienne à cette échelle. Le système devait aussi rester assez souple pour accepter des décisions créatives tardives et se transposer d’une installation à l’autre.',
-      role: 'Généraliste 3D temps réel — animation procédurale, look development et compositing',
-      contribution: ['Conception des comportements de nuées procédurales et du mélange d’animations pour les groupes d’arrière-plan, et animation à part des oiseaux principaux pour les gros plans qui demandaient un jeu dirigé.', 'Développement, avec la direction artistique, d’un traitement visuel simplifié mené par le Fresnel, pour que les silhouettes et le mouvement restent lisibles sur la surface de projection.', 'Préparation de passes séparées de lumière, de masque et de base, afin que les ajustements finaux se fassent au compositing sans rouvrir chaque élément rendu.', 'Adaptation, avec la production et pour une salle à venir, des scènes de nuages Notch construites par Fred Tretout et Julien Lassignardie.', 'Utilisation de Blender pour préparer les Color IDs et modéliser des éléments servant à créer des effets adaptés aux pixel maps de projection.'],
-      technicalChallenges: ['Le défi — les grandes surfaces de projection effacent le détail fin, et une approche de rendu littérale aurait rendu les changements visuels tardifs plus lents et plus difficiles à maîtriser.', 'La réponse de production — le look a été organisé autour de formes lisibles, de passes séparées et de tests de compositing précoces ; les nuées procédurales ont absorbé l’échelle pendant que l’animation principale préservait les moments écrits.', 'L’effet sur la production — l’équipe a pu affiner le rythme et finir plus tard dans le processus, et la même logique de production a suivi de l’installation de Denver au remontage de Chicago.'],
-      rnd: ['Pendant une plage de recherche approuvée, j’ai développé et livré une première application de revue VR fonctionnelle, pour que les artistes, la production et le client puissent tester les scènes à la première personne avant l’installation. La navigation passait par un pointeur de téléportation, et des zones autorisées et interdites reprenaient le parcours prévu pour le public.', 'L’application devait tenir les performances du temps réel, lecture des textures comprise, à un minimum de 60 images par seconde sur portable et 120 sur station de travail, ce qui décidait de ce qui pouvait être chargé et à quel moment.', 'L’ergonomie a demandé autant de soin que l’image : un panneau de menu ancré au corps, un pointeur laser, des commandes de lecture et un déroulé de spectacle programmé, pour qu’une séance de revue suive l’ordre du show et anticipe la suite au lieu de s’arrêter à chaque scène.', 'Un second technical artist a ensuite mené une passe d’optimisation et fusionné l’application avec le système de visualisation PC existant.', 'Les tests de lecture ont porté sur l’expérience du spectateur : préserver la clarté et l’impact visuel à l’échelle monumentale tout en restant dans les limites du temps réel. Nous avons comparé dimensions d’image, résolution, comportement du lecteur et encodage, puis choisi Bink pour une lecture haute résolution plus fiable.', 'Le flux d’aperçu des artistes a été ajusté sur les mêmes contraintes, ce qui leur permettait de juger des images proches du spectacle final sans maintenir une version basse fidélité en parallèle.', 'Juger dans l’espace a rendu les tests et les aperçus clients plus rapides à mener, et les échanges plus précis : la mise en scène, l’échelle et le rythme se décidaient plus tôt, avec moins de dépendance aux exports rendus ou aux retours du jour de l’installation.'],
-      pipeline: ['Blocking des nuées procédurales et animation principale', 'Look development à l’échelle de la projection', 'Préparation des passes de rendu séparées', 'Revue de compositing temps réel', 'Recherche PC/VR avant installation'],
-      impact: 'Le flux de travail obtenu a gardé les décisions visuelles modifiables jusqu’au compositing, et s’est adapté au passage de la production de Denver à Chicago.'
+      desc: "Un spectacle immersif pour lequel j’ai adapté des animations de nuées d’oiseaux, travaillé le traitement Fresnel et préparé des passes de rendu.",
+      overview: "Produite chez Normal Studio, Celestia est un spectacle immersif précalculé. Mon intervention portait sur des éléments d’animation et de rendu au sein de la production, ainsi que sur un travail de prévisualisation distinct du spectacle final.",
+      role: "Artiste 3D — adaptation d’animations et préparation de passes de rendu",
+      contribution: ["Adaptation des animations de nuées d’oiseaux.","Travail sur le traitement Fresnel des éléments concernés.","Préparation de passes de rendu par couches destinées au compositing, réalisé par une autre personne de l’équipe."],
+      technicalChallenges: ["Le défi — la prévisualisation devait permettre de revoir le contenu dans l’espace en temps réel ; cette contrainte concernait les aperçus, pas la diffusion du spectacle précalculé.","La réponse — le travail de prévisualisation portait sur la lecture des contenus et leur consultation dans l’environnement de revue. Les passes de rendu par couches étaient destinées au compositing réalisé par une autre personne de l’équipe.","Le résultat — distinguer les aperçus de travail des images finales permettait de revoir les scènes avant l’installation."],
+      rnd: ['Pendant une plage de recherche approuvée, j’ai développé et livré une première application de revue VR fonctionnelle, pour que les artistes, la production et le client puissent tester les scènes à la première personne avant l’installation. La navigation passait par un pointeur de téléportation, et des zones autorisées et interdites reprenaient le parcours prévu pour le public.', 'L’application devait tenir les performances du temps réel, lecture des textures comprise, à un minimum de 60 images par seconde sur portable et 120 sur station de travail, ce qui décidait de ce qui pouvait être chargé et à quel moment.', 'L’ergonomie a demandé autant de soin que l’image : un panneau de menu ancré au corps, un pointeur laser, des commandes de lecture et un déroulé de spectacle programmé, pour qu’une séance de revue suive l’ordre du show et anticipe la suite au lieu de s’arrêter à chaque scène.', 'Le Lead Tech Artist a ensuite mené une passe d’optimisation et fusionné l’application avec le système de visualisation PC existant.', 'Les tests de lecture ont porté sur l’expérience du spectateur : préserver la clarté et l’impact visuel à l’échelle monumentale tout en restant dans les limites du temps réel. Nous avons comparé dimensions d’image, résolution, comportement du lecteur et encodage, puis choisi Bink pour une lecture haute résolution plus fiable.', 'Le flux d’aperçu des artistes a été ajusté sur les mêmes contraintes, ce qui leur permettait de juger des images proches du spectacle final sans maintenir une version basse fidélité en parallèle.', 'Juger dans l’espace a rendu les tests et les aperçus clients plus rapides à mener, et les échanges plus précis : la mise en scène, l’échelle et le rythme se décidaient plus tôt, avec moins de dépendance aux exports rendus ou aux retours du jour de l’installation.'],
+      pipeline: ["Adaptation des animations de nuées","Traitement Fresnel","Préparation des passes de rendu par couches","Transmission pour le compositing","Prévisualisation avant installation"],
+      impact: "Ma contribution portait sur l’adaptation d’animations et la préparation des images pour le compositing de l’équipe, avec un travail de prévisualisation distinct du spectacle précalculé.",
     },
 
     hurtubise: {
+      galleryAlts: ["Motifs lumineux rectangulaires ambrés projetés au-dessus du public assis sous le dôme.", "Motifs lumineux angulaires bleus sur le dôme, avec les silhouettes du public.", "Motifs en damier dorés couvrant le dôme au-dessus du public.", "Motifs picturaux multicolores enveloppant le public sous le dôme."],
       category: 'Film immersif · Fulldôme',
-      venue: 'Planétarium de Montréal',
+      venue: "SAT, Montréal",
       desc: 'Une production fulldôme qui traduit les tableaux de Jacques Hurtubise en lumière, mouvement et composition spatiale synchronisés.',
-      overview: 'Présenté au Planétarium de Montréal, le film place l’oeuvre de Jacques Hurtubise dans une expérience audiovisuelle à l’échelle du dôme, sur une musique d’Hippie Hourrah. Le défi de production : animer les tableaux sans perdre leur rythme graphique, puis coordonner plusieurs couches visuelles sur une surface immersive continue.',
+      overview: "Présenté à la SAT, à Montréal, ce film fulldôme transpose les tableaux de Jacques Hurtubise dans une expérience audiovisuelle immersive, sur une musique d’Hippie Hourrah. Ma contribution portait sur des rigs d’animation, des séquences animées et du compositing au sein de l’équipe de production.",
       role: 'Artiste 3D temps réel — systèmes d’animation, synchronisation et compositing fulldôme',
       contribution: ['Développement de rigs d’animation réutilisables pour les séquences de néons, afin de diriger de grands groupes d’ampoules sans perdre l’énergie irrégulière de l’oeuvre d’origine.', 'Préparation et animation des séquences de fenêtres mappées et des interprétations numériques des tableaux d’Hurtubise.', 'Compositing du matériel fulldôme, incluant les traitements de retard visuel et les ajustements de rythme nécessaires à la synchronisation sur le dôme.', 'Décisions de mouvement et de rythme travaillées avec le réalisateur Tommy Caron, pour que l’animation soutienne la musique sans devenir mécaniquement répétitive.'],
       technicalChallenges: ['Le défi — des centaines de lumières animées et d’oeuvres superposées devaient paraître coordonnées sur le dôme, tout en préservant la tension et la spontanéité du langage visuel d’Hurtubise.', 'La réponse de production — des rigs réutilisables ont organisé l’animation des lumières, pendant que les séquences mappées et le compositing par retard étaient réglés comme des couches liées plutôt que comme des plans isolés.', 'L’effet sur la production — le système a permis d’itérer sur le rythme et la synchronisation sans reconstruire chaque élément un par un.'],
       rnd: ['Les études de caméra et de rythme se sont développées par échanges répétés avec le réalisateur Tommy Caron, à la recherche de règles de minutage qui soutiennent la partition tout en laissant place à la variation.'],
       pipeline: ['Préparation des oeuvres et animation mappée', 'Rigging réutilisable des néons', 'Études de rythme menées par la musique', 'Compositing fulldôme', 'Synchronisation et intégration technique sur le dôme'],
-      impact: 'La production relie peinture, lumière et musique par une structure de minutage commune, conçue pour les exigences spatiales de la projection fulldôme.'
+      impact: 'La production relie peinture, lumière et musique par une structure de minutage commune, conçue pour les exigences spatiales de la projection fulldôme.',
+      creditsNote: "Production : Normal Studio, Hippie Hourrah, SAT. Réalisateur multimédia : Tommy Caron. Lead Motion Designer : Pierre Prieur."
     },
 
     volcano: {
+      galleryAlts: ["Falaises côtières aux strates jaunes et rouges, avec des personnes à leur pied.", "Visiteurs face à une grande projection incurvée de canyon rocheux."],
       category: 'Installation immersive · 270°',
       cardCategory: 'Installation immersive',
       venue: 'Musée Perlan, Reykjavík',
       desc: 'Une expérience muséale à 270° qui combine des images de volcans et des paysages numériques préparés pour une vision rapprochée, en grand format.',
-      overview: 'Créée pour le planétarium sur mesure du Perlan à Reykjavík, l’installation est une descente permanente, projetée tous les jours, sous la péninsule de Snæfellsnes : des images documentaires d’éruptions vers des environnements volcaniques reconstruits. L’image court sur une surface LED continue qui enveloppe le public à 270° verticalement et 360° horizontalement, prolongée par un plancher de verre, si bien que la roche se lit de près plutôt qu’à distance cadrée. Ces environnements ont été rebâtis en partie par photogrammétrie de roches et de falaises islandaises. Ma contribution a porté sur le fait de rendre ces ressources géologiques en très haute résolution utilisables en production, sans perdre le détail de surface que la distance de vision expose.',
-      role: 'Environment artist — look development et intégration de ressources haute résolution',
-      contribution: ['Évaluation et préparation de ressources géologiques portant des textures sources en 16K.', 'Nettoyage et réparation des zones de texture qui deviendraient visibles à l’échelle de l’installation.', 'Intégration des ressources dans l’environnement temps réel, en équilibrant la fidélité et les performances de production.', 'Documentation d’un transfert reproductible entre réparation de texture, look development et intégration finale de la scène.'],
-      technicalChallenges: ['Le défi — les textures 16K portaient le détail géologique exigé par l’expérience, mais leur poids rendait l’inspection, la réparation et l’itération difficiles.', 'La réponse de production — les textures ont été découpées en étapes délibérées de réparation et de validation, de sorte que seules les zones affectant l’image finale reçoivent un travail intensif.', 'L’effet sur la production — les ressources haute résolution ont pu traverser le look development et l’intégration sans traiter chaque fichier source comme une opération également coûteuse.'],
+      overview: "Into the Volcano est une expérience immersive au musée Perlan, à Reykjavík. Je suis intervenu en fin de production pour nettoyer et retoucher les ressources photographiques haute résolution d’une scène, avant leur intégration par l’équipe.",
+      role: "Artiste 3D — retouche de ressources photographiques haute résolution",
+      contribution: ["Nettoyage et retouche de textures photographiques 16K sur un maillage haute résolution, avec retrait d’éléments visuels indésirables.","Mise en place d’une méthode de travail associant Photoshop et BodyPaint dans Cinema 4D, et rédaction d’une notice pour accompagner mes retouches.","Préparation des ressources nettoyées pour leur transmission avant intégration dans l’environnement final."],
+      technicalChallenges: ["Le défi — travailler sur des textures 16K avec un maillage haute résolution dépassait les limites pratiques de Substance Painter pour cette tâche.","La réponse — j’ai mis en place une méthode de nettoyage combinant Photoshop et BodyPaint dans Cinema 4D, avec une notice décrivant les étapes.","Le résultat — cette méthode m’a permis de réaliser les retouches photographiques avec les outils disponibles."],
       recognition: ['Prix NUMIX 2026 — Lauréat, International · Exposition'],
-      pipeline: ['Évaluation des textures sources 16K', 'Nettoyage et réparation ciblés', 'Intégration des ressources haute résolution', 'Revue de look development', 'Préparation de scène attentive aux performances'],
-      impact: 'Le flux de travail a préservé le détail géologique nécessaire à la présentation à 270°, tout en rendant les ressources maniables à juger et à intégrer pendant la production.',
-      creditsNote: 'Réalisation : Tommy Caron — Normal Studio',
+      pipeline: ["Examen des ressources photographiques","Mise en place du travail entre Photoshop et BodyPaint","Nettoyage et retouche ciblés","Préparation pour transmission"],
+      impact: "Ma contribution portait sur le nettoyage et la préparation des ressources photographiques destinées à la présentation immersive ; la création des environnements et leur intégration finale relevaient de l’équipe.",
+      creditsNote: "Réalisateur multimédia : Tommy Caron. Lead Artiste Environnement : Charly Tempez. Lead Tech Artist : Victor Kawajigashi. Production : Normal Studio.",
       externalLabel: 'Voir plus sur Normal Studio'
     },
 
     melanie: {
+      galleryAlts: ["Une interprète suspendue par des fils dans un décor de théâtre de marionnettes violet et rouge.", "Cour d’école pastel avec des balançoires à bascule roses en forme de cœur, au-dessus du public du concert.", "Figures féminines dans une pièce rouge projetée sur la scène du concert.", "Carrousel rose encadré par une arche lumineuse au-dessus du public du concert.", "Grandes figures de marionnettes encadrées par des rideaux de scène roses.", "Façade de palais encadrée par une arche de feuillage vert."],
       category: 'Visuels de tournée',
       venue: 'The Trilogy Tour — univers K-12 et Portals',
       desc: 'Des visuels de tournée qui traduisent les univers de livre d’images de Melanie Martinez en scènes conçues pour une lecture répétable en grande salle.',
-      overview: 'Produit avec Normal Studio pour la Trilogy Tour, le travail traverse des environnements de terrain de jeu, de carrousel, de maison de poupée et de théâtre de marionnettes. Chaque scène devait préserver une direction artistique faite main tout en restant fiable dans le rythme et les contraintes techniques d’un spectacle en tournée.',
-      role: 'Généraliste 3D temps réel — production de ressources et assemblage d’environnements',
-      contribution: ['Reprise du sculpt des chevaux de carrousel, puis préparation des versions haute et basse résolution et bake de leurs normal maps.', 'Texturing des chevaux dans Substance Painter, en adaptant des matériaux intelligents et des filtres, puis en peignant à la main les zones restantes.', 'Retouche dans Blender de modèles de buissons sur mesure afin que leurs formes correspondent aux références visuelles de l’environnement.', 'Modélisation dans Cinema 4D d’un kit d’assets modulaires à partir de références architecturales du palais Esterházy, puis préparation des éléments pour l’assemblage de l’environnement dans Unreal Engine.', 'Modélisation de la boîte en bois et adaptation de la balançoire à bascule.', 'Assemblage et préparation des environnements pour la lecture en direct, en gardant la continuité visuelle d’un décor de livre d’images à l’autre.', 'Préparation et optimisation des scènes pour la répétabilité qu’exige une production en tournée.'],
-      technicalChallenges: ['Le défi — les scènes devaient préserver une identité visuelle détaillée et artisanale tout en se lisant de façon constante sur un système de tournée en direct.', 'La réponse de production — les ressources ont été évaluées dans le contexte de chaque scène, et les simulations répétées de lancer d’objets ont été remplacées par une logique réutilisable dans la scène, ajustable sans nouvelle passe de simulation externe.', 'L’effet sur la production — les changements de mouvement et de mise en place ont pu être jugés directement dans la scène en direct, réduisant les allers-retours pendant l’itération.'],
-      pipeline: ['Modélisation, sculpture et adaptation des ressources', 'Préparation high/low et bake des normal maps', 'Texturing et développement des matières', 'Assemblage de scène et revue de continuité', 'Logique de mouvement réutilisable', 'Préparation pour la lecture en tournée'],
-      impact: 'Les scènes ont été préparées comme des éléments fiables d’une séquence de tournée plus large, avec des décisions visuelles prises par rapport au rythme du spectacle plutôt qu’à un seul plan rendu.'
+      overview: "Produits chez Normal Studio pour le Trilogy Tour, ces visuels étaient précalculés pour être diffusés pendant le spectacle. Unreal Engine permettait de revoir les assets et les mouvements pendant la production. Mon travail portait sur certains assets et sur la dynamique d’objets.",
+      role: "Généraliste 3D — modélisation, sculpture, textures et dynamique d’objets",
+      contribution: ["Reprise du sculpt des chevaux de carrousel, puis préparation des versions haute et basse résolution et bake de leurs normal maps.","Texturing des chevaux dans Substance Painter, en adaptant des matériaux intelligents et des filtres, puis en peignant à la main les zones restantes.","Retouche dans Blender de modèles de buissons sur mesure afin que leurs formes correspondent aux références visuelles de l’environnement.","Modélisation dans Cinema 4D d’un kit d’assets modulaires à partir de références architecturales du palais Esterházy, puis préparation des éléments pour l’assemblage de l’environnement dans Unreal Engine.","Modélisation de la boîte en bois et adaptation de la balançoire à bascule.","Assemblage des environnements pour les visuels précalculés, en suivant la direction artistique du projet.","Mise en place d’une dynamique de lancer d’objets soumise à la gravité, avec des réglages comparables à ceux d’une simulation physique dans Cinema 4D."],
+      technicalChallenges: ["Le défi — pouvoir ajuster le mouvement des objets lancés pendant la production de visuels précalculés.","La réponse — j’ai mis en place une dynamique d’objets soumise à la gravité dans la scène, pour ajuster et prévisualiser les mouvements pendant la production.","Le résultat — cette dynamique permettait d’itérer avant le rendu final ; le spectacle diffusait ensuite du contenu précalculé."],
+      pipeline: ["Modélisation, sculpture et adaptation de certains assets","Préparation high/low et bake des normal maps","Texturing","Mise en place de la dynamique et revue des mouvements","Préparation pour le rendu"],
+      impact: "Les assets et les dynamiques d’objets sur lesquels j’ai travaillé contribuaient aux visuels précalculés de la tournée, sous la direction artistique et motion du projet.",
+      creditsNote: "Directrice artistique : Éliane Achcar. Réalisateur multimédia : Tommy Caron. Leads Motion Designers : Daniella Tran Van, Michel Greco. Production : Normal Studio."
     },
 
     traveler: {
+      galleryAlts: ["Formation cristalline rose dans un environnement tourbillonnant bleu et blanc.", "Filaments dorés courbes autour d’un globe rocheux flottant sur fond vert.", "Vue circulaire de spirales cristallines rouges et blanches.", "Sphère rocheuse et filaments dorés courbes dans un cadrage circulaire sombre pour le dôme.", "Sphère blanche et dorée entourée de filaments dorés courbes sur fond noir."],
       category: 'Film immersif · Dôme',
       cardCategory: 'Film immersif',
       roleTitle: 'Cofondateur',
@@ -487,6 +494,7 @@ window.KP_FR = {
     },
 
     paralleles: {
+      galleryAlts: ["Visiteurs traversant des portiques lumineux en X près d’une façade projetée, de nuit.", "Portiques métalliques extérieurs à barres diagonales colorées, de jour.", "Vue de travail dans Unreal Engine montrant des portiques éclairés en violet sur une place."],
       category: 'Installation interactive · Temps réel',
       desc: 'Une installation interactive bâtie sur une chaîne caméra-présentation synchronisée, qui relie des séquences cinématographiques à des visuels procéduraux. Réalisée en 28 heures.',
       overview: 'Développé avec Transversal, PARALLÈLES demandait que deux systèmes visuels se comportent comme une seule ligne de temps de production. Les séquences de caméra cinématographique menaient la présentation, des messages OSC déclenchaient les événements procéduraux dans TouchDesigner, et les images obtenues revenaient dans la scène temps réel pour la capture et la revue.',
@@ -498,6 +506,7 @@ window.KP_FR = {
     },
 
     batiscan: {
+      galleryAlts: ["Maquette de terrain projetée sur une table dans une salle aux grandes fenêtres.", "Vue de dessus d’une maquette enneigée aux cours d’eau bleus.", "Projection de terrain vert avec des noms de lieux blancs et une rivière sinueuse.", "Vue oblique d’une maquette de terrain enneigée aux eaux bleues.", "Panneau d’information sur tablette devant une maquette de terrain projetée en vert."],
       category: 'Maquette interactive · Conception de mapping vidéo',
       cardCategory: 'Maquette interactive',
       roleTitle: 'À mon compte',
@@ -510,11 +519,12 @@ window.KP_FR = {
       technicalChallenges: ['Le défi — le contenu projeté devait s’aligner sur la géométrie physique de la maquette et rester lisible depuis plusieurs points de vue de visiteurs.', 'La réponse de production — précision de projection, contraste du terrain, transitions saisonnières, comportement de l’eau et éclairage ont été évalués ensemble, à l’aune de la lisibilité pour le public.', 'L’effet sur la production — le système visuel a donné aux visiteurs une vue d’ensemble claire du paysage et de ses saisons avant qu’ils ne commencent à explorer le parc.'],
       impact: 'Le contenu final est devenu la base visuelle de l’installation interactive, aidant les visiteurs à mieux comprendre les paysages et les transformations saisonnières du Parc de la Rivière Batiscan avant leur visite. L’ensemble de la production visuelle a été réalisé en 72 heures.',
       pipeline: ['Planification de la projection sur maquette physique', 'Look development du terrain et des saisons', 'Eau et mouvement de l’environnement', 'Revue de lisibilité sous plusieurs angles', 'Compositing final', 'Transfert pour l’intégration interactive'],
-      creditsNote: 'Courtoisie et photographies : XYZ Technologies',
+      creditsNote: "Courtoisie et photographies : XYZ Technologies",
       externalLabel: 'Voir plus sur XYZ Technologies'
     },
 
     epernay: {
+      galleryAlts: ["Mapping géométrique jaune et vert sur une façade devant le public.", "Contours architecturaux blancs projetés sur un bâtiment de nuit.", "Motifs verticaux verts projetés sur la façade au-dessus de la foule.", "Fragments de pierre gris projetés sur la partie basse de la façade.", "Blocs lumineux fragmentés projetés à la base du bâtiment."],
       category: 'Mapping vidéo · Architectural',
       client: 'Ville d’Épernay',
       venue: 'Épernay, France',
@@ -531,6 +541,7 @@ window.KP_FR = {
     },
 
     colosseum: {
+      galleryAlts: ["Vue large du Colisée éclairé en bleu avec des images de navires projetées.", "Navires sur l’eau projetés sur le Colisée éclairé en bleu.", "Projections de navires et de flammes orangées sur le Colisée éclairé en bleu.", "Vue large d’une rangée de personnages projetés sur le Colisée éclairé en rouge.", "Deux combattants projetés à grande échelle sur le Colisée.", "Alignement de gladiateurs blancs projetés sous un éclairage architectural rouge.", "Bannière illustrée de Priscus et Verus projetée sur le Colisée.", "Buste sculpté lumineux projeté sur la façade sombre du Colisée.", "Tracé architectural blanc projeté sur la façade du Colisée."],
       category: 'Mapping vidéo · Architectural',
       venue: 'Colisée de Rome',
       desc: 'L’une de mes premières productions internationales de grande échelle, mêlant captation, animation et projection architecturale au Colisée de Rome.',
@@ -546,6 +557,7 @@ window.KP_FR = {
     },
 
     luminart: {
+      galleryAlts: ["Emblème circulaire segmenté en verre bleu sur fond sombre.", "Sphère bleue texturée lumineuse entourée de fins anneaux concentriques.", "Colonne bleue translucide entourée d’anneaux lumineux bleus et violets."],
       category: 'Logo animé · Motion design',
       cardCategory: 'Logo animé',
       roleTitle: 'À mon compte',
@@ -562,34 +574,36 @@ window.KP_FR = {
     },
 
     'memoire-eau': {
+      galleryAlts: ["Motifs fluides clairs projetés sur les arcs gothiques et la pierre d’une façade d’église de nuit."],
       category: 'Mapping vidéo · Architectural',
       cardCategory: 'Mapping vidéo',
       roleTitle: 'À mon compte',
       venue: 'Église St. Mark, Vieux-Longueuil',
       desc: 'Un mapping avec une commande bien à lui : tenir toute une soirée de festival à côté d’une scène musicale, et offrir aux gens un endroit où ralentir.',
-      overview: 'Créée pour le Lumifest Longueuil 2023 et projetée sur le mur extérieur de l’église St. Mark, la pièce rend hommage à la molécule d’eau — présente dans chaque corps vivant et dans les écosystèmes autour. Sa place dans la programmation l’a façonnée autant que son sujet. Le mur jouxtait une scène musicale : l’oeuvre ne pouvait pas répondre au bruit par le bruit, il lui fallait tenir un calme dans lequel la foule puisse entrer.',
+      overview: "Créée pour le Lumifest Longueuil 2023 et projetée sur le mur extérieur de l’église St. Mark, cette œuvre rend hommage à l’eau et à sa présence dans les corps vivants et les écosystèmes. Je l’ai développée comme une création personnelle, en composant des mouvements fluides avec la façade. Elle suivait son propre rythme, indépendamment de la musique programmée, tout en étant pensée pour s’accorder avec l’ambiance de la soirée.",
       role: 'Artiste 3D à mon compte — concept, simulation, look development, animation, compositing et pixel mapping',
-      contribution: ['Écriture de la pièce et production menée seul, des premières images au pixel map livré pour la projection.', 'Construction de l’eau — simulation dans Fluid Flux, puis ombrage, éclairage et compositing — pour qu’elle se lise comme de l’eau depuis l’autre côté de la rue, et pas seulement de près.', 'Composition avec les ouvertures gothiques et les reliefs de l’église, plutôt qu’une projection par-dessus.', 'Rythme de la pièce calé sur le tempo de la scène musicale voisine.'],
-      designIntent: 'L’eau traverse chaque corps et chaque écosystème, et la pièce lui rend hommage. À côté d’une scène musicale, elle avait aussi une tâche concrète : être la part tranquille de la soirée. La lenteur du fluide, la retenue de la palette et les longs mouvements viennent de là — un endroit où s’arrêter et respirer, comme l’eau le permet.',
-      technicalChallenges: ['Le défi — un mur n’est pas un écran. Arcs gothiques, relief de pierre et ouvertures sombres déforment l’image et avalent la lumière, et l’eau qui porte la pièce devait rester reconnaissable de loin, la nuit, sur de la pierre.', 'La réponse de production — l’architecture est devenue une part de la composition au lieu d’un obstacle à recouvrir, et le fluide a été réglé pour la distance de vision plutôt que pour un réalisme de gros plan : mouvement plus ample, contraste plus fort, déplacement plus lent.', 'L’effet sur la production — l’image a tenu sur une surface irrégulière et a gardé le calme qu’elle était là pour offrir, à quelques mètres d’une scène qui jouait toute la soirée.'],
-      pipeline: ['Concept et travail de références', 'Simulation de fluide dans Fluid Flux', 'Ombrage et éclairage', 'Animation et rythme calés sur le lieu', 'Compositing', 'Préparation du pixel map pour la façade'],
-      impact: 'La pièce a été présentée au Lumifest Longueuil 2023 sur le mur de l’église St. Mark, comme le point lent d’une soirée construite autour d’une scène musicale.',
-      externalLabel: 'Voir le Lumifest Longueuil'
+      contribution: ["Conception et production de l’œuvre en autonomie, des premières images au pixel map livré pour la projection.","Travail sur la fluidité et les mouvements singuliers de l’eau à travers la simulation et l’animation.","Composition du mapping autour de ces mouvements, en lien avec les ouvertures gothiques et les reliefs de l’église.","Création d’un rythme visuel indépendant de la musique programmée, en tenant compte de l’ambiance de la soirée."],
+      designIntent: "L’œuvre explore l’eau à travers sa fluidité et ses mouvements singuliers. Je voulais faire dialoguer ces mouvements avec l’architecture et proposer une présence contemplative à côté de la scène musicale. La création était pensée pour s’accorder avec l’ambiance de la programmation, sans être synchronisée aux morceaux diffusés.",
+      technicalChallenges: ["Le défi — préserver la continuité et la fluidité des mouvements sur une façade interrompue par les arcs gothiques, les reliefs de pierre et les ouvertures sombres.","La réponse — j’ai composé le mapping autour des mouvements de l’eau et des particularités de l’architecture, en travaillant la façon dont l’image circulait sur la surface.","Le résultat — la façade prenait part au mouvement d’une œuvre qui suivait son propre rythme, aux côtés de la programmation musicale."],
+      pipeline: ["Concept et références","Simulation de fluide","Recherche de fluidité et de mouvements","Animation et mapping architectural","Compositing","Préparation du pixel map pour la façade"],
+      impact: "Présentée au Lumifest Longueuil 2023 sur le mur de l’église St. Mark, la pièce portait ma démarche personnelle — comme le disait Dominique Arcand, « une œuvre signée Killian Pichon ».",
+      externalLabel: 'Voir le Lumifest Longueuil',
+      creditsNote: "Merci à Dominique Arcand pour sa confiance et pour m’avoir donné l’occasion de prendre mon élan en tant qu’artiste émergent."
     }
   },
 
   head: {
     home: {
-      title: 'Killian Pichon — Généraliste 3D / Temps réel',
-      description: 'Killian Pichon est un artiste immersif basé à Montréal, actif en graphisme temps réel, en direction technique et en narration visuelle, pour le cinéma fulldôme, le mapping vidéo et les expériences sur site.'
+      title: 'Killian Pichon — Artiste 3D à Montréal | Portfolio',
+      description: 'Killian Pichon, artiste 3D à Montréal. Portfolio d’animation 3D, de création temps réel, de films fulldôme et de mapping vidéo pour des expériences immersives.'
     },
     about: {
       title: 'Profil — Killian Pichon',
       description: 'Expérience de production, spécialisations et façon de travailler de Killian Pichon, artiste immersif basé à Montréal.'
     },
     technical: {
-      title: 'Démarche de production — Killian Pichon',
-      description: 'Études de production, décisions de flux de travail et intérêts en direction technique derrière le travail immersif de Killian Pichon.'
+      title: 'Outils & méthodes — Killian Pichon',
+      description: 'Scripts Python pour Cinema 4D, outils de production et mappings MIDI DJ de Killian Pichon. Projets professionnels, outils personnels et expérimentations à réutiliser.'
     },
     demos: {
       title: 'Autres démos — Killian Pichon',

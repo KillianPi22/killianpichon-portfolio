@@ -67,6 +67,8 @@ Avant de considérer une modification terminée :
 
 ## Direction éditoriale
 
+- Tous les fichiers publiés par le propriétaire sont vérifiés localement par lui, notamment les scripts et mappings. Prendre cette validation comme acquise pour les versions qu'il publie ; ne pas les présenter comme « à vérifier », « non testées » ou « candidates » uniquement parce que Codex ne peut pas les exécuter dans son environnement.
+- Distinguer la validation du propriétaire des contrôles réalisés par Codex dans les comptes rendus. Ne pas étendre cette validation à d'autres configurations ou à de nouvelles modifications fonctionnelles non essayées par le propriétaire.
 - Ne jamais présenter un logiciel, un moteur ou une technique comme l'accomplissement. Les outils servent uniquement à situer le contexte de production.
 - Construire chaque récit autour du problème à résoudre, des décisions prises, des compromis rencontrés et de leur impact sur la production.
 - Expliquer pourquoi le travail comptait, pas seulement ce qui a été fabriqué.

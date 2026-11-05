@@ -1,0 +1,304 @@
+/* Generated from index.html by tools/build-technical.cjs. */
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root{--font-display:'Archivo',system-ui,sans-serif;--font-body:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',monospace}
+
+:root{
+--void-950:#0a0a0b;--void-900:#0e0e10;--void-850:#131316;--void-800:#19191d;--void-700:#232328;--void-600:#313138;
+--line-subtle:rgba(255,255,255,.07);--line-default:rgba(255,255,255,.13);--line-strong:rgba(255,255,255,.22);
+--white-100:#f5f4f0;--white-80:#c9c8c4;--grey-500:#9a999f;--grey-600:#77767c;--grey-700:#57565c;
+--ember-500:#ff5a2a;--ember-600:#e8481e;--ember-400:#ff8259;--ember-dim:#3a2016;--ember-glow:rgba(255,90,42,.35);
+--surface-page:var(--void-950);--surface-1:var(--void-900);--surface-2:var(--void-850);--surface-3:var(--void-800);--surface-raised:var(--void-700);
+--border-color:var(--line-subtle);--border-color-strong:var(--line-default);
+--text-heading:var(--white-100);--color-text-body:var(--white-80);--text-muted:var(--grey-500);--text-faint:var(--grey-700);
+--accent:var(--ember-500);--accent-hover:var(--ember-400);--accent-dim:var(--ember-dim);--accent-glow:var(--ember-glow);
+--focus-ring:rgba(255,90,42,.55)
+}
+
+:root{
+--text-display-xl:clamp(3.4rem,calc(6vw + 1rem),6.8rem);--text-display-lg:clamp(2.4rem,calc(4vw + 1rem),4.2rem);--text-display-md:clamp(1.8rem,calc(2.4vw + 1rem),2.6rem);
+--text-h1:clamp(1.6rem,calc(1.6vw + 1rem),2.1rem);--text-h2:1.5rem;--text-h3:1.125rem;
+--color-text-body-lg:1.0625rem;--font-size-body:.9375rem;--text-small:.8125rem;--text-micro:.6875rem;
+--leading-tight:1.02;--leading-snug:1.2;--leading-normal:1.55;--leading-relaxed:1.7;
+--tracking-tight:-0.02em;--tracking-normal:0;--tracking-wide:.1em;--tracking-widest:.18em;
+--weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;--weight-black:800
+}
+
+:root{
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;--space-10:128px;--space-11:160px;--space-12:200px;
+--container-max:1440px;--container-pad:clamp(20px,4vw,64px);--grid-columns:12;/* @kind other */--grid-gap:24px
+}
+
+:root{
+--radius-xs:2px;--radius-sm:4px;--radius-md:8px;--radius-lg:14px;--radius-pill:999px;
+--shadow-soft:0 1px 0 rgba(255,255,255,.03) inset,0 12px 40px rgba(0,0,0,.35);
+--shadow-glow:0 0 48px var(--accent-glow);
+--blur-panel:blur(16px);/* @kind other */
+--ease-out:cubic-bezier(.16,1,.3,1);/* @kind other */--ease-in-out:cubic-bezier(.65,0,.35,1);/* @kind other */
+--duration-fast:150ms;/* @kind other */--duration-base:320ms;/* @kind other */--duration-slow:640ms/* @kind other */
+}
+
+
+
+
+
+
+*{box-sizing:border-box}
+html{background:var(--surface-page);overflow-x:hidden;scroll-behavior:smooth}
+body{margin:0;background:var(--surface-page);color:var(--color-text-body);font-family:var(--font-body);font-size:var(--font-size-body);line-height:var(--leading-normal);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);color:var(--text-heading);margin:0;letter-spacing:var(--tracking-tight)}
+a{color:var(--text-heading);text-decoration:none}
+a:hover{color:var(--accent-hover)}
+button,input,select,textarea{font:inherit}
+button{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+::selection{background:var(--accent);color:var(--void-950)}
+
+.site-nav{position:relative;z-index:30}
+/* Le filet de gauche separe le choix de langue des liens de navigation : ce
+   n'est pas une cinquieme destination. Meme graisse et meme casse que les
+   liens voisins, pour qu'il se lise comme un reglage et non comme un bouton. */
+.site-lang{display:flex;align-items:center;gap:6px;margin-left:32px;padding-left:32px;border-left:1px solid var(--line-subtle);align-self:stretch}
+.site-lang-link{font-size:var(--text-micro);letter-spacing:var(--tracking-widest);text-transform:uppercase;padding-bottom:4px;transition:color var(--duration-base) var(--ease-out)}
+.site-lang-link:hover{color:var(--text-heading)}
+/* Teinte de texte et non de filet : une barre oblique posee en --line-default
+   se perdait completement sur le fond, et les deux libelles paraissaient
+   flotter cote a cote. --text-faint la rend lisible tout en la gardant
+   inferieure aux deux langues qu'elle separe. */
+.site-lang-sep{font-size:var(--text-micro);color:var(--text-faint);padding-bottom:4px;user-select:none}
+.hero{min-height:calc(100vh + 2px);min-height:calc(100dvh + 2px)}
+.site-mark{display:inline-flex;align-items:center;min-height:32px}
+.about-intro{display:grid;grid-template-columns:minmax(0,640px) minmax(240px,360px);gap:clamp(40px,7vw,112px);align-items:end;max-width:1120px}
+.about-profile-figure{width:100%;max-width:360px;margin:0;justify-self:end}
+.about-profile-image{display:block;width:100%;height:auto;border:1px solid var(--line-subtle);border-radius:var(--radius-sm);background:var(--surface-2)}
+.about-profile-caption{margin-top:10px;font-family:var(--font-mono);font-size:var(--text-micro);line-height:var(--leading-normal);color:var(--text-faint);letter-spacing:var(--tracking-wide);text-transform:uppercase}
+.view-all-button,.project-back,.related-project-button{appearance:none;background:none;border:0;padding:0}
+.view-all-button{display:inline-flex;align-items:center;gap:10px;font-size:var(--text-small);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--tracking-wide);cursor:pointer}
+.view-all-button:hover{color:var(--text-heading)}
+.view-all-toggle-icon{position:relative;display:inline-block;flex:0 0 auto;width:11px;height:11px;color:var(--accent);transition:color .3s ease,transform .3s ease}
+.view-all-toggle-icon::before,.view-all-toggle-icon::after{content:'';position:absolute;top:50%;left:50%;background:currentColor;transform:translate(-50%,-50%)}
+.view-all-toggle-icon::before{width:100%;height:1.5px}
+.view-all-toggle-icon::after{width:1.5px;height:100%;transition:transform .34s cubic-bezier(.65,0,.35,1)}
+.view-all-button[aria-expanded="true"] .view-all-toggle-icon::after{transform:translate(-50%,-50%) rotate(90deg)}
+.view-all-button[aria-expanded="false"] .view-all-toggle-icon{animation:kp-toggle-pulse 2.6s cubic-bezier(.45,0,.55,1) infinite}
+.view-all-button:hover .view-all-toggle-icon,.view-all-button:focus-visible .view-all-toggle-icon{animation:none;color:var(--accent-hover);transform:scale(1.15)}
+@keyframes kp-toggle-pulse{0%,52%,100%{transform:scale(1);opacity:.85}18%{transform:scale(1.32);opacity:1}36%{transform:scale(1);opacity:.85}}
+.project-media-grid{min-width:0;align-content:start}
+.project-media-tile{appearance:none;width:100%;min-width:0;aspect-ratio:16/9;padding:0;text-align:inherit}
+.project-media-tile:hover:not(:disabled),.project-media-tile:focus-visible,.project-media-tile[aria-pressed="true"]{outline:2px solid var(--accent);outline-offset:2px;box-shadow:0 0 16px var(--accent-glow)}
+.project-media-tile:focus-visible .project-video-play,.project-media-tile:hover .project-video-play,.project-media-tile[aria-pressed="true"] .project-video-play{border-color:var(--accent);color:var(--accent)}
+.project-video-play{width:48px;height:48px;border-radius:50%;background:rgba(10,10,11,.8);border:2px solid var(--text-heading);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text-heading)}
+.project-video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+/* Fondu du carrousel ordinateur et tablette ; la grille telephone reste sans masque. */
+.clients-track{
+    -webkit-mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 28px),transparent);
+    mask-image:linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 28px),transparent);
+}
+/* Drive impose 300 px a son lecteur interne ; lui reserver cet espace sur mobile. */
+@media(max-width:1024px){
+  .project-video-player{width:100%;min-width:0;max-width:100%;min-height:var(--project-player-min-height,202px);flex-shrink:0}
+  .project-video-player>iframe{display:block;max-width:100%;max-height:100%}
+}
+.project-card-lock{position:absolute;top:50%;left:50%;z-index:1;width:34px;height:25px;transform:translate(-50%,-50%);border-radius:4px;background:var(--text-faint)}
+.project-card-lock::before{content:'';position:absolute;left:50%;bottom:100%;width:20px;height:14px;transform:translateX(-50%);border:3px solid var(--text-faint);border-bottom:0;border-radius:11px 11px 0 0}
+/* Tuile sous NDA : la vignette reste visible, assombrie pour que le verrou se
+   detache quelle que soit l'image. */
+.thumb-locked::after{content:'';position:absolute;inset:0;background:rgba(10,10,11,.45)}
+.thumb-locked .project-card-lock{background:var(--text-heading)}
+.thumb-locked .project-card-lock::before{border-color:var(--text-heading)}
+/* Index des projets suivants. Il ne sert que sous 768 px : au-dela, la grille
+   reste la bonne reponse. Sur telephone, six cartes pleine largeur demandaient
+   deux ecrans et demi ; l'index les ramene a trois lignes et demie, le reste
+   se deroulant sur place plutot qu'en allongeant la page. */
+.project-index{display:none;margin-top:var(--space-5)}
+.project-index-scroll{max-height:290px;overflow-y:auto;overscroll-behavior:contain;
+  scroll-behavior:smooth;scroll-snap-type:y proximity;-webkit-overflow-scrolling:touch;
+  border-top:1px solid var(--line-subtle);
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 38px),transparent);
+  mask-image:linear-gradient(to bottom,#000 calc(100% - 38px),transparent)}
+.project-index-open .project-index-scroll{max-height:none;-webkit-mask-image:none;mask-image:none}
+.project-index-row{display:flex;gap:14px;align-items:center;padding:12px 0;
+  border-bottom:1px solid var(--line-subtle);color:inherit;scroll-snap-align:start}
+.project-index-row:hover{color:inherit}
+.project-index-thumb{position:relative;flex:0 0 76px;height:57px;overflow:hidden;
+  border-radius:var(--radius-sm);border:1px solid var(--line-subtle);
+  background-color:var(--surface-2);background-size:cover;background-position:center}
+.project-index-thumb .project-card-lock{width:20px;height:15px;border-radius:2px}
+.project-index-thumb .project-card-lock::before{width:12px;height:8px;border-width:2px;border-radius:6px 6px 0 0}
+.project-index-body{min-width:0;flex:1}
+.project-index-title{display:block;font-family:var(--font-display);font-weight:700;font-size:15px;
+  line-height:1.15;color:var(--text-heading);text-transform:uppercase;letter-spacing:var(--tracking-tight)}
+/* Deux lignes plutot qu'une coupure : tronquer faisait disparaitre l'annee,
+   qui est la donnee la plus utile de la ligne. */
+.project-index-meta{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  margin-top:5px;font-family:var(--font-mono);font-size:10px;line-height:1.4;
+  color:var(--text-muted);letter-spacing:var(--tracking-wide);text-transform:uppercase;
+  overflow:hidden}
+.project-index-go{flex:0 0 auto;color:var(--text-faint);font-size:15px}
+.project-index-row:active .project-index-go{color:var(--accent)}
+.project-index-toggle{appearance:none;width:100%;min-height:44px;margin-top:12px;padding:10px 0;background:none;
+  border:0;border-bottom:1px solid var(--line-subtle);color:var(--text-muted);cursor:pointer;
+  font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:var(--tracking-wide);
+  text-transform:uppercase}
+.project-index-toggle:hover{color:var(--text-heading)}
+@media (prefers-reduced-motion:reduce){.project-index-scroll{scroll-behavior:auto}}
+
+.project-gate{display:flex;justify-content:center;padding:clamp(80px,14vh,160px) var(--container-pad)}
+.project-gate-panel{width:min(520px,100%);padding:clamp(24px,5vw,40px);border:1px solid var(--line-default);border-radius:var(--radius-md);background:var(--surface-2)}
+.modal-backdrop{overscroll-behavior:contain}
+@media (min-width: 768px){
+  html.kp-snap .hero{min-height:100vh;min-height:100dvh}
+}
+.awards-row{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.awards-cell{border-left:1px solid var(--line-subtle);min-width:0}
+.awards-cell:nth-child(6n+1){border-left:none}
+.awards-cell:nth-child(n+7){border-top:1px solid var(--line-subtle)}
+@media (max-width: 1023px){
+  .awards-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .awards-cell:nth-child(n){border-left:1px solid var(--line-subtle);border-top:none}
+  .awards-cell:nth-child(3n+1){border-left:none}
+  .awards-cell:nth-child(n+4){border-top:1px solid var(--line-subtle)}
+}
+@media (max-width: 640px){
+  .awards-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .awards-cell:nth-child(n){border-left:1px solid var(--line-subtle);border-top:none}
+  .awards-cell:nth-child(2n+1){border-left:none}
+  .awards-cell:nth-child(n+3){border-top:1px solid var(--line-subtle)}
+}
+.kp-scroll-arrow{display:inline-block;line-height:1;animation:kp-scroll-bob 1.6s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes kp-scroll-bob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(10px);opacity:1}}
+
+@media (max-width: 1024px){
+  .project-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .project-hero-grid{grid-template-columns:minmax(260px,340px) 1fr!important;gap:var(--space-6)!important}
+}
+
+@media (max-width: 767px){
+  .site-nav{padding:20px var(--container-pad)!important;gap:10px}
+  .site-nav-links{gap:10px!important;min-width:0}
+  .site-nav-link{font-size:10px!important;letter-spacing:.12em!important;white-space:nowrap}
+  /* Sur telephone, les quatre liens et la paire de langues ne tiennent pas
+     ensemble a droite : en francais le bloc debordait des 375 px. Deux
+     ajustements, et un seul element dans les deux cas, jamais un exemplaire
+     cache en double.
+     1. Le bloc passe a gauche, contre le monogramme, par un simple ordre.
+     2. Seule la langue vers laquelle on bascule reste affichee. La langue
+        courante et la barre oblique disparaissent : le contenu de la page dit
+        deja dans quelle langue on se trouve, et un libellé unique demande
+        trois fois moins de place. */
+  .site-mark{order:0}
+  .site-lang{order:1;margin-left:12px;padding-left:0;border-left:0;gap:0}
+  .site-nav-links{order:2;gap:8px!important}
+  .site-lang-link,.site-lang-sep{font-size:10px!important;letter-spacing:.12em!important}
+  .site-lang-link[aria-current="true"],.site-lang-sep{display:none}
+  /* Seule de son espece, la langue restante n'est plus le terme secondaire
+     d'une paire : c'est une action, et elle doit se lire comme telle. La
+     pastille reprend le trace des etiquettes du site — meme rayon, meme filet,
+     meme casse — plutot que d'inventer une forme. Le libelle nu offrait une
+     cible de 16 x 21 px, tres en dessous des 44 px recommandes ; le
+     pseudo-element etend la zone tactile sans rien agrandir a l'ecran, et la
+     hauteur de la pastille s'aligne sur celle du monogramme pour ne pas
+     changer la hauteur de la barre. */
+  .site-lang-link{
+    position:relative;display:inline-flex;align-items:center;
+    min-height:30px;padding:0 10px!important;
+    border:1px solid var(--line-default)!important;
+    border-radius:var(--radius-pill);
+    color:var(--text-heading)!important;
+  }
+  .site-lang-link::after{content:'';position:absolute;inset:-7px -4px}
+  .site-mark{font-size:16px!important;flex:0 0 auto}
+
+  .about-intro{grid-template-columns:1fr;gap:var(--space-6);align-items:start}
+  .about-profile-figure{max-width:420px;justify-self:start}
+
+  .hero{padding:108px var(--container-pad) 0!important;min-height:0!important}
+  .hero-main{display:block!important}
+  .hero-left{width:100%!important}
+  .hero-title-wrap h1,.hero-title-wire{font-size:clamp(3rem,16vw,4.6rem)!important}
+  .hero-art{display:none!important}
+  .hero-scroll-indicator{gap:0!important}
+  .hero-scroll-indicator .kp-scroll-label{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;white-space:nowrap;clip-path:inset(50%)}
+  .hero-scroll-indicator .kp-scroll-arrow{font-size:calc(var(--text-small) * 2.6)!important}
+  .hero-reel{width:min(280px,100%)!important}
+
+  .featured-projects{padding:72px var(--container-pad)!important}
+  .section-heading{align-items:flex-start!important;gap:16px}
+  .section-heading h2{font-size:1.45rem!important}
+  /* Le telephone montre les quatre projets en vue d'ensemble, deux par
+     rangee, et le bouton bascule cette vue vers l'index complet. Une carte
+     par ligne obligeait a defiler pour en voir une seule a la fois. */
+  .project-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+  .project-grid .thumb{margin-bottom:10px!important}
+  /* cadenas remis a l'echelle de la tuile reduite */
+  .project-grid .project-card-lock{width:26px;height:19px}
+  .project-grid .project-card-lock::before{width:15px;height:11px;border-width:2.5px;border-radius:8px 8px 0 0}
+  .project-grid-featured a > div:nth-child(2){font-size:14px!important;line-height:1.15!important}
+  .project-grid-featured a > div:nth-child(3){font-size:9px!important;margin-top:4px!important;line-height:1.4!important}
+  .project-grid-more{display:none!important}
+  .projects-expanded .project-grid-featured{display:none!important}
+  .project-index{display:block;margin-top:0}
+  .clients-section,.awards-section{padding-left:var(--container-pad)!important;padding-right:var(--container-pad)!important}
+
+  .contact-layout{grid-template-columns:1fr!important;gap:var(--space-7)!important;padding:48px var(--container-pad) 80px!important}
+  .contact-form{max-width:none!important;width:100%}
+  .contact-name-email{grid-template-columns:1fr!important;gap:0!important}
+
+  .project-page-container{padding:0 var(--container-pad)!important}
+  .project-hero-grid{grid-template-columns:1fr!important;gap:var(--space-6)!important}
+  .project-summary{min-width:0}
+  .project-media-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .project-details-grid{grid-template-columns:1fr!important;gap:var(--space-5)!important;margin-top:var(--space-7)!important}
+  .project-nav-edge{top:50%!important;top:50dvh!important;bottom:auto!important;transform:translateY(-50%)!important}
+  .project-nav-edge-prev{left:12px!important}
+  .project-nav-edge-next{right:12px!important}
+  .project-nav-edge .pn-label{display:none!important}
+  .project-nav-button{width:44px!important;height:44px!important}
+  .modal-backdrop{padding:20px!important}
+
+  .exp-timeline{--exp-lane-0:11px!important;--exp-lane-gap:10px!important}
+  .exp-rail{left:11px!important}
+  .exp-row{grid-template-columns:38px 1fr!important;column-gap:4px}
+  .exp-row .exp-dot-cell{grid-column:1;grid-row:1/span 2}
+  .exp-row .exp-year{grid-column:2;grid-row:1;transform:none!important;margin-bottom:6px}
+  .exp-row .exp-body{grid-column:2;grid-row:2}
+}
+
+/* Deux paliers pour les ecrans etroits, tous deux places APRES le bloc
+   telephone et jamais au milieu : glisse dedans, un tel palier en refermait la
+   moitie et privait les fiches projet de toute leur mise en page.
+
+   Le francais coute une trentaine de pixels de plus que l'anglais dans la
+   barre, et la pastille une vingtaine. En dessous d'une certaine largeur, ces
+   deux couts ne rentrent plus. On rend alors du confort, jamais de la lecture :
+   un lien de navigation tronque est une perte reelle. */
+
+/* 360 a 374 px : tout tient encore, mais d'un cheveu. Un point de corps en
+   moins vaut mieux qu'une barre tassee. 9 px est deja employe ailleurs sur
+   telephone, dans les vignettes de la grille. */
+@media (max-width: 374px){
+  .site-nav-link,.site-lang-link{font-size:9px!important}
+}
+
+/* Sous 360 px : meme a 9 px la pastille ne rentre plus. On revient au libelle
+   nu, dont la zone tactile reste etendue par le pseudo-element. */
+@media (max-width: 359px){
+  .site-lang{margin-left:10px}
+  .site-nav-links{gap:8px!important}
+  .site-lang-link{min-height:0;padding:0!important;border:0!important}
+  .site-lang-link::after{inset:-11px -8px}
+}
+
+@media (hover: none){
+  .project-nav-edge{top:50%!important;top:50dvh!important;bottom:auto!important;transform:translateY(-50%)!important}
+  .project-nav-edge-prev{left:12px!important}
+  .project-nav-edge-next{right:12px!important}
+  .project-nav-edge .pn-label{display:none!important}
+  .project-nav-button{width:44px!important;height:44px!important}
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  html.kp-snap{scroll-snap-type:none}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}

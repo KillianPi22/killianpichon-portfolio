@@ -1,5 +1,227 @@
 # Portfolio de Killian Pichon
 
+### Validation locale des fichiers publiés — 22 octobre 2026
+
+Le propriétaire confirme qu'il vérifie localement tous les fichiers qu'il
+publie. Cette règle est conservée dans `AGENTS.md` pour les prochaines sessions.
+L'absence d'exécution dans l'environnement de Codex ne doit pas devenir une
+mention publique « à vérifier » ni remettre en cause les essais du propriétaire.
+Cette validation concerne les versions publiées et les configurations indiquées.
+
+Les en-têtes des scripts français et anglais `downloads/Select_Similar_Angle*.py`
+indiquent maintenant les essais locaux dans Cinema 4D 2026. Seule leur
+documentation change ; leur logique reste identique. `data/technical.js`
+confirme les deux langues et la validation du mapping 5.1.0 avec les deux
+Denon DN-SC2000 sous Windows / Traktor Pro 4. Le rappel d'un ancien statut de
+version candidate est retiré des fiches du portfolio. Les références de cache
+dans `index.html` et les six pages régénérées passent à `20261022-tools-v6`.
+
+Vérifications : syntaxe Python et comparaison des arbres syntaxiques hors
+documentation ; contrôles HTTP des six pages en français et en anglais à
+320, 390, 768 et 1440 px, navigation et ancres, ressources, copie et
+téléchargements, repli sans JavaScript, console, réseau, consentement et refus
+des chemins sensibles. Captures mobile, tablette et ordinateur contrôlées.
+La validation fonctionnelle dans C4D et sur les contrôleurs est celle du
+propriétaire ; ces applications et appareils ne sont pas réessayés par Codex.
+`CNAME`, `.nojekyll`, les médias, protections et réglages de publication sont
+conservés. Correction préparée depuis `main` distant `b0a0478`, sans reprendre
+les autres travaux locaux de l'éditeur.
+
+### Allègement du texte de réutilisation — 22 octobre 2026
+
+Les versions française et anglaise retirent les deux précisions demandées
+sur la mesure du gain et sur l’absence de service IA ou de requête réseau.
+Les textes restent dans `data/technical.js` ; les pages statiques sont
+régénérées et les références de cache passent à `20261022-tools-v5`.
+Contrôles HTTP des six pages réussis en français et en anglais à 320, 390,
+768 et 1440 px : navigation, ressources, copie, téléchargements, console,
+réseau, consentement et chemins sensibles.
+
+### Captures de l’outil localisées — 22 octobre 2026
+
+La capture française de Select Similar – Angle remplace le nom de l’objet
+par « Objet ». Une variante anglaise reprend les libellés exacts du script
+anglais et affiche « Object ». Chaque fiche utilise l’image de sa langue ;
+la légende anglaise précise qu’elle est traduite depuis la capture d’origine.
+Ces retouches utilisent ImageGen intégré. Les boutons, le curseur à 11°, la
+case décochée et la disposition sont conservés. Les scripts Python ne changent pas.
+
+Les fichiers `assets/tools/select-similar-angle-interface.{webp,png}` sont
+remplacés et `assets/tools/select-similar-angle-interface-en.{webp,png}` sont
+ajoutés. Les images sont ramenées aux dimensions de la nouvelle capture fournie,
+416 × 272, et encodées en WebP sans perte (environ 82 Ko) avec repli PNG
+(environ 99 Ko). `data/technical.js` définit les images, textes alternatifs et
+légendes ; la révision `20261022-tools-v4` renouvelle les caches. Les pages
+statiques sont régénérées. Le test HTTP vérifie la variante attendue par langue,
+ses dimensions et son repli PNG. Les prompts complets restent dans le dossier
+local d’artefacts de la tâche, hors du dépôt public.
+
+Publié avec le commit `100255d`. Déploiement GitHub Pages réussi ; les quatre
+fichiers image publiés correspondent aux versions locales. Les fiches française
+et anglaise chargent chacune leur image et leur légende. Contrôles HTTP locaux
+à 320, 390, 768 et 1440 px réussis, sans nouvelle erreur de console ou de réseau.
+
+### Scripts français et anglais — 22 octobre 2026
+
+Select Similar – Angle propose deux scripts autonomes : le fichier français
+`downloads/Select_Similar_Angle.py`, conservé octet pour octet, et sa traduction
+`downloads/Select_Similar_Angle_EN.py`. Cette dernière traduit les commandes,
+les messages d’état et d’erreur ainsi que les commentaires. La logique de
+sélection reste identique. La structure Python, hors textes, est comparée et
+les deux fichiers passent la compilation syntaxique ; la traduction anglaise
+n’a pas été exécutée dans Cinema 4D par cet environnement.
+
+Chaque fiche présente d’abord le script correspondant à sa langue, puis un
+volet dépliable pour l’autre version. Chaque code possède son bouton de copie
+et son téléchargement, avec un nom de fichier distinct. Le volet fonctionne
+aussi sans JavaScript. Le mode d’emploi utilise les libellés de la version
+présentée en premier. Chaque langue possède maintenant son aperçu d’interface ;
+la variante anglaise est identifiée comme une traduction de la capture d’origine.
+
+Les sources concernées sont `data/technical.js`, le rendu et le style
+`assets/technical-library.*`, le générateur `tools/build-technical.cjs` et le
+test `tools/test-technical-library.cjs`, avec les pages statiques régénérées.
+La révision de cache passe à `20261022-tools-v3`. Le test vérifie la copie,
+le repli manuel et le téléchargement de chaque langue, le volet déplié sur
+mobile et son fonctionnement sans JavaScript. Les deux versions ont été publiées
+à la demande du propriétaire avec le commit `9b138e0`. Le déploiement GitHub
+Pages a réussi ; les deux téléchargements et les boutons de copie des fiches
+française et anglaise ont aussi été vérifiés sur le domaine public.
+
+### Catalogue d’outils — 22 octobre 2026
+
+La page Technique est activée et mène à un catalogue statique :
+`technical/` en anglais et `technical/fr/` en français. Les trois rubriques
+sont **Projets professionnels**, **Outils personnels** et **Just for fun**.
+Les anciennes sections « Systèmes de production immersive » et « Trois cas de
+production » sont retirées à la demande du propriétaire. La page présente sa
+démarche à travers les besoins et les outils concrets. Les détails de production
+à autorisation restent annoncés comme tels, sans nouveau contenu sensible ni
+changement des accès existants.
+
+Deux premières fiches, chacune disponible en anglais et en français :
+
+- `technical/select-similar-angle/` : script Python pour sélectionner les
+  polygones de normales similaires dans Cinema 4D, même sans continuité entre
+  les faces. Le récit décrit le besoin de sélection, l’aide de l’IA et le choix
+  de rester dans Cinema 4D. Le propriétaire confirme ses essais dans C4D 2026.
+  Commandes, mode d’emploi, périmètre et limites accompagnent le code complet,
+  un bouton de copie et le téléchargement de `downloads/Select_Similar_Angle.py`.
+  Ce fichier reste identique octet pour octet à la source fournie. La copie
+  préserve le code et l’indentation ; en cas de refus du presse-papiers,
+  le champ se sélectionne et indique le raccourci de copie manuelle.
+  La capture fournie de l’interface apparaît sous l’introduction, avec texte
+  alternatif et légende dans les deux langues. Ses pixels et ses dimensions
+  de 425 × 275 sont préservés : WebP sans perte (43 Ko), avec repli PNG (78 Ko),
+  sans agrandissement à l’affichage. Les fichiers vivent dans `assets/tools/`.
+  La phrase « Je n’ai pas mesuré le temps gagné » est retirée des deux langues.
+- `technical/denon-sc2000-traktor/` : mapping Denon DN-SC2000 / Traktor Pro 4,
+  dans Just for fun. Le propriétaire confirme la validation de la version 5.1.0
+  avec les deux contrôleurs. La fiche distingue cette confirmation de l’ancienne
+  mention de version candidate encore présente sur
+  [DJ TechTools](https://maps.djtechtools.com/mappings/22961). Le guide et le
+  téléchargement restent sur cette plateforme, avec les crédits bascurtiz / Stewe.
+
+Ajouter `fr/` à chacune de ces deux adresses ouvre sa version française.
+Les pages ont leur propre HTML lisible sans JavaScript, titre, description,
+canonique, variantes linguistiques, données structurées et entrée dans le sitemap.
+La navigation du portfolio pointe vers ces URLs ; les anciennes adresses
+`#/technical` fonctionnent toujours et déclarent la nouvelle canonique.
+Le référencement effectif reste soumis à publication puis exploration des moteurs.
+Les autres routes du portfolio restent à fragments. Référence :
+[Google, structure des URLs](https://developers.google.com/search/docs/crawling-indexing/url-structure).
+
+Le texte « Créer une fois, réutiliser » explique l’intérêt de réutiliser un
+script local au lieu de répéter une génération IA. L’économie d’électricité
+et l’impact environnemental sont présentés comme une possibilité à mesurer,
+sans chiffre ni garantie. Le contexte général est lié au rapport
+[Energy and AI de l’AIE](https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai).
+Une note sur le versionnement explique l’historique du code, les essais sur
+des branches, la relecture collaborative avant intégration et la possibilité
+de revenir à une version précédente. Elle décrit une manière de faire évoluer
+les outils avec plus de sécurité et de les garder modifiables, sans promettre
+qu’un outil versionné serait exempt de défauts.
+
+**Maintenance.** Les nouveaux textes bilingues vivent dans `data/technical.js`.
+Pour ajouter un outil, ajouter une entrée avec le même `id` et la même
+`category` dans les deux langues (`professional`, `personal`, `just-for-fun`).
+Une fiche locale peut référencer un fichier public dans `downloads/` ; un outil
+hébergé ailleurs peut avoir un lien `external`. Ne jamais y ajouter de contenu
+confidentiel. Le rendu commun est dans `assets/technical-library.js` et ses
+styles dans `assets/technical-library.css`. Le code n’est jamais exécuté dans
+le navigateur du visiteur : il est affiché comme texte échappé.
+
+Après une modification des textes, du script, des captures ou du style principal
+du portfolio, lancer `node tools/build-technical.cjs`.
+Ce générateur sans dépendance ni réseau produit les six pages et
+`assets/technical-base.css` depuis les styles existants d’`index.html`, puis
+actualise uniquement son bloc du sitemap. Les deux anciens blocs et leur
+extraction sont supprimés du composant `TechnicalScreen` et du générateur.
+Ne pas modifier directement les fichiers générés. Actualiser `updated` dans le
+catalogue pour une modification éditoriale, ainsi que `revision` et les versions
+de cache des nouveaux assets dans `index.html` lorsque leur contenu change.
+Le champ facultatif `preview` d’un outil décrit sa capture, son repli, ses
+dimensions intrinsèques, son texte alternatif et sa légende.
+
+Les nouveaux textes du catalogue se modifient actuellement dans ce fichier
+de données, pas dans les formulaires de l’éditeur local. Son bouton Commiter
+ne couvre pas les nouveaux dossiers : lors d’une livraison, inclure également
+les fichiers `technical/`, `downloads/`, `data/technical.js`,
+`assets/technical-*`, `assets/tools/` et les scripts de génération/test concernés.
+Le réglage Afficher la page Technique conserve le contrôle du lien principal
+et de l’ancienne route ; les pages statiques ont leurs propres adresses publiques.
+Ce réglage de visibilité n’est toujours pas une protection d’accès.
+
+**Vérifications.** `node tools/test-technical-library.cjs`, après lancement du
+serveur habituel, requiert Node et Playwright ; Chrome est le navigateur par
+défaut (`KP_TEST_BROWSER` permet un autre canal). `KP_TEST_ORIGIN` choisit le
+serveur et `KP_TEST_ARTIFACTS` un dossier existant pour trois captures.
+Les contrôles HTTP passent en anglais et français à 320, 390, 768 et 1440 px :
+navigation, ancres, bascule de langue, compatibilité des anciens liens,
+copie réelle, copie refusée, téléchargement, fonctionnement sans JavaScript,
+métadonnées, casse des chemins, ressources et absence d’erreurs console/réseau.
+Le contrôle de la fiche de sélection vérifie aussi le chargement effectif du
+WebP et du repli PNG. L’absence des anciennes sections est vérifiée sur les
+pages statiques et sur l’ancienne route. Les captures sont contrôlées visuellement.
+Aucune requête Analytics avant consentement. Les chemins sensibles sont refusés
+par le serveur habituel et `/__settings` reste authentifié. Le test de visibilité
+existant est adapté au nouveau lien et fonctionne indépendamment de la valeur
+initiale de l’interrupteur, sur sa seule copie temporaire.
+Le test de sérialisation de l’éditeur utilise désormais un paragraphe de Contact,
+car son ancien texte de référence sur la page Technique a été retiré. La suite
+de l’éditeur passe également dans sa copie isolée, y compris l’affichage de
+texte collé comme texte brut, la navigation et la conservation des protections.
+
+La syntaxe Python est vérifiée, mais le script n’est pas exécuté dans Cinema 4D
+par cet environnement ; la compatibilité et la validation matérielle du mapping
+reposent sur les essais confirmés par le propriétaire. Pas d’essai sur téléphone
+physique ni de téléchargement authentifié DJ TechTools. Les projets, médias,
+chiffrement, consentement, `CNAME`, `.nojekyll` et configuration de publication
+sont conservés. Comparaison effectuée avec `origin/main`, dont le SHA a été
+confirmé par GitHub (`6efb29a`). Le catalogue a été publié avec le commit
+`7db67cf` ; le déploiement GitHub Pages et les pages publiques ont été vérifiés.
+Les changements de l’éditeur déjà présents dans la branche sont conservés
+hors publication.
+
+### Intitulé des projets sous accord — 21 octobre 2026
+
+Le libellé public de la fiche protégée utilise désormais « Project under a
+confidentiality agreement » en anglais et conserve « Projet sous accord de
+confidentialité » en français. La source anglaise est dans `data/projects.js`,
+sa traduction dans `data/fr.js` ; leurs versions de cache dans `index.html`
+sont actualisées. Les accès, données chiffrées et médias sont inchangés.
+Correction locale, sans publication.
+
+Vérifications : préparation réelle de la fiche et traduction dans les deux
+langues, maintien du verrou et du mode NDA, syntaxe JavaScript et comparaison
+des données avec `main` local. `CNAME` et `.nojekyll` sont conservés.
+Les essais HTTP dans le navigateur n'ont pas abouti : Edge ne démarre pas et
+Chrome refuse l'accès au serveur local (`ERR_NETWORK_ACCESS_DENIED`). Le rendu
+responsive, la navigation et les erreurs console/réseau restent donc à vérifier
+dans un navigateur accessible. Le serveur d'édition n'a pas été relancé ; ses
+protections sont inchangées. L'accès à GitHub étant indisponible, la comparaison
+avec la toute dernière version distante de `main` n'a pas pu être faite.
+
 Site statique du portfolio de Killian Pichon, pret pour GitHub Pages puis pour un futur domaine personnalise.
 
 ## Fiches des projets
@@ -767,7 +989,8 @@ dictionnaire.
 
 ## Editeur de contenu local
 
-`tools/` contient un editeur de texte local, destine aux corrections redactionnelles.
+`tools/` contient un editeur local avec edition visuelle, formulaires de contenu
+et relecture avant commit.
 Il ne fait partie d'aucun deploiement : GitHub Pages sert uniquement des fichiers
 statiques et n'execute jamais ces scripts.
 
@@ -776,8 +999,12 @@ statiques et n'execute jamais ces scripts.
 | `tools/edit-site.cmd` | Double-clic : demarre le serveur et ouvre l'editeur |
 | `tools/set-password.cmd` | Definit ou change le mot de passe de l'editeur |
 | `tools/serve.ps1` | Serveur local : previsualisation, lecture/ecriture d'`index.html` et de `data/projects.js`, televersement des medias |
-| `tools/editor.html` | Interface : panneau d'edition a gauche, apercu du site a droite |
+| `tools/editor.html`, `tools/editor.css`, `tools/editor.js` | Interface, styles et formulaires de contenu, separes pour la maintenance |
+| `tools/visual-editor.js`, `tools/visual-editor.ps1` | Edition directe, historique du brouillon, validation et sauvegarde visuelle |
+| `data/layout.js`, `assets/site-layout.js` | Ordre des blocs et rendu statique React, sans interface d'edition publique |
 | `tools/setup-wifi.cmd` | A lancer une seule fois pour autoriser l'acces iPhone en Wi-Fi |
+| `tools/setup-wifi.ps1`, `tools/local-network.ps1` | Autorisation Windows limitee au reseau physique actuel et detection de l'adresse iPhone |
+| `tools/launch-editor.html` | Ouvre un onglet que le bouton Quitter peut fermer |
 
 ### Premier lancement
 
@@ -789,21 +1016,98 @@ versionnee.
 
 1. Double-cliquer sur `tools/edit-site.cmd`. L'editeur s'ouvre sur
    `http://localhost:8000/__editor` et demande le mot de passe.
-2. Onglet **Textes** : rechercher un texte, le corriger, cliquer sur
+2. Onglet **Visuel** (ouvert au demarrage) : choisir une page et une langue,
+   cliquer un texte encadre dans l'apercu, puis ecrire directement. Deplacer
+   les blocs avec leur poignee ou les fleches. Relire le brouillon et cliquer
+   sur **Enregistrer**. Voir les limites et raccourcis ci-dessous.
+3. Onglet **Textes** : rechercher un texte, le corriger, cliquer sur
    **Enregistrer**. L'ecriture se fait dans `index.html` ou dans
    `data/projects.js` selon l'origine du texte ; les textes des fiches sont
    groupes par projet.
-3. Onglet **Projets** : creer, modifier, proteger ou retirer une fiche.
+4. Onglet **Projets** : creer, modifier, proteger ou retirer une fiche.
    Voir la section suivante.
-4. Onglet **Medias** : remplacer un chemin d'image, avec vignette et
+5. Onglet **Medias** : remplacer un chemin d'image, avec vignette et
    autocompletion sur les fichiers presents dans `assets/` et `projects/`.
-5. Onglet **Reglages** : titre d'onglet, description, favicon, image de
+6. Onglet **Reglages** : titre d'onglet, description, favicon, image de
    partage, langue, titres des pages secondaires et demo reel de l'accueil.
-6. Verifier le rendu dans l'apercu de droite. Le bouton **Pointer** de la barre
+7. Verifier le rendu dans l'apercu de droite. Hors onglet Visuel, le bouton **Pointer** de la barre
    d'apercu permet de cliquer un texte ou une image sur la page pour l'ouvrir
    directement dans le panneau de gauche.
-7. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
+8. Onglet **Modifications** : relire chaque changement en avant/apres, ajuster
    le message propose, puis **Commiter**.
+
+### Edition visuelle — septembre 2026
+
+L'onglet **Visuel** agit sur le vrai apercu du site, dans la langue choisie.
+**Entree** termine une saisie, **Maj+Entree** ajoute un retour et **Echap**
+annule la saisie courante. **Annuler / Retablir** parcourt les operations du
+brouillon (textes et deplacements, jusqu'a 80 operations). **Tout abandonner**
+recharge les fichiers apres confirmation. Le bouton **Edition active** passe
+en **Navigation** pour utiliser les liens et les lecteurs normalement.
+
+Le brouillon reste en memoire dans l'onglet, sans ecriture automatique ni
+stockage persistant. Il survit aux changements de page, de langue et au
+rafraichissement de l'apercu. Fermer l'editeur avec un brouillon demande une
+confirmation. Enregistrer ou abandonner ce brouillon avant de changer d'onglet
+d'edition ; les formulaires existants restent disponibles.
+
+Les textes simples reperes sans ambiguite sont editables : titres, paragraphes
+et elements de listes. Le francais des fiches reste dans `data/fr.js`, l'anglais
+dans sa source. Les textes composites, calcules, repetes de facon ambigue,
+les liens et les boutons se modifient via les formulaires existants.
+Les libelles d'interface partages en francais conservent leur traduction commune.
+Les fiches protegees, meme apres deverrouillage dans l'apercu, restent exclues
+de l'edition visuelle. Aucun acces, media ou lecteur ne se deplace avec ce mode.
+
+Groupes de blocs deplacables, par glisser-deposer dans la liste ou avec la
+poignee du bloc selectionne dans l'apercu, et par fleches accessibles au clavier :
+
+- accueil : Clients et Prix ; introduction et projets restent ancres ;
+- profil : Expertise, Specialisations, Experience, Formation et Outils ;
+- technique : les anciens blocs Domaines de recherche et Etudes de cas sont
+  retirés depuis le 22 octobre 2026 ; le catalogue se maintient dans `data/technical.js` ;
+- chaque fiche publique : colonnes Contexte / Contribution / Etapes, puis
+  sections presentes du recit (Defis, Intention, Recherche, Reconnaissance, Resultat).
+
+L'ordre est commun aux deux langues, conserve dans `data/layout.js`. Le rendu
+reordonne les enfants React existants, avec leurs cles, sans ajouter de conteneur
+HTML ni changer leurs styles. Une configuration vide conserve l'ordre initial.
+Il n'y a pas de placement libre au pixel, de redimensionnement des medias ni
+d'ajout arbitraire de composants : ces limites preservent le design responsive.
+
+La route locale authentifiee `/__visual` valide le catalogue, les identifiants
+de blocs et l'empreinte des fichiers avant toute ecriture. Un changement externe
+refuse l'enregistrement et conserve le brouillon visible ; copier les corrections
+utiles avant **Tout abandonner** pour recharger la version du disque. Les fichiers
+sont sauvegardes comme auparavant, et une erreur d'ecriture restaure les octets
+des fichiers concernes. Aucun HTML colle n'est execute comme du code.
+
+L'apercu conserve maintenant la page et la langue lors d'un rafraichissement.
+La largeur Bureau/Tablette/iPhone correspond a une vraie largeur de cadre ;
+le panneau et l'apercu s'empilent sur une petite fenetre. Le pointage retrouve
+egalement les textes des fiches avec leur identifiant de fichier complet.
+
+Pour verifier la fonctionnalite : `node tools/test-visual-editor.cjs`, avec
+Node, Playwright et Edge installes (ou `KP_TEST_BROWSER` pour un autre canal
+Playwright). `NODE_PATH` peut designer une installation partagee de Playwright.
+Le test cree sa propre copie temporaire et sa propre authentification aleatoire ;
+il ne lit ni ne copie le vrai `tools/auth.json` et ne publie rien.
+Le serveur d'essai tourne en PowerShell 5.1, comme le lanceur habituel.
+Ajouter `--legacy` pour le controle cible des formulaires existants, de leur
+brouillon lors des changements d'onglet et de la largeur exacte de l'apercu.
+
+Verification sur copie isolee, dans Edge via HTTP : saisie directe, annulation,
+retablissement, glisser-deposer, fleches, rechargement et sauvegarde bilingue,
+relecture des traductions et des blocs, refus des brouillons perimes et des
+identifiants invalides. Un echec d'ecriture simule apres plusieurs ecritures
+restaure tous les fichiers octet pour octet ; une liste francaise d'un seul
+element conserve son type. Les controles couvrent les largeurs 390, 768 et
+1440 px, les ressources locales et leur casse, la navigation, la visionneuse,
+l'ouverture/fermeture du lecteur integre et l'absence d'Analytics avant consentement.
+Les donnees de projet hors texte modifie, les videos, les protections, le domaine
+et les fichiers GitHub Pages sont conserves. Aucun essai sur iPhone physique,
+depuis une autre machine du reseau ou de lecture complete des videos externes
+n'est effectue. Les seuils d'authentification et de chiffrement sont inchanges.
 
 ### Demo reel de l'accueil
 
@@ -908,7 +1212,8 @@ au besoin, puis commite et pousse cette branche. `main` reste la branche de
 publication : l'editeur n'y ecrit jamais, et c'est la fusion vers `main`,
 decidee a la main, qui met a jour killianpichon.art.
 
-Le commit porte sur `index.html`, `data/projects.js`, `projects/` et
+Le commit porte sur `index.html`, `data/projects.js`, `data/fr.js`,
+`data/layout.js`, `projects/` et
 `sitemap.xml`. Les medias ajoutes sont indexes explicitement, sinon un projet
 partirait sans ses images.
 
@@ -1002,11 +1307,22 @@ a jour uniquement la constante `MEASUREMENT_ID` dans
 L'onglet **Modifications** compare le fichier de travail au dernier commit et
 affiche chaque texte modifie, avec sa section et sa ligne.
 
-- Le commit porte sur `index.html`, `data/projects.js`, `projects/` et
+- Le commit porte sur `index.html`, `data/projects.js`, `data/fr.js`,
+  `data/layout.js`, `projects/` et
   `sitemap.xml`. Aucun autre fichier modifie n'est embarque, quel que soit
   l'etat de l'index git.
 - Le commit se fait toujours sur la branche `content`, jamais sur `main`.
   L'editeur y bascule seul, puis pousse cette branche.
+- Si `content` existe mais ne contient pas `main` ou la branche courante,
+  le commit est refuse avant tout changement de branche. Mettre `content`
+  a jour dans GitHub Desktop pour ne pas restaurer un ancien site.
+- Les traductions et l'ordre des blocs figurent aussi dans la relecture
+  avant/apres. La publication reste une integration volontaire dans `main`.
+- Au premier lancement apres la mise a jour, `data/layout.js` peut ne pas encore
+  exister dans le dernier commit. La comparaison part alors de l'ordre initial,
+  sans afficher d'erreur Git dans la console. `tools/serve.ps1` capture ce
+  diagnostic attendu ; `tools/test-visual-editor.cjs` couvre ce cas avant le
+  premier commit, ainsi que la relecture d'un nouvel ordre enregistre.
 - Les fiches de projet se comparent champ par champ, et non chaine par chaine :
   ajouter ou retirer un projet change le nombre de textes, et c'est l'usage
   normal de l'outil.
@@ -1014,8 +1330,17 @@ affiche chaque texte modifie, avec sa section et sa ligne.
   textes different), la comparaison est refusee et renvoie vers GitHub Desktop
   plutot que de deviner.
 
-Le serveur s'arrete automatiquement une vingtaine de secondes apres la fermeture
-de l'onglet de l'editeur, ou immediatement via le bouton **Quitter**.
+Le bouton **Quitter** arrete le serveur et ferme l'onglet de l'editeur. Les
+modifications non enregistrees demandent une seule confirmation ; annuler garde
+le brouillon. Le lancement par `edit-site.cmd` ouvre un onglet que le navigateur
+autorise a fermer. Si l'ouverture automatique est bloquee, cliquer **Ouvrir
+l'editeur** sur la page de lancement. Une URL saisie manuellement dans un ancien
+onglet peut imposer une fermeture manuelle avec `Ctrl + W`.
+
+Sans utiliser Quitter, le serveur s'arrete environ 25 secondes apres le dernier
+signe de vie de l'editeur, ou jusqu'a trois minutes si l'onglet etait masque.
+Cette marge absorbe le ralentissement des minuteurs en arriere-plan pendant un
+essai sur iPhone. Le PC doit rester allume et ne pas passer en veille.
 
 ### Notes
 
@@ -1025,14 +1350,16 @@ de l'onglet de l'editeur, ou immediatement via le bouton **Quitter**.
   de branche), l'editeur le detecte et se resynchronise automatiquement.
 - Une modification dont le texte source a change entre-temps est refusee et
   signalee, jamais appliquee a l'aveugle.
-- L'editeur ne touche qu'au texte editorial : ni mise en page, ni styles, ni images.
+- Le mode visuel modifie les textes et l'ordre des groupes autorises ; il
+  conserve les styles, les medias, les lecteurs et les acces proteges.
 
 ### Securite
 
 Le site publie sur GitHub Pages n'est pas modifiable par cet outil : Pages sert
 des fichiers statiques et n'execute jamais `serve.ps1`. Les corrections
-n'affectent que les fichiers locaux, jusqu'au `git push` qui, lui, met a jour
-killianpichon.art.
+n'affectent que les fichiers locaux. Le commit et l'envoi de `content` ne
+publient pas le site : seule l'integration volontaire dans `main` declenche
+la publication habituelle.
 
 Quatre protections encadrent l'outil local :
 
@@ -1105,6 +1432,44 @@ Windows n'autorise pas l'ecoute reseau sans privileges. Lancer **une seule fois*
 l'adresse a saisir sur le telephone, connecte au meme reseau. Sans cette etape,
 l'editeur fonctionne normalement mais reste limite a `localhost`.
 
+L'autorisation porte uniquement sur le port TCP 8000, l'adresse du PC, sa carte
+physique active et le sous-reseau du routeur actuel. Elle fonctionne aussi si
+Windows classe ce reseau comme public, sans changer ce classement ni desactiver
+le pare-feu. Le VPN et les cartes deconnectees sont exclus du choix de l'adresse.
+Si le PC change de reseau, de carte ou d'adresse IP, relancer `setup-wifi.cmd`.
+Un autre port se configure avec `setup-wifi.cmd -Port 8001` puis
+`edit-site.cmd -Port 8001`.
+
+Garder l'editeur ouvert sur le PC, connecter l'iPhone au Wi-Fi du meme routeur,
+puis ouvrir l'adresse **iPhone** affichee en haut de l'editeur. Le PC peut etre
+branche en Ethernet. Enregistrer les changements et actualiser la page sur le
+telephone. Quitter l'editeur arrete aussi cet apercu. Les reseaux invites qui
+isolent les appareils ne permettent pas cette connexion.
+
+Le telephone affiche uniquement le site : toutes les routes `/__*` restent
+refusees aux autres appareils, ainsi que les fichiers sensibles de l'outil.
+L'authentification, les sessions, les contenus proteges et GitHub Pages restent
+inchanges. Rien n'est publie par cette configuration.
+
+Verification reproductible : `node tools/test-visual-editor.cjs --session`
+(Node et Playwright requis). Le test utilise une copie temporaire et des
+identifiants jetables ; il controle la confirmation du brouillon, l'annulation,
+la fermeture du seul onglet editeur, l'arret du serveur et la tolerance d'un
+onglet masque. `KP_TEST_PORT` et `KP_EXPECT_LAN` permettent de verifier aussi
+l'adresse locale autorisee. Un essai sur un iPhone physique reste necessaire
+pour confirmer le trajet Wi-Fi complet.
+
+Cette mise a jour concerne `tools/editor.js` (fermeture et signes de vie),
+`tools/launch-editor.html`, `tools/edit-site.cmd` et `tools/serve.ps1` (lancement
+et arret), `tools/local-network.ps1`, `tools/setup-wifi.cmd` et
+`tools/setup-wifi.ps1` (acces au reseau), ainsi que
+`tools/test-visual-editor.cjs` et cette documentation. Les suites complete et
+`--session` passent dans Edge, avec controles aux largeurs 390, 768 et 1440 px,
+navigation, ressources et absence d'erreurs de console. La reponse HTTP via
+l'adresse locale et les restrictions du pare-feu ont ete controlees sur le PC.
+Le domaine, les fichiers GitHub Pages, les medias et leurs protections restent
+intacts ; aucune publication n'a ete effectuee.
+
 ## Publication GitHub Pages
 
 1. Creer un depot GitHub et pousser la branche `main`.
@@ -1125,3 +1490,166 @@ Pour le domaine racine `killianpichon.art`, ajouter les quatre enregistrements `
 Ajouter aussi un `CNAME` pour `www` vers `KillianPi22.github.io` afin que les variantes avec et sans `www` fonctionnent ensemble.
 
 Apres l'achat, ajouter un fichier `CNAME` a la racine du depot contenant uniquement `killianpichon.art` afin de conserver le domaine personnalise lors des publications.
+
+### Précision des contributions — 12 octobre 2026
+
+À partir du retour de Valeria et des précisions de Killian, les fiches anglaises
+et françaises de Volcano, Hurtubise et Melanie Martinez sont révisées dans
+`data/projects.js` et `data/fr.js`. Volcano distingue le nettoyage photographique
+et la méthode Photoshop / BodyPaint pour les textures 16K de l’intégration finale.
+Melanie Martinez distingue les itérations de production des visuels précalculés
+diffusés pendant la tournée. Hurtubise indique la SAT comme lieu de présentation.
+Les crédits fournis sont ajoutés à ces trois fiches.
+
+La surcharge française de Celestia distingue l’adaptation des animations, le
+traitement Fresnel et la préparation des passes du compositing effectué par une
+autre personne. Aucun crédit nominatif n’est ajouté pendant l’embargo. La fiche
+anglaise est également corrigée dans sa charge chiffrée, avec un nouveau sel et
+un nouveau nonce générés dans le navigateur. Les médias et les métadonnées
+protégées sont conservés, ainsi que PBKDF2-SHA256 à 600 000 itérations et AES-GCM.
+La rubrique R&D de `index.html` et sa traduction sont harmonisées ; les versions
+de cache des deux fichiers de données et la date principale du sitemap changent.
+
+Vérifications : syntaxe JavaScript et diff sans erreur ; trois fiches publiques
+servies par HTTP avec le serveur habituel, en français et en anglais à 390, 768
+et 1440 px, sans débordement horizontal ni image cassée ; aucune erreur de page
+ou requête échouée relevée pendant ces contrôles ; navigation interne testée.
+Les chemins sensibles sont toujours refusés par le serveur habituel. Les liens
+externes et la lecture effective des vidéos n’ont pas été retestés : leurs
+adresses et leur fonctionnement n’ont pas été modifiés. Les sources des médias,
+les autres charges chiffrées, les projets hors périmètre, CNAME et .nojekyll sont vérifiés
+inchangés. La base locale correspond à main distant. Aucune publication effectuée.
+Les modifications préexistantes de l’éditeur local sont conservées.
+
+Complément Celestia : déverrouillage et rendu vérifiés en français et en anglais
+à 390, 768 et 1440 px, sans débordement, image cassée ni erreur de page ou de
+réseau. Le nouveau contenu a été déchiffré après rechiffrement pour vérifier
+son intégrité. Une comparaison en mémoire confirme que seuls les champs
+éditoriaux prévus ont changé ; les médias et métadonnées protégées sont intacts.
+Aucun code d’accès n’a été enregistré dans les fichiers du projet.
+
+
+Correction complémentaire du 12 octobre 2026 : retrait de la mention de Mari
+et de la contrainte de licence dans les défis de Volcano, en français et en
+anglais, à la demande du propriétaire. Médias et protections inchangés.
+
+
+### La Mémoire de l’Eau — 13 octobre 2026
+
+Les textes français et anglais mettent en avant la fluidité et les mouvements
+singuliers du mapping. L’œuvre suit son propre rythme, indépendamment de la
+musique programmée, tout en étant pensée pour son ambiance. Un remerciement
+à Dominique Arcand souligne sa confiance et son soutien à Killian en tant
+qu’artiste émergent ; la formule « une œuvre signée Killian Pichon » lui est
+attribuée selon les précisions du propriétaire. Médias et protections conservés.
+
+Vérification locale par HTTP en français et en anglais à 390, 768 et 1440 px :
+aucun débordement horizontal, image cassée ou erreur de navigateur relevé ;
+navigation interne vérifiée. Comparaison des données : autres projets, sources
+vidéo, liens et protections inchangés. Liens externes et lecture effective de
+la vidéo non retestés. Cette révision reste locale, sans publication.
+
+
+### Projets liés — 13 octobre 2026
+
+Toutes les fiches ouvertes proposent trois projets liés avec le composant et
+le style existants. Les choix de relatedProjects restent prioritaires ; une
+table de suggestions par identifiant dans index.html complète les listes selon
+les formats et démarches. Les nouveaux projets disposent d’un repli sur les
+projets visibles, classés par date. Les doublons, renvois vers soi, références
+invalides, fiches masquées et destinations verrouillées sont exclus. Les titres
+suivent la langue du site. Une fiche protégée conserve sa barrière d’accès et
+affiche ses suggestions seulement une fois déverrouillée. Aucun contenu chiffré
+ni média n’est modifié. Préparation locale, sans publication.
+
+Contrôles Projets liés : 13 fiches publiques, deux langues et trois largeurs
+(390, 768 et 1440 px), trois boutons par fiche, sans débordement ni erreur
+de page ou de réseau. Chaque destination est testée dans les deux langues.
+Le sélecteur est vérifié pour toutes les fiches, y compris les exclusions de
+doublons, de la fiche courante et des références invalides, masquées ou
+verrouillées. La barrière de Celestia reste présente ; son affichage après
+déverrouillage n’a pas été retesté pour cette modification. Les vidéos et liens
+externes inchangés ne sont pas retestés. CNAME et .nojekyll sont inchangés.
+
+
+### Halo des flèches du carrousel — 13 octobre 2026
+
+Le conteneur clients-carousel autorise le débordement visuel afin de ne plus
+couper le halo des deux flèches. La piste clients-track conserve son défilement
+et son découpage. Dimensions, espacements, couleurs, grille mobile et logique
+de navigation inchangés. Correction locale, sans publication.
+
+Contrôles du halo : aperçu HTTP à 390, 768, 1440 et 1920 px, survol des deux
+flèches, défilement dans les deux sens et focus clavier vérifiés ; grille mobile
+conservée, logos chargés, sans débordement horizontal ni erreur de navigateur.
+Capture du survol contrôlée visuellement. Fichiers concernés : index.html et
+README.md ; aucune modification des médias, protections ou fichiers Pages.
+
+
+### Fondu du carrousel sur ordinateur — 13 octobre 2026
+
+Un masque d’opacité de 28 px adoucit les deux bords de clients-track uniquement
+au-delà de 1024 px avec un pointeur précis et le survol disponible. Les flèches
+restent hors masque, avec leur halo visible. Dimensions, espacement, défilement
+et snap existants conservés. Aucun changement en mode tablette ou iPhone.
+Fichiers concernés : index.html et README.md. Préparation locale non publiée.
+
+Contrôles HTTP : 390, 768, 1024, 1025, 1440, 1792 et 1920 px ; activation du
+masque uniquement sur ordinateur, absence sur tablette tactile simulée à
+1366 px, grille iPhone conservée, défilement des deux flèches fonctionnel et
+halos hors masque. Aucun débordement horizontal ni erreur de page/requête
+relevé. Capture contrôlée visuellement. Pas de test sur appareil physique.
+
+
+### Extension du fondu aux tablettes — 13 octobre 2026
+
+Le fondu de 28 px s’applique désormais à toute piste clients-track, y compris
+sur tablette tactile, en portrait et paysage. La grille téléphone n’utilise
+pas cette classe et reste inchangée. Cette extension remplace la restriction
+ordinateur décrite ci-dessus. Les flèches restent hors masque ; dimensions,
+défilement et snap sont conservés. Modification locale non publiée.
+
+Vérifications HTTP en émulation tactile : 768 × 1024, 1024 × 768, 820 × 1180,
+1180 × 820 et 1366 × 1024 ; rotation/redimensionnement, boutons tactiles et
+balayage fonctionnels. Grille sans masque contrôlée à 390 et 767 px, retour
+au carrousel à 768 px. Aucun débordement horizontal ni erreur de page/requête.
+Capture tablette contrôlée visuellement ; pas de test sur iPad physique.
+
+
+### Visibilité de la page Technique — 13 octobre 2026
+
+Dans l’éditeur local, Réglages > Pages > Afficher la page Technique est une
+case à cocher, désactivée par défaut. Enregistrer puis recharger l’aperçu pour
+voir le changement. Le booléen window.KP_SHOW_TECHNICAL dans index.html pilote
+à la fois le lien de navigation et la route, en français et en anglais.
+Désactivée, la page redirige #/technical vers #/work en conservant la langue.
+Réactivée, elle retrouve son contenu et son lien. Aucun contenu n’est supprimé ;
+ce masquage éditorial n’est pas une protection de confidentialité. Le réglage
+réutilise la sauvegarde authentifiée existante et exige une publication pour
+modifier le site public. Préparation locale, sans publication.
+
+Vérification reproductible : node tools/test-technical-visibility.cjs (Node,
+Playwright et Edge). Le test utilise une copie temporaire et des identifiants
+jetables ; aucun fichier d’authentification réel n’est lu ou copié. Contrôles :
+case à cocher dans l’éditeur, sauvegarde authentifiée, rejet d’une valeur non
+booléenne, cycle désactivé/activé/désactivé sans altération du contenu, route
+directe et navigation en français/anglais à 390, 768 et 1440 px, absence
+d’erreurs de navigateur et refus des chemins sensibles. Test réussi avec
+l’éditeur publié et avec la version locale en cours de développement.
+Fichiers : index.html, tools/serve.ps1, tools/test-technical-visibility.cjs
+et README.md. Médias, chiffrement, domaine et configuration Pages inchangés.
+
+### Référencement des images publiques — 14 octobre 2026
+
+Les titres et descriptions de l’accueil précisent l’activité d’artiste 3D à
+Montréal en français et en anglais, sans changer le texte visible ni les URL.
+Les vignettes publiques et les images de galerie utilisent des éléments `img`
+avec textes alternatifs ; les fonds CSS sont conservés pour l’effet visuel existant.
+Les descriptions de galerie vivent dans `galleryAlts`, dans le même ordre que
+`galleryImages`, avec leurs traductions dans `data/fr.js`.
+
+La génération du sitemap par l’éditeur inclut les vignettes, images principales
+et galeries locales publiques. Les fiches chiffrées ou masquées, les liens vidéo
+et les contenus chiffrés restent exclus. Aucun bloc de mots-clés caché n’est ajouté.
+Les routes `#/project/...` restent inchangées ; leur indexation individuelle
+et le suivi dans Search Console restent à traiter séparément.

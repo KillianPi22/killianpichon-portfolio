@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ouvrir l’éditeur local</title>
+  <link rel="stylesheet" href="/tools/editor.css">
+  <style>
+    body { display:grid; place-items:center; min-height:100vh; height:auto; padding:24px; overflow:auto; }
+    main { max-width:480px; line-height:1.7; }
+    h1 { font-size:22px; }
+    p { color:#aaa; }
+    button { padding:12px 20px; font-size:15px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Éditeur local</h1>
+    <p>L’éditeur s’ouvre dans un onglet que le bouton « Quitter » pourra fermer.</p>
+    <button id="open" type="button">Ouvrir l’éditeur</button>
+    <p id="message" role="status">Si le navigateur bloque l’ouverture automatique, utilise ce bouton.</p>
+  </main>
+  <script>
+    if (!['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) {
+      document.querySelector('#open').disabled = true;
+      document.querySelector('#message').textContent = 'Lance tools/edit-site.cmd sur ton ordinateur.';
+    } else {
+      let timer;
+      const ping = () => fetch('/__ping?v=' + document.visibilityState, {keepalive:true}).catch(() => {});
+      function openEditor(){
+        const editor = window.open('/__editor', '_blank');
+        if (!editor) return;
+        clearInterval(timer);
+        document.removeEventListener('visibilitychange', ping);
+        document.querySelector('#message').textContent = 'L’éditeur est ouvert. Tu peux fermer cet onglet de lancement.';
+        document.querySelector('#open').disabled = true;
+        window.close();
+      }
+      ping();
+      timer = setInterval(ping, 5000);
+      document.addEventListener('visibilitychange', ping);
+      document.querySelector('#open').addEventListener('click', openEditor);
+      openEditor();
+    }
+  </script>
+</body>
+</html>

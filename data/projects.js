@@ -99,26 +99,27 @@ window.KP_PROJECTS = {
   celestia: {
     date: '2026-06',
     listing: 'nda',
-    lockedTitle: 'Projet sous accord de confidentialité',
+    lockedTitle: 'Project under a confidentiality agreement',
     thumb: 'projects/celestia/cathedral-nave.jpg',
     protected: {
       id: 'celestia',
       version: 1,
       iterations: 600000,
-      salt: 'oLX9iehVgfGkrsju5GlCKQ==',
-      iv: 'VXgKh9AR+nNErbZ0',
-      ciphertext: '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'
+      salt: 'Ognmc+rODKWqA2uu5xe7gg==',
+      iv: 'AIv5iv5Gj/iVViM5',
+      ciphertext: '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'
     }
   },
   hurtubise: {
+    galleryAlts: ["Amber rectangular light patterns projected above a seated dome audience.", "Blue angular light patterns across the dome, with audience silhouettes.", "Golden checkerboard patterns filling the dome above the audience.", "Multicoloured painterly patterns surrounding the audience under the dome."],
     title: 'Hurtubise : Saisir le Chaos',
     category: 'Immersive Film · Fulldome',
     date: '2025-08',
     thumb: 'projects/hurtubise/dome-neon-blue-1.jpg',
     studio: 'Normal Studio',
-    venue: 'Montréal Planetarium',
+    venue: "SAT, Montréal",
     desc: "A fulldome production translating Jacques Hurtubise's paintings into synchronized light, movement and spatial composition.",
-    overview: "Presented at the Montréal Planetarium, the film placed Jacques Hurtubise's work inside a dome-scale audiovisual experience set to music by Hippie Hourrah. The production challenge was to animate the paintings without losing their graphic rhythm, then coordinate multiple visual layers across a continuous immersive surface.",
+    overview: "Presented at the SAT in Montréal, this fulldome film brings Jacques Hurtubise’s paintings into an immersive audiovisual experience, with music by Hippie Hourrah. My contribution involved animation rigs, animated sequences and compositing within the team’s production.",
     role: 'Realtime 3D Artist — Animation Systems, Synchronization & Fulldome Compositing',
     tools: ['Unreal Engine 5', 'Photoshop', 'After Effects'],
     contribution: ['Developed reusable animation rigs for the neon-light sequences so large groups of bulbs could be directed without losing the irregular energy of the source artwork.', 'Prepared and animated mapped window sequences and digital interpretations of Hurtubise paintings.', 'Composited the fulldome material, including visual-delay treatments and timing adjustments required for synchronization across the dome.', 'Worked through motion and pacing decisions with director Tommy Caron so the animation supported the music without becoming mechanically repetitive.'],
@@ -128,9 +129,11 @@ window.KP_PROJECTS = {
     impact: 'The production connected painting, light and music through a shared timing structure designed for the spatial demands of fulldome projection.',
     heroImage: 'projects/hurtubise/dome-neon-blue-1.jpg',
     trailerUrl: 'https://www.youtube.com/watch?v=V8K4WwrpNwI',
-    galleryImages: ['projects/hurtubise/dome-neon-blue-1.jpg', 'projects/hurtubise/dome-neon-blue-2.png', 'projects/hurtubise/dome-neon-amber.jpg', 'projects/hurtubise/dome-paint-animation.jpg']
+    galleryImages: ['projects/hurtubise/dome-neon-blue-1.jpg', 'projects/hurtubise/dome-neon-blue-2.png', 'projects/hurtubise/dome-neon-amber.jpg', 'projects/hurtubise/dome-paint-animation.jpg'],
+    creditsNote: "Production: Normal Studio, Hippie Hourrah, SAT. Multimedia Director: Tommy Caron. Lead Motion Designer: Pierre Prieur.",
   },
   volcano: {
+    galleryAlts: ["Layered coastal cliffs with yellow and red rock bands and people at their base.", "Visitors facing a large curved projection of a rocky canyon."],
     title: 'Into the Volcano',
     category: 'Immersive Installation · 270°',
     date: '2025-06',
@@ -139,21 +142,22 @@ window.KP_PROJECTS = {
     studio: 'Normal Studio',
     venue: 'Perlan Museum, Reykjavík',
     desc: 'A 270° museum experience combining volcanic footage with digital landscapes prepared for close, large-format viewing.',
-    overview: 'Created for the custom-built planetarium at Perlan in Reykjavík, the installation is a permanent, daily-screened descent beneath the Snæfellsnes Peninsula, moving from documentary footage of eruptions into reconstructed volcanic environments. The image runs on a continuous LED surface wrapping the audience 270° vertically and 360° horizontally, extended by a glass floor underfoot, so rock is read from close range rather than at a framed distance. Those environments were rebuilt in part from photogrammetry of Icelandic rock and cliff faces. My contribution centered on making the resulting ultra-high-resolution geological assets usable in production while preserving the surface detail that viewing distance exposes.',
-    role: 'Environment Artist — Look Development & High-Resolution Asset Integration',
-    tools: ['Unreal Engine 5', 'Cinema 4D', 'Substance 3D', 'Photoshop'],
-    contribution: ['Assessed and prepared geological assets carrying 16K texture sources.', 'Cleaned and repaired texture areas that would become visible at installation scale.', 'Integrated the assets into the real-time environment and balanced fidelity against production performance.', 'Documented a repeatable handoff between texture repair, look development and final scene integration.'],
-    technicalChallenges: ['Challenge — the 16K textures carried the geological detail required by the experience, but their size made inspection, repair and iteration difficult.', 'Production response — the textures were divided into deliberate repair and validation stages so only the areas that affected the final view received intensive work.', 'Production impact — high-resolution assets could move through look development and integration without treating every source file as an equally expensive operation.'],
+    overview: "Into the Volcano is an immersive experience at the Perlan Museum in Reykjavík. I joined near the end of production to clean and retouch high-resolution photographic resources for one scene, before their integration by the team.",
+    role: "3D Artist — High-Resolution Photographic Cleanup",
+    tools: ["Photoshop","Cinema 4D / BodyPaint"],
+    contribution: ["Cleaned and retouched 16K photographic textures on a high-resolution mesh, removing unwanted visual elements.","Established a working method using Photoshop and BodyPaint in Cinema 4D to carry out the cleanup, and wrote instructions to support my work.","Prepared the cleaned resources for handoff before their integration into the final environment."],
+    technicalChallenges: ["Challenge — working with 16K textures on a high-resolution mesh exceeded the practical limits of Substance Painter for this task.","Production response — I established a cleanup workflow combining Photoshop and BodyPaint in Cinema 4D, with written instructions for the steps involved.","Result — this method allowed me to carry out the photographic cleanup with the tools available."],
     recognition: ['Prix NUMIX 2026 — Winner, International · Exhibition'],
-    pipeline: ['16K source-texture assessment', 'Targeted cleaning and repair', 'High-resolution asset integration', 'Look-development review', 'Performance-aware scene preparation'],
-    impact: 'The workflow preserved the geological detail needed for the 270° presentation while making the assets practical to review and integrate during production.',
+    pipeline: ["Review of the photographic resources","Setup of the Photoshop / BodyPaint workflow","Targeted cleanup and retouching","Preparation for handoff"],
+    impact: "My contribution was the cleanup and preparation of photographic resources for the immersive presentation; environment creation and final integration were handled by the team.",
     galleryImages: ['projects/volcano/iceland-cliffs.jpg', 'projects/volcano/installation-view.png'],
     placeholderTiles: 2,
-    creditsNote: 'Directed by Tommy Caron — Normal Studio',
+    creditsNote: "Multimedia Director: Tommy Caron. Lead Environment Artist: Charly Tempez. Lead Tech Artist: Victor Kawajigashi. Production: Normal Studio.",
     externalUrl: 'https://normal.studio/en/projects/into-the-volcano/',
     externalLabel: 'See more on Normal Studio'
   },
   melanie: {
+    galleryAlts: ["A performer suspended by strings in a purple and red puppet theatre stage scene.", "Pastel school playground with pink heart-shaped seesaws, above a concert audience.", "Female figures in a red room projected on the concert stage.", "Pink carousel framed by an illuminated arch above the concert audience.", "Oversized puppet figures framed by pink stage curtains.", "Palace façade framed by an arch of green foliage."],
     title: 'Melanie Martinez',
     category: 'Tour Visuals',
     date: '2024-09',
@@ -161,16 +165,18 @@ window.KP_PROJECTS = {
     studio: 'Normal Studio',
     venue: 'The Trilogy Tour — K-12 / Portals worlds',
     desc: 'Touring visuals translating Melanie Martinez’s storybook worlds into scenes designed for repeatable large-venue playback.',
-    overview: 'Produced with Normal Studio for the Trilogy Tour, the work moved through playground, carousel, dollhouse and marionette-theatre environments. Each scene had to preserve the hand-crafted art direction while remaining dependable within the pacing and technical constraints of a touring show.',
-    role: 'Realtime 3D Generalist — Asset Production & Environment Assembly',
+    overview: "Produced at Normal Studio for the Trilogy Tour, these visuals were pre-rendered for playback during the show. Unreal Engine allowed changes to assets and motion to be reviewed during production. My work focused on selected assets and object dynamics.",
+    role: "3D Generalist — Modeling, Sculpting, Texturing & Object Dynamics",
     tools: ['Unreal Engine 5', 'Blender', 'Cinema 4D', 'Substance 3D Painter', 'Substance Designer', 'After Effects'],
-    contribution: ['Reworked the sculpt of the carousel horses, then prepared the high- and low-resolution versions and baked their normal maps.', 'Textured the horses in Substance Painter, adapting smart materials and filters and painting the remaining areas by hand.', 'Retouched custom bush models in Blender so their shapes matched the environment references.', 'Modeled a modular asset kit in Cinema 4D from architectural references of Esterházy Palace, preparing the pieces for environment assembly in Unreal Engine.', 'Modeled the wooden-box set piece and adapted the seesaw asset.', 'Assembled and prepared the environments for live playback, keeping visual continuity as the show moved between distinct storybook settings.', 'Prepared and optimized scenes for the repeatability expected of a touring production.'],
-    technicalChallenges: ['Challenge — the scenes had to preserve a detailed, hand-made visual identity while playing consistently across a live touring system.', 'Production response — assets were evaluated in the context of each scene, and repeated object-throw simulations were replaced with reusable in-scene logic that could be adjusted without another external simulation pass.', 'Production impact — motion and staging changes could be reviewed inside the live scene, reducing back-and-forth during iteration.'],
+    contribution: ["Reworked the sculpt of the carousel horses, then prepared the high- and low-resolution versions and baked their normal maps.","Textured the horses in Substance Painter, adapting smart materials and filters and painting the remaining areas by hand.","Retouched custom bush models in Blender so their shapes matched the environment references.","Modeled a modular asset kit in Cinema 4D from architectural references of Esterházy Palace, preparing the pieces for environment assembly in Unreal Engine.","Modeled the wooden-box set piece and adapted the seesaw asset.","Assembled environments for the pre-rendered visuals, following the project’s art direction.","Set up object-throw dynamics using gravity, with controls comparable to a physics setup in Cinema 4D."],
+    technicalChallenges: ["Challenge — object throws needed adjustable motion during the production of pre-rendered visuals.","Production response — I set up gravity-based object dynamics in the scene so their motion could be adjusted and reviewed during production.","Result — the dynamics supported iteration before the final rendering; the show itself played pre-rendered content."],
     galleryImages: ['projects/melanie-martinez/k12-seesaw.jpg', 'projects/melanie-martinez/carousel-bunny.avif', 'projects/melanie-martinez/carousel-arch.avif', 'projects/melanie-martinez/mansion-arch.avif', 'projects/melanie-martinez/red-room-dancers.avif', 'projects/melanie-martinez/puppet-theater.avif'],
-    pipeline: ['Asset modeling, sculpting and adaptation', 'High/low preparation and normal-map baking', 'Texturing and material development', 'Scene assembly and continuity review', 'Reusable motion logic', 'Touring-playback preparation'],
-    impact: 'The scenes were prepared as dependable parts of a larger touring sequence, with visual decisions made in relation to live pacing rather than a single rendered shot.'
+    pipeline: ["Modeling, sculpting and adaptation of selected assets","High/low preparation and normal-map baking","Texturing","Object-dynamics setup and motion review","Preparation for rendering"],
+    impact: "The assets and object dynamics I worked on contributed to the pre-rendered tour visuals, under the project’s artistic and motion direction.",
+    creditsNote: "Art Director: Éliane Achcar. Multimedia Director: Tommy Caron. Lead Motion Designers: Daniella Tran Van, Michel Greco. Production: Normal Studio.",
   },
   traveler: {
+    galleryAlts: ["Pink crystalline formation in a swirling blue and white environment.", "Golden curved strands surrounding a floating rocky globe against a green background.", "Circular view of red and white crystalline spirals.", "Rocky sphere and golden curved strands within a dark circular dome frame.", "White and gold sphere surrounded by curved golden strands against black."],
     title: "Traveler's Introspection",
     category: 'Immersive Film · Dome',
     date: '2026-03',
@@ -205,6 +211,7 @@ window.KP_PROJECTS = {
     galleryImages: ['projects/traveler/planet-strands.png', 'projects/traveler/asteroid-field.png', 'projects/traveler/cave-crystals.webp', 'projects/traveler/tunnel-vortex.webp', 'projects/traveler/golden-strands-2.webp']
   },
   paralleles: {
+    galleryAlts: ["Visitors walking through illuminated X-shaped portals beside a projected building façade at night.", "Outdoor metal portals with coloured diagonal bars in daylight.", "Unreal Engine viewport showing purple illuminated portals in a public square."],
     title: 'PARALLÈLES',
     category: 'Interactive Installation · Real-Time',
     date: '2023-06',
@@ -221,6 +228,7 @@ window.KP_PROJECTS = {
     galleryImages: ['projects/paralleles/installation-neon-x.jpg', 'projects/paralleles/installation-day.webp', 'projects/paralleles/unreal-viewport.png']
   },
   batiscan: {
+    galleryAlts: ["Projected terrain model on a table inside a room with large windows.", "Overhead view of a snowy terrain model with blue waterways.", "Green terrain projection with white place labels and a winding river.", "Angled view of a snowy terrain model with blue water.", "Tablet information panel in front of a green projected terrain model."],
     title: 'Lac Batiscan',
     category: 'Interactive Scale Model · Projection Mapping Design',
     date: '2024-05',
@@ -250,6 +258,7 @@ window.KP_PROJECTS = {
     relatedProjects: ['1858 – Habits de Lumière', 'Sangue e Arena']
   },
   epernay: {
+    galleryAlts: ["Yellow and green geometric projection mapping on a façade above an audience.", "White architectural outlines projected on a building at night.", "Green vertical patterns projected across the façade above the crowd.", "Grey stone fragments projected across the lower part of the façade.", "Bright fragmented blocks projected at the base of the building."],
     title: '1858 – Habits de Lumière',
     category: 'Projection Mapping · Architectural',
     date: '2022-12',
@@ -274,6 +283,7 @@ window.KP_PROJECTS = {
     relatedProjects: ['Sangue e Arena', 'Lac Batiscan']
   },
   colosseum: {
+    galleryAlts: ["Wide view of the Colosseum lit blue with ship imagery projected across it.", "Ships on water projected across the blue-lit Colosseum.", "Ship projections with orange flames across the blue-lit Colosseum.", "Wide view of a row of projected figures across the red-lit Colosseum.", "Two fighting figures projected at large scale on the Colosseum.", "A line of white gladiator figures projected beneath red architectural lighting.", "Illustrated Priscus and Verus banner projected across the Colosseum.", "Luminous sculpted bust projected against the dark Colosseum façade.", "White architectural linework projected across the Colosseum façade."],
     title: 'Sangue e Arena',
     category: 'Projection Mapping · Architectural',
     date: '2018-06',
@@ -296,6 +306,7 @@ window.KP_PROJECTS = {
     placeholderTiles: 0
   },
   luminart: {
+    galleryAlts: ["Segmented circular blue glass emblem against a dark background.", "Glowing blue textured sphere surrounded by thin concentric rings.", "Translucent blue column surrounded by glowing blue and violet rings."],
     title: 'Lumin-ART Productions',
     category: 'Animated Logo · Motion Design',
     cardCategory: 'Animated Logo',
@@ -320,6 +331,7 @@ window.KP_PROJECTS = {
     externalLabel: 'See Lumin-ART Productions'
   },
   'memoire-eau': {
+    galleryAlts: ["Flowing pale patterns projected across pointed arches and stonework on a church façade at night."],
     title: "La Mémoire de l'Eau",
     category: 'Projection Mapping · Architectural',
     cardCategory: 'Projection Mapping',
@@ -329,19 +341,20 @@ window.KP_PROJECTS = {
     roleTitle: 'Freelance',
     venue: "St. Mark's Church, Vieux-Longueuil",
     desc: 'A projection mapping with a brief of its own: stand beside a music stage for a whole festival night, and give people somewhere to slow down.',
-    overview: "Created for Lumifest Longueuil 2023 and projected on the outside wall of St. Mark's Church, the piece is a tribute to the water molecule — part of every living body and of the ecosystems around it. Its place in the programme shaped it as much as its subject. The wall stood next to a music stage, so the work could not answer noise with noise: it had to hold a calm the crowd could step into.",
+    overview: "Created for Lumifest Longueuil 2023 and projected on the outside wall of St. Mark's Church, this work pays tribute to water and its presence in living bodies and ecosystems. I developed it as a personal piece, shaping fluid movements around the façade. It followed its own rhythm, independently of the programmed music, while being conceived to fit the atmosphere of the evening.",
     role: 'Freelance 3D Artist — Concept, Simulation, Look Development, Animation, Compositing & Pixel Mapping',
     tools: ['Cinema 4D', 'Unreal Engine', 'Fluid Flux', 'After Effects'],
-    contribution: ['Wrote the piece and carried it alone, from the first images to the pixel map delivered for projection.', 'Built the water — simulation in Fluid Flux, then shading, lighting and compositing — so it would read as water from across the street, not only up close.', "Composed with the church's gothic openings and reliefs rather than projecting over them.", 'Paced the piece against the tempo of the music stage beside it.'],
-    designIntent: "Water runs through every body and every ecosystem, and the piece was built as a tribute to that. Next to a music stage, it also had a practical job: being the quiet part of the evening. The slowness of the fluid, the restraint of the palette and the long movements all come from there — somewhere to stop and take a breath, the way water lets you.",
-    technicalChallenges: ['Challenge — the wall is not a screen. Gothic arches, stone relief and dark openings deform the image and swallow light, and the water carrying the piece had to stay recognizable at a distance, at night, on stone.', 'Production response — the architecture became part of the composition instead of an obstacle to cover, and the fluid was tuned for viewing distance rather than close-up realism: larger movement, stronger contrast, slower travel.', 'Production impact — the imagery held together on an irregular surface and kept the calm the piece was there to provide, a few metres from a stage playing all evening.'],
-    pipeline: ['Concept and reference work', 'Fluid simulation in Fluid Flux', 'Shading and lighting', 'Animation and pacing against the site', 'Compositing', 'Pixel map preparation for the façade'],
-    impact: "The piece ran at Lumifest Longueuil 2023 on the wall of St. Mark's Church, as the slow point of an evening built around a music stage.",
+    contribution: ["Conceived and produced the piece independently, from the first images to the pixel map delivered for projection.","Developed the fluidity and distinctive movements of the water through simulation and animation.","Composed the mapping around those movements, working with the church’s gothic openings and reliefs.","Created a visual rhythm independent of the programmed music, while keeping the mood of the evening in mind."],
+    designIntent: "The piece explores water through its fluidity and distinctive movements. I wanted those movements to interact with the architecture and offer a contemplative presence beside the music stage. The work was conceived to fit the mood of the programming, without being synchronized to the tracks being played.",
+    technicalChallenges: ["Challenge — preserve the continuity and fluidity of the movement across a façade interrupted by gothic arches, stone reliefs and dark openings.","Production response — I shaped the mapping around the water’s movements and the features of the architecture, working on how the image flowed across the surface.","Result — the façade became part of the movement in a work that followed its own rhythm alongside the music programme."],
+    pipeline: ["Concept and references","Fluid simulation","Fluidity and movement studies","Animation and architectural mapping","Compositing","Pixel map preparation for the façade"],
+    impact: "Presented at Lumifest Longueuil 2023 on the wall of St. Mark’s Church, the piece expressed my own artistic approach — as Dominique Arcand put it, “a work signed Killian Pichon.”",
     trailerUrl: 'https://youtu.be/1c6VhRPaIDM',
     galleryImages: ['projects/memoire-eau/mapping-eglise.webp'],
     placeholderTiles: 0,
     externalUrl: 'https://lumifest.ca/',
     externalLabel: 'See Lumifest Longueuil',
-    relatedProjects: ['epernay', 'colosseum']
+    relatedProjects: ['epernay', 'colosseum'],
+    creditsNote: "Thank you to Dominique Arcand for his trust and for helping me take an important step forward as an emerging artist."
   }
 };

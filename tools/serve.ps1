@@ -85,6 +85,7 @@ $Sources = @(
   [pscustomobject]@{ key = "index";    path = $TargetFile; label = "index.html";       backup = "index";    ext = ".html"; scan = $true  }
   [pscustomobject]@{ key = "projects"; path = $DataFile;   label = "data/projects.js"; backup = "projects"; ext = ".js";   scan = $true  }
   [pscustomobject]@{ key = "fr";       path = $FrFile;     label = "data/fr.js";       backup = "fr";       ext = ".js";   scan = $false }
+  [pscustomobject]@{ key = "layout"; path = (Join-Path $Root 'data\layout.js'); label = "data/layout.js"; backup = "layout"; ext = ".js"; scan = $false }
 )
 
 function Get-ScannedSources { return @(Get-Sources | Where-Object { $_.scan }) }
@@ -229,6 +230,8 @@ function ConvertTo-SourceLiteral([string]$s, [char]$quote) {
   $s = $s.Replace("`r", '')
   $s = $s.Replace("`n", '\n')
   $s = $s.Replace("`t", '\t')
+  # A pasted closing script tag must remain text inside index.html.
+  $s = $s.Replace('<', '\x3C').Replace([string][char]0x2028, '\u2028').Replace([string][char]0x2029, '\u2029')
   if ($quote -eq "'") { $s = $s.Replace("'", "\'") } else { $s = $s.Replace('"', '\"') }
   return $s
 }
@@ -433,7 +436,7 @@ function Invoke-Git([string[]]$gitArgs) {
 # de la sortie de git abimerait les accents.
 # Ce que l'editeur a le droit de commiter. La pathspec finale garantit
 # qu'aucun autre fichier modifie ne sera embarque, quel que soit l'index git.
-$CommitPaths = @("index.html", "data/projects.js", "projects", "sitemap.xml")
+$CommitPaths = @("index.html", "data/projects.js", "data/fr.js", "data/layout.js", "projects", "sitemap.xml")
 
 # Branche de travail de l'editeur. main est la branche de publication : y
 # ecrire depuis l'outil mettrait le site en ligne sans relecture.
@@ -441,10 +444,17 @@ $ContentBranch = "content"
 
 function Set-ContentBranch {
   $current = Get-Branch
-  if ($current -eq $ContentBranch) { return @{ ok = $true; switched = $false } }
   if ($current -eq "(hors git)") { return @{ ok = $false; reason = "Dossier hors depot git." } }
 
   $exists = (Invoke-Git @("rev-parse", "--verify", "--quiet", "refs/heads/$ContentBranch")).code -eq 0
+  # Never switch to an old content branch that would restore an older site.
+  if ($exists -and (Invoke-Git @('merge-base', '--is-ancestor', 'main', $ContentBranch)).code -ne 0) {
+    return @{ ok = $false; reason = "La branche content ne contient pas la version actuelle de main. Mets-la a jour dans GitHub Desktop avant de commiter." }
+  }
+  if ($current -eq $ContentBranch) { return @{ ok = $true; switched = $false } }
+  if ($exists -and (Invoke-Git @('merge-base', '--is-ancestor', 'HEAD', $ContentBranch)).code -ne 0) {
+    return @{ ok = $false; reason = "La branche content ne contient pas les changements de cette branche. Integre-les dans content avant de commiter depuis l'editeur." }
+  }
   $checkoutArgs = $(if ($exists) { @("checkout", $ContentBranch) } else { @("checkout", "-b", $ContentBranch) })
   $r = Invoke-Git $checkoutArgs
   if ($r.code -ne 0) {
@@ -456,9 +466,13 @@ function Set-ContentBranch {
 
 function Get-HeadContent([string]$rel = "index.html") {
   $tmp = [System.IO.Path]::GetTempFileName()
+  $err = [System.IO.Path]::GetTempFileName()
   try {
+    # Un nouveau fichier peut exister sur disque sans version dans HEAD.
+    # Capturer aussi stderr : le comparateur traite deja ce cas via $null,
+    # sans afficher le diagnostic fatal de Git dans la console du serveur.
     $p = Start-Process -FilePath "git" -ArgumentList @("-C", $Root, "show", "HEAD:$rel") `
-           -RedirectStandardOutput $tmp -NoNewWindow -Wait -PassThru
+           -RedirectStandardOutput $tmp -RedirectStandardError $err -NoNewWindow -Wait -PassThru
     if ($p.ExitCode -ne 0) { return $null }
     $enc = [System.Text.UTF8Encoding]::new($false)
     return @{
@@ -466,7 +480,7 @@ function Get-HeadContent([string]$rel = "index.html") {
       text  = [System.IO.File]::ReadAllText($tmp, $enc)
     }
   } catch { return $null }
-  finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+  finally { Remove-Item $tmp, $err -Force -ErrorAction SilentlyContinue }
 }
 
 # Compare le fichier de travail au dernier commit, texte par texte.
@@ -535,6 +549,7 @@ function Get-Changes {
   #    par chaine : ajouter ou retirer un projet change forcement le nombre de
   #    textes, et ce n'est pas une anomalie mais l'usage normal de l'outil.
   $changes += @(Get-ProjectChanges)
+  $changes += @(Get-VisualChanges)
 
   return @{ ok = $true; changes = $changes; count = $changes.Count }
 }
@@ -992,11 +1007,12 @@ function Read-FrProjectsMap([string]$raw) {
   return $out
 }
 
-function Read-FrDictionary {
+function Read-FrDictionary([string]$src) {
   $vide = [ordered]@{ ui = (New-OrderedMap); uiSection = (New-OrderedMap); projects = (New-OrderedMap); head = (New-OrderedMap); stale = @() }
-  if (-not (Test-Path -LiteralPath $FrFile -PathType Leaf)) { return $vide }
-
-  $src = [System.IO.File]::ReadAllText($FrFile, [System.Text.UTF8Encoding]::new($false))
+  if (-not $PSBoundParameters.ContainsKey('src')) {
+    if (-not (Test-Path -LiteralPath $FrFile -PathType Leaf)) { return $vide }
+    $src = [System.IO.File]::ReadAllText($FrFile, [System.Text.UTF8Encoding]::new($false))
+  }
   $clean = Remove-JsComments $src
 
   $m = [regex]::Match($clean, 'window\.KP_FR\s*=\s*\{')
@@ -1561,11 +1577,18 @@ function Update-Sitemap {
     $f = $r.fields
     if ($f.Contains('protected')) { continue }
     if ($f.Contains('listing') -and [string]$f['listing'] -eq 'hidden') { continue }
-    if (-not $f.Contains('thumb')) { continue }
-    $images += "https://killianpichon.art/" + ([string]$f['thumb']).TrimStart('/')
+    # Index only public local images, never encrypted media or external links.
+    $candidates = @($f['thumb']) + @($f['heroImage']) + @($f['galleryImages'])
+    foreach ($candidate in $candidates) {
+      $rel = [string]$candidate
+      $mediaPath = Resolve-PublicMedia $rel
+      if ($mediaPath -and $rel -match '(?i)\.(avif|webp|jpe?g|png|gif|svg)$' -and (Test-Path -LiteralPath $mediaPath -PathType Leaf)) {
+        $images += "https://killianpichon.art/" + $rel
+      }
+    }
   }
 
-  $block = ($images | Select-Object -Unique | ForEach-Object { "    <image:image>`r`n      <image:loc>$_</image:loc>`r`n    </image:image>" }) -join "`r`n"
+  $block = ($images | Select-Object -Unique | ForEach-Object { $_ = [System.Security.SecurityElement]::Escape($_); "    <image:image>`r`n      <image:loc>$_</image:loc>`r`n    </image:image>" }) -join "`r`n"
   $updated = [regex]::Replace($text, '(?s)(\r?\n)\s*<image:image>.*?</image:image>\s*(\r?\n  </url>)', "`r`n$block`$2")
   $updated = [regex]::Replace($updated, '<lastmod>[^<]*</lastmod>', "<lastmod>$(Get-Date -Format 'yyyy-MM-dd')</lastmod>")
   if ($updated -ne $text) { [System.IO.File]::WriteAllText($path, $updated, $enc) }
@@ -1911,6 +1934,10 @@ function New-JsonLdPattern([string]$type, [string]$field) {
 }
 
 $SettingsDef = @(
+  @{ key='showTechnical'; group='Pages'; label='Afficher la page Technique'; kind='boolean'
+     help='Decochez pour masquer le lien et rediriger son adresse vers les projets. Le contenu est conserve. La publication reste necessaire pour modifier le site en ligne.'
+     targets=@( '(?<pre>window\.KP_SHOW_TECHNICAL = )(?<v>true|false)(?<post>;)' ) }
+
   @{ key='showReel'; group='Accueil - Demo reel'; label="Afficher le demo reel sur l'accueil"; kind='boolean'
      help='Decochez pour masquer la tuile et son lecteur. Le lien est conserve.'
      targets=@( '(?<pre>  showReel = )(?<v>true|false)(?<post>,)' ) }
@@ -2099,14 +2126,13 @@ function Send-Json($res, $obj) {
 # ------------------------------------------------------------------ adresses
 function Get-LanIp {
   try {
-    $ip = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop |
-      Where-Object { $_.IPAddress -notmatch '^(127\.|169\.254\.)' -and $_.InterfaceAlias -notmatch 'Loopback|vEthernet|WSL' } |
-      Sort-Object -Property InterfaceMetric | Select-Object -First 1
-    if ($ip) { return $ip.IPAddress }
+    $network = Get-LocalNetwork
+    if ($network) { return $network.Address }
   } catch {}
   return $null
 }
 
+. (Join-Path $ScriptDir 'local-network.ps1')
 $lanIp = Get-LanIp
 
 # Renvoie un listener demarre, ou $null. Ferme systematiquement l'objet en cas
@@ -2123,6 +2149,8 @@ function Start-Listener([string]$prefix) {
     return $null
   }
 }
+
+. (Join-Path $ScriptDir 'visual-editor.ps1')
 
 if ($NoServe) { return }
 
@@ -2182,7 +2210,7 @@ Write-Host ""
 Write-Host "  Ferme l'onglet de l'editeur pour arreter le serveur."
 Write-Host ""
 
-if (-not $NoBrowser) { Start-Process $editorUrl | Out-Null }
+if (-not $NoBrowser) { Start-Process ($editorUrl + '?launch=1') | Out-Null }
 
 # --------------------------------------------------------------- boucle HTTP
 $lastPing = Get-Date
@@ -2210,6 +2238,9 @@ try {
     while (-not $task.AsyncWaitHandle.WaitOne(1000)) {
       $idle = ((Get-Date) - $lastPing).TotalSeconds
       $limit = if ($everPinged) { $IdleTimeoutSeconds } else { 120 }
+      # Les navigateurs peuvent espacer les minuteurs d'un onglet cache d'une
+      # minute. Laisser trois minutes de marge pendant les essais sur iPhone.
+      if ($lastVisibility -eq 'hidden') { $limit = [Math]::Max($limit, 180) }
       if ($idle -gt $limit) {
         if ($everPinged) { Write-Host "  Editeur ferme - arret du serveur." }
         else { Write-Host "  Aucun editeur connecte - arret du serveur." }
@@ -2331,12 +2362,25 @@ try {
       }
 
       if ($rel -eq "/__quit") {
+        if ($req.HttpMethod -ne 'POST') { $res.StatusCode = 405; $res.Headers.Add('Allow', 'POST'); $res.Close(); continue }
         Send-Json $res @{ ok = $true }
         $res.Close()
         Write-Host "  Arret demande par l'editeur."
         Write-Diag ("ARRET propre demande par l'editeur  dernier-onglet={0}" -f $lastVisibility)
         $diagStopLogged = $true
         $listener.Stop(); return
+      }
+
+      if ($rel -eq '/__visual' -and $req.HttpMethod -eq 'GET') {
+        Send-Json $res @{ entries=@(Get-VisualCatalog); layout=(Read-Layout); stamp=(Get-FileStamp) }
+        $res.Close(); continue
+      }
+      if ($rel -eq '/__visual' -and $req.HttpMethod -eq 'POST') {
+        if ($req.ContentLength64 -gt 2MB) { $res.StatusCode=413; $res.Close(); continue }
+        $reader = New-Object System.IO.StreamReader($req.InputStream, [System.Text.Encoding]::UTF8)
+        try { $payload = $reader.ReadToEnd() | ConvertFrom-Json } finally { $reader.Close() }
+        Send-Json $res (Save-Visual $payload)
+        $res.Close(); continue
       }
 
       if ($rel -eq "/__strings") {
@@ -2559,7 +2603,8 @@ try {
       }
 
       if ($rel -eq "/__editor") {
-        $b = [System.IO.File]::ReadAllBytes((Join-Path $ScriptDir "editor.html"))
+        $page = if ($req.QueryString['launch'] -eq '1') { 'launch-editor.html' } else { 'editor.html' }
+        $b = [System.IO.File]::ReadAllBytes((Join-Path $ScriptDir $page))
         $res.ContentType = "text/html; charset=utf-8"
         $res.Headers.Add("Cache-Control", "no-store")
         $res.ContentLength64 = $b.Length
@@ -2572,7 +2617,7 @@ try {
       $candidate = Join-Path $Root ($rel.TrimStart("/") -replace "/", "\")
       $full = [System.IO.Path]::GetFullPath($candidate)
       $rootFull = [System.IO.Path]::GetFullPath($Root)
-      if (-not $full.StartsWith($rootFull, [StringComparison]::OrdinalIgnoreCase)) {
+      if (-not $full.StartsWith($rootFull + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
         $res.StatusCode = 403; $res.Close(); continue
       }
 
