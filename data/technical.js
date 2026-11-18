@@ -1,15 +1,15 @@
 /* Public tool catalogue. Keep EN/FR together; rebuild with node tools/build-technical.cjs. */
 (function (root) {
   const content = {
-    updated: '2026-11-05',
-    revision: '20261105-downloads',
+    updated: '2026-11-17',
+    revision: '20261117-keyframe-reducer',
     en: {
       title: 'Tools & workflows',
-      meta: 'Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
+      meta: 'Blender add-ons, Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
       intro: 'Tools I develop as needs arise: on professional projects, in my own practice and in my hobbies. They show how I work: identify what is slowing a task down, choose the right approach and refine it through use, with AI when it helps.',
       categories: [
         { id: 'professional', title: 'Professional projects', subtitle: 'Corporate & contract work', text: 'Tools developed within a production belong in their project context: the need, my contribution and what can be shared. Technical details will be added to the relevant project pages when I have permission to disclose them.', empty: 'No standalone tool shared here yet.' },
-        { id: 'personal', title: 'Personal tools', subtitle: 'Modelling & everyday production', text: 'Small tools developed in my own time to remove friction from the way I work.' },
+        { id: 'personal', title: 'Personal tools', subtitle: 'Modelling, animation & everyday production', text: 'Small tools developed in my own time to remove friction from the way I work.' },
         { id: 'just-for-fun', title: 'Just for fun', subtitle: 'Hardware mappings, hobbies & utilities', text: 'Experiments that become useful: adapting hardware, connecting software and making everyday tasks simpler.' }
       ],
       reuseTitle: 'Build once, reuse',
@@ -38,6 +38,31 @@
           alternate: { language: 'Français', file: 'downloads/Select_Similar_Angle.py', summary: 'French version — code and download' }
         },
         {
+          id: 'keyframe-reducer', category: 'personal', title: 'Keyframe Reducer',
+          version: '1.1.1', requirements: 'Blender 5.2 or later',
+          pageTitle: 'Keyframe Reducer for Blender — Killian Pichon',
+          meta: 'Free Blender add-on to reduce animation keyframes on a copy, across an entire Action or selected keys. Version 1.1.1 with English and French guides.',
+          tags: ['Blender 5.2', 'Python', 'Animation · v1.1.1'],
+          summary: 'Reduce dense animation curves to make motion capture cleanup and manual corrections easier.',
+          need: 'Working with Brekel and Kinect v2 capture and Mixamo animations led me to dense curves that were cumbersome to edit in Blender. I wanted a reduction workflow closer to what I use in Cinema 4D, with control over the sections being simplified.',
+          response: 'I developed this add-on with AI assistance around a protected source Action, adjustable tolerances and before/after comparison. The Selected Keys mode grew out of a practical need: simplify one passage while preserving the surrounding animation.',
+          result: 'The tool lets me compare a reduced copy, adjust the result from the original and keep it for manual editing. The current version was checked in Blender 5.2.1 LTS, including selected sections of a Mixamo animation and updating an already enabled add-on.',
+          download: {
+            title: 'Download & guides',
+            file: 'downloads/keyframe-reducer/keyframe_reducer-1.1.1.zip',
+            label: 'Download add-on · v1.1.1 (.zip)',
+            note: 'Free · GPL-3.0-or-later · Python source included. Install this ZIP directly in Blender without extracting it. The interface is in English; both guides are Markdown files.',
+            guides: [
+              { file: 'downloads/keyframe-reducer/Keyframe_Reducer_Guide_EN.md', language: 'en', label: 'English guide (.md)' },
+              { file: 'downloads/keyframe-reducer/Keyframe_Reducer_Guide_FR.md', language: 'fr', label: 'Guide français (.md)' }
+            ]
+          },
+          features: ['Reduce an Entire Action or only Selected Keys in the Graph Editor.', 'Adjust Strength and separate position, rotation and scale tolerances.', 'Compare Original / Reduced and recalculate from the protected source.', 'Preserve unselected keys, gaps and selection boundaries.', 'Reduce New Selection to continue on another passage, then Keep Copy for Editing.'],
+          workflow: ['Download the ZIP above. In Blender, open Edit → Preferences → Add-ons → Install from Disk and select the ZIP without extracting it.', 'Select the armature and its active Action. For an NLA montage, bake the motion to an Action first.', 'Open the Graph Editor, press N and choose Key Reducer. Select Entire Action, or select key points and choose Scope → Selected Keys.', 'Click Reduce on a Copy, compare Original / Reduced, then adjust Strength and use Recalculate from Source if needed.', 'For quaternion rotation, select W, X, Y and Z at matching times. Each selected run needs at least three consecutive keys.', 'Click Keep Copy for Editing before correcting keys manually. To simplify another passage first, show Reduced and use Reduce New Selection.'],
+          limits: 'Processes the active Action, not the NLA stack. Error checks sample local transforms; they do not lock feet in world space or automatically remove capture jitter. Quaternion components must be selected together. Selected Keys excludes hidden curves. Locked curves and unsupported channels are preserved.',
+          compatibility: 'Requires Blender 5.2 or later. Checked on Windows in Blender 5.2.1 LTS. English interface; guides in English and French. No external dependencies.'
+        },
+        {
           id: 'denon-sc2000-traktor', category: 'just-for-fun', title: 'Denon DN-SC2000 · Traktor Pro 4',
           meta: 'Denon DN-SC2000 mapping for Traktor Pro 4: two decks, FX and a documented MIDI setup. Version 5.1.0 tested by Killian Pichon.',
           tags: ['Denon DN-SC2000', 'Traktor Pro 4', 'MIDI · v5.1.0'],
@@ -57,11 +82,11 @@
     },
     fr: {
       title: 'Outils & méthodes',
-      meta: 'Scripts Python pour Cinema 4D, outils de production et mappings MIDI DJ de Killian Pichon. Projets professionnels, outils personnels et expérimentations à réutiliser.',
+      meta: 'Add-ons Blender, scripts Python pour Cinema 4D, outils de production et mappings MIDI DJ de Killian Pichon. Projets professionnels, outils personnels et expérimentations à réutiliser.',
       intro: 'Des outils que je développe au fil des besoins : en production, dans ma pratique personnelle et dans mes hobbies. Ils montrent ma façon de travailler : repérer ce qui ralentit une tâche, choisir les moyens adaptés et ajuster la solution à l’usage, avec l’IA lorsqu’elle peut aider.',
       categories: [
         { id: 'professional', title: 'Projets professionnels', subtitle: 'Projets corpo & contrats', text: 'Les outils développés en production s’expliquent dans le contexte du projet : le besoin, ma contribution et ce qui peut être partagé. Les volets techniques seront ajoutés aux fiches concernées lorsque j’aurai l’autorisation de les divulguer.', empty: 'Aucun outil autonome partagé ici pour le moment.' },
-        { id: 'personal', title: 'Outils personnels', subtitle: 'Modélisation & pratique quotidienne', text: 'De petits outils développés sur mon temps libre pour simplifier les tâches qui ralentissent mon travail.' },
+        { id: 'personal', title: 'Outils personnels', subtitle: 'Modélisation, animation & pratique quotidienne', text: 'De petits outils développés sur mon temps libre pour simplifier les tâches qui ralentissent mon travail.' },
         { id: 'just-for-fun', title: 'Just for fun', subtitle: 'Mapping matériel, hobbies & utilitaires', text: 'Des expérimentations qui deviennent utiles : adapter du matériel, relier des logiciels et simplifier les tâches du quotidien.' }
       ],
       reuseTitle: 'Créer une fois, réutiliser',
@@ -88,6 +113,31 @@
           scriptLanguage: 'Français',
           file: 'downloads/Select_Similar_Angle.py',
           alternate: { language: 'English', file: 'downloads/Select_Similar_Angle_EN.py', summary: 'Version anglaise — code et téléchargement' }
+        },
+        {
+          id: 'keyframe-reducer', category: 'personal', title: 'Keyframe Reducer',
+          version: '1.1.1', requirements: 'Blender 5.2 ou ultérieur',
+          pageTitle: 'Keyframe Reducer pour Blender — Killian Pichon',
+          meta: 'Add-on gratuit pour réduire les clés d’animation dans Blender, sur une copie : Action complète ou clés sélectionnées. Version 1.1.1 et guides français et anglais.',
+          tags: ['Blender 5.2', 'Python', 'Animation · v1.1.1'],
+          summary: 'Alléger les courbes d’animation pour faciliter le nettoyage de motion capture et les corrections à la main.',
+          need: 'En travaillant avec des captures Brekel et Kinect v2 et des animations Mixamo, je me retrouvais avec des courbes denses, peu pratiques à retoucher dans Blender. Je voulais un workflow de réduction plus proche de celui que j’utilise dans Cinema 4D, avec un contrôle sur les passages à simplifier.',
+          response: 'J’ai développé cet add-on avec l’aide de l’IA autour d’une Action source protégée, de tolérances ajustables et d’une comparaison avant/après. Le mode Selected Keys répond à un besoin apparu à l’usage : simplifier un passage tout en conservant l’animation autour.',
+          result: 'L’outil me permet de comparer une copie réduite, d’ajuster le résultat depuis l’original et de le conserver pour la retouche. La version actuelle a été contrôlée dans Blender 5.2.1 LTS, notamment sur des passages d’une animation Mixamo et lors de la mise à jour d’un add-on déjà activé.',
+          download: {
+            title: 'Téléchargement & guides',
+            file: 'downloads/keyframe-reducer/keyframe_reducer-1.1.1.zip',
+            label: 'Télécharger l’add-on · v1.1.1 (.zip)',
+            note: 'Gratuit · GPL-3.0-or-later · Code Python inclus. Installer ce ZIP directement dans Blender, sans le décompresser. L’interface est en anglais ; les deux guides sont au format Markdown.',
+            guides: [
+              { file: 'downloads/keyframe-reducer/Keyframe_Reducer_Guide_FR.md', language: 'fr', label: 'Guide français (.md)' },
+              { file: 'downloads/keyframe-reducer/Keyframe_Reducer_Guide_EN.md', language: 'en', label: 'English guide (.md)' }
+            ]
+          },
+          features: ['Réduire une Action complète ou seulement les clés sélectionnées dans le Graph Editor.', 'Ajuster Strength et les tolérances de position, rotation et échelle séparément.', 'Comparer Original / Reduced et recalculer depuis la source protégée.', 'Conserver les clés non sélectionnées, les intervalles et les bornes des passages.', 'Traiter un autre passage avec Reduce New Selection, puis conserver la copie pour retouche.'],
+          workflow: ['Télécharger le ZIP ci-dessus. Dans Blender, ouvrir Edit → Preferences → Add-ons → Install from Disk et sélectionner ce ZIP sans le décompresser.', 'Sélectionner l’armature et son Action active. Pour un montage NLA, baker d’abord le mouvement dans une Action.', 'Dans le Graph Editor, appuyer sur N puis ouvrir Key Reducer. Choisir Entire Action, ou sélectionner des points de clés et choisir Scope → Selected Keys.', 'Cliquer sur Reduce on a Copy, comparer Original / Reduced, puis ajuster Strength et utiliser Recalculate from Source au besoin.', 'Pour une rotation quaternion, sélectionner W, X, Y et Z aux mêmes images. Chaque passage doit contenir au moins trois clés consécutives sélectionnées.', 'Cliquer sur Keep Copy for Editing avant de corriger les clés à la main. Pour simplifier d’abord un autre passage, afficher Reduced puis utiliser Reduce New Selection.'],
+          limits: 'Traite l’Action active, pas la pile NLA. Le contrôle d’erreur échantillonne les transformations locales : il ne verrouille pas les pieds dans l’espace monde et ne supprime pas automatiquement les tremblements de capture. Les composantes quaternion doivent être sélectionnées ensemble. Selected Keys exclut les courbes masquées. Les courbes verrouillées et les canaux non pris en charge sont conservés.',
+          compatibility: 'Blender 5.2 minimum. Contrôlé sous Windows dans Blender 5.2.1 LTS. Interface anglaise ; guides français et anglais. Aucune dépendance externe.'
         },
         {
           id: 'denon-sc2000-traktor', category: 'just-for-fun', title: 'Denon DN-SC2000 · Traktor Pro 4',

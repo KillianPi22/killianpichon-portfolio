@@ -36,6 +36,10 @@
     const labels = data.labels;
     const category = data.categories.find(item => item.id === tool.category);
     let body = '<a class="tool-text-link" href="' + route(lang) + '#' + tool.category + '">← ' + escape(labels.back) + '</a><header class="tool-intro"><p class="tool-eyebrow">' + escape(category.title) + '</p><h1>' + escape(tool.title) + '</h1>' + paragraph(tool.summary) + tags(tool.tags) + '</header>';
+    if (tool.download) {
+      const download = tool.download;
+      body += '<section class="tool-section" aria-labelledby="tool-download-heading"><h2 id="tool-download-heading">' + escape(download.title) + '</h2><div class="tool-actions"><a class="tool-button tool-button-primary" href="' + escape(download.file) + '" download="' + escape(download.file.split('/').pop()) + '">' + escape(download.label) + '</a>' + (download.guides || []).map(guide => '<a class="tool-button" href="' + escape(guide.file) + '" download="' + escape(guide.file.split('/').pop()) + '" hreflang="' + escape(guide.language) + '">' + escape(guide.label) + '</a>').join('') + '</div><p class="tool-note">' + escape(download.note) + '</p></section>';
+    }
     if (tool.preview) {
       const preview = tool.preview;
       body += '<figure class="tool-interface"><picture><source srcset="' + escape(preview.src) + '" type="image/webp"><img src="' + escape(preview.fallback) + '" width="' + preview.width + '" height="' + preview.height + '" alt="' + escape(preview.alt) + '" decoding="async"></picture><figcaption class="tool-note">' + escape(preview.caption) + '</figcaption></figure>';
