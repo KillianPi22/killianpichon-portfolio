@@ -7,8 +7,11 @@ en français : `technical/keyframe-reducer/` et `technical/keyframe-reducer/fr/`
 La fiche explique le besoin de simplifier des courbes de motion capture, la
 réduction sur une copie, le mode Selected Keys et les limites du contrôle
 d'erreur en transformations locales. L'interface de l'add-on reste en anglais.
-Le ZIP installable et les guides Markdown FR/EN sont servis directement depuis
-`downloads/keyframe-reducer/`, sans service de téléchargement supplémentaire.
+Un seul bouton télécharge le ZIP installable depuis `downloads/keyframe-reducer/`,
+sans service de téléchargement supplémentaire. À la demande du propriétaire,
+les boutons séparés des guides sont retirés des deux langues : `README_EN.md`
+et `README_FR.md` sont déjà inclus dans le ZIP. Les URLs des guides précédemment
+publiées restent disponibles.
 Le ZIP contient le code Python sous GPL-3.0-or-later ; les scènes de travail et
 animations de test ne sont pas distribuées. La version 1.1.1 inclut le correctif
 de rechargement des modules lors d'une mise à jour de l'add-on déjà activé.
@@ -21,7 +24,7 @@ manifeste et le sitemap sont actualisés. Pour une mise à jour, ajouter le ZIP
 versionné, actualiser les deux fiches et guides, puis exécuter les générateurs
 de pages projets et techniques. Conserver les anciens téléchargements publiés.
 
-Contrôles : syntaxe JavaScript, génération et vérification des pages projets,
+Contrôles de l'ajout initial : syntaxe JavaScript, génération et vérification des pages projets,
 tests de génération et six tests du compteur C4D réussis. L'aperçu HTTP des
 fichiers publics est vérifié en français et en anglais à 320, 390, 768 et
 1440 px, sans débordement horizontal. Les changements de langue, les liens
@@ -38,6 +41,11 @@ configuration GitHub Pages restent inchangés. Les essais de l'add-on ont été
 réalisés séparément dans Blender 5.2.1 LTS ; pas de nouvel essai sur appareil
 mobile physique. Révision préparée depuis `main` distant `f8c4e8b` sur
 `codex/keyframe-reducer` pour l'ajout demandé au site.
+
+Retrait des boutons de guides : génération et contrôle des pages réussis,
+aperçu HTTP FR/EN à 320, 390, 768 et 1440 px, téléchargement du ZIP et navigation
+vérifiés, avec un seul bouton de téléchargement même sans JavaScript. Aucun
+débordement ni erreur de console/réseau. Le ZIP et les styles restent identiques.
 
 ### Compteur de téléchargements C4D — 5 novembre 2026
 

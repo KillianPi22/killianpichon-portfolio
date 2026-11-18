@@ -2,7 +2,7 @@
 (function (root) {
   const content = {
     updated: '2026-11-17',
-    revision: '20261117-keyframe-reducer',
+    revision: '20261117-reducer-download',
     en: {
       title: 'Tools & workflows',
       meta: 'Blender add-ons, Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -48,14 +48,10 @@
           response: 'I developed this add-on with AI assistance around a protected source Action, adjustable tolerances and before/after comparison. The Selected Keys mode grew out of a practical need: simplify one passage while preserving the surrounding animation.',
           result: 'The tool lets me compare a reduced copy, adjust the result from the original and keep it for manual editing. The current version was checked in Blender 5.2.1 LTS, including selected sections of a Mixamo animation and updating an already enabled add-on.',
           download: {
-            title: 'Download & guides',
+            title: 'Download',
             file: 'downloads/keyframe-reducer/keyframe_reducer-1.1.1.zip',
             label: 'Download add-on · v1.1.1 (.zip)',
-            note: 'Free · GPL-3.0-or-later · Python source included. Install this ZIP directly in Blender without extracting it. The interface is in English; both guides are Markdown files.',
-            guides: [
-              { file: 'downloads/keyframe-reducer/Keyframe_Reducer_Guide_EN.md', language: 'en', label: 'English guide (.md)' },
-              { file: 'downloads/keyframe-reducer/Keyframe_Reducer_Guide_FR.md', language: 'fr', label: 'Guide français (.md)' }
-            ]
+            note: 'Free · GPL-3.0-or-later · Python source included. Install this ZIP directly in Blender without extracting it. English interface; English and French guides included in the ZIP.'
           },
           features: ['Reduce an Entire Action or only Selected Keys in the Graph Editor.', 'Adjust Strength and separate position, rotation and scale tolerances.', 'Compare Original / Reduced and recalculate from the protected source.', 'Preserve unselected keys, gaps and selection boundaries.', 'Reduce New Selection to continue on another passage, then Keep Copy for Editing.'],
           workflow: ['Download the ZIP above. In Blender, open Edit → Preferences → Add-ons → Install from Disk and select the ZIP without extracting it.', 'Select the armature and its active Action. For an NLA montage, bake the motion to an Action first.', 'Open the Graph Editor, press N and choose Key Reducer. Select Entire Action, or select key points and choose Scope → Selected Keys.', 'Click Reduce on a Copy, compare Original / Reduced, then adjust Strength and use Recalculate from Source if needed.', 'For quaternion rotation, select W, X, Y and Z at matching times. Each selected run needs at least three consecutive keys.', 'Click Keep Copy for Editing before correcting keys manually. To simplify another passage first, show Reduced and use Reduce New Selection.'],
@@ -125,14 +121,10 @@
           response: 'J’ai développé cet add-on avec l’aide de l’IA autour d’une Action source protégée, de tolérances ajustables et d’une comparaison avant/après. Le mode Selected Keys répond à un besoin apparu à l’usage : simplifier un passage tout en conservant l’animation autour.',
           result: 'L’outil me permet de comparer une copie réduite, d’ajuster le résultat depuis l’original et de le conserver pour la retouche. La version actuelle a été contrôlée dans Blender 5.2.1 LTS, notamment sur des passages d’une animation Mixamo et lors de la mise à jour d’un add-on déjà activé.',
           download: {
-            title: 'Téléchargement & guides',
+            title: 'Téléchargement',
             file: 'downloads/keyframe-reducer/keyframe_reducer-1.1.1.zip',
             label: 'Télécharger l’add-on · v1.1.1 (.zip)',
-            note: 'Gratuit · GPL-3.0-or-later · Code Python inclus. Installer ce ZIP directement dans Blender, sans le décompresser. L’interface est en anglais ; les deux guides sont au format Markdown.',
-            guides: [
-              { file: 'downloads/keyframe-reducer/Keyframe_Reducer_Guide_FR.md', language: 'fr', label: 'Guide français (.md)' },
-              { file: 'downloads/keyframe-reducer/Keyframe_Reducer_Guide_EN.md', language: 'en', label: 'English guide (.md)' }
-            ]
+            note: 'Gratuit · GPL-3.0-or-later · Code Python inclus. Installer ce ZIP directement dans Blender, sans le décompresser. Interface anglaise ; guides français et anglais inclus dans le ZIP.'
           },
           features: ['Réduire une Action complète ou seulement les clés sélectionnées dans le Graph Editor.', 'Ajuster Strength et les tolérances de position, rotation et échelle séparément.', 'Comparer Original / Reduced et recalculer depuis la source protégée.', 'Conserver les clés non sélectionnées, les intervalles et les bornes des passages.', 'Traiter un autre passage avec Reduce New Selection, puis conserver la copie pour retouche.'],
           workflow: ['Télécharger le ZIP ci-dessus. Dans Blender, ouvrir Edit → Preferences → Add-ons → Install from Disk et sélectionner ce ZIP sans le décompresser.', 'Sélectionner l’armature et son Action active. Pour un montage NLA, baker d’abord le mouvement dans une Action.', 'Dans le Graph Editor, appuyer sur N puis ouvrir Key Reducer. Choisir Entire Action, ou sélectionner des points de clés et choisir Scope → Selected Keys.', 'Cliquer sur Reduce on a Copy, comparer Original / Reduced, puis ajuster Strength et utiliser Recalculate from Source au besoin.', 'Pour une rotation quaternion, sélectionner W, X, Y et Z aux mêmes images. Chaque passage doit contenir au moins trois clés consécutives sélectionnées.', 'Cliquer sur Keep Copy for Editing avant de corriger les clés à la main. Pour simplifier d’abord un autre passage, afficher Reduced puis utiliser Reduce New Selection.'],
