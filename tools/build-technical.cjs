@@ -57,7 +57,7 @@ for (const lang of ['en', 'fr']) {
     ];
     if (!tool) graph.push({ '@type': 'ItemList', itemListElement: data.tools.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.title, url: origin + route(lang, item.id) })) });
     if (tool?.file) graph.push({ '@type': 'SoftwareSourceCode', name: tool.title, description: tool.summary, programmingLanguage: 'Python', runtimePlatform: 'Cinema 4D 2026', codeSampleType: 'full', url: canonical, contentUrl: origin + tool.file, author: { '@type': 'Person', name: 'Killian Pichon', url: origin } });
-    if (tool?.download) graph.push({ '@type': 'SoftwareApplication', name: tool.title, description: tool.summary, applicationCategory: 'MultimediaApplication', softwareVersion: tool.version, softwareRequirements: tool.requirements, url: canonical, downloadUrl: origin + tool.download.file, license: 'https://www.gnu.org/licenses/gpl-3.0.html', author: { '@type': 'Person', name: 'Killian Pichon', url: origin } });
+    if (tool?.download) graph.push({ '@type': 'SoftwareApplication', name: tool.title, description: tool.summary, applicationCategory: 'MultimediaApplication', softwareVersion: tool.version, softwareRequirements: tool.requirements, url: canonical, downloadUrl: new URL(view.downloadURL(tool.download), origin).href, license: 'https://www.gnu.org/licenses/gpl-3.0.html', author: { '@type': 'Person', name: 'Killian Pichon', url: origin } });
     const dict = lang === 'fr' ? Object.fromEntries(uiKeys.filter(key => french[key]).map(key => [key, french[key]])) : {};
     const safeJSON = value => JSON.stringify(value).replace(/</g, '\\u003c');
     const base = '../'.repeat(pathname.split('/').filter(Boolean).length);
@@ -96,7 +96,7 @@ for (const lang of ['en', 'fr']) {
   <link rel="stylesheet" href="assets/organic-floating.css?v=20260906">
   <script>window.KP_I18N={lang:${safeJSON(lang)},t:function(s){return ${safeJSON(dict)}[s]||s;}};</script>
   <script defer src="assets/technical-library.js?v=${assetVersion}"></script>
-${tool?.downloadRelease ? '  <script defer src="assets/download-counter.js?v=' + assetVersion + '"></script>\n' : ''}  <script defer src="assets/analytics-consent.js?v=20261030-projects"></script>
+${tool?.downloadRelease || tool?.download?.counter ? '  <script defer src="assets/download-counter.js?v=' + assetVersion + '"></script>\n' : ''}  <script defer src="assets/analytics-consent.js?v=20261030-projects"></script>
   <script defer src="assets/motion-exploration.js?v=20261030-projects"></script>
   <script defer src="assets/organic-floating.js?v=20261031-auto-tilt"></script>
   <script type="application/ld+json">${safeJSON({ '@context': 'https://schema.org', '@graph': graph })}</script>

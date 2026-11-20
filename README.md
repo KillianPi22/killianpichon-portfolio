@@ -1,5 +1,47 @@
 # Portfolio de Killian Pichon
 
+### Dépôt dédié et compteur Keyframe Reducer - 20 novembre 2026
+
+Le développement de l'add-on est séparé du portfolio dans
+`KillianPi22/blender-keyframe-reducer`. Les fiches françaises et anglaises
+référencent ce dépôt et le ZIP installable de sa release `v1.1.1`.
+Les guides restent inclus dans l'archive, sans boutons de guides séparés.
+L'ancien ZIP local reste accessible par le lien de secours.
+
+Le compteur partagé conserve le total Select Similar dans le dépôt du portfolio
+et calcule un total indépendant pour Keyframe Reducer dans son propre dépôt.
+Pour l'add-on, seuls les assets `keyframe_reducer-X.Y.Z.zip` des releases stables
+publiques dont le tag suit `vX.Y.Z` sont additionnés. Les brouillons,
+préversions, packs de développement, archives sources et téléchargements locaux
+sont exclus. Les statistiques antérieures du site ne peuvent pas être reprises.
+Les erreurs de l'API affichent « Compteur indisponible », jamais un faux zéro.
+Les téléchargements réels de vérification entrent dans le total GitHub.
+
+Pour publier une version : créer d'abord la release et son ZIP dans le dépôt de
+l'add-on, vérifier leur accès public, puis modifier `version`, `download.release`,
+`download.file` et les libellés EN/FR dans `data/technical.js`. Ajouter le ZIP local
+de secours, conserver les anciennes releases et leurs assets, actualiser les
+versions de cache de `index.html`, puis exécuter `node tools/build-projects.cjs`
+et `node tools/build-technical.cjs`. Ne pas publier la fiche avant que le dépôt
+et son asset existent. La prévisualisation interactive dans le Graph Editor est
+une priorité de développement du dépôt ; elle n'est pas annoncée comme disponible
+dans la version 1.1.1.
+
+Le compteur utilise toujours l'API publique GitHub sans cookie, stockage,
+identifiant, referrer ni clé. Chaque outil est rafraîchi séparément, au plus une
+fois par minute, avec un délai maximal de huit secondes. Le comportement C4D
+et les protections Analytics/NDA restent inchangés. `privacy.html` décrit les
+deux outils. Les tests du compteur couvrent les totaux séparés, l'historique,
+la pagination, les erreurs indépendantes et les liens statiques EN/FR.
+
+Contrôles de cette préparation : onze tests du compteur et le test de génération
+déterministe réussis ; 36 pages, ressources et liens locaux contrôlés via HTTP,
+avec vérification de casse, d'ancres et des octets du ZIP. Les sources des médias,
+styles, protections, `CNAME`, `.nojekyll` et configuration Pages restent identiques.
+Le test navigateur ne démarre pas, car Playwright n'est pas installé : affichage
+responsive, console et réseau dans un navigateur restent à contrôler. Le dépôt
+et le ZIP distants doivent être vérifiés avant publication.
+
 ### Keyframe Reducer pour Blender — 17 novembre 2026
 
 La rubrique Outils personnels présente Keyframe Reducer 1.1.1, en anglais et
