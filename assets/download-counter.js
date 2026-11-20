@@ -3,13 +3,13 @@
   'use strict';
   const profiles = {
     'select-similar-angle': {
-      repository: 'KillianPi22/killianpichon-portfolio',
+      repositories: ['KillianPi22/c4d-select-similar-angle', 'KillianPi22/killianpichon-portfolio'],
       tag: value => typeof value === 'string' && value.startsWith('select-similar-angle-'),
       asset: value => ['Select_Similar_Angle.py', 'Select_Similar_Angle_EN.py'].includes(value),
       complete: names => names.size === 2
     },
     'keyframe-reducer': {
-      repository: 'KillianPi22/blender-keyframe-reducer',
+      repositories: ['KillianPi22/blender-keyframe-reducer'],
       tag: value => typeof value === 'string' && /^v\d+\.\d+\.\d+$/.test(value),
       asset: value => typeof value === 'string' && /^keyframe_reducer-\d+\.\d+\.\d+\.zip$/.test(value),
       complete: names => names.size > 0
@@ -18,10 +18,16 @@
   async function total(fetcher = fetch, signal, profileId = 'select-similar-angle') {
     const profile = Object.hasOwn(profiles, profileId) ? profiles[profileId] : null;
     if (!profile) throw new Error('Unknown download counter');
+    const totals = await Promise.all(profile.repositories.map(repository => repositoryTotal(fetcher, signal, profile, repository)));
+    const count = totals.reduce((sum, value) => sum + value, 0);
+    if (!Number.isSafeInteger(count)) throw new Error('Invalid download total');
+    return count;
+  }
+  async function repositoryTotal(fetcher, signal, profile, repository) {
     let count = 0;
     const seen = new Set(), found = new Set();
     for (let page = 1; page <= 20; page++) {
-      const response = await fetcher('https://api.github.com/repos/' + profile.repository + '/releases?per_page=100&page=' + page, {
+      const response = await fetcher('https://api.github.com/repos/' + repository + '/releases?per_page=100&page=' + page, {
         credentials: 'omit', referrerPolicy: 'no-referrer', signal,
         headers: { Accept: 'application/vnd.github+json' }
       });
