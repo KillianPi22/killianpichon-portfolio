@@ -26,12 +26,12 @@
       ).join('') + '</section>'
     ).join('') + '<aside class="tool-reuse"><h2>' + escape(data.reuseTitle) + '</h2>' + paragraph(data.reuse) + paragraph(data.versioning) + paragraph(data.ecology) + '<a class="tool-text-link tool-note" href="https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai">' + escape(data.ecologySource) + ' ↗</a></aside>';
   }
-  function codeSection(labels, file, language, code, alternate = false, release = null) {
+  function codeSection(labels, file, language, code, alternate = false, release = null, repository = null) {
     const id = alternate ? 'tool-source-alternate' : 'tool-source';
     const headingId = alternate ? 'source-heading-alternate' : 'source-heading';
     const title = labels.code + (language ? ' — ' + language : '');
     const filename = file.split('/').pop();
-    const url = release ? 'https://github.com/KillianPi22/killianpichon-portfolio/releases/download/' + encodeURIComponent(release) + '/' + encodeURIComponent(filename) : file;
+    const url = downloadURL({ file, release, repository });
     const counter = release ? '<p class="tool-note tool-download-total" data-download-count data-download-label="' + escape(labels.downloadTotal) + '" data-download-unavailable="' + escape(labels.downloadUnavailable) + '" title="' + escape(labels.downloadNote) + '" aria-live="polite">' + escape(labels.downloadUnavailable) + '</p><a class="tool-text-link tool-note" href="' + escape(file) + '" download="' + escape(filename) + '">' + escape(labels.downloadFallback) + '</a>' : '';
     return '<section class="tool-section tool-code" aria-labelledby="' + headingId + '"><div class="tool-code-header"><h2 id="' + headingId + '">' + escape(title) + '</h2><div class="tool-actions"><button class="tool-button tool-button-primary" type="button" data-copy-code data-copied="' + escape(labels.copied) + '" data-fallback="' + escape(labels.fallback) + '">' + escape(labels.copy) + '</button><div class="tool-download"><a class="tool-button" href="' + escape(url) + '" download="' + escape(filename) + '">' + escape(labels.download) + '</a>' + counter + '</div></div></div>' + paragraph(labels.codeHint) + '<label class="tool-sr-only" for="' + id + '">' + escape(labels.source + ' — ' + language) + '</label><textarea id="' + id + '" class="tool-source" readonly spellcheck="false" wrap="off" rows="18">' + escape(code) + '</textarea><p class="tool-copy-status" role="status" aria-live="polite"></p></section>';
   }
@@ -54,8 +54,8 @@
     if (tool.limits) body += heading(labels.limits, tool.limits);
     body += '<p class="tool-note">' + escape(tool.compatibility) + '</p>';
     if (tool.file) {
-      body += codeSection(labels, tool.file, tool.scriptLanguage, code, false, tool.downloadRelease);
-      if (tool.alternate) body += '<details class="tool-code-alternate"><summary>' + escape(tool.alternate.summary) + '</summary>' + codeSection(labels, tool.alternate.file, tool.alternate.language, alternateCode, true, tool.downloadRelease) + '</details>';
+      body += codeSection(labels, tool.file, tool.scriptLanguage, code, false, tool.downloadRelease, tool.downloadRepository);
+      if (tool.alternate) body += '<details class="tool-code-alternate"><summary>' + escape(tool.alternate.summary) + '</summary>' + codeSection(labels, tool.alternate.file, tool.alternate.language, alternateCode, true, tool.downloadRelease, tool.downloadRepository) + '</details>';
     }
     if (tool.external) body += '<section class="tool-section"><a class="tool-button tool-button-primary" href="' + escape(tool.external) + '">' + escape(tool.externalLabel) + ' ↗</a><p class="tool-note">' + escape(tool.externalNote) + '</p><h2>' + escape(labels.credit) + '</h2>' + paragraph(tool.credits) + '</section>';
     return body;

@@ -2,7 +2,7 @@
 (function (root) {
   const content = {
     updated: '2026-11-20',
-    revision: '20261120-reducer-repository',
+    revision: '20261120-c4d-repository',
     en: {
       title: 'Tools & workflows',
       meta: 'Blender add-ons, Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -20,6 +20,7 @@
       tools: [
         {
           downloadRelease: 'select-similar-angle-v1',
+          downloadRepository: 'KillianPi22/c4d-select-similar-angle',
           id: 'select-similar-angle', category: 'personal', title: 'Select Similar – Angle',
           pageTitle: 'Select Similar – Angle for Cinema 4D 2026 — Killian Pichon',
           meta: 'Select similar polygon normals in Cinema 4D 2026. Python script with angle tolerance, reference selection and opposite normals. Copy the code or download it.',
@@ -99,6 +100,7 @@
       tools: [
         {
           downloadRelease: 'select-similar-angle-v1',
+          downloadRepository: 'KillianPi22/c4d-select-similar-angle',
           id: 'select-similar-angle', category: 'personal', title: 'Select Similar – Angle',
           pageTitle: 'Select Similar – Angle pour Cinema 4D 2026 — Killian Pichon',
           meta: 'Sélection de polygones par normales similaires dans Cinema 4D 2026 : script Python avec tolérance d’angle, références et normales opposées. Code à copier ou télécharger.',
