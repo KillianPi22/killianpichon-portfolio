@@ -1,8 +1,8 @@
 /* Public tool catalogue. Keep EN/FR together; rebuild with node tools/build-technical.cjs. */
 (function (root) {
   const content = {
-    updated: '2026-11-17',
-    revision: '20261117-reducer-download',
+    updated: '2026-11-20',
+    revision: '20261120-reducer-repository',
     en: {
       title: 'Tools & workflows',
       meta: 'Blender add-ons, Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -49,6 +49,12 @@
           result: 'The tool lets me compare a reduced copy, adjust the result from the original and keep it for manual editing. The current version was checked in Blender 5.2.1 LTS, including selected sections of a Mixamo animation and updating an already enabled add-on.',
           download: {
             title: 'Download',
+            repository: 'KillianPi22/blender-keyframe-reducer',
+            repositoryLabel: 'Source code and development on GitHub',
+            release: 'v1.1.1',
+            counter: 'keyframe-reducer',
+            countLabel: 'add-on downloads via GitHub',
+            countNote: 'Installable ZIP downloads across public stable releases. Previous site downloads, backup downloads and source archives are excluded.',
             file: 'downloads/keyframe-reducer/keyframe_reducer-1.1.1.zip',
             label: 'Download add-on · v1.1.1 (.zip)',
             note: 'Free · GPL-3.0-or-later · Python source included. Install this ZIP directly in Blender without extracting it. English interface; English and French guides included in the ZIP.'
@@ -122,6 +128,12 @@
           result: 'L’outil me permet de comparer une copie réduite, d’ajuster le résultat depuis l’original et de le conserver pour la retouche. La version actuelle a été contrôlée dans Blender 5.2.1 LTS, notamment sur des passages d’une animation Mixamo et lors de la mise à jour d’un add-on déjà activé.',
           download: {
             title: 'Téléchargement',
+            repository: 'KillianPi22/blender-keyframe-reducer',
+            repositoryLabel: 'Code source et développement sur GitHub',
+            release: 'v1.1.1',
+            counter: 'keyframe-reducer',
+            countLabel: 'téléchargements de l’add-on via GitHub',
+            countNote: 'ZIP installables des versions publiques stables. Les anciens téléchargements du site, les liens de secours et les archives sources sont exclus.',
             file: 'downloads/keyframe-reducer/keyframe_reducer-1.1.1.zip',
             label: 'Télécharger l’add-on · v1.1.1 (.zip)',
             note: 'Gratuit · GPL-3.0-or-later · Code Python inclus. Installer ce ZIP directement dans Blender, sans le décompresser. Interface anglaise ; guides français et anglais inclus dans le ZIP.'

@@ -3,6 +3,9 @@
   'use strict';
   const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   const route = (lang, id = '') => 'technical/' + (id ? id + '/' : '') + (lang === 'fr' ? 'fr/' : '');
+  const downloadURL = download => download.repository && download.release
+    ? 'https://github.com/' + download.repository + '/releases/download/' + encodeURIComponent(download.release) + '/' + encodeURIComponent(download.file.split('/').pop())
+    : download.file;
   const tags = items => '<div class="tool-tags">' + items.map(item => '<span>' + escape(item) + '</span>').join('') + '</div>';
   const paragraph = text => '<p>' + escape(text) + '</p>';
   const list = (items, ordered = false) => {
@@ -38,7 +41,8 @@
     let body = '<a class="tool-text-link" href="' + route(lang) + '#' + tool.category + '">← ' + escape(labels.back) + '</a><header class="tool-intro"><p class="tool-eyebrow">' + escape(category.title) + '</p><h1>' + escape(tool.title) + '</h1>' + paragraph(tool.summary) + tags(tool.tags) + '</header>';
     if (tool.download) {
       const download = tool.download;
-      body += '<section class="tool-section" aria-labelledby="tool-download-heading"><h2 id="tool-download-heading">' + escape(download.title) + '</h2><div class="tool-actions"><a class="tool-button tool-button-primary" href="' + escape(download.file) + '" download="' + escape(download.file.split('/').pop()) + '">' + escape(download.label) + '</a>' + (download.guides || []).map(guide => '<a class="tool-button" href="' + escape(guide.file) + '" download="' + escape(guide.file.split('/').pop()) + '" hreflang="' + escape(guide.language) + '">' + escape(guide.label) + '</a>').join('') + '</div><p class="tool-note">' + escape(download.note) + '</p></section>';
+      const counter = download.counter ? '<p class="tool-note tool-download-total" data-download-count="' + escape(download.counter) + '" data-download-label="' + escape(download.countLabel) + '" data-download-unavailable="' + escape(labels.downloadUnavailable) + '" title="' + escape(download.countNote) + '" aria-live="polite">' + escape(labels.downloadUnavailable) + '</p><a class="tool-text-link tool-note" href="' + escape(download.file) + '" download="' + escape(download.file.split('/').pop()) + '">' + escape(labels.downloadFallback) + '</a>' : '';
+      body += '<section class="tool-section" aria-labelledby="tool-download-heading"><h2 id="tool-download-heading">' + escape(download.title) + '</h2><div class="tool-actions"><div class="tool-download"><a class="tool-button tool-button-primary" href="' + escape(downloadURL(download)) + '" download="' + escape(download.file.split('/').pop()) + '">' + escape(download.label) + '</a>' + counter + '</div>' + (download.guides || []).map(guide => '<a class="tool-button" href="' + escape(guide.file) + '" download="' + escape(guide.file.split('/').pop()) + '" hreflang="' + escape(guide.language) + '">' + escape(guide.label) + '</a>').join('') + '</div><p class="tool-note">' + escape(download.note) + '</p>' + (download.repository ? '<p><a class="tool-text-link" href="https://github.com/' + escape(download.repository) + '">' + escape(download.repositoryLabel) + '</a></p>' : '') + '</section>';
     }
     if (tool.preview) {
       const preview = tool.preview;
@@ -56,7 +60,7 @@
     if (tool.external) body += '<section class="tool-section"><a class="tool-button tool-button-primary" href="' + escape(tool.external) + '">' + escape(tool.externalLabel) + ' ↗</a><p class="tool-note">' + escape(tool.externalNote) + '</p><h2>' + escape(labels.credit) + '</h2>' + paragraph(tool.credits) + '</section>';
     return body;
   }
-  const api = { escape, route, intro, catalogue, detail };
+  const api = { escape, route, downloadURL, intro, catalogue, detail };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else {
     root.KPTechnicalLibrary = api;
