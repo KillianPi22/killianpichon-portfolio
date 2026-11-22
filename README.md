@@ -16,3 +16,9 @@ CNAME conserve le domaine personnalisé et .nojekyll le fonctionnement statique.
 Un dépôt public et les fichiers servis par le site restent consultables et
 téléchargeables. Le retrait des fichiers de maintenance de la version courante
 ne supprime pas leurs anciennes copies dans l'historique ou les autres branches.
+
+Les fiches Technique proposent automatiquement la dernière release stable de
+[Select Similar – Angle](https://github.com/KillianPi22/c4d-select-similar-angle/releases/latest)
+et de [Keyframe Reducer](https://github.com/KillianPi22/blender-keyframe-reducer/releases/latest).
+Les guides sont liés à la version publiée. Le code et les notes de version sont
+maintenus dans les dépôts dédiés.
