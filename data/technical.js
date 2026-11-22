@@ -2,7 +2,7 @@
 (function (root) {
   const content = {
     updated: '2026-11-21',
-    revision: '20261121-tool-releases',
+    revision: '20261121-github-versioning',
     en: {
       title: 'Tools & workflows',
       meta: 'Blender add-ons, Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -60,7 +60,7 @@
       labels: {
         releaseTitle: "Download the tool",
         releaseDefault: "Latest stable release on GitHub",
-        releaseUnavailable: "Version details unavailable here. The latest release remains available on GitHub.",
+        releaseUnavailable: "Direct download unavailable here. Get the latest stable release on GitHub.",
         releaseFallback: "Download on GitHub",
         releaseAddon: "Download add-on (.zip)",
         releaseFR: "Download · Français (.py)",
@@ -156,7 +156,7 @@
       labels: {
         releaseTitle: "Télécharger l’outil",
         releaseDefault: "Dernière version stable sur GitHub",
-        releaseUnavailable: "Les détails de version sont indisponibles ici. La dernière release reste accessible sur GitHub.",
+        releaseUnavailable: "Le téléchargement direct est indisponible ici. La dernière version stable reste accessible sur GitHub.",
         releaseFallback: "Télécharger sur GitHub",
         releaseAddon: "Télécharger l’add-on (.zip)",
         releaseFR: "Télécharger · Français (.py)",

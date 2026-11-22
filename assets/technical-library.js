@@ -34,7 +34,7 @@
     const countLabel = reducer ? labels.releaseCounterReducer : labels.downloadTotal;
     return '<section class="tool-section tool-release" data-tool-release="' + id + '" data-release-language="' + lang + '" aria-labelledby="tool-download-heading">' +
       '<p class="tool-eyebrow">' + escape(labels.releaseEyebrow) + '</p><h2 id="tool-download-heading">' + escape(labels.releaseTitle) + '</h2>' +
-      '<p class="tool-release-version" data-release-status data-unavailable="' + escape(labels.releaseUnavailable) + '" aria-live="polite">' + escape(labels.releaseDefault) + '</p>' +
+      '<p class="tool-release-status" data-release-status data-ready="' + escape(labels.releaseDefault) + '" data-unavailable="' + escape(labels.releaseUnavailable) + '" aria-live="polite">' + escape(labels.releaseDefault) + '</p>' +
       '<div class="tool-actions"><a class="tool-button tool-button-primary" data-release-fallback href="' + latest + '">' + escape(labels.releaseFallback) + '</a>' +
       keys.map((key,i) => '<a hidden class="tool-button' + (i === 0 ? ' tool-button-primary' : '') + '" data-release-asset="' + key + '" href="' + latest + '">' + escape(names[key]) + '</a>').join('') + '</div>' +
       '<p class="tool-note">' + escape(reducer ? labels.releaseReducerNote : labels.releaseC4DNote) + '</p>' +

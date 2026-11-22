@@ -37,7 +37,7 @@
       files[key] = { name: asset.name, url: downloadURL(id, release.tag_name, asset.name) };
     }
     if (id === 'keyframe-reducer' && files.addon.name !== 'keyframe_reducer-' + release.tag_name.slice(1) + '.zip') throw new Error('Asset version mismatch');
-    return { tag: release.tag_name, version: release.tag_name.replace(/^select-similar-angle-/, ''), published: release.published_at, url: releaseURL(id, release.tag_name), files };
+    return { tag: release.tag_name, url: releaseURL(id, release.tag_name), files };
   }
   async function latest(id, fetcher = fetch, signal) {
     const config = profile(id);
@@ -70,8 +70,7 @@
       const guide = section.querySelector('[data-release-guide]');
       guide.href = repositoryURL(id) + '/blob/' + encodeURIComponent(release.tag) + '/' + config.guides[lang];
       section.querySelector('[data-release-notes]').href = release.url;
-      const date = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-CA' : 'en-CA', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(release.published));
-      status.textContent = 'Version ' + release.version + ' · ' + date;
+      status.textContent = status.dataset.ready;
       section.querySelector('[data-release-fallback]').hidden = true;
       section.dataset.releaseState = 'ready';
     } catch (_) {
