@@ -2,7 +2,7 @@
 (function (root) {
   const content = {
     updated: '2026-11-21',
-    revision: '20261121-github-versioning',
+    revision: '20261121-marionette-seo',
     en: {
       title: 'Tools & workflows',
       meta: 'Blender add-ons, Cinema 4D Python scripts, production tools and DJ MIDI mappings by Killian Pichon. Personal tools, professional work and experiments to reuse.',
@@ -21,10 +21,10 @@
         {
           github: true,
           id: 'select-similar-angle', category: 'personal', title: 'Select Similar – Angle',
-          pageTitle: 'Select Similar – Angle for Cinema 4D — Killian Pichon',
+          pageTitle: 'Cinema 4D: select polygons by normal | Select Similar – Angle',
           meta: 'Select similar polygon normals in Cinema 4D. Python script with angle tolerance, reference selection and opposite normals. Releases and downloads on GitHub.',
           tags: ['Cinema 4D', 'Python', 'Polygon selection'],
-          summary: 'Select faces with a similar orientation, even across disconnected parts of an architectural or geometric mesh.',
+          summary: 'A Python script for Cinema 4D to select polygons by similar normal direction, with an angle tolerance, even across disconnected parts of a mesh.',
           need: 'Selecting faces one by one was slowing down my modelling. I wanted the principle of Blender’s Select Similar → Normal directly in Cinema 4D, without switching applications.',
           response: 'I developed this Python script with AI assistance, specifying the controls I actually needed: a reference selection, an angle tolerance and a way to restore the starting point. The floating window stays open while I work in the viewport.',
           result: 'Tested in Cinema 4D 2026 in my own workflow. It lets me repeat the selection and try different tolerances without returning to Blender.',
@@ -33,13 +33,32 @@
         {
           id: 'keyframe-reducer', category: 'personal', title: 'Keyframe Reducer',
           github: true,
-          pageTitle: 'Keyframe Reducer for Blender — Killian Pichon',
+          pageTitle: 'Reduce keyframes in Blender | Keyframe Reducer',
           meta: 'Free Blender add-on to reduce animation keyframes on a copy, across an entire Action or selected keys. Stable release with English and French guides.',
           tags: ['Blender', 'Python', 'Animation'],
-          summary: 'Reduce dense animation curves to make motion capture cleanup and manual corrections easier.',
+          summary: 'A free Blender add-on to reduce animation keyframes on a copy of an Action or on selected keys, making motion capture cleanup and manual corrections easier.',
           need: 'Working with Brekel and Kinect v2 capture and Mixamo animations led me to dense curves that were cumbersome to edit in Blender. I wanted a reduction workflow closer to what I use in Cinema 4D, with control over the sections being simplified.',
           response: 'I developed this add-on with AI assistance around a protected source Action, adjustable tolerances and before/after comparison. The Selected Keys mode grew out of a practical need: simplify one passage while preserving the surrounding animation.',
           result: 'The tool lets me compare a reduced copy, adjust the result from the original and keep it for manual editing. My work with the tool includes reducing selected sections of a Mixamo animation in Blender.',
+        },
+        {
+          "id": "marionette-workflow-helper",
+          "category": "personal",
+          "title": "Marionette Workflow Helper",
+          "github": true,
+          "pageTitle": "Marionette Workflow Helper | Motion capture cleanup in Blender",
+          "meta": "Free Blender add-on for Marionette motion capture: prepare a Mixamo rig, preview manual corrections and transfer a take to the original character. Download and guide.",
+          "tags": [
+            "Blender",
+            "Marionette",
+            "Motion capture"
+          ],
+          "summary": "Prepare a capture on a copy of the character, adjust the take and transfer it back to the original animation rig in Blender.",
+          "need": "A capture needs preparation and cleanup before it can be used on a character. The goal is to work on an isolated capture rig while preserving the original skeleton, Actions and NLA tracks.",
+          "response": "The helper prepares Mixamo-compatible rigs and character presets, then lets you preview manual adjustments to the root, torso, hands, pelvis and feet against the source take.",
+          "result": "Transfer the take into a separate Action or NLA strip on the original rig, or build an editable corrected Action. Corrections remain separate from the source animation.",
+          "downloadNote": "Free · GPL-3.0-or-later. Install the ZIP in Blender without extracting it. Requires the separate Marionette application and its official Blender plugin. Interface and guide in English.",
+          "limits": "For compatible humanoid FK rigs with Mixamo bone names, including the Tripo Mixamo profile. It is not a universal retargeter for custom rigs or IK controls. See the GitHub guide for setup and compatibility."
         },
         {
           id: 'denon-sc2000-traktor', category: 'just-for-fun', title: 'Denon DN-SC2000 · Traktor Pro 4',
@@ -117,10 +136,10 @@
         {
           github: true,
           id: 'select-similar-angle', category: 'personal', title: 'Select Similar – Angle',
-          pageTitle: 'Select Similar – Angle pour Cinema 4D — Killian Pichon',
+          pageTitle: 'Cinema 4D : sélection par normales | Select Similar – Angle',
           meta: 'Sélection de polygones par normales similaires dans Cinema 4D : script Python avec tolérance d’angle, références et normales opposées. Versions et téléchargement sur GitHub.',
           tags: ['Cinema 4D', 'Python', 'Sélection de polygones'],
-          summary: 'Sélectionner des faces d’orientation similaire, même séparées, sur un maillage architectural ou géométrique.',
+          summary: 'Un script Python pour Cinema 4D : sélectionner les polygones par orientation de leurs normales, avec une tolérance d’angle, même sur des parties séparées du maillage.',
           need: 'Sélectionner les faces une par une ralentissait ma modélisation. Je voulais retrouver le principe de Select Similar → Normal de Blender directement dans Cinema 4D, sans changer de logiciel.',
           response: 'J’ai développé ce script Python avec l’aide de l’IA, en précisant les paramètres dont j’avais besoin : une sélection de référence, une tolérance d’angle et la possibilité de revenir au point de départ. La fenêtre reste ouverte pendant que je travaille dans la vue.',
           result: 'Testé dans Cinema 4D 2026 dans mon propre workflow. Il me permet de répéter la sélection et d’essayer différentes tolérances sans revenir dans Blender.',
@@ -129,13 +148,33 @@
         {
           id: 'keyframe-reducer', category: 'personal', title: 'Keyframe Reducer',
           github: true,
-          pageTitle: 'Keyframe Reducer pour Blender — Killian Pichon',
+          pageTitle: 'Réduire les clés dans Blender | Keyframe Reducer',
           meta: 'Add-on gratuit pour réduire les clés d’animation dans Blender, sur une copie : Action complète ou clés sélectionnées. Version stable et guides français et anglais.',
           tags: ['Blender', 'Python', 'Animation'],
-          summary: 'Alléger les courbes d’animation pour faciliter le nettoyage de motion capture et les corrections à la main.',
+          summary: 'Un add-on gratuit pour réduire les clés d’animation dans Blender, sur une copie de l’Action ou des clés sélectionnées, et faciliter la retouche des captures de mouvement.',
           need: 'En travaillant avec des captures Brekel et Kinect v2 et des animations Mixamo, je me retrouvais avec des courbes denses, peu pratiques à retoucher dans Blender. Je voulais un workflow de réduction plus proche de celui que j’utilise dans Cinema 4D, avec un contrôle sur les passages à simplifier.',
           response: 'J’ai développé cet add-on avec l’aide de l’IA autour d’une Action source protégée, de tolérances ajustables et d’une comparaison avant/après. Le mode Selected Keys répond à un besoin apparu à l’usage : simplifier un passage tout en conservant l’animation autour.',
           result: 'L’outil me permet de comparer une copie réduite, d’ajuster le résultat depuis l’original et de le conserver pour la retouche. Mon travail avec l’outil comprend la réduction de passages sélectionnés d’une animation Mixamo dans Blender.',
+        },
+        {
+          "id": "marionette-workflow-helper",
+          "category": "personal",
+          "title": "Marionette Workflow Helper",
+          "github": true,
+          "pageTitle": "Marionette Workflow Helper | Capture et retouche dans Blender",
+          "meta": "Add-on gratuit pour la capture Marionette dans Blender : préparer un rig Mixamo, ajuster la prise et transférer l’animation au personnage d’origine. Téléchargement et guide.",
+          "tags": [
+            "Blender",
+            "Marionette",
+            "Capture de mouvement"
+          ],
+          "summary": "Préparer une capture sur une copie du personnage, ajuster la prise et la transférer vers son squelette d’animation d’origine dans Blender.",
+          "need": "Une capture demande de la préparation et des retouches avant de servir à l’animation du personnage. L’objectif est de travailler sur un squelette de capture isolé, en conservant le squelette, les Actions et les pistes NLA d’origine.",
+          "response": "L’outil prépare les squelettes compatibles Mixamo et les préréglages du personnage, puis permet de prévisualiser les corrections manuelles de la racine, du torse, des mains, du bassin et des pieds par rapport à la prise source.",
+          "result": "La prise peut être transférée vers une Action ou une bande NLA séparée sur le squelette d’origine, ou servir à créer une Action corrigée et modifiable. Les corrections restent distinctes de l’animation source.",
+          "downloadNote": "Gratuit · GPL-3.0-or-later. Installer le ZIP dans Blender sans le décompresser. L’application Marionette et son plugin Blender officiel sont requis séparément. Interface et guide en anglais.",
+          "guideLabel": "Installation et guide (anglais)",
+          "limits": "Pour les squelettes humanoïdes FK compatibles avec les noms d’os Mixamo, dont le profil Tripo Mixamo. Ce n’est pas un outil universel de transfert pour les rigs personnalisés ou les contrôles IK. Configuration et compatibilité détaillées sur GitHub."
         },
         {
           id: 'denon-sc2000-traktor', category: 'just-for-fun', title: 'Denon DN-SC2000 · Traktor Pro 4',

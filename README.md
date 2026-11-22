@@ -19,7 +19,13 @@ ne supprime pas leurs anciennes copies dans l'historique ou les autres branches.
 
 Les fiches Technique proposent automatiquement la dernière release stable de
 [Select Similar – Angle](https://github.com/KillianPi22/c4d-select-similar-angle/releases/latest)
-et de [Keyframe Reducer](https://github.com/KillianPi22/blender-keyframe-reducer/releases/latest).
+de [Keyframe Reducer](https://github.com/KillianPi22/blender-keyframe-reducer/releases/latest)
+et de [Marionette Workflow Helper](https://github.com/KillianPi22/marionette-workflow-helper/releases/latest).
 Les guides sont liés à la version publiée. Le code et les notes de version sont
 maintenus dans les dépôts dédiés. Les numéros et dates de version sont consultables
 sur GitHub ; les fiches du site ne les reproduisent pas.
+
+Les fiches françaises et anglaises décrivent le besoin et le périmètre de chaque
+outil. Leurs pages HTML sont consultables sans JavaScript et figurent dans le
+plan du site, avec des liens entre les deux langues pour les moteurs de recherche.
+Marionette Workflow Helper propose une interface et un guide en anglais.
