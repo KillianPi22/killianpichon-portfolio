@@ -1,20 +1,13 @@
 /* Public GitHub release totals. No click tracking, cookies, storage or credentials. */
 (function (root) {
   'use strict';
-  const profiles = {
-    'select-similar-angle': {
-      repositories: ['KillianPi22/c4d-select-similar-angle', 'KillianPi22/killianpichon-portfolio'],
-      tag: value => typeof value === 'string' && value.startsWith('select-similar-angle-'),
-      asset: value => ['Select_Similar_Angle.py', 'Select_Similar_Angle_EN.py'].includes(value),
-      complete: names => names.size === 2
-    },
-    'keyframe-reducer': {
-      repositories: ['KillianPi22/blender-keyframe-reducer'],
-      tag: value => typeof value === 'string' && /^v\d+\.\d+\.\d+$/.test(value),
-      asset: value => typeof value === 'string' && /^keyframe_reducer-\d+\.\d+\.\d+\.zip$/.test(value),
-      complete: names => names.size > 0
-    }
-  };
+  const releases = typeof module === 'object' && module.exports ? require('./tool-releases.js') : root.KPToolReleases;
+  const profiles = Object.fromEntries(Object.entries(releases.profiles).map(([id, config]) => [id, {
+    repositories: [config.repository, ...config.history],
+    tag: config.tag,
+    asset: name => typeof name === 'string' && Object.values(config.files).some(pattern => pattern.test(name)),
+    complete: names => Object.values(config.files).every(pattern => [...names].some(name => pattern.test(name)))
+  }]));
   async function total(fetcher = fetch, signal, profileId = 'select-similar-angle') {
     const profile = Object.hasOwn(profiles, profileId) ? profiles[profileId] : null;
     if (!profile) throw new Error('Unknown download counter');
