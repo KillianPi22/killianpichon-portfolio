@@ -14,8 +14,17 @@
       repository: 'KillianPi22/blender-keyframe-reducer',
       history: [],
       tag: value => typeof value === 'string' && /^v\d+\.\d+\.\d+$/.test(value),
+      addonPrefix: 'keyframe_reducer-',
       files: { addon: /^keyframe_reducer-\d+\.\d+\.\d+\.zip$/ },
       guides: { fr: 'keyframe_reducer/README_FR.md', en: 'keyframe_reducer/README_EN.md' }
+    },
+    'marionette-workflow-helper': {
+      repository: 'KillianPi22/marionette-workflow-helper',
+      history: [],
+      tag: value => typeof value === 'string' && /^v\d+\.\d+\.\d+$/.test(value),
+      addonPrefix: 'marionette_workflow-',
+      files: { addon: /^marionette_workflow-\d+\.\d+\.\d+\.zip$/ },
+      guides: { fr: 'marionette_workflow/README_EN.md', en: 'marionette_workflow/README_EN.md' }
     }
   };
   const profile = id => Object.hasOwn(profiles, id) ? profiles[id] : null;
@@ -36,7 +45,7 @@
       // Derive URLs from the allowlisted repository, never from API-provided HTML or URLs.
       files[key] = { name: asset.name, url: downloadURL(id, release.tag_name, asset.name) };
     }
-    if (id === 'keyframe-reducer' && files.addon.name !== 'keyframe_reducer-' + release.tag_name.slice(1) + '.zip') throw new Error('Asset version mismatch');
+    if (config.addonPrefix && files.addon.name !== config.addonPrefix + release.tag_name.slice(1) + '.zip') throw new Error('Asset version mismatch');
     return { tag: release.tag_name, url: releaseURL(id, release.tag_name), files };
   }
   async function latest(id, fetcher = fetch, signal) {

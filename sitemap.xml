@@ -521,6 +521,7 @@
     <loc>https://killianpichon.art/technical/</loc>
     <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/fr/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/"/>
   </url>
@@ -528,6 +529,7 @@
     <loc>https://killianpichon.art/technical/select-similar-angle/</loc>
     <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/select-similar-angle/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/select-similar-angle/fr/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/select-similar-angle/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/select-similar-angle/"/>
   </url>
@@ -535,13 +537,23 @@
     <loc>https://killianpichon.art/technical/keyframe-reducer/</loc>
     <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/keyframe-reducer/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/keyframe-reducer/fr/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/keyframe-reducer/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/keyframe-reducer/"/>
+  </url>
+  <url>
+    <loc>https://killianpichon.art/technical/marionette-workflow-helper/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/marionette-workflow-helper/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/marionette-workflow-helper/fr/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/marionette-workflow-helper/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/marionette-workflow-helper/"/>
   </url>
   <url>
     <loc>https://killianpichon.art/technical/denon-sc2000-traktor/</loc>
     <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/denon-sc2000-traktor/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/denon-sc2000-traktor/fr/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/denon-sc2000-traktor/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/denon-sc2000-traktor/"/>
   </url>
@@ -549,6 +561,7 @@
     <loc>https://killianpichon.art/technical/fr/</loc>
     <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/fr/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/"/>
   </url>
@@ -556,6 +569,7 @@
     <loc>https://killianpichon.art/technical/select-similar-angle/fr/</loc>
     <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/select-similar-angle/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/select-similar-angle/fr/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/select-similar-angle/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/select-similar-angle/"/>
   </url>
@@ -563,13 +577,23 @@
     <loc>https://killianpichon.art/technical/keyframe-reducer/fr/</loc>
     <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/keyframe-reducer/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/keyframe-reducer/fr/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/keyframe-reducer/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/keyframe-reducer/"/>
+  </url>
+  <url>
+    <loc>https://killianpichon.art/technical/marionette-workflow-helper/fr/</loc>
+    <lastmod>2026-11-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/marionette-workflow-helper/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/marionette-workflow-helper/fr/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/marionette-workflow-helper/fr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/marionette-workflow-helper/"/>
   </url>
   <url>
     <loc>https://killianpichon.art/technical/denon-sc2000-traktor/fr/</loc>
     <lastmod>2026-11-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://killianpichon.art/technical/denon-sc2000-traktor/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://killianpichon.art/technical/denon-sc2000-traktor/fr/"/>
     <xhtml:link rel="alternate" hreflang="fr-CA" href="https://killianpichon.art/technical/denon-sc2000-traktor/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://killianpichon.art/technical/denon-sc2000-traktor/"/>
   </url>

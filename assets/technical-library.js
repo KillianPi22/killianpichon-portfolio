@@ -28,18 +28,18 @@
   function releaseSection(data, lang, tool) {
     const labels = data.labels, id = tool.id;
     const latest = releases.latestURL(id), repository = releases.repositoryURL(id);
-    const reducer = id === 'keyframe-reducer';
-    const keys = reducer ? ['addon'] : (lang === 'fr' ? ['fr', 'en'] : ['en', 'fr']);
+    const addon = Object.hasOwn(releases.profile(id).files, 'addon');
+    const keys = addon ? ['addon'] : (lang === 'fr' ? ['fr', 'en'] : ['en', 'fr']);
     const names = { addon: labels.releaseAddon, fr: labels.releaseFR, en: labels.releaseEN };
-    const countLabel = reducer ? labels.releaseCounterReducer : labels.downloadTotal;
+    const countLabel = addon ? labels.releaseCounterReducer : labels.downloadTotal;
     return '<section class="tool-section tool-release" data-tool-release="' + id + '" data-release-language="' + lang + '" aria-labelledby="tool-download-heading">' +
       '<p class="tool-eyebrow">' + escape(labels.releaseEyebrow) + '</p><h2 id="tool-download-heading">' + escape(labels.releaseTitle) + '</h2>' +
       '<p class="tool-release-status" data-release-status data-ready="' + escape(labels.releaseDefault) + '" data-unavailable="' + escape(labels.releaseUnavailable) + '" aria-live="polite">' + escape(labels.releaseDefault) + '</p>' +
       '<div class="tool-actions"><a class="tool-button tool-button-primary" data-release-fallback href="' + latest + '">' + escape(labels.releaseFallback) + '</a>' +
       keys.map((key,i) => '<a hidden class="tool-button' + (i === 0 ? ' tool-button-primary' : '') + '" data-release-asset="' + key + '" href="' + latest + '">' + escape(names[key]) + '</a>').join('') + '</div>' +
-      '<p class="tool-note">' + escape(reducer ? labels.releaseReducerNote : labels.releaseC4DNote) + '</p>' +
+      '<p class="tool-note">' + escape(tool.downloadNote || (addon ? labels.releaseReducerNote : labels.releaseC4DNote)) + '</p>' +
       '<nav class="tool-release-links" aria-label="' + escape(labels.releaseTitle) + '">' +
-      '<a class="tool-text-link" data-release-guide href="' + latest + '">' + escape(labels.releaseGuide) + '</a>' +
+      '<a class="tool-text-link" data-release-guide href="' + latest + '">' + escape(tool.guideLabel || labels.releaseGuide) + '</a>' +
       '<a class="tool-text-link" data-release-notes href="' + latest + '">' + escape(labels.releaseNotes) + '</a>' +
       '<a class="tool-text-link" href="' + repository + '/releases">' + escape(labels.releaseHistory) + '</a>' +
       '<a class="tool-text-link" href="' + repository + '">' + escape(labels.releaseSource) + '</a></nav>' +
